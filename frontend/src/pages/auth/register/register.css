@@ -1,0 +1,221 @@
+.register-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.register-image-section {
+    flex: 1;
+    background: url('https://jmhfi.com/wp-content/uploads/2021/06/Micro-Facade1.png') no-repeat center;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.register-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 20px;
+}
+
+.register-title {
+    color: white;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.register-title-highlight {
+    color: #3498db;
+    font-weight: bold;
+}
+
+.register-form-section {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #f9f9f9;
+    overflow-y: auto;
+}
+
+.register-logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.register-logo {
+    max-width: 150px;
+    height: auto;
+}
+
+.register-heading {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 1.8rem;
+}
+
+.register-form-container {
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.register-input-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.register-input-container {
+    position: relative;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.register-input {
+    width: 100%;
+    padding: 12px 15px;
+    padding-left: 40px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.register-input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.register-input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.register-role-container {
+    margin-bottom: 20px;
+}
+
+.register-role-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #333;
+}
+
+.register-role-options {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.register-role-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.register-role-option input[type="radio"] {
+    accent-color: #3498db;
+}
+
+.register-role-option label {
+    cursor: pointer;
+}
+
+.register-error {
+    background-color: #ffebee;
+    color: #f44336;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.register-success {
+    background-color: #e8f5e9;
+    color: #4caf50;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.register-footer {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.register-link {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.register-link:hover {
+    text-decoration: underline;
+}
+
+.register-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #3498db;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.register-button:hover {
+    background-color: #2980b9;
+}
+
+.register-button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+    .register-container {
+        flex-direction: column;
+    }
+
+    .register-image-section {
+        height: 200px;
+    }
+
+    .register-form-section {
+        padding: 20px;
+    }
+
+    .register-input-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}

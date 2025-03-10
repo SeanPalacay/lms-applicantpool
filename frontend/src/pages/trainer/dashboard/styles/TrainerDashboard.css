@@ -1,0 +1,179 @@
+/* Trainer Dashboard Specific Styles */
+
+.trainer-dashboard {
+    padding: 20px;
+    color: #333;
+}
+
+/* Active Programs Section */
+.active-programs {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.active-programs h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.program-card {
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.program-card:last-child {
+    margin-bottom: 0;
+}
+
+.program-info {
+    flex: 1;
+}
+
+.program-info h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+}
+
+.program-info p {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.program-stats {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.program-stat {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.program-stat i {
+    margin-right: 5px;
+    color: #2196f3;
+}
+
+/* Trainee Performance Section */
+.trainee-performance {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.trainee-performance h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.performance-table-container {
+    overflow-x: auto;
+}
+
+.performance-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.performance-table th {
+    text-align: left;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.performance-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.performance-table td:last-child {
+    text-align: center;
+}
+
+.progress-bar.small {
+    height: 6px;
+    width: 100px;
+    display: inline-block;
+    margin: 0 10px;
+    vertical-align: middle;
+}
+
+.action-link {
+    color: #2196f3;
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background-color: #e3f2fd;
+    transition: background-color 0.3s;
+}
+
+.action-link:hover {
+    background-color: #bbdefb;
+}
+
+/* Status badges for trainee table */
+.status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-completed {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-in-progress {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.status-starting {
+    background-color: #f5f5f5;
+    color: #616161;
+}
+
+/* Responsive adjustments for trainer dashboard */
+@media (max-width: 992px) {
+    .dashboard-content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .program-card {
+        flex-direction: column;
+    }
+    
+    .program-actions {
+        margin-left: 0;
+        margin-top: 15px;
+        align-self: flex-start;
+    }
+    
+    .performance-table-container {
+        overflow-x: auto;
+    }
+}

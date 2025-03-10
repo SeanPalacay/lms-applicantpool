@@ -1,0 +1,380 @@
+/* Applicant Dashboard Specific Styles */
+
+.applicant-dashboard {
+    padding: 20px;
+    color: #333;
+}
+
+/* Application Status Section */
+.application-status-section {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.status-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+/* Status badge styles */
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-pending {
+    background-color: #f5f5f5;
+    color: #616161;
+}
+
+.status-shortlisted {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.status-hired {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-rejected {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+/* Application Timeline */
+.application-timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline {
+    position: relative;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background-color: #e0e0e0;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+    padding-left: 50px;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 8px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #e0e0e0;
+}
+
+.timeline-item.completed .timeline-marker {
+    background-color: #4caf50;
+    box-shadow: 0 0 0 2px #a5d6a7;
+}
+
+.timeline-content {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+}
+
+.timeline-content h4 {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+}
+
+.timeline-content p {
+    margin: 0 0 5px 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.timeline-date {
+    font-size: 0.85rem;
+    color: #333;
+    display: block;
+    margin-top: 5px;
+}
+
+/* Applicant Information Card */
+.applicant-info-card {
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 20px;
+}
+
+.applicant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.applicant-name h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+}
+
+.applicant-name p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.application-date {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Score visualization */
+.applicant-scores {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.score-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.score-label {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.circular-progress {
+    width: 80px;
+    height: 80px;
+}
+
+.circular-chart {
+    width: 100%;
+    height: 100%;
+}
+
+.circle-bg {
+    fill: none;
+    stroke: #eee;
+    stroke-width: 2;
+}
+
+.circle {
+    fill: none;
+    stroke: #2196f3;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.percentage {
+    font-size: 6px;
+    text-anchor: middle;
+    font-weight: bold;
+    fill: #333;
+}
+
+/* Document management */
+.applicant-documents {
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.applicant-documents h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+}
+
+.document-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px 0;
+}
+
+.document-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.document-item i {
+    margin-right: 10px;
+    color: #f44336;
+    font-size: 1.1rem;
+}
+
+.document-item span {
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+.document-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.doc-action {
+    color: #2196f3;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.doc-action:hover {
+    color: #1976d2;
+}
+
+/* Next Steps Section */
+.next-steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.next-step-card {
+    display: flex;
+    align-items: flex-start;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    border: 1px solid #eee;
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2196f3;
+    color: white;
+    border-radius: 50%;
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content h4 {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+}
+
+.step-content p {
+    margin: 0 0 5px 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.step-deadline {
+    font-size: 0.85rem;
+    color: #d32f2f;
+}
+
+.step-action {
+    margin-left: 10px;
+}
+
+/* Waiting message when no next steps are available */
+.waiting-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    text-align: center;
+}
+
+.waiting-icon {
+    font-size: 2rem;
+    color: #2196f3;
+    margin-bottom: 15px;
+}
+
+.waiting-message h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+}
+
+.waiting-message p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+    max-width: 400px;
+}
+
+/* Responsive adjustments for applicant dashboard */
+@media (max-width: 992px) {
+    .dashboard-content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .applicant-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .application-date {
+        margin-top: 5px;
+    }
+    
+    .applicant-scores {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    
+    .next-step-card {
+        flex-direction: column;
+    }
+    
+    .step-number {
+        margin-bottom: 10px;
+    }
+    
+    .step-action {
+        margin-left: 0;
+        margin-top: 10px;
+        align-self: flex-start;
+    }
+}

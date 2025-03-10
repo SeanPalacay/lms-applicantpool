@@ -1,0 +1,1991 @@
+[2025-03-09 14:16:27] Login request received
+[2025-03-09 14:16:27] Database connection successful
+[2025-03-09 14:16:27] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 14:16:27] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 14:16:27] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 14:16:27] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 14:16:27] User query result {"id":7,"found":true}
+[2025-03-09 14:16:27] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 14:16:27] Password verification result matched
+[2025-03-09 14:16:27] Authentication successful
+[2025-03-09 14:16:27] Login successful, returning data {"token":"NzoxNzQxNTI2MTg3","role":"administrator","full_name":"admin admin"}
+[2025-03-09 14:16:46] Login request received
+[2025-03-09 14:16:46] Database connection successful
+[2025-03-09 14:16:46] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 14:16:46] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 14:16:46] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 14:16:46] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 14:16:46] User query result {"id":7,"found":true}
+[2025-03-09 14:16:46] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 14:16:46] Password verification result matched
+[2025-03-09 14:16:46] Authentication successful
+[2025-03-09 14:16:46] Login successful, returning data {"token":"NzoxNzQxNTI2MjA2","role":"administrator","full_name":"admin admin"}
+[2025-03-09 14:37:27] Login request received
+[2025-03-09 14:37:27] Database connection successful
+[2025-03-09 14:37:27] Raw request data {"username":"admin","password":"test"}
+[2025-03-09 14:37:27] Decoded data {"username":"admin","password":"test"}
+[2025-03-09 14:37:27] Attempting to authenticate {"username":"admin","password_length":4}
+[2025-03-09 14:37:27] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 14:37:27] User query result {"id":7,"found":true}
+[2025-03-09 14:37:27] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 14:37:27] Password verification result failed
+[2025-03-09 14:37:27] Trying direct comparison as fallback
+[2025-03-09 14:37:27] Direct comparison result failed
+[2025-03-09 14:37:27] Password verification failed
+[2025-03-09 14:37:31] Login request received
+[2025-03-09 14:37:31] Database connection successful
+[2025-03-09 14:37:31] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 14:37:31] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 14:37:31] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 14:37:31] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 14:37:31] User query result {"id":7,"found":true}
+[2025-03-09 14:37:31] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 14:37:31] Password verification result matched
+[2025-03-09 14:37:31] Authentication successful
+[2025-03-09 14:37:31] Login successful, returning data {"token":"NzoxNzQxNTI3NDUx","role":"administrator","full_name":"admin admin"}
+[2025-03-09 14:38:24] Login request received
+[2025-03-09 14:38:24] Database connection successful
+[2025-03-09 14:38:24] Raw request data {"username":"applicant","password":"test123123"}
+[2025-03-09 14:38:24] Decoded data {"username":"applicant","password":"test123123"}
+[2025-03-09 14:38:24] Attempting to authenticate {"username":"applicant","password_length":10}
+[2025-03-09 14:38:24] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 14:38:24] User query result {"id":6,"found":true}
+[2025-03-09 14:38:24] Stored password hash $2y$10$TONg2cTG/RZkaPi/PjD1hOx0xCb6crYoJZNrO1rvH7qFxUpWVqLhi
+[2025-03-09 14:38:24] Password verification result matched
+[2025-03-09 14:38:24] Authentication successful
+[2025-03-09 14:38:24] Login successful, returning data {"token":"NjoxNzQxNTI3NTA0","role":"applicant","full_name":"applicant applicant"}
+[2025-03-09 14:39:31] Login request received
+[2025-03-09 14:39:31] Database connection successful
+[2025-03-09 14:39:31] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-09 14:39:31] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-09 14:39:31] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-09 14:39:31] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 14:39:31] User query result {"id":8,"found":true}
+[2025-03-09 14:39:31] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-09 14:39:31] Password verification result matched
+[2025-03-09 14:39:31] Authentication successful
+[2025-03-09 14:39:31] Login successful, returning data {"token":"ODoxNzQxNTI3NTcx","role":"trainee","full_name":"trainee trainee"}
+[2025-03-09 14:39:41] Login request received
+[2025-03-09 14:39:41] Database connection successful
+[2025-03-09 14:39:41] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-09 14:39:41] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-09 14:39:41] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-09 14:39:41] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 14:39:41] User query result {"id":8,"found":true}
+[2025-03-09 14:39:41] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-09 14:39:41] Password verification result matched
+[2025-03-09 14:39:41] Authentication successful
+[2025-03-09 14:39:41] Login successful, returning data {"token":"ODoxNzQxNTI3NTgx","role":"trainee","full_name":"trainee trainee"}
+[2025-03-09 14:39:58] Login request received
+[2025-03-09 14:39:58] Database connection successful
+[2025-03-09 14:39:58] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-09 14:39:58] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-09 14:39:58] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-09 14:39:58] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 14:39:58] User query result {"id":9,"found":true}
+[2025-03-09 14:39:58] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-09 14:39:58] Password verification result matched
+[2025-03-09 14:39:58] Authentication successful
+[2025-03-09 14:39:58] Login successful, returning data {"token":"OToxNzQxNTI3NTk4","role":"trainer","full_name":"trainer trainer"}
+[2025-03-09 14:45:48] Login request received
+[2025-03-09 14:45:48] Database connection successful
+[2025-03-09 14:45:48] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 14:45:48] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 14:45:48] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 14:45:48] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 14:45:48] User query result {"id":7,"found":true}
+[2025-03-09 14:45:48] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 14:45:48] Password verification result matched
+[2025-03-09 14:45:48] Authentication successful
+[2025-03-09 14:45:48] Login successful, returning data {"token":"NzoxNzQxNTI3OTQ4","role":"administrator","full_name":"admin admin"}
+[2025-03-09 15:06:16] Login request received
+[2025-03-09 15:06:16] Database connection successful
+[2025-03-09 15:06:16] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 15:06:16] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 15:06:16] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 15:06:16] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 15:06:16] User query result {"id":7,"found":true}
+[2025-03-09 15:06:16] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 15:06:16] Password verification result matched
+[2025-03-09 15:06:16] Authentication successful
+[2025-03-09 15:06:16] Login successful, returning data {"token":"NzoxNzQxNTI5MTc2","role":"administrator","full_name":"admin admin"}
+[2025-03-09 15:16:15] Login request received
+[2025-03-09 15:16:15] Database connection successful
+[2025-03-09 15:16:15] Raw request data {"username":"trainee","password":"test"}
+[2025-03-09 15:16:15] Decoded data {"username":"trainee","password":"test"}
+[2025-03-09 15:16:15] Attempting to authenticate {"username":"trainee","password_length":4}
+[2025-03-09 15:16:15] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 15:16:15] User query result {"id":8,"found":true}
+[2025-03-09 15:16:15] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-09 15:16:15] Password verification result failed
+[2025-03-09 15:16:15] Trying direct comparison as fallback
+[2025-03-09 15:16:15] Direct comparison result failed
+[2025-03-09 15:16:15] Password verification failed
+[2025-03-09 15:16:18] Login request received
+[2025-03-09 15:16:18] Database connection successful
+[2025-03-09 15:16:18] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-09 15:16:18] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-09 15:16:18] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-09 15:16:18] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 15:16:18] User query result {"id":8,"found":true}
+[2025-03-09 15:16:18] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-09 15:16:18] Password verification result matched
+[2025-03-09 15:16:18] Authentication successful
+[2025-03-09 15:16:18] Login successful, returning data {"token":"ODoxNzQxNTI5Nzc4","role":"trainee","full_name":"trainee trainee"}
+[2025-03-09 15:17:18] Login request received
+[2025-03-09 15:17:18] Database connection successful
+[2025-03-09 15:17:18] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 15:17:18] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 15:17:18] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 15:17:18] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 15:17:18] User query result {"id":7,"found":true}
+[2025-03-09 15:17:18] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 15:17:18] Password verification result matched
+[2025-03-09 15:17:18] Authentication successful
+[2025-03-09 15:17:18] Login successful, returning data {"token":"NzoxNzQxNTI5ODM4","role":"administrator","full_name":"admin admin"}
+[2025-03-09 15:24:50] Login request received
+[2025-03-09 15:24:50] Database connection successful
+[2025-03-09 15:24:50] Raw request data {"username":"trainee","password":"test"}
+[2025-03-09 15:24:50] Decoded data {"username":"trainee","password":"test"}
+[2025-03-09 15:24:50] Attempting to authenticate {"username":"trainee","password_length":4}
+[2025-03-09 15:24:50] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 15:24:50] User query result {"id":8,"found":true}
+[2025-03-09 15:24:50] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-09 15:24:50] Password verification result failed
+[2025-03-09 15:24:50] Trying direct comparison as fallback
+[2025-03-09 15:24:50] Direct comparison result failed
+[2025-03-09 15:24:50] Password verification failed
+[2025-03-09 15:24:52] Login request received
+[2025-03-09 15:24:52] Database connection successful
+[2025-03-09 15:24:52] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-09 15:24:52] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-09 15:24:52] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-09 15:24:52] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 15:24:52] User query result {"id":8,"found":true}
+[2025-03-09 15:24:52] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-09 15:24:52] Password verification result matched
+[2025-03-09 15:24:52] Authentication successful
+[2025-03-09 15:24:52] Login successful, returning data {"token":"ODoxNzQxNTMwMjky","role":"trainee","full_name":"trainee trainee"}
+[2025-03-09 15:25:02] Login request received
+[2025-03-09 15:25:02] Database connection successful
+[2025-03-09 15:25:02] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 15:25:02] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 15:25:02] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 15:25:02] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 15:25:02] User query result {"id":7,"found":true}
+[2025-03-09 15:25:02] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 15:25:02] Password verification result matched
+[2025-03-09 15:25:02] Authentication successful
+[2025-03-09 15:25:02] Login successful, returning data {"token":"NzoxNzQxNTMwMzAy","role":"administrator","full_name":"admin admin"}
+[2025-03-09 15:28:43] Login request received
+[2025-03-09 15:28:44] Database connection successful
+[2025-03-09 15:28:44] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-09 15:28:44] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-09 15:28:44] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-09 15:28:44] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 15:28:44] User query result {"id":8,"found":true}
+[2025-03-09 15:28:44] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-09 15:28:44] Password verification result matched
+[2025-03-09 15:28:44] Authentication successful
+[2025-03-09 15:28:44] Login successful, returning data {"token":"ODoxNzQxNTMwNTI0","role":"trainee","full_name":"trainee trainee"}
+[2025-03-09 15:29:16] Login request received
+[2025-03-09 15:29:16] Database connection successful
+[2025-03-09 15:29:16] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 15:29:16] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 15:29:16] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 15:29:16] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 15:29:16] User query result {"id":7,"found":true}
+[2025-03-09 15:29:16] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 15:29:16] Password verification result matched
+[2025-03-09 15:29:16] Authentication successful
+[2025-03-09 15:29:16] Login successful, returning data {"token":"NzoxNzQxNTMwNTU2","role":"administrator","full_name":"admin admin"}
+[2025-03-09 15:35:05] Login request received
+[2025-03-09 15:35:05] Database connection successful
+[2025-03-09 15:35:05] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 15:35:05] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 15:35:05] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 15:35:05] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 15:35:05] User query result {"id":7,"found":true}
+[2025-03-09 15:35:05] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 15:35:05] Password verification result matched
+[2025-03-09 15:35:05] Authentication successful
+[2025-03-09 15:35:05] Login successful, returning data {"token":"NzoxNzQxNTMwOTA1","role":"administrator","full_name":"admin admin"}
+[2025-03-09 16:22:14] Login request received
+[2025-03-09 16:22:15] Database connection successful
+[2025-03-09 16:22:15] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 16:22:15] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 16:22:15] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 16:22:15] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 16:22:15] User query result {"id":7,"found":true}
+[2025-03-09 16:22:15] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 16:22:15] Password verification result matched
+[2025-03-09 16:22:15] Authentication successful
+[2025-03-09 16:22:15] Login successful, returning data {"token":"NzoxNzQxNTMzNzM1","role":"administrator","full_name":"admin admin"}
+[2025-03-09 16:34:16] Login request received
+[2025-03-09 16:34:16] Database connection successful
+[2025-03-09 16:34:16] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 16:34:16] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 16:34:16] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 16:34:16] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 16:34:16] User query result {"id":7,"found":true}
+[2025-03-09 16:34:16] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 16:34:16] Password verification result matched
+[2025-03-09 16:34:16] Authentication successful
+[2025-03-09 16:34:16] Login successful, returning data {"token":"NzoxNzQxNTM0NDU2","role":"administrator","full_name":"admin admin"}
+[2025-03-09 16:56:40] Login request received
+[2025-03-09 16:56:40] Database connection successful
+[2025-03-09 16:56:40] Raw request data {"username":"admin","password":"test13123"}
+[2025-03-09 16:56:40] Decoded data {"username":"admin","password":"test13123"}
+[2025-03-09 16:56:40] Attempting to authenticate {"username":"admin","password_length":9}
+[2025-03-09 16:56:40] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 16:56:40] User query result {"id":7,"found":true}
+[2025-03-09 16:56:40] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 16:56:40] Password verification result failed
+[2025-03-09 16:56:40] Trying direct comparison as fallback
+[2025-03-09 16:56:40] Direct comparison result failed
+[2025-03-09 16:56:40] Password verification failed
+[2025-03-09 16:56:43] Login request received
+[2025-03-09 16:56:43] Database connection successful
+[2025-03-09 16:56:43] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 16:56:43] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 16:56:43] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 16:56:43] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 16:56:43] User query result {"id":7,"found":true}
+[2025-03-09 16:56:43] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 16:56:43] Password verification result matched
+[2025-03-09 16:56:43] Authentication successful
+[2025-03-09 16:56:43] Login successful, returning data {"token":"NzoxNzQxNTM1ODAz","role":"administrator","full_name":"admin admin"}
+[2025-03-09 17:01:47] Login request received
+[2025-03-09 17:01:47] Database connection successful
+[2025-03-09 17:01:47] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 17:01:47] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 17:01:47] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 17:01:47] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 17:01:47] User query result {"id":7,"found":true}
+[2025-03-09 17:01:47] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 17:01:47] Password verification result matched
+[2025-03-09 17:01:47] Authentication successful
+[2025-03-09 17:01:47] Login successful, returning data {"token":"NzoxNzQxNTM2MTA3","role":"administrator","full_name":"admin admin"}
+[2025-03-09 17:04:26] Login request received
+[2025-03-09 17:04:26] Database connection successful
+[2025-03-09 17:04:26] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-09 17:04:26] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-09 17:04:26] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-09 17:04:26] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-09 17:04:26] User query result {"id":7,"found":true}
+[2025-03-09 17:04:26] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-09 17:04:26] Password verification result matched
+[2025-03-09 17:04:26] Authentication successful
+[2025-03-09 17:04:26] Login successful, returning data {"token":"NzoxNzQxNTM2MjY2","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:35:39] Login request received
+[2025-03-10 01:35:39] Database connection successful
+[2025-03-10 01:35:39] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:35:39] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:35:39] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:35:39] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:35:39] User query result {"id":7,"found":true}
+[2025-03-10 01:35:39] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:35:39] Password verification result matched
+[2025-03-10 01:35:39] Authentication successful
+[2025-03-10 01:35:39] Login successful, returning data {"token":"NzoxNzQxNTY2OTM5","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:36:49] Login request received
+[2025-03-10 01:36:49] Database connection successful
+[2025-03-10 01:36:49] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:36:49] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:36:49] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:36:49] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:36:49] User query result {"id":7,"found":true}
+[2025-03-10 01:36:49] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:36:49] Password verification result matched
+[2025-03-10 01:36:49] Authentication successful
+[2025-03-10 01:36:49] Login successful, returning data {"token":"NzoxNzQxNTY3MDA5","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:37:05] Login request received
+[2025-03-10 01:37:05] Database connection successful
+[2025-03-10 01:37:05] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:37:05] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:37:05] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:37:05] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:37:05] User query result {"id":7,"found":true}
+[2025-03-10 01:37:05] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:37:05] Password verification result matched
+[2025-03-10 01:37:05] Authentication successful
+[2025-03-10 01:37:05] Login successful, returning data {"token":"NzoxNzQxNTY3MDI1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:37:31] Login request received
+[2025-03-10 01:37:31] Database connection successful
+[2025-03-10 01:37:31] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:37:31] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:37:31] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:37:31] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:37:31] User query result {"id":7,"found":true}
+[2025-03-10 01:37:31] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:37:31] Password verification result matched
+[2025-03-10 01:37:31] Authentication successful
+[2025-03-10 01:37:31] Login successful, returning data {"token":"NzoxNzQxNTY3MDUx","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:38:02] Login request received
+[2025-03-10 01:38:02] Database connection successful
+[2025-03-10 01:38:02] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:38:02] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:38:02] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:38:02] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:38:02] User query result {"id":7,"found":true}
+[2025-03-10 01:38:02] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:38:02] Password verification result matched
+[2025-03-10 01:38:02] Authentication successful
+[2025-03-10 01:38:02] Login successful, returning data {"token":"NzoxNzQxNTY3MDgy","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:38:49] Login request received
+[2025-03-10 01:38:49] Database connection successful
+[2025-03-10 01:38:49] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:38:49] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:38:49] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:38:49] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:38:49] User query result {"id":7,"found":true}
+[2025-03-10 01:38:49] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:38:50] Password verification result matched
+[2025-03-10 01:38:50] Authentication successful
+[2025-03-10 01:38:50] Login successful, returning data {"token":"NzoxNzQxNTY3MTMw","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:40:17] Login request received
+[2025-03-10 01:40:17] Database connection successful
+[2025-03-10 01:40:17] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:40:17] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:40:17] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:40:17] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:40:17] User query result {"id":7,"found":true}
+[2025-03-10 01:40:17] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:40:17] Password verification result matched
+[2025-03-10 01:40:17] Authentication successful
+[2025-03-10 01:40:17] Login successful, returning data {"token":"NzoxNzQxNTY3MjE3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:40:45] Login request received
+[2025-03-10 01:40:45] Database connection successful
+[2025-03-10 01:40:45] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:40:45] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:40:45] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:40:45] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:40:45] User query result {"id":7,"found":true}
+[2025-03-10 01:40:45] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:40:45] Password verification result matched
+[2025-03-10 01:40:45] Authentication successful
+[2025-03-10 01:40:45] Login successful, returning data {"token":"NzoxNzQxNTY3MjQ1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:45:17] Login request received
+[2025-03-10 01:45:17] Database connection successful
+[2025-03-10 01:45:17] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:45:17] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:45:17] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:45:17] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:45:17] User query result {"id":7,"found":true}
+[2025-03-10 01:45:17] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:45:17] Password verification result matched
+[2025-03-10 01:45:17] Authentication successful
+[2025-03-10 01:45:17] Login successful, returning data {"token":"NzoxNzQxNTY3NTE3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:47:01] Login request received
+[2025-03-10 01:47:01] Database connection successful
+[2025-03-10 01:47:01] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:47:01] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:47:01] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:47:01] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:47:01] User query result {"id":7,"found":true}
+[2025-03-10 01:47:01] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:47:01] Password verification result matched
+[2025-03-10 01:47:01] Authentication successful
+[2025-03-10 01:47:01] Login successful, returning data {"token":"NzoxNzQxNTY3NjIx","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:47:23] Login request received
+[2025-03-10 01:47:23] Database connection successful
+[2025-03-10 01:47:23] Raw request data {"username":"applicant","password":"test123123"}
+[2025-03-10 01:47:23] Decoded data {"username":"applicant","password":"test123123"}
+[2025-03-10 01:47:23] Attempting to authenticate {"username":"applicant","password_length":10}
+[2025-03-10 01:47:23] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:47:23] User query result {"id":6,"found":true}
+[2025-03-10 01:47:23] Stored password hash $2y$10$TONg2cTG/RZkaPi/PjD1hOx0xCb6crYoJZNrO1rvH7qFxUpWVqLhi
+[2025-03-10 01:47:23] Password verification result matched
+[2025-03-10 01:47:23] Authentication successful
+[2025-03-10 01:47:23] Login successful, returning data {"token":"NjoxNzQxNTY3NjQz","role":"applicant","full_name":"applicant applicant"}
+[2025-03-10 01:49:30] Login request received
+[2025-03-10 01:49:30] Database connection successful
+[2025-03-10 01:49:30] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:49:30] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:49:30] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:49:30] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:49:30] User query result {"id":7,"found":true}
+[2025-03-10 01:49:30] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:49:30] Password verification result matched
+[2025-03-10 01:49:30] Authentication successful
+[2025-03-10 01:49:30] Login successful, returning data {"token":"NzoxNzQxNTY3Nzcw","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:51:21] Login request received
+[2025-03-10 01:51:21] Database connection successful
+[2025-03-10 01:51:21] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:51:21] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:51:21] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:51:21] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:51:21] User query result {"id":7,"found":true}
+[2025-03-10 01:51:21] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:51:21] Password verification result matched
+[2025-03-10 01:51:21] Authentication successful
+[2025-03-10 01:51:21] Login successful, returning data {"token":"NzoxNzQxNTY3ODgx","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:51:28] Login request received
+[2025-03-10 01:51:28] Database connection successful
+[2025-03-10 01:51:28] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 01:51:28] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 01:51:28] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 01:51:28] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:51:28] User query result {"id":8,"found":true}
+[2025-03-10 01:51:28] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 01:51:28] Password verification result matched
+[2025-03-10 01:51:28] Authentication successful
+[2025-03-10 01:51:28] Login successful, returning data {"token":"ODoxNzQxNTY3ODg4","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 01:57:27] Login request received
+[2025-03-10 01:57:27] Database connection successful
+[2025-03-10 01:57:27] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:57:27] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:57:27] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:57:27] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:57:27] User query result {"id":7,"found":true}
+[2025-03-10 01:57:27] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:57:27] Password verification result matched
+[2025-03-10 01:57:27] Authentication successful
+[2025-03-10 01:57:27] Login successful, returning data {"token":"NzoxNzQxNTY4MjQ3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 01:58:33] Login request received
+[2025-03-10 01:58:33] Database connection successful
+[2025-03-10 01:58:33] Raw request data {"username":"admin","password":"test"}
+[2025-03-10 01:58:33] Decoded data {"username":"admin","password":"test"}
+[2025-03-10 01:58:33] Attempting to authenticate {"username":"admin","password_length":4}
+[2025-03-10 01:58:33] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:58:33] User query result {"id":7,"found":true}
+[2025-03-10 01:58:33] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:58:33] Password verification result failed
+[2025-03-10 01:58:33] Trying direct comparison as fallback
+[2025-03-10 01:58:33] Direct comparison result failed
+[2025-03-10 01:58:33] Password verification failed
+[2025-03-10 01:58:35] Login request received
+[2025-03-10 01:58:35] Database connection successful
+[2025-03-10 01:58:35] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 01:58:35] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 01:58:35] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 01:58:35] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 01:58:35] User query result {"id":7,"found":true}
+[2025-03-10 01:58:35] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 01:58:35] Password verification result matched
+[2025-03-10 01:58:35] Authentication successful
+[2025-03-10 01:58:35] Login successful, returning data {"token":"NzoxNzQxNTY4MzE1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:01:22] Login request received
+[2025-03-10 02:01:22] Database connection successful
+[2025-03-10 02:01:22] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:01:22] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:01:22] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:01:22] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:01:22] User query result {"id":7,"found":true}
+[2025-03-10 02:01:22] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:01:22] Password verification result matched
+[2025-03-10 02:01:22] Authentication successful
+[2025-03-10 02:01:22] Login successful, returning data {"token":"NzoxNzQxNTY4NDgy","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:02:27] Login request received
+[2025-03-10 02:02:27] Database connection successful
+[2025-03-10 02:02:27] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:02:27] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:02:27] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:02:27] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:02:27] User query result {"id":7,"found":true}
+[2025-03-10 02:02:27] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:02:27] Password verification result matched
+[2025-03-10 02:02:27] Authentication successful
+[2025-03-10 02:02:27] Login successful, returning data {"token":"NzoxNzQxNTY4NTQ3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:02:34] Login request received
+[2025-03-10 02:02:34] Database connection successful
+[2025-03-10 02:02:34] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:02:34] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:02:34] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:02:34] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:02:34] User query result {"id":7,"found":true}
+[2025-03-10 02:02:34] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:02:34] Password verification result matched
+[2025-03-10 02:02:34] Authentication successful
+[2025-03-10 02:02:34] Login successful, returning data {"token":"NzoxNzQxNTY4NTU0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:03:25] Login request received
+[2025-03-10 02:03:25] Database connection successful
+[2025-03-10 02:03:25] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:03:25] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:03:25] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:03:25] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:03:25] User query result {"id":7,"found":true}
+[2025-03-10 02:03:25] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:03:25] Password verification result matched
+[2025-03-10 02:03:25] Authentication successful
+[2025-03-10 02:03:25] Login successful, returning data {"token":"NzoxNzQxNTY4NjA1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:05:03] Login request received
+[2025-03-10 02:05:03] Database connection successful
+[2025-03-10 02:05:03] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:05:03] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:05:03] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:05:03] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:05:03] User query result {"id":7,"found":true}
+[2025-03-10 02:05:03] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:05:03] Password verification result matched
+[2025-03-10 02:05:03] Authentication successful
+[2025-03-10 02:05:04] Login successful, returning data {"token":"NzoxNzQxNTY4NzA0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:05:10] Login request received
+[2025-03-10 02:05:10] Database connection successful
+[2025-03-10 02:05:10] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:05:10] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:05:10] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:05:10] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:05:10] User query result {"id":7,"found":true}
+[2025-03-10 02:05:10] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:05:10] Password verification result matched
+[2025-03-10 02:05:10] Authentication successful
+[2025-03-10 02:05:10] Login successful, returning data {"token":"NzoxNzQxNTY4NzEw","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:07:19] Login request received
+[2025-03-10 02:07:19] Database connection successful
+[2025-03-10 02:07:19] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:07:19] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:07:19] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:07:19] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:07:19] User query result {"id":7,"found":true}
+[2025-03-10 02:07:19] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:07:19] Password verification result matched
+[2025-03-10 02:07:19] Authentication successful
+[2025-03-10 02:07:19] Login successful, returning data {"token":"NzoxNzQxNTY4ODM5","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:07:33] Login request received
+[2025-03-10 02:07:33] Database connection successful
+[2025-03-10 02:07:33] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:07:33] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:07:33] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:07:33] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:07:33] User query result {"id":7,"found":true}
+[2025-03-10 02:07:33] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:07:33] Password verification result matched
+[2025-03-10 02:07:33] Authentication successful
+[2025-03-10 02:07:33] Login successful, returning data {"token":"NzoxNzQxNTY4ODUz","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:09:31] Login request received
+[2025-03-10 02:09:31] Database connection successful
+[2025-03-10 02:09:31] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:09:31] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:09:31] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:09:31] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:09:31] User query result {"id":7,"found":true}
+[2025-03-10 02:09:31] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:09:31] Password verification result matched
+[2025-03-10 02:09:31] Authentication successful
+[2025-03-10 02:09:31] Login successful, returning data {"token":"NzoxNzQxNTY4OTcx","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:09:51] Login request received
+[2025-03-10 02:09:51] Database connection successful
+[2025-03-10 02:09:51] Raw request data {"username":"admn","password":"test123123"}
+[2025-03-10 02:09:51] Decoded data {"username":"admn","password":"test123123"}
+[2025-03-10 02:09:51] Attempting to authenticate {"username":"admn","password_length":10}
+[2025-03-10 02:09:51] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:09:51] User query result {"found":false}
+[2025-03-10 02:09:51] User not found {"username":"admn"}
+[2025-03-10 02:09:56] Login request received
+[2025-03-10 02:09:56] Database connection successful
+[2025-03-10 02:09:56] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:09:56] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:09:56] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:09:56] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:09:56] User query result {"id":7,"found":true}
+[2025-03-10 02:09:56] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:09:56] Password verification result matched
+[2025-03-10 02:09:56] Authentication successful
+[2025-03-10 02:09:56] Login successful, returning data {"token":"NzoxNzQxNTY4OTk2","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:15:39] Login request received
+[2025-03-10 02:15:39] Database connection successful
+[2025-03-10 02:15:39] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:15:39] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:15:39] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:15:39] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:15:39] User query result {"id":7,"found":true}
+[2025-03-10 02:15:39] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:15:39] Password verification result matched
+[2025-03-10 02:15:39] Authentication successful
+[2025-03-10 02:15:39] Login successful, returning data {"token":"NzoxNzQxNTY5MzM5","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:16:33] Login request received
+[2025-03-10 02:16:33] Database connection successful
+[2025-03-10 02:16:33] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:16:33] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:16:33] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:16:33] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:16:33] User query result {"id":7,"found":true}
+[2025-03-10 02:16:33] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:16:33] Password verification result matched
+[2025-03-10 02:16:33] Authentication successful
+[2025-03-10 02:16:33] Login successful, returning data {"token":"NzoxNzQxNTY5Mzkz","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:24:43] Login request received
+[2025-03-10 02:24:44] Database connection successful
+[2025-03-10 02:24:44] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:24:44] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:24:44] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:24:44] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:24:44] User query result {"id":7,"found":true}
+[2025-03-10 02:24:44] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:24:44] Password verification result matched
+[2025-03-10 02:24:44] Authentication successful
+[2025-03-10 02:24:44] Login successful, returning data {"token":"NzoxNzQxNTY5ODg0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:39:48] Login request received
+[2025-03-10 02:39:48] Database connection successful
+[2025-03-10 02:39:48] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:39:48] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:39:48] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:39:48] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:39:48] User query result {"id":7,"found":true}
+[2025-03-10 02:39:48] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:39:48] Password verification result matched
+[2025-03-10 02:39:48] Authentication successful
+[2025-03-10 02:39:48] Login successful, returning data {"token":"NzoxNzQxNTcwNzg4","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:47:19] Login request received
+[2025-03-10 02:47:19] Database connection successful
+[2025-03-10 02:47:19] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:47:19] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:47:19] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:47:19] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:47:19] User query result {"id":7,"found":true}
+[2025-03-10 02:47:19] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:47:19] Password verification result matched
+[2025-03-10 02:47:19] Authentication successful
+[2025-03-10 02:47:19] Login successful, returning data {"token":"NzoxNzQxNTcxMjM5","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:50:37] Login request received
+[2025-03-10 02:50:37] Database connection successful
+[2025-03-10 02:50:37] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:50:37] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:50:37] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:50:37] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:50:37] User query result {"id":7,"found":true}
+[2025-03-10 02:50:37] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:50:37] Password verification result matched
+[2025-03-10 02:50:37] Authentication successful
+[2025-03-10 02:50:37] Login successful, returning data {"token":"NzoxNzQxNTcxNDM3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:54:06] Login request received
+[2025-03-10 02:54:06] Database connection successful
+[2025-03-10 02:54:06] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:54:06] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:54:06] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:54:06] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:54:06] User query result {"id":7,"found":true}
+[2025-03-10 02:54:06] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:54:06] Password verification result matched
+[2025-03-10 02:54:06] Authentication successful
+[2025-03-10 02:54:06] Login successful, returning data {"token":"NzoxNzQxNTcxNjQ2","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:58:21] Login request received
+[2025-03-10 02:58:21] Database connection successful
+[2025-03-10 02:58:21] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:58:21] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:58:21] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:58:21] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:58:21] User query result {"id":7,"found":true}
+[2025-03-10 02:58:21] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:58:21] Password verification result matched
+[2025-03-10 02:58:21] Authentication successful
+[2025-03-10 02:58:21] Login successful, returning data {"token":"NzoxNzQxNTcxOTAx","role":"administrator","full_name":"admin admin"}
+[2025-03-10 02:58:57] Login request received
+[2025-03-10 02:58:57] Database connection successful
+[2025-03-10 02:58:57] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 02:58:57] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 02:58:57] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 02:58:57] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 02:58:57] User query result {"id":7,"found":true}
+[2025-03-10 02:58:57] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 02:58:57] Password verification result matched
+[2025-03-10 02:58:57] Authentication successful
+[2025-03-10 02:58:57] Login successful, returning data {"token":"NzoxNzQxNTcxOTM3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 03:00:01] Login request received
+[2025-03-10 03:00:01] Database connection successful
+[2025-03-10 03:00:01] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 03:00:01] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 03:00:01] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 03:00:01] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:00:01] User query result {"id":7,"found":true}
+[2025-03-10 03:00:01] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 03:00:01] Password verification result matched
+[2025-03-10 03:00:01] Authentication successful
+[2025-03-10 03:00:01] Login successful, returning data {"token":"NzoxNzQxNTcyMDAx","role":"administrator","full_name":"admin admin"}
+[2025-03-10 03:01:04] Login request received
+[2025-03-10 03:01:04] Database connection successful
+[2025-03-10 03:01:04] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 03:01:04] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 03:01:04] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 03:01:04] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:01:04] User query result {"id":7,"found":true}
+[2025-03-10 03:01:04] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 03:01:04] Password verification result matched
+[2025-03-10 03:01:04] Authentication successful
+[2025-03-10 03:01:04] Login successful, returning data {"token":"NzoxNzQxNTcyMDY0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 03:02:01] Login request received
+[2025-03-10 03:02:01] Database connection successful
+[2025-03-10 03:02:01] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:02:01] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:02:01] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 03:02:01] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:02:01] User query result {"id":8,"found":true}
+[2025-03-10 03:02:01] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 03:02:01] Password verification result matched
+[2025-03-10 03:02:01] Authentication successful
+[2025-03-10 03:02:01] Login successful, returning data {"token":"ODoxNzQxNTcyMTIx","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 03:05:15] Login request received
+[2025-03-10 03:05:15] Database connection successful
+[2025-03-10 03:05:15] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:05:15] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:05:15] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 03:05:15] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:05:15] User query result {"id":8,"found":true}
+[2025-03-10 03:05:15] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 03:05:15] Password verification result matched
+[2025-03-10 03:05:15] Authentication successful
+[2025-03-10 03:05:15] Login successful, returning data {"token":"ODoxNzQxNTcyMzE1","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 03:08:08] Login request received
+[2025-03-10 03:08:08] Database connection successful
+[2025-03-10 03:08:08] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:08:08] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:08:08] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 03:08:08] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:08:08] User query result {"id":8,"found":true}
+[2025-03-10 03:08:08] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 03:08:08] Password verification result matched
+[2025-03-10 03:08:08] Authentication successful
+[2025-03-10 03:08:08] Login successful, returning data {"token":"ODoxNzQxNTcyNDg4","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 03:08:27] Login request received
+[2025-03-10 03:08:27] Database connection successful
+[2025-03-10 03:08:27] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 03:08:27] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 03:08:27] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 03:08:27] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:08:27] User query result {"id":7,"found":true}
+[2025-03-10 03:08:27] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 03:08:27] Password verification result matched
+[2025-03-10 03:08:27] Authentication successful
+[2025-03-10 03:08:27] Login successful, returning data {"token":"NzoxNzQxNTcyNTA3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 03:08:35] Login request received
+[2025-03-10 03:08:35] Database connection successful
+[2025-03-10 03:08:35] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:08:35] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:08:35] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 03:08:35] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:08:35] User query result {"id":8,"found":true}
+[2025-03-10 03:08:35] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 03:08:35] Password verification result matched
+[2025-03-10 03:08:35] Authentication successful
+[2025-03-10 03:08:35] Login successful, returning data {"token":"ODoxNzQxNTcyNTE1","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 03:09:25] Login request received
+[2025-03-10 03:09:25] Database connection successful
+[2025-03-10 03:09:25] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:09:25] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:09:25] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 03:09:25] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:09:25] User query result {"id":8,"found":true}
+[2025-03-10 03:09:25] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 03:09:25] Password verification result matched
+[2025-03-10 03:09:25] Authentication successful
+[2025-03-10 03:09:25] Login successful, returning data {"token":"ODoxNzQxNTcyNTY1","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 03:10:37] Login request received
+[2025-03-10 03:10:37] Database connection successful
+[2025-03-10 03:10:37] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:10:37] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:10:37] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 03:10:37] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:10:37] User query result {"id":8,"found":true}
+[2025-03-10 03:10:37] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 03:10:37] Password verification result matched
+[2025-03-10 03:10:37] Authentication successful
+[2025-03-10 03:10:37] Login successful, returning data {"token":"ODoxNzQxNTcyNjM3","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 03:11:04] Login request received
+[2025-03-10 03:11:04] Database connection successful
+[2025-03-10 03:11:04] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 03:11:04] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 03:11:04] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 03:11:04] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:11:04] User query result {"id":7,"found":true}
+[2025-03-10 03:11:04] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 03:11:04] Password verification result matched
+[2025-03-10 03:11:04] Authentication successful
+[2025-03-10 03:11:04] Login successful, returning data {"token":"NzoxNzQxNTcyNjY0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 03:11:13] Login request received
+[2025-03-10 03:11:13] Database connection successful
+[2025-03-10 03:11:13] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:11:13] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:11:13] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 03:11:13] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:11:13] User query result {"id":8,"found":true}
+[2025-03-10 03:11:13] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 03:11:14] Password verification result matched
+[2025-03-10 03:11:14] Authentication successful
+[2025-03-10 03:11:14] Login successful, returning data {"token":"ODoxNzQxNTcyNjc0","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 03:11:38] Login request received
+[2025-03-10 03:11:38] Database connection successful
+[2025-03-10 03:11:38] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 03:11:38] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 03:11:38] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 03:11:38] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:11:38] User query result {"id":7,"found":true}
+[2025-03-10 03:11:38] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 03:11:38] Password verification result matched
+[2025-03-10 03:11:38] Authentication successful
+[2025-03-10 03:11:38] Login successful, returning data {"token":"NzoxNzQxNTcyNjk4","role":"administrator","full_name":"admin admin"}
+[2025-03-10 03:12:01] Login request received
+[2025-03-10 03:12:01] Database connection successful
+[2025-03-10 03:12:01] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:12:01] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:12:01] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 03:12:01] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:12:01] User query result {"id":8,"found":true}
+[2025-03-10 03:12:01] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 03:12:01] Password verification result matched
+[2025-03-10 03:12:01] Authentication successful
+[2025-03-10 03:12:01] Login successful, returning data {"token":"ODoxNzQxNTcyNzIx","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 03:15:07] Login request received
+[2025-03-10 03:15:07] Database connection successful
+[2025-03-10 03:15:07] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:15:07] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 03:15:07] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 03:15:07] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 03:15:07] User query result {"id":8,"found":true}
+[2025-03-10 03:15:07] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 03:15:08] Password verification result matched
+[2025-03-10 03:15:08] Authentication successful
+[2025-03-10 03:15:08] Login successful, returning data {"token":"ODoxNzQxNTcyOTA4","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 07:14:20] Login request received
+[2025-03-10 07:14:20] Database connection successful
+[2025-03-10 07:14:20] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 07:14:20] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 07:14:20] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 07:14:20] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:14:20] User query result {"id":7,"found":true}
+[2025-03-10 07:14:20] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 07:14:20] Password verification result matched
+[2025-03-10 07:14:20] Authentication successful
+[2025-03-10 07:14:20] Login successful, returning data {"token":"NzoxNzQxNTg3MjYw","role":"administrator","full_name":"admin admin"}
+[2025-03-10 07:14:36] Login request received
+[2025-03-10 07:14:36] Database connection successful
+[2025-03-10 07:14:36] Raw request data {"username":"trainee","password":"test"}
+[2025-03-10 07:14:36] Decoded data {"username":"trainee","password":"test"}
+[2025-03-10 07:14:36] Attempting to authenticate {"username":"trainee","password_length":4}
+[2025-03-10 07:14:36] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:14:36] User query result {"id":8,"found":true}
+[2025-03-10 07:14:36] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 07:14:36] Password verification result failed
+[2025-03-10 07:14:36] Trying direct comparison as fallback
+[2025-03-10 07:14:36] Direct comparison result failed
+[2025-03-10 07:14:36] Password verification failed
+[2025-03-10 07:14:39] Login request received
+[2025-03-10 07:14:39] Database connection successful
+[2025-03-10 07:14:39] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 07:14:39] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 07:14:39] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 07:14:39] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:14:39] User query result {"id":8,"found":true}
+[2025-03-10 07:14:39] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 07:14:39] Password verification result matched
+[2025-03-10 07:14:39] Authentication successful
+[2025-03-10 07:14:39] Login successful, returning data {"token":"ODoxNzQxNTg3Mjc5","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 07:16:10] Login request received
+[2025-03-10 07:16:10] Database connection successful
+[2025-03-10 07:16:10] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 07:16:10] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 07:16:10] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 07:16:10] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:16:10] User query result {"id":8,"found":true}
+[2025-03-10 07:16:10] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 07:16:10] Password verification result matched
+[2025-03-10 07:16:10] Authentication successful
+[2025-03-10 07:16:10] Login successful, returning data {"token":"ODoxNzQxNTg3Mzcw","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 07:20:26] Login request received
+[2025-03-10 07:20:26] Database connection successful
+[2025-03-10 07:20:26] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 07:20:26] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 07:20:26] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 07:20:26] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:20:26] User query result {"id":8,"found":true}
+[2025-03-10 07:20:26] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 07:20:26] Password verification result matched
+[2025-03-10 07:20:26] Authentication successful
+[2025-03-10 07:20:26] Login successful, returning data {"token":"ODoxNzQxNTg3NjI2","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 07:20:42] Login request received
+[2025-03-10 07:20:42] Database connection successful
+[2025-03-10 07:20:42] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:20:42] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:20:42] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 07:20:42] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:20:42] User query result {"id":9,"found":true}
+[2025-03-10 07:20:42] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 07:20:42] Password verification result matched
+[2025-03-10 07:20:42] Authentication successful
+[2025-03-10 07:20:42] Login successful, returning data {"token":"OToxNzQxNTg3NjQy","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 07:25:18] Login request received
+[2025-03-10 07:25:18] Database connection successful
+[2025-03-10 07:25:18] Raw request data {"username":"trainer","password":"test"}
+[2025-03-10 07:25:18] Decoded data {"username":"trainer","password":"test"}
+[2025-03-10 07:25:18] Attempting to authenticate {"username":"trainer","password_length":4}
+[2025-03-10 07:25:18] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:25:18] User query result {"id":9,"found":true}
+[2025-03-10 07:25:18] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 07:25:18] Password verification result failed
+[2025-03-10 07:25:18] Trying direct comparison as fallback
+[2025-03-10 07:25:18] Direct comparison result failed
+[2025-03-10 07:25:18] Password verification failed
+[2025-03-10 07:25:23] Login request received
+[2025-03-10 07:25:23] Database connection successful
+[2025-03-10 07:25:23] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:25:23] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:25:23] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 07:25:23] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:25:23] User query result {"id":9,"found":true}
+[2025-03-10 07:25:23] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 07:25:23] Password verification result matched
+[2025-03-10 07:25:23] Authentication successful
+[2025-03-10 07:25:23] Login successful, returning data {"token":"OToxNzQxNTg3OTIz","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 07:25:37] Login request received
+[2025-03-10 07:25:37] Database connection successful
+[2025-03-10 07:25:37] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:25:37] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:25:37] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 07:25:37] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:25:37] User query result {"id":9,"found":true}
+[2025-03-10 07:25:37] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 07:25:37] Password verification result matched
+[2025-03-10 07:25:37] Authentication successful
+[2025-03-10 07:25:37] Login successful, returning data {"token":"OToxNzQxNTg3OTM3","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 07:26:58] Login request received
+[2025-03-10 07:26:58] Database connection successful
+[2025-03-10 07:26:58] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:26:58] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:26:58] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 07:26:58] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:26:58] User query result {"id":9,"found":true}
+[2025-03-10 07:26:58] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 07:26:58] Password verification result matched
+[2025-03-10 07:26:58] Authentication successful
+[2025-03-10 07:26:58] Login successful, returning data {"token":"OToxNzQxNTg4MDE4","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 07:32:57] Login request received
+[2025-03-10 07:32:57] Database connection successful
+[2025-03-10 07:32:57] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:32:57] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:32:57] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 07:32:57] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:32:57] User query result {"id":9,"found":true}
+[2025-03-10 07:32:57] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 07:32:57] Password verification result matched
+[2025-03-10 07:32:57] Authentication successful
+[2025-03-10 07:32:57] Login successful, returning data {"token":"OToxNzQxNTg4Mzc3","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 07:35:22] Login request received
+[2025-03-10 07:35:22] Database connection successful
+[2025-03-10 07:35:22] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 07:35:22] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 07:35:22] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 07:35:22] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:35:22] User query result {"id":7,"found":true}
+[2025-03-10 07:35:22] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 07:35:22] Password verification result matched
+[2025-03-10 07:35:22] Authentication successful
+[2025-03-10 07:35:22] Login successful, returning data {"token":"NzoxNzQxNTg4NTIy","role":"administrator","full_name":"admin admin"}
+[2025-03-10 07:35:49] Login request received
+[2025-03-10 07:35:49] Database connection successful
+[2025-03-10 07:35:49] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 07:35:49] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 07:35:49] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 07:35:49] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:35:49] User query result {"id":8,"found":true}
+[2025-03-10 07:35:49] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 07:35:49] Password verification result matched
+[2025-03-10 07:35:49] Authentication successful
+[2025-03-10 07:35:49] Login successful, returning data {"token":"ODoxNzQxNTg4NTQ5","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 07:37:07] Login request received
+[2025-03-10 07:37:07] Database connection successful
+[2025-03-10 07:37:07] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:37:07] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:37:07] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 07:37:07] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:37:07] User query result {"id":9,"found":true}
+[2025-03-10 07:37:07] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 07:37:07] Password verification result matched
+[2025-03-10 07:37:07] Authentication successful
+[2025-03-10 07:37:07] Login successful, returning data {"token":"OToxNzQxNTg4NjI3","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 07:37:26] Login request received
+[2025-03-10 07:37:26] Database connection successful
+[2025-03-10 07:37:26] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:37:26] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:37:26] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 07:37:26] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:37:26] User query result {"id":9,"found":true}
+[2025-03-10 07:37:26] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 07:37:27] Password verification result matched
+[2025-03-10 07:37:27] Authentication successful
+[2025-03-10 07:37:27] Login successful, returning data {"token":"OToxNzQxNTg4NjQ3","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 07:43:41] Login request received
+[2025-03-10 07:43:41] Database connection successful
+[2025-03-10 07:43:41] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:43:41] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:43:41] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 07:43:42] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:43:42] User query result {"id":9,"found":true}
+[2025-03-10 07:43:42] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 07:43:42] Password verification result matched
+[2025-03-10 07:43:42] Authentication successful
+[2025-03-10 07:43:42] Login successful, returning data {"token":"OToxNzQxNTg5MDIy","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 07:43:58] Login request received
+[2025-03-10 07:43:58] Database connection successful
+[2025-03-10 07:43:58] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:43:58] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:43:58] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 07:43:58] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:43:58] User query result {"id":9,"found":true}
+[2025-03-10 07:43:58] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 07:43:58] Password verification result matched
+[2025-03-10 07:43:58] Authentication successful
+[2025-03-10 07:43:58] Login successful, returning data {"token":"OToxNzQxNTg5MDM4","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 07:45:44] Login request received
+[2025-03-10 07:45:44] Database connection successful
+[2025-03-10 07:45:44] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:45:44] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 07:45:44] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 07:45:44] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:45:44] User query result {"id":9,"found":true}
+[2025-03-10 07:45:44] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 07:45:44] Password verification result matched
+[2025-03-10 07:45:44] Authentication successful
+[2025-03-10 07:45:44] Login successful, returning data {"token":"OToxNzQxNTg5MTQ0","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 07:51:26] Login request received
+[2025-03-10 07:51:26] Database connection successful
+[2025-03-10 07:51:26] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 07:51:26] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 07:51:26] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 07:51:26] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:51:26] User query result {"id":7,"found":true}
+[2025-03-10 07:51:26] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 07:51:27] Password verification result matched
+[2025-03-10 07:51:27] Authentication successful
+[2025-03-10 07:51:27] Login successful, returning data {"token":"NzoxNzQxNTg5NDg3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 07:51:39] Login request received
+[2025-03-10 07:51:39] Database connection successful
+[2025-03-10 07:51:39] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 07:51:39] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 07:51:39] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 07:51:39] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:51:39] User query result {"id":7,"found":true}
+[2025-03-10 07:51:39] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 07:51:40] Password verification result matched
+[2025-03-10 07:51:40] Authentication successful
+[2025-03-10 07:51:40] Login successful, returning data {"token":"NzoxNzQxNTg5NTAw","role":"administrator","full_name":"admin admin"}
+[2025-03-10 07:52:35] Login request received
+[2025-03-10 07:52:35] Database connection successful
+[2025-03-10 07:52:35] Raw request data {"username":"admin1","password":"test123123"}
+[2025-03-10 07:52:35] Decoded data {"username":"admin1","password":"test123123"}
+[2025-03-10 07:52:35] Attempting to authenticate {"username":"admin1","password_length":10}
+[2025-03-10 07:52:35] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:52:35] User query result {"id":10,"found":true}
+[2025-03-10 07:52:35] Stored password hash $2y$10$jfUzExVaRAgoLAYfUBsqZOEx9jUwOW//6NHhxeEda7d9q9TvPzvny
+[2025-03-10 07:52:36] Password verification result matched
+[2025-03-10 07:52:36] Authentication successful
+[2025-03-10 07:52:36] Login successful, returning data {"token":"MTA6MTc0MTU4OTU1Ng==","role":"administrator","full_name":"admin1 admin1"}
+[2025-03-10 07:52:52] Login request received
+[2025-03-10 07:52:52] Database connection successful
+[2025-03-10 07:52:52] Raw request data {"username":"admin","password":"test123"}
+[2025-03-10 07:52:52] Decoded data {"username":"admin","password":"test123"}
+[2025-03-10 07:52:52] Attempting to authenticate {"username":"admin","password_length":7}
+[2025-03-10 07:52:52] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:52:52] User query result {"id":7,"found":true}
+[2025-03-10 07:52:52] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 07:52:52] Password verification result failed
+[2025-03-10 07:52:52] Trying direct comparison as fallback
+[2025-03-10 07:52:52] Direct comparison result failed
+[2025-03-10 07:52:52] Password verification failed
+[2025-03-10 07:53:44] Login request received
+[2025-03-10 07:53:44] Database connection successful
+[2025-03-10 07:53:44] Raw request data {"username":"admin","password":"test123"}
+[2025-03-10 07:53:44] Decoded data {"username":"admin","password":"test123"}
+[2025-03-10 07:53:44] Attempting to authenticate {"username":"admin","password_length":7}
+[2025-03-10 07:53:44] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:53:44] User query result {"id":7,"found":true}
+[2025-03-10 07:53:44] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 07:53:44] Password verification result failed
+[2025-03-10 07:53:44] Trying direct comparison as fallback
+[2025-03-10 07:53:44] Direct comparison result failed
+[2025-03-10 07:53:44] Password verification failed
+[2025-03-10 07:53:46] Login request received
+[2025-03-10 07:53:46] Database connection successful
+[2025-03-10 07:53:46] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 07:53:46] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 07:53:46] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 07:53:46] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:53:46] User query result {"id":7,"found":true}
+[2025-03-10 07:53:46] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 07:53:47] Password verification result matched
+[2025-03-10 07:53:47] Authentication successful
+[2025-03-10 07:53:47] Login successful, returning data {"token":"NzoxNzQxNTg5NjI3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 07:57:07] Login request received
+[2025-03-10 07:57:07] Database connection successful
+[2025-03-10 07:57:07] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 07:57:07] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 07:57:07] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 07:57:07] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:57:07] User query result {"id":7,"found":true}
+[2025-03-10 07:57:07] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 07:57:07] Password verification result matched
+[2025-03-10 07:57:07] Authentication successful
+[2025-03-10 07:57:07] Login successful, returning data {"token":"NzoxNzQxNTg5ODI3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 07:57:41] Login request received
+[2025-03-10 07:57:41] Database connection successful
+[2025-03-10 07:57:41] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 07:57:41] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 07:57:41] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 07:57:41] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 07:57:41] User query result {"id":7,"found":true}
+[2025-03-10 07:57:41] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 07:57:41] Password verification result matched
+[2025-03-10 07:57:41] Authentication successful
+[2025-03-10 07:57:41] Login successful, returning data {"token":"NzoxNzQxNTg5ODYx","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:03:29] Login request received
+[2025-03-10 08:03:29] Database connection successful
+[2025-03-10 08:03:29] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:03:29] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:03:29] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:03:29] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:03:29] User query result {"id":7,"found":true}
+[2025-03-10 08:03:29] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:03:29] Password verification result matched
+[2025-03-10 08:03:29] Authentication successful
+[2025-03-10 08:03:29] Login successful, returning data {"token":"NzoxNzQxNTkwMjA5","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:03:44] Login request received
+[2025-03-10 08:03:44] Database connection successful
+[2025-03-10 08:03:44] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:03:44] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:03:44] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:03:44] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:03:44] User query result {"id":7,"found":true}
+[2025-03-10 08:03:44] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:03:44] Password verification result matched
+[2025-03-10 08:03:44] Authentication successful
+[2025-03-10 08:03:44] Login successful, returning data {"token":"NzoxNzQxNTkwMjI0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:05:11] Login request received
+[2025-03-10 08:05:11] Database connection successful
+[2025-03-10 08:05:11] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:05:11] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:05:11] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:05:11] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:05:11] User query result {"id":7,"found":true}
+[2025-03-10 08:05:11] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:05:12] Password verification result matched
+[2025-03-10 08:05:12] Authentication successful
+[2025-03-10 08:05:12] Login successful, returning data {"token":"NzoxNzQxNTkwMzEy","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:05:56] Login request received
+[2025-03-10 08:05:56] Database connection successful
+[2025-03-10 08:05:56] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:05:56] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:05:56] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:05:56] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:05:56] User query result {"id":7,"found":true}
+[2025-03-10 08:05:56] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:05:56] Password verification result matched
+[2025-03-10 08:05:56] Authentication successful
+[2025-03-10 08:05:56] Login successful, returning data {"token":"NzoxNzQxNTkwMzU2","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:06:43] Login request received
+[2025-03-10 08:06:43] Database connection successful
+[2025-03-10 08:06:43] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 08:06:43] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 08:06:43] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 08:06:43] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:06:43] User query result {"id":8,"found":true}
+[2025-03-10 08:06:43] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 08:06:43] Password verification result matched
+[2025-03-10 08:06:43] Authentication successful
+[2025-03-10 08:06:43] Login successful, returning data {"token":"ODoxNzQxNTkwNDAz","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 08:07:01] Login request received
+[2025-03-10 08:07:01] Database connection successful
+[2025-03-10 08:07:01] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:07:01] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:07:01] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:07:01] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:07:01] User query result {"id":7,"found":true}
+[2025-03-10 08:07:01] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:07:01] Password verification result matched
+[2025-03-10 08:07:01] Authentication successful
+[2025-03-10 08:07:01] Login successful, returning data {"token":"NzoxNzQxNTkwNDIx","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:07:25] Login request received
+[2025-03-10 08:07:25] Database connection successful
+[2025-03-10 08:07:25] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:07:25] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:07:25] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:07:25] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:07:25] User query result {"id":7,"found":true}
+[2025-03-10 08:07:25] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:07:25] Password verification result matched
+[2025-03-10 08:07:25] Authentication successful
+[2025-03-10 08:07:25] Login successful, returning data {"token":"NzoxNzQxNTkwNDQ1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:08:09] Login request received
+[2025-03-10 08:08:09] Database connection successful
+[2025-03-10 08:08:09] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:08:09] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:08:09] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:08:09] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:08:09] User query result {"id":7,"found":true}
+[2025-03-10 08:08:09] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:08:09] Password verification result matched
+[2025-03-10 08:08:09] Authentication successful
+[2025-03-10 08:08:09] Login successful, returning data {"token":"NzoxNzQxNTkwNDg5","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:08:20] Login request received
+[2025-03-10 08:08:20] Database connection successful
+[2025-03-10 08:08:20] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 08:08:20] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 08:08:20] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 08:08:20] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:08:20] User query result {"id":8,"found":true}
+[2025-03-10 08:08:20] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 08:08:20] Password verification result matched
+[2025-03-10 08:08:20] Authentication successful
+[2025-03-10 08:08:20] Login successful, returning data {"token":"ODoxNzQxNTkwNTAw","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 08:08:29] Login request received
+[2025-03-10 08:08:29] Database connection successful
+[2025-03-10 08:08:29] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 08:08:29] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 08:08:29] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 08:08:29] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:08:29] User query result {"id":9,"found":true}
+[2025-03-10 08:08:29] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 08:08:29] Password verification result matched
+[2025-03-10 08:08:29] Authentication successful
+[2025-03-10 08:08:29] Login successful, returning data {"token":"OToxNzQxNTkwNTA5","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 08:08:37] Login request received
+[2025-03-10 08:08:37] Database connection successful
+[2025-03-10 08:08:37] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:08:37] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:08:37] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:08:37] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:08:37] User query result {"id":7,"found":true}
+[2025-03-10 08:08:37] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:08:37] Password verification result matched
+[2025-03-10 08:08:37] Authentication successful
+[2025-03-10 08:08:37] Login successful, returning data {"token":"NzoxNzQxNTkwNTE3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:09:07] Login request received
+[2025-03-10 08:09:07] Database connection successful
+[2025-03-10 08:09:07] Raw request data {"username":"admin2","password":"test123123"}
+[2025-03-10 08:09:07] Decoded data {"username":"admin2","password":"test123123"}
+[2025-03-10 08:09:07] Attempting to authenticate {"username":"admin2","password_length":10}
+[2025-03-10 08:09:07] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:09:07] User query result {"id":11,"found":true}
+[2025-03-10 08:09:07] Stored password hash $2y$10$9ZrRp7uNx1NXN1km0Jqucu6RRFjqFIU.HHVhuUhAXbYHHPrhUQJsi
+[2025-03-10 08:09:08] Password verification result matched
+[2025-03-10 08:09:08] Authentication successful
+[2025-03-10 08:09:08] Login successful, returning data {"token":"MTE6MTc0MTU5MDU0OA==","role":"administrator","full_name":"admin2 admin2"}
+[2025-03-10 08:09:15] Login request received
+[2025-03-10 08:09:15] Database connection successful
+[2025-03-10 08:09:15] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:09:15] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:09:15] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:09:15] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:09:15] User query result {"id":7,"found":true}
+[2025-03-10 08:09:15] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:09:15] Password verification result matched
+[2025-03-10 08:09:15] Authentication successful
+[2025-03-10 08:09:15] Login successful, returning data {"token":"NzoxNzQxNTkwNTU1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:14:40] Login request received
+[2025-03-10 08:14:40] Database connection successful
+[2025-03-10 08:14:40] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 08:14:40] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 08:14:40] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 08:14:40] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:14:40] User query result {"id":9,"found":true}
+[2025-03-10 08:14:40] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 08:14:41] Password verification result matched
+[2025-03-10 08:14:41] Authentication successful
+[2025-03-10 08:14:41] Login successful, returning data {"token":"OToxNzQxNTkwODgx","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 08:14:54] Login request received
+[2025-03-10 08:14:54] Database connection successful
+[2025-03-10 08:14:54] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:14:54] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:14:54] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:14:54] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:14:54] User query result {"id":7,"found":true}
+[2025-03-10 08:14:54] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:14:54] Password verification result matched
+[2025-03-10 08:14:54] Authentication successful
+[2025-03-10 08:14:54] Login successful, returning data {"token":"NzoxNzQxNTkwODk0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:15:07] Login request received
+[2025-03-10 08:15:07] Database connection successful
+[2025-03-10 08:15:07] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:15:07] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:15:07] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:15:07] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:15:07] User query result {"id":7,"found":true}
+[2025-03-10 08:15:07] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:15:07] Password verification result matched
+[2025-03-10 08:15:07] Authentication successful
+[2025-03-10 08:15:07] Login successful, returning data {"token":"NzoxNzQxNTkwOTA3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:15:21] Login request received
+[2025-03-10 08:15:21] Database connection successful
+[2025-03-10 08:15:21] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:15:21] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:15:21] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:15:21] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:15:21] User query result {"id":7,"found":true}
+[2025-03-10 08:15:21] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:15:22] Password verification result matched
+[2025-03-10 08:15:22] Authentication successful
+[2025-03-10 08:15:22] Login successful, returning data {"token":"NzoxNzQxNTkwOTIy","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:16:18] Login request received
+[2025-03-10 08:16:18] Database connection successful
+[2025-03-10 08:16:18] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:16:18] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:16:18] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:16:18] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:16:18] User query result {"id":7,"found":true}
+[2025-03-10 08:16:18] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:16:18] Password verification result matched
+[2025-03-10 08:16:18] Authentication successful
+[2025-03-10 08:16:18] Login successful, returning data {"token":"NzoxNzQxNTkwOTc4","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:17:32] Login request received
+[2025-03-10 08:17:32] Database connection successful
+[2025-03-10 08:17:32] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:17:32] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:17:32] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:17:32] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:17:32] User query result {"id":7,"found":true}
+[2025-03-10 08:17:32] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:17:32] Password verification result matched
+[2025-03-10 08:17:32] Authentication successful
+[2025-03-10 08:17:32] Login successful, returning data {"token":"NzoxNzQxNTkxMDUy","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:17:40] Login request received
+[2025-03-10 08:17:40] Database connection successful
+[2025-03-10 08:17:40] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 08:17:40] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 08:17:40] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 08:17:40] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:17:40] User query result {"id":8,"found":true}
+[2025-03-10 08:17:40] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 08:17:40] Password verification result matched
+[2025-03-10 08:17:40] Authentication successful
+[2025-03-10 08:17:40] Login successful, returning data {"token":"ODoxNzQxNTkxMDYw","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 08:17:49] Login request received
+[2025-03-10 08:17:49] Database connection successful
+[2025-03-10 08:17:49] Raw request data {"username":"trainert","password":"est123123"}
+[2025-03-10 08:17:49] Decoded data {"username":"trainert","password":"est123123"}
+[2025-03-10 08:17:49] Attempting to authenticate {"username":"trainert","password_length":9}
+[2025-03-10 08:17:49] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:17:49] User query result {"found":false}
+[2025-03-10 08:17:49] User not found {"username":"trainert"}
+[2025-03-10 08:17:55] Login request received
+[2025-03-10 08:17:55] Database connection successful
+[2025-03-10 08:17:55] Raw request data {"username":"trainert","password":"test123123"}
+[2025-03-10 08:17:55] Decoded data {"username":"trainert","password":"test123123"}
+[2025-03-10 08:17:55] Attempting to authenticate {"username":"trainert","password_length":10}
+[2025-03-10 08:17:55] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:17:55] User query result {"found":false}
+[2025-03-10 08:17:55] User not found {"username":"trainert"}
+[2025-03-10 08:18:08] Login request received
+[2025-03-10 08:18:08] Database connection successful
+[2025-03-10 08:18:08] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 08:18:08] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 08:18:08] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 08:18:08] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:18:08] User query result {"id":9,"found":true}
+[2025-03-10 08:18:08] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 08:18:08] Password verification result matched
+[2025-03-10 08:18:08] Authentication successful
+[2025-03-10 08:18:08] Login successful, returning data {"token":"OToxNzQxNTkxMDg4","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 08:18:20] Login request received
+[2025-03-10 08:18:20] Database connection successful
+[2025-03-10 08:18:20] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:18:20] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:18:20] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:18:20] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:18:20] User query result {"id":7,"found":true}
+[2025-03-10 08:18:20] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:18:20] Password verification result matched
+[2025-03-10 08:18:20] Authentication successful
+[2025-03-10 08:18:20] Login successful, returning data {"token":"NzoxNzQxNTkxMTAw","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:20:26] Login request received
+[2025-03-10 08:20:26] Database connection successful
+[2025-03-10 08:20:26] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:20:26] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:20:26] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:20:26] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:20:26] User query result {"id":7,"found":true}
+[2025-03-10 08:20:26] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:20:26] Password verification result matched
+[2025-03-10 08:20:26] Authentication successful
+[2025-03-10 08:20:26] Login successful, returning data {"token":"NzoxNzQxNTkxMjI2","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:21:54] Login request received
+[2025-03-10 08:21:54] Database connection successful
+[2025-03-10 08:21:54] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:21:54] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:21:54] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:21:54] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:21:54] User query result {"id":7,"found":true}
+[2025-03-10 08:21:54] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:21:54] Password verification result matched
+[2025-03-10 08:21:54] Authentication successful
+[2025-03-10 08:21:54] Login successful, returning data {"token":"NzoxNzQxNTkxMzE0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:22:26] Login request received
+[2025-03-10 08:22:26] Database connection successful
+[2025-03-10 08:22:26] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 08:22:26] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 08:22:26] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 08:22:26] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:22:26] User query result {"id":9,"found":true}
+[2025-03-10 08:22:26] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 08:22:26] Password verification result matched
+[2025-03-10 08:22:26] Authentication successful
+[2025-03-10 08:22:26] Login successful, returning data {"token":"OToxNzQxNTkxMzQ2","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 08:23:28] Login request received
+[2025-03-10 08:23:28] Database connection successful
+[2025-03-10 08:23:28] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 08:23:28] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 08:23:28] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 08:23:28] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:23:28] User query result {"id":9,"found":true}
+[2025-03-10 08:23:28] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 08:23:29] Password verification result matched
+[2025-03-10 08:23:29] Authentication successful
+[2025-03-10 08:23:29] Login successful, returning data {"token":"OToxNzQxNTkxNDA5","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 08:23:46] Login request received
+[2025-03-10 08:23:46] Database connection successful
+[2025-03-10 08:23:46] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 08:23:46] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 08:23:46] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 08:23:46] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:23:46] User query result {"id":8,"found":true}
+[2025-03-10 08:23:46] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 08:23:46] Password verification result matched
+[2025-03-10 08:23:46] Authentication successful
+[2025-03-10 08:23:46] Login successful, returning data {"token":"ODoxNzQxNTkxNDI2","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 08:23:54] Login request received
+[2025-03-10 08:23:54] Database connection successful
+[2025-03-10 08:23:54] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:23:54] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:23:54] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:23:54] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:23:54] User query result {"id":7,"found":true}
+[2025-03-10 08:23:54] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:23:55] Password verification result matched
+[2025-03-10 08:23:55] Authentication successful
+[2025-03-10 08:23:55] Login successful, returning data {"token":"NzoxNzQxNTkxNDM1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:28:15] Login request received
+[2025-03-10 08:28:15] Database connection successful
+[2025-03-10 08:28:15] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:28:15] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:28:15] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:28:15] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:28:15] User query result {"id":7,"found":true}
+[2025-03-10 08:28:15] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:28:15] Password verification result matched
+[2025-03-10 08:28:15] Authentication successful
+[2025-03-10 08:28:15] Login successful, returning data {"token":"NzoxNzQxNTkxNjk1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:28:40] Login request received
+[2025-03-10 08:28:40] Database connection successful
+[2025-03-10 08:28:40] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:28:40] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:28:40] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:28:40] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:28:40] User query result {"id":7,"found":true}
+[2025-03-10 08:28:40] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:28:40] Password verification result matched
+[2025-03-10 08:28:40] Authentication successful
+[2025-03-10 08:28:40] Login successful, returning data {"token":"NzoxNzQxNTkxNzIw","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:29:17] Login request received
+[2025-03-10 08:29:17] Database connection successful
+[2025-03-10 08:29:17] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:29:17] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:29:17] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:29:17] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:29:17] User query result {"id":7,"found":true}
+[2025-03-10 08:29:17] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:29:17] Password verification result matched
+[2025-03-10 08:29:17] Authentication successful
+[2025-03-10 08:29:17] Login successful, returning data {"token":"NzoxNzQxNTkxNzU3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:29:27] Login request received
+[2025-03-10 08:29:27] Database connection successful
+[2025-03-10 08:29:27] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:29:27] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:29:27] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:29:27] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:29:27] User query result {"id":7,"found":true}
+[2025-03-10 08:29:27] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:29:28] Password verification result matched
+[2025-03-10 08:29:28] Authentication successful
+[2025-03-10 08:29:28] Login successful, returning data {"token":"NzoxNzQxNTkxNzY4","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:30:35] Login request received
+[2025-03-10 08:30:35] Database connection successful
+[2025-03-10 08:30:35] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:30:35] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:30:35] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:30:35] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:30:35] User query result {"id":7,"found":true}
+[2025-03-10 08:30:35] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:30:35] Password verification result matched
+[2025-03-10 08:30:35] Authentication successful
+[2025-03-10 08:30:35] Login successful, returning data {"token":"NzoxNzQxNTkxODM1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:31:13] Login request received
+[2025-03-10 08:31:13] Database connection successful
+[2025-03-10 08:31:13] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:31:13] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:31:13] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:31:13] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:31:13] User query result {"id":7,"found":true}
+[2025-03-10 08:31:13] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:31:13] Password verification result matched
+[2025-03-10 08:31:13] Authentication successful
+[2025-03-10 08:31:13] Login successful, returning data {"token":"NzoxNzQxNTkxODcz","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:31:47] Login request received
+[2025-03-10 08:31:47] Database connection successful
+[2025-03-10 08:31:47] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:31:47] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:31:47] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:31:47] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:31:47] User query result {"id":7,"found":true}
+[2025-03-10 08:31:47] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:31:47] Password verification result matched
+[2025-03-10 08:31:47] Authentication successful
+[2025-03-10 08:31:47] Login successful, returning data {"token":"NzoxNzQxNTkxOTA3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:32:40] Login request received
+[2025-03-10 08:32:40] Database connection successful
+[2025-03-10 08:32:40] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:32:40] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:32:40] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:32:40] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:32:40] User query result {"id":7,"found":true}
+[2025-03-10 08:32:40] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:32:40] Password verification result matched
+[2025-03-10 08:32:40] Authentication successful
+[2025-03-10 08:32:40] Login successful, returning data {"token":"NzoxNzQxNTkxOTYw","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:35:24] Login request received
+[2025-03-10 08:35:24] Database connection successful
+[2025-03-10 08:35:24] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:35:24] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:35:24] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:35:24] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:35:24] User query result {"id":7,"found":true}
+[2025-03-10 08:35:24] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:35:24] Password verification result matched
+[2025-03-10 08:35:24] Authentication successful
+[2025-03-10 08:35:24] Login successful, returning data {"token":"NzoxNzQxNTkyMTI0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:36:00] Login request received
+[2025-03-10 08:36:00] Database connection successful
+[2025-03-10 08:36:00] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:36:00] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:36:00] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:36:00] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:36:00] User query result {"id":7,"found":true}
+[2025-03-10 08:36:00] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:36:00] Password verification result matched
+[2025-03-10 08:36:00] Authentication successful
+[2025-03-10 08:36:00] Login successful, returning data {"token":"NzoxNzQxNTkyMTYw","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:36:34] Login request received
+[2025-03-10 08:36:34] Database connection successful
+[2025-03-10 08:36:34] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:36:34] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:36:34] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:36:34] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:36:34] User query result {"id":7,"found":true}
+[2025-03-10 08:36:34] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:36:34] Password verification result matched
+[2025-03-10 08:36:34] Authentication successful
+[2025-03-10 08:36:34] Login successful, returning data {"token":"NzoxNzQxNTkyMTk0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:36:41] Login request received
+[2025-03-10 08:36:41] Database connection successful
+[2025-03-10 08:36:41] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-10 08:36:41] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-10 08:36:41] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-10 08:36:41] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:36:41] User query result {"id":9,"found":true}
+[2025-03-10 08:36:41] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-10 08:36:42] Password verification result matched
+[2025-03-10 08:36:42] Authentication successful
+[2025-03-10 08:36:42] Login successful, returning data {"token":"OToxNzQxNTkyMjAy","role":"trainer","full_name":"trainer trainer"}
+[2025-03-10 08:36:57] Login request received
+[2025-03-10 08:36:57] Database connection successful
+[2025-03-10 08:36:57] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 08:36:57] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 08:36:57] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 08:36:57] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:36:57] User query result {"id":8,"found":true}
+[2025-03-10 08:36:57] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 08:36:57] Password verification result matched
+[2025-03-10 08:36:57] Authentication successful
+[2025-03-10 08:36:57] Login successful, returning data {"token":"ODoxNzQxNTkyMjE3","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 08:37:08] Login request received
+[2025-03-10 08:37:08] Database connection successful
+[2025-03-10 08:37:08] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:37:08] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:37:08] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:37:08] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:37:08] User query result {"id":7,"found":true}
+[2025-03-10 08:37:08] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:37:08] Password verification result matched
+[2025-03-10 08:37:08] Authentication successful
+[2025-03-10 08:37:08] Login successful, returning data {"token":"NzoxNzQxNTkyMjI4","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:37:25] Login request received
+[2025-03-10 08:37:25] Database connection successful
+[2025-03-10 08:37:25] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:37:25] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:37:25] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:37:25] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:37:25] User query result {"id":7,"found":true}
+[2025-03-10 08:37:25] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:37:25] Password verification result matched
+[2025-03-10 08:37:25] Authentication successful
+[2025-03-10 08:37:25] Login successful, returning data {"token":"NzoxNzQxNTkyMjQ1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:37:47] Login request received
+[2025-03-10 08:37:47] Database connection successful
+[2025-03-10 08:37:47] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:37:47] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:37:47] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:37:47] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:37:47] User query result {"id":7,"found":true}
+[2025-03-10 08:37:47] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:37:47] Password verification result matched
+[2025-03-10 08:37:47] Authentication successful
+[2025-03-10 08:37:47] Login successful, returning data {"token":"NzoxNzQxNTkyMjY3","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:38:01] Login request received
+[2025-03-10 08:38:01] Database connection successful
+[2025-03-10 08:38:01] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:38:01] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:38:01] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:38:01] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:38:01] User query result {"id":7,"found":true}
+[2025-03-10 08:38:01] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:38:01] Password verification result matched
+[2025-03-10 08:38:01] Authentication successful
+[2025-03-10 08:38:01] Login successful, returning data {"token":"NzoxNzQxNTkyMjgx","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:38:15] Login request received
+[2025-03-10 08:38:15] Database connection successful
+[2025-03-10 08:38:15] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:38:15] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:38:15] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:38:15] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:38:15] User query result {"id":7,"found":true}
+[2025-03-10 08:38:15] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:38:15] Password verification result matched
+[2025-03-10 08:38:15] Authentication successful
+[2025-03-10 08:38:15] Login successful, returning data {"token":"NzoxNzQxNTkyMjk1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:38:32] Login request received
+[2025-03-10 08:38:32] Database connection successful
+[2025-03-10 08:38:32] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:38:32] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:38:32] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:38:32] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:38:32] User query result {"id":7,"found":true}
+[2025-03-10 08:38:32] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:38:32] Password verification result matched
+[2025-03-10 08:38:32] Authentication successful
+[2025-03-10 08:38:32] Login successful, returning data {"token":"NzoxNzQxNTkyMzEy","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:38:46] Login request received
+[2025-03-10 08:38:46] Database connection successful
+[2025-03-10 08:38:46] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:38:46] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:38:46] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:38:46] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:38:46] User query result {"id":7,"found":true}
+[2025-03-10 08:38:46] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:38:46] Password verification result matched
+[2025-03-10 08:38:46] Authentication successful
+[2025-03-10 08:38:46] Login successful, returning data {"token":"NzoxNzQxNTkyMzI2","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:39:18] Login request received
+[2025-03-10 08:39:18] Database connection successful
+[2025-03-10 08:39:18] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:39:18] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:39:18] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:39:18] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:39:18] User query result {"id":7,"found":true}
+[2025-03-10 08:39:18] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:39:18] Password verification result matched
+[2025-03-10 08:39:18] Authentication successful
+[2025-03-10 08:39:18] Login successful, returning data {"token":"NzoxNzQxNTkyMzU4","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:40:05] Login request received
+[2025-03-10 08:40:05] Database connection successful
+[2025-03-10 08:40:05] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:40:05] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:40:05] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:40:05] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:40:05] User query result {"id":7,"found":true}
+[2025-03-10 08:40:05] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:40:05] Password verification result matched
+[2025-03-10 08:40:05] Authentication successful
+[2025-03-10 08:40:05] Login successful, returning data {"token":"NzoxNzQxNTkyNDA1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 08:40:28] Login request received
+[2025-03-10 08:40:28] Database connection successful
+[2025-03-10 08:40:28] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 08:40:28] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 08:40:28] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 08:40:28] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 08:40:28] User query result {"id":7,"found":true}
+[2025-03-10 08:40:28] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 08:40:28] Password verification result matched
+[2025-03-10 08:40:28] Authentication successful
+[2025-03-10 08:40:28] Login successful, returning data {"token":"NzoxNzQxNTkyNDI4","role":"administrator","full_name":"admin admin"}
+[2025-03-10 09:18:42] Login request received
+[2025-03-10 09:18:42] Database connection successful
+[2025-03-10 09:18:42] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 09:18:42] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 09:18:42] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 09:18:42] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 09:18:42] User query result {"id":7,"found":true}
+[2025-03-10 09:18:42] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 09:18:42] Password verification result matched
+[2025-03-10 09:18:42] Authentication successful
+[2025-03-10 09:18:42] Login successful, returning data {"token":"NzoxNzQxNTk0NzIy","role":"administrator","full_name":"admin admin"}
+[2025-03-10 09:19:24] Login request received
+[2025-03-10 09:19:24] Database connection successful
+[2025-03-10 09:19:24] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 09:19:24] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 09:19:24] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 09:19:24] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 09:19:24] User query result {"id":7,"found":true}
+[2025-03-10 09:19:24] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 09:19:24] Password verification result matched
+[2025-03-10 09:19:24] Authentication successful
+[2025-03-10 09:19:24] Login successful, returning data {"token":"NzoxNzQxNTk0NzY0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 09:19:45] Login request received
+[2025-03-10 09:19:45] Database connection successful
+[2025-03-10 09:19:45] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 09:19:45] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 09:19:45] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 09:19:45] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 09:19:45] User query result {"id":7,"found":true}
+[2025-03-10 09:19:45] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 09:19:45] Password verification result matched
+[2025-03-10 09:19:45] Authentication successful
+[2025-03-10 09:19:45] Login successful, returning data {"token":"NzoxNzQxNTk0Nzg1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:39:28] Login request received
+[2025-03-10 10:39:28] Database connection successful
+[2025-03-10 10:39:28] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:39:28] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:39:28] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:39:28] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:39:28] User query result {"id":7,"found":true}
+[2025-03-10 10:39:28] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:39:28] Password verification result matched
+[2025-03-10 10:39:28] Authentication successful
+[2025-03-10 10:39:28] Login successful, returning data {"token":"NzoxNzQxNTk5NTY4","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:39:54] Login request received
+[2025-03-10 10:39:54] Database connection successful
+[2025-03-10 10:39:54] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:39:54] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:39:54] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:39:54] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:39:54] User query result {"id":7,"found":true}
+[2025-03-10 10:39:54] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:39:54] Password verification result matched
+[2025-03-10 10:39:54] Authentication successful
+[2025-03-10 10:39:54] Login successful, returning data {"token":"NzoxNzQxNTk5NTk0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:40:08] Login request received
+[2025-03-10 10:40:08] Database connection successful
+[2025-03-10 10:40:08] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:40:08] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:40:08] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:40:08] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:40:08] User query result {"id":7,"found":true}
+[2025-03-10 10:40:08] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:40:08] Password verification result matched
+[2025-03-10 10:40:08] Authentication successful
+[2025-03-10 10:40:08] Login successful, returning data {"token":"NzoxNzQxNTk5NjA4","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:40:25] Login request received
+[2025-03-10 10:40:25] Database connection successful
+[2025-03-10 10:40:25] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:40:25] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:40:25] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:40:25] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:40:25] User query result {"id":7,"found":true}
+[2025-03-10 10:40:25] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:40:25] Password verification result matched
+[2025-03-10 10:40:25] Authentication successful
+[2025-03-10 10:40:25] Login successful, returning data {"token":"NzoxNzQxNTk5NjI1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:43:34] Login request received
+[2025-03-10 10:43:34] Database connection successful
+[2025-03-10 10:43:34] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:43:34] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:43:34] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:43:34] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:43:34] User query result {"id":7,"found":true}
+[2025-03-10 10:43:34] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:43:34] Password verification result matched
+[2025-03-10 10:43:34] Authentication successful
+[2025-03-10 10:43:34] Login successful, returning data {"token":"NzoxNzQxNTk5ODE0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:44:25] Login request received
+[2025-03-10 10:44:25] Database connection successful
+[2025-03-10 10:44:25] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:44:25] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:44:25] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:44:25] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:44:25] User query result {"id":7,"found":true}
+[2025-03-10 10:44:25] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:44:25] Password verification result matched
+[2025-03-10 10:44:25] Authentication successful
+[2025-03-10 10:44:25] Login successful, returning data {"token":"NzoxNzQxNTk5ODY1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:45:04] Login request received
+[2025-03-10 10:45:04] Database connection successful
+[2025-03-10 10:45:04] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:45:04] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:45:04] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:45:04] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:45:04] User query result {"id":7,"found":true}
+[2025-03-10 10:45:04] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:45:04] Password verification result matched
+[2025-03-10 10:45:04] Authentication successful
+[2025-03-10 10:45:04] Login successful, returning data {"token":"NzoxNzQxNTk5OTA0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:45:21] Login request received
+[2025-03-10 10:45:21] Database connection successful
+[2025-03-10 10:45:21] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:45:21] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:45:21] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:45:21] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:45:21] User query result {"id":7,"found":true}
+[2025-03-10 10:45:21] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:45:21] Password verification result matched
+[2025-03-10 10:45:21] Authentication successful
+[2025-03-10 10:45:21] Login successful, returning data {"token":"NzoxNzQxNTk5OTIx","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:46:56] Login request received
+[2025-03-10 10:46:56] Database connection successful
+[2025-03-10 10:46:56] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:46:56] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:46:56] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:46:56] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:46:56] User query result {"id":7,"found":true}
+[2025-03-10 10:46:56] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:46:56] Password verification result matched
+[2025-03-10 10:46:56] Authentication successful
+[2025-03-10 10:46:56] Login successful, returning data {"token":"NzoxNzQxNjAwMDE2","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:53:03] Login request received
+[2025-03-10 10:53:03] Database connection successful
+[2025-03-10 10:53:03] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:53:03] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:53:03] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:53:03] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:53:03] User query result {"id":7,"found":true}
+[2025-03-10 10:53:03] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:53:03] Password verification result matched
+[2025-03-10 10:53:03] Authentication successful
+[2025-03-10 10:53:03] Login successful, returning data {"token":"NzoxNzQxNjAwMzgz","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:53:25] Login request received
+[2025-03-10 10:53:25] Database connection successful
+[2025-03-10 10:53:25] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:53:25] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:53:25] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:53:25] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:53:25] User query result {"id":7,"found":true}
+[2025-03-10 10:53:25] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:53:25] Password verification result matched
+[2025-03-10 10:53:25] Authentication successful
+[2025-03-10 10:53:25] Login successful, returning data {"token":"NzoxNzQxNjAwNDA1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:56:23] Login request received
+[2025-03-10 10:56:23] Database connection successful
+[2025-03-10 10:56:23] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:56:23] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:56:23] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:56:23] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:56:23] User query result {"id":7,"found":true}
+[2025-03-10 10:56:23] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:56:23] Password verification result matched
+[2025-03-10 10:56:23] Authentication successful
+[2025-03-10 10:56:23] Login successful, returning data {"token":"NzoxNzQxNjAwNTgz","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:57:45] Login request received
+[2025-03-10 10:57:45] Database connection successful
+[2025-03-10 10:57:45] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:57:45] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:57:45] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:57:45] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:57:45] User query result {"id":7,"found":true}
+[2025-03-10 10:57:45] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:57:45] Password verification result matched
+[2025-03-10 10:57:45] Authentication successful
+[2025-03-10 10:57:45] Login successful, returning data {"token":"NzoxNzQxNjAwNjY1","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:59:21] Login request received
+[2025-03-10 10:59:21] Database connection successful
+[2025-03-10 10:59:21] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:59:21] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:59:21] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:59:21] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:59:21] User query result {"id":7,"found":true}
+[2025-03-10 10:59:21] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:59:22] Password verification result matched
+[2025-03-10 10:59:22] Authentication successful
+[2025-03-10 10:59:22] Login successful, returning data {"token":"NzoxNzQxNjAwNzYy","role":"administrator","full_name":"admin admin"}
+[2025-03-10 10:59:58] Login request received
+[2025-03-10 10:59:58] Database connection successful
+[2025-03-10 10:59:58] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 10:59:58] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 10:59:58] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 10:59:58] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 10:59:58] User query result {"id":7,"found":true}
+[2025-03-10 10:59:58] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 10:59:58] Password verification result matched
+[2025-03-10 10:59:58] Authentication successful
+[2025-03-10 10:59:58] Login successful, returning data {"token":"NzoxNzQxNjAwNzk4","role":"administrator","full_name":"admin admin"}
+[2025-03-10 11:00:34] Login request received
+[2025-03-10 11:00:34] Database connection successful
+[2025-03-10 11:00:34] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 11:00:34] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 11:00:34] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 11:00:34] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 11:00:34] User query result {"id":7,"found":true}
+[2025-03-10 11:00:34] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 11:00:34] Password verification result matched
+[2025-03-10 11:00:34] Authentication successful
+[2025-03-10 11:00:34] Login successful, returning data {"token":"NzoxNzQxNjAwODM0","role":"administrator","full_name":"admin admin"}
+[2025-03-10 11:00:43] Login request received
+[2025-03-10 11:00:43] Database connection successful
+[2025-03-10 11:00:43] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 11:00:43] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 11:00:43] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 11:00:43] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 11:00:43] User query result {"id":8,"found":true}
+[2025-03-10 11:00:43] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 11:00:43] Password verification result matched
+[2025-03-10 11:00:43] Authentication successful
+[2025-03-10 11:00:43] Login successful, returning data {"token":"ODoxNzQxNjAwODQz","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 11:03:52] Login request received
+[2025-03-10 11:03:52] Database connection successful
+[2025-03-10 11:03:52] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 11:03:52] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 11:03:52] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 11:03:52] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 11:03:52] User query result {"id":7,"found":true}
+[2025-03-10 11:03:52] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 11:03:52] Password verification result matched
+[2025-03-10 11:03:52] Authentication successful
+[2025-03-10 11:03:52] Login successful, returning data {"token":"NzoxNzQxNjAxMDMy","role":"administrator","full_name":"admin admin"}
+[2025-03-10 11:04:26] Login request received
+[2025-03-10 11:04:26] Database connection successful
+[2025-03-10 11:04:26] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 11:04:26] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 11:04:26] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 11:04:26] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 11:04:26] User query result {"id":7,"found":true}
+[2025-03-10 11:04:26] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 11:04:26] Password verification result matched
+[2025-03-10 11:04:26] Authentication successful
+[2025-03-10 11:04:26] Login successful, returning data {"token":"NzoxNzQxNjAxMDY2","role":"administrator","full_name":"admin admin"}
+[2025-03-10 11:11:48] Login request received
+[2025-03-10 11:11:48] Database connection successful
+[2025-03-10 11:11:48] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 11:11:48] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 11:11:48] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 11:11:48] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 11:11:48] User query result {"id":7,"found":true}
+[2025-03-10 11:11:48] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 11:11:48] Password verification result matched
+[2025-03-10 11:11:48] Authentication successful
+[2025-03-10 11:11:48] Login successful, returning data {"token":"NzoxNzQxNjAxNTA4","role":"administrator","full_name":"admin admin"}
+[2025-03-10 11:12:41] Login request received
+[2025-03-10 11:12:41] Database connection successful
+[2025-03-10 11:12:41] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 11:12:41] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 11:12:41] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 11:12:41] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 11:12:41] User query result {"id":7,"found":true}
+[2025-03-10 11:12:41] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 11:12:41] Password verification result matched
+[2025-03-10 11:12:41] Authentication successful
+[2025-03-10 11:12:41] Login successful, returning data {"token":"NzoxNzQxNjAxNTYx","role":"administrator","full_name":"admin admin"}
+[2025-03-10 11:12:50] Login request received
+[2025-03-10 11:12:50] Database connection successful
+[2025-03-10 11:12:50] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-10 11:12:50] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-10 11:12:50] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-10 11:12:50] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 11:12:50] User query result {"id":8,"found":true}
+[2025-03-10 11:12:50] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-10 11:12:50] Password verification result matched
+[2025-03-10 11:12:50] Authentication successful
+[2025-03-10 11:12:50] Login successful, returning data {"token":"ODoxNzQxNjAxNTcw","role":"trainee","full_name":"trainee trainee"}
+[2025-03-10 11:12:57] Login request received
+[2025-03-10 11:12:57] Database connection successful
+[2025-03-10 11:12:57] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-10 11:12:57] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-10 11:12:57] Attempting to authenticate {"username":"admin","password_length":10}
+[2025-03-10 11:12:57] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login"]
+[2025-03-10 11:12:57] User query result {"id":7,"found":true}
+[2025-03-10 11:12:57] Stored password hash $2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO
+[2025-03-10 11:12:57] Password verification result matched
+[2025-03-10 11:12:57] Authentication successful
+[2025-03-10 11:12:57] Login successful, returning data {"token":"NzoxNzQxNjAxNTc3","role":"administrator","full_name":"admin admin"}
