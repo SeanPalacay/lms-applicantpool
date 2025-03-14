@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
-import trainerService from '../../../services/trainerService';
-import './styles/TrainerDashboard.css';
+import './styles/TrainerDashboard.css'; // Create this CSS file
 
 const TrainerDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const navigate = useNavigate();
-    const [stats, setStats] = useState({
-        activePrograms: [],
+    const [dashboardData, setDashboardData] = useState({
+        user: { full_name: '' },
+        createdPrograms: [],
         totalPrograms: 0,
-        totalTrainees: 0,
-        pendingQuizzes: 0,
-        overallProgress: 0,
-        traineePerformance: [],
-        alerts: [],
+        activeTrainees: 0,
+        createdQuizzes: [],
+        createdMilestones: [],
+        traineeProgress: [],
+        alerts: []
     });
+    const navigate = useNavigate();
+    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -25,69 +27,87 @@ const TrainerDashboard = () => {
             setError(null);
 
             try {
-                const authToken = localStorage.getItem('authToken');
-                const userRole = localStorage.getItem('role');
-                if (!authToken || userRole !== 'trainer') {
-                    setError('Access denied. Redirecting to login...');
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    setError('You are not logged in. Please log in to access the dashboard.');
+                    setLoading(false);
                     setTimeout(() => navigate('/login'), 2000);
                     return;
                 }
 
-                console.log('Fetching trainer dashboard data...');
-                const data = await trainerService.getDashboardData();
-                console.log('API Response:', data);
+                const userRole = localStorage.getItem('userRole');
+                if (userRole !== 'trainer') {
+                    setError('You do not have permission to access this dashboard.');
+                    setLoading(false);
+                    setTimeout(() => navigate(`/${userRole}/dashboard`), 2000);
+                    return;
+                }
 
-                setStats(data);
+                const response = await fetch(`http://localhost:8080/lms-forbes/backend/api/trainer/dashboard.php`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Fetch failed:', response.status, errorText);
+                    throw new Error(`HTTP error! Status: ${response.status} - ${errorText}`);
+                }
+
+                const data = await response.json();
+                setDashboardData(data);
             } catch (err) {
                 console.error('Error fetching trainer dashboard data:', err);
-                if (err.message.includes('Authentication') || err.message.includes('login')) {
-                    setError('Authentication failed. Please log in again.');
-                    setTimeout(() => navigate('/login'), 2000);
-                } else {
-                    setError('Failed to load dashboard data. Please try again later.');
-                }
+                setError(`Failed to load dashboard data: ${err.message}`);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchDashboardData();
-
-        // Refresh data every 5 minutes
-        const interval = setInterval(fetchDashboardData, 300000);
-        return () => clearInterval(interval);
     }, [navigate]);
 
+    const formatDueDate = (dateString) => {
+        if (!dateString) return 'No due date';
+        const date = new Date(dateString);
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        if (date.toDateString() === today.toDateString()) return 'Due Today';
+        if (date.toDateString() === tomorrow.toDateString()) return 'Due Tomorrow';
+        return date.toLocaleDateString();
+    };
+
     if (loading) return <LoadingSpinner />;
-    if (error) return <AlertBanner message={error} type="error" />;
 
     return (
         <div className="trainer-dashboard">
-            {/* Header */}
+            {error && <AlertBanner message={error} type="error" />}
             <div className="dashboard-header">
                 <h2>Trainer Dashboard</h2>
-                <p>Welcome back! Here's an overview of your training activities.</p>
+                <p>Welcome, {dashboardData.user.full_name}! Manage your training content and track trainee progress.</p>
             </div>
 
             {/* Alerts Section */}
-            {stats.alerts.length > 0 && (
+            {dashboardData.alerts.length > 0 && (
                 <div className="alerts-section">
                     <h3>Alerts & Notifications</h3>
                     <div className="alerts-container">
-                        {stats.alerts.map((alert, index) => (
+                        {dashboardData.alerts.map((alert, index) => (
                             <div key={index} className={`alert-card alert-${alert.type}`}>
                                 <div className="alert-icon">
-                                    {alert.type === 'warning' && <i className="fas fa-exclamation-triangle"></i>}
-                                    {alert.type === 'info' && <i className="fas fa-info-circle"></i>}
+                                    <i className="fas fa-exclamation-triangle"></i>
                                 </div>
                                 <div className="alert-content">
                                     <h4>{alert.title}</h4>
-                                    <p>{alert.message}</p>
-                                    {alert.actionLink && (
-                                        <Link to={alert.actionLink} className="alert-action-btn">
-                                            {alert.actionText || 'View'}
-                                        </Link>
-                                    )}
+                                    <p>{alert.message} - {formatDueDate(alert.dueDate)}</p>
+                                </div>
+                                <div className="alert-actions">
+                                    <Link to={alert.actionLink} className="alert-action-btn">{alert.actionText}</Link>
                                 </div>
                             </div>
                         ))}
@@ -95,98 +115,131 @@ const TrainerDashboard = () => {
                 </div>
             )}
 
-            {/* Summary Section */}
-            <div className="dashboard-summary">
-                <div className="summary-card">
-                    <div className="stat-icon">
-                        <i className="fas fa-book"></i>
+            <div className="dashboard-main">
+                <div className="dashboard-column">
+                    {/* Created Programs */}
+                    <div className="stat-card">
+                        <div className="card-header">
+                            <h3><i className="fas fa-graduation-cap"></i> My Programs</h3>
+                            <Link to="/trainer/programs" className="view-all">View All</Link>
+                        </div>
+                        <div className="stat-content">
+                            {dashboardData.createdPrograms.length > 0 ? (
+                                dashboardData.createdPrograms.map((program, index) => (
+                                    <div key={index} className="program-item">
+                                        <h4>{program.title}</h4>
+                                        <p>{program.type} - Created: {new Date(program.created_at).toLocaleDateString()}</p>
+                                        <Link to={`/trainer/programs/${program.id}`} className="continue-link">
+                                            Manage <i className="fas fa-chevron-right"></i>
+                                        </Link>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="empty-state">
+                                    <i className="fas fa-book"></i>
+                                    <p>You haven’t created any programs yet.</p>
+                                    <Link to="/trainer/programs/create" className="action-btn">Create Program</Link>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                    <div className="stat-details">
-                        <h4>{stats.totalPrograms}</h4>
-                        <p>Total Programs</p>
-                    </div>
-                </div>
-                <div className="summary-card">
-                    <div className="stat-icon">
-                        <i className="fas fa-user-graduate"></i>
-                    </div>
-                    <div className="stat-details">
-                        <h4>{stats.totalTrainees}</h4>
-                        <p>Total Trainees</p>
-                    </div>
-                </div>
-                <div className="summary-card">
-                    <div className="stat-icon">
-                        <i className="fas fa-tasks"></i>
-                    </div>
-                    <div className="stat-details">
-                        <h4>{stats.pendingQuizzes}</h4>
-                        <p>Pending Quizzes</p>
-                    </div>
-                </div>
-                <div className="summary-card">
-                    <div className="stat-icon">
-                        <i className="fas fa-chart-line"></i>
-                    </div>
-                    <div className="stat-details">
-                        <h4>{stats.overallProgress}%</h4>
-                        <p>Overall Progress</p>
-                        <div className="progress-bar">
-                            <div className="progress-value" style={{ width: `${stats.overallProgress}%` }}></div>
+
+                    {/* Created Milestones */}
+                    <div className="stat-card">
+                        <div className="card-header">
+                            <h3><i className="fas fa-tasks"></i> Recent Milestones</h3>
+                        </div>
+                        <div className="stat-content">
+                            {dashboardData.createdMilestones.length > 0 ? (
+                                dashboardData.createdMilestones.map((milestone, index) => (
+                                    <div key={index} className="milestone-item">
+                                        <div className="milestone-info">
+                                            <h4>{milestone.title}</h4>
+                                            <p className="program-name">{milestone.program_title}</p>
+                                        </div>
+                                        <div className="milestone-date">
+                                            <div className="due-date">{formatDueDate(milestone.due_date)}</div>
+                                            <Link to={`/trainer/milestones/${milestone.id}`} className="milestone-link">
+                                                Details <i className="fas fa-chevron-right"></i>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="empty-state">
+                                    <i className="fas fa-check-circle"></i>
+                                    <p>No milestones created yet.</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Active Programs Section */}
-            <div className="dashboard-section active-programs">
-                <h3>Active Programs</h3>
-                {stats.activePrograms.length > 0 ? (
-                    <div className="programs-list">
-                        {stats.activePrograms.map((program) => (
-                            <div key={program.id} className="program-card">
-                                <h4>{program.title}</h4>
-                                <p>{program.description}</p>
-                                <div className="program-stats">
-                                    <span>{program.enrolled_count} Enrolled</span>
-                                    <span>{program.completion_rate}% Complete</span>
+                <div className="dashboard-column">
+                    {/* Created Quizzes */}
+                    <div className="stat-card">
+                        <div className="card-header">
+                            <h3><i className="fas fa-question-circle"></i> Recent Quizzes</h3>
+                            <Link to="/trainer/quizzes" className="view-all">View All</Link>
+                        </div>
+                        <div className="stat-content">
+                            {dashboardData.createdQuizzes.length > 0 ? (
+                                dashboardData.createdQuizzes.map((quiz, index) => (
+                                    <div key={index} className="quiz-item">
+                                        <div className="quiz-info">
+                                            <h4>{quiz.title}</h4>
+                                            <p className="program-name">{quiz.program_title}</p>
+                                            <div className="quiz-details">
+                                                <span className="time-limit">
+                                                    <i className="fas fa-clock"></i> {quiz.time_limit} minutes
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="quiz-actions">
+                                            <Link to={`/trainer/quizzes/${quiz.id}`} className="take-quiz-btn">
+                                                Edit <i className="fas fa-edit"></i>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="empty-state">
+                                    <i className="fas fa-check-double"></i>
+                                    <p>No quizzes created yet.</p>
                                 </div>
-                                <Link to={`/trainer/programs/${program.id}`} className="btn-view">View</Link>
-                            </div>
-                        ))}
+                            )}
+                        </div>
                     </div>
-                ) : (
-                    <p>No active programs found.</p>
-                )}
-            </div>
 
-            {/* Trainee Performance Section */}
-            <div className="dashboard-section trainee-performance">
-                <h3>Trainee Performance</h3>
-                {stats.traineePerformance.length > 0 ? (
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Progress</th>
-                                <th>Quiz Avg.</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {stats.traineePerformance.map((trainee) => (
-                                <tr key={trainee.id}>
-                                    <td>{trainee.full_name}</td>
-                                    <td>{trainee.progress}%</td>
-                                    <td>{trainee.quiz_average}%</td>
-                                    <td>{trainee.status}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p>No trainee performance data available.</p>
-                )}
+                    {/* Trainee Progress */}
+                    {dashboardData.traineeProgress.length > 0 && (
+                        <div className="stat-card">
+                            <div className="card-header">
+                                <h3><i className="fas fa-chart-pie"></i> Trainee Progress</h3>
+                            </div>
+                            <div className="stat-content">
+                                <div className="progress-overview">
+                                    <div className="progress-stats">
+                                        <div className="stat-box">
+                                            <span className="stat-value">{dashboardData.totalPrograms}</span>
+                                            <span className="stat-label">Programs</span>
+                                        </div>
+                                        <div className="stat-box">
+                                            <span className="stat-value">{dashboardData.activeTrainees}</span>
+                                            <span className="stat-label">Active Trainees</span>
+                                        </div>
+                                    </div>
+                                    {dashboardData.traineeProgress.map((prog, index) => (
+                                        <div key={index} className="progress-item">
+                                            <h4>{prog.title}</h4>
+                                            <p>Enrolled: {prog.enrolled_count} | Avg. Completion: {prog.avg_completion ? prog.avg_completion.toFixed(2) : 0}% | Quiz Attempts: {prog.quiz_attempts}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
