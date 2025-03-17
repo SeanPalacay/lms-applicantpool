@@ -189,7 +189,7 @@ const TraineeDashboard = () => {
                 <p style={{ fontSize: '14px', color: '#666', margin: '0 0 15px 0' }}>
                   You have not enrolled in any programs yet.
                 </p>
-                <Link 
+                {/* <Link 
                   to="/trainee/browse-programs" 
                   style={{ 
                     padding: '8px 15px', 
@@ -201,7 +201,7 @@ const TraineeDashboard = () => {
                   }}
                 >
                   Browse Programs
-                </Link>
+                </Link> */}
               </div>
             )}
           </div>
