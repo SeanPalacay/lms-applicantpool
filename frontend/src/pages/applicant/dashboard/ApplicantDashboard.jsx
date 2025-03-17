@@ -1,294 +1,252 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { 
+  Briefcase, 
+  Bell, 
+  AlertTriangle, 
+  Info, 
+  Calendar, 
+  User, 
+  Building, 
+  FileText, 
+  ChevronRight 
+} from 'lucide-react';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
+import applicantService from '../../../services/applicantService';
 import './styles/ApplicantDashboard.css';
 
 const ApplicantDashboard = () => {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [stats, setStats] = useState({
-        applicantInfo: {
-            full_name: '',
-            job_role: '',
-            department: '',
-            status: '',
-            evaluation_score: null,
-            fst_score: null,
-            applied_at: '',
-            documents: []
-        },
-        applicationStatus: '',
-        statusTimeline: [],
-        alerts: [],
-        nextSteps: []
-    });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            setLoading(true);
-            setError(null);
+  // This mirrors the structure from the server
+  const [dashboardData, setDashboardData] = useState({
+    user: {
+      full_name: '',
+      email: '',
+      status: ''
+    },
+    myApplications: [],
+    notifications: [],
+    alerts: []
+  });
 
-            try {
-                const token = localStorage.getItem('token');
-                
-                const response = await axios.get(
-                    'http://localhost:8080/lms-forbes/backend/api/applicant/dashboard.php',
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    }
-                );
-                
-                setStats(response.data);
-            } catch (err) {
-                console.error('Error fetching applicant dashboard data:', err);
-                setError('Failed to load dashboard data. Please try again later.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchDashboardData();
-        
-        // Refresh data every 5 minutes
-        const interval = setInterval(fetchDashboardData, 300000);
-        
-        return () => clearInterval(interval);
-    }, []);
-
-    if (loading) {
-        return <LoadingSpinner />;
-    }
-
-    const getStatusClass = (status) => {
-        switch (status.toLowerCase()) {
-            case 'pending': return 'pending';
-            case 'shortlisted': return 'success';
-            case 'hired': return 'success';
-            case 'rejected': return 'danger';
-            default: return 'info';
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          setError('You are not logged in. Please login to access the Applicant Dashboard.');
+          setLoading(false);
+          setTimeout(() => navigate('/login'), 2000);
+          return;
         }
+
+        const userRole = localStorage.getItem('userRole');
+        if (userRole !== 'applicant') {
+          setError('You do not have permission to access the applicant dashboard.');
+          setLoading(false);
+          setTimeout(() => navigate(`/${userRole}/dashboard`), 2000);
+          return;
+        }
+
+        const data = await applicantService.getDashboardData();
+        setDashboardData(data);
+      } catch (err) {
+        console.error('Error fetching applicant dashboard data:', err);
+        setError(`Failed to load data: ${err.message}`);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    return (
-            <div className="applicant-dashboard">
-                {error && <AlertBanner message={error} type="error" />}
-                
-                {stats.alerts && stats.alerts.length > 0 && (
-                    <div className="alerts-section">
-                        <h3>Important Notifications</h3>
-                        <div className="alerts-container">
-                            {stats.alerts.map((alert, index) => (
-                                <div key={index} className={`alert-card alert-${alert.type}`}>
-                                    <div className="alert-icon">
-                                        {alert.type === 'warning' && <i className="fas fa-exclamation-triangle"></i>}
-                                        {alert.type === 'info' && <i className="fas fa-info-circle"></i>}
-                                        {alert.type === 'success' && <i className="fas fa-check-circle"></i>}
-                                    </div>
-                                    <div className="alert-content">
-                                        <h4>{alert.title}</h4>
-                                        <p>{alert.message}</p>
-                                    </div>
-                                    <div className="alert-actions">
-                                        {alert.actionLink && (
-                                            <Link to={alert.actionLink} className="alert-action-btn">
-                                                {alert.actionText || 'View'}
-                                            </Link>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-                
-                <div className="application-status-section">
-                    <div className="status-header">
-                        <h3>Application Status</h3>
-                        <span className={`status-badge status-${getStatusClass(stats.applicationStatus)}`}>
-                            {stats.applicationStatus || 'Pending'}
-                        </span>
-                    </div>
-                    
-                    <div className="application-timeline">
-                        {stats.statusTimeline && stats.statusTimeline.length > 0 ? (
-                            <div className="timeline">
-                                {stats.statusTimeline.map((item, index) => (
-                                    <div key={index} className={`timeline-item ${item.completed ? 'completed' : ''}`}>
-                                        <div className="timeline-marker"></div>
-                                        <div className="timeline-content">
-                                            <h4>{item.status}</h4>
-                                            <p>{item.description}</p>
-                                            {item.date && (
-                                                <span className="timeline-date">
-                                                    {new Date(item.date).toLocaleDateString()}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="no-data-message">Your application has been received. Status updates will appear here.</p>
-                        )}
-                    </div>
+    fetchDashboard();
+  }, [navigate]);
+
+  if (loading) return <LoadingSpinner />;
+
+  const { user, myApplications, notifications, alerts } = dashboardData;
+
+  return (
+    <div className="applicant-dashboard">
+      {error && <AlertBanner type="error" message={error} />}
+
+      <div className="welcome-section">
+        <h1>Welcome, {user.full_name}</h1>
+        <p>Track your applications and stay updated on your application status.</p>
+      </div>
+
+      {alerts && alerts.length > 0 && (
+        <div className="alerts-section">
+          <div className="section-header">
+            <h2>Alerts & Notifications</h2>
+            <div className="header-line"></div>
+          </div>
+          <div className="alerts-container">
+            {alerts.map((alert, index) => (
+              <div key={index} className={`alert-card alert-${alert.type || 'info'}`}>
+                <div className="alert-icon">
+                  {alert.type === 'warning' ? (
+                    <AlertTriangle size={20} />
+                  ) : (
+                    <Info size={20} />
+                  )}
                 </div>
-                
-                <div className="dashboard-content-grid">
-                    <div className="dashboard-section applicant-info">
-                        <h3>My Application</h3>
-                        <div className="applicant-info-card">
-                            <div className="applicant-header">
-                                <div className="applicant-name">
-                                    <h4>{stats.applicantInfo.full_name}</h4>
-                                    <p>{stats.applicantInfo.job_role} - {stats.applicantInfo.department}</p>
-                                </div>
-                                <div className="application-date">
-                                    <span>Applied on: {new Date(stats.applicantInfo.applied_at).toLocaleDateString()}</span>
-                                </div>
-                            </div>
-                            
-                            <div className="applicant-scores">
-                                {stats.applicantInfo.evaluation_score !== null && (
-                                    <div className="score-item">
-                                        <div className="score-label">Evaluation Score</div>
-                                        <div className="score-value">
-                                            <div className="circular-progress">
-                                                <svg viewBox="0 0 36 36" className="circular-chart">
-                                                    <path className="circle-bg"
-                                                        d="M18 2.0845
-                                                        a 15.9155 15.9155 0 0 1 0 31.831
-                                                        a 15.9155 15.9155 0 0 1 0 -31.831"
-                                                    />
-                                                    <path className="circle"
-                                                        strokeDasharray={`${stats.applicantInfo.evaluation_score}, 100`}
-                                                        d="M18 2.0845
-                                                        a 15.9155 15.9155 0 0 1 0 31.831
-                                                        a 15.9155 15.9155 0 0 1 0 -31.831"
-                                                    />
-                                                    <text x="18" y="20.35" className="percentage">{stats.applicantInfo.evaluation_score}%</text>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                                
-                                {stats.applicantInfo.fst_score !== null && (
-                                    <div className="score-item">
-                                        <div className="score-label">FST Score</div>
-                                        <div className="score-value">
-                                            <div className="circular-progress">
-                                                <svg viewBox="0 0 36 36" className="circular-chart">
-                                                    <path className="circle-bg"
-                                                        d="M18 2.0845
-                                                        a 15.9155 15.9155 0 0 1 0 31.831
-                                                        a 15.9155 15.9155 0 0 1 0 -31.831"
-                                                    />
-                                                    <path className="circle"
-                                                        strokeDasharray={`${stats.applicantInfo.fst_score}, 100`}
-                                                        d="M18 2.0845
-                                                        a 15.9155 15.9155 0 0 1 0 31.831
-                                                        a 15.9155 15.9155 0 0 1 0 -31.831"
-                                                    />
-                                                    <text x="18" y="20.35" className="percentage">{stats.applicantInfo.fst_score}%</text>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                            
-                            <div className="applicant-documents">
-                                <h4>Submitted Documents</h4>
-                                {stats.applicantInfo.documents && stats.applicantInfo.documents.length > 0 ? (
-                                    <ul className="document-list">
-                                        {stats.applicantInfo.documents.map((doc, index) => (
-                                            <li key={index} className="document-item">
-                                                <i className="fas fa-file-alt"></i>
-                                                <span>{doc.description}</span>
-                                                <div className="document-actions">
-                                                    <a href={doc.file_path} target="_blank" rel="noopener noreferrer" className="doc-action">
-                                                        <i className="fas fa-eye"></i>
-                                                    </a>
-                                                    <a href={doc.file_path} download className="doc-action">
-                                                        <i className="fas fa-download"></i>
-                                                    </a>
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p className="no-data-message">No documents submitted yet.</p>
-                                )}
-                                <div className="document-actions">
-                                    <Link to="/applicant/upload" className="btn-primary">
-                                        <i className="fas fa-upload"></i> Upload Document
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="dashboard-section next-steps">
-                        <h3>Next Steps</h3>
-                        {stats.nextSteps && stats.nextSteps.length > 0 ? (
-                            <div className="next-steps-list">
-                                {stats.nextSteps.map((step, index) => (
-                                    <div key={index} className="next-step-card">
-                                        <div className="step-number">{index + 1}</div>
-                                        <div className="step-content">
-                                            <h4>{step.title}</h4>
-                                            <p>{step.description}</p>
-                                            {step.deadline && (
-                                                <p className="step-deadline">
-                                                    <i className="far fa-calendar-alt"></i> Deadline: {new Date(step.deadline).toLocaleDateString()}
-                                                </p>
-                                            )}
-                                        </div>
-                                        {step.actionLink && (
-                                            <div className="step-action">
-                                                <Link to={step.actionLink} className="btn-primary">
-                                                    {step.actionText}
-                                                </Link>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="waiting-message">
-                                <div className="waiting-icon">
-                                    <i className="fas fa-hourglass-half"></i>
-                                </div>
-                                <h4>Application Under Review</h4>
-                                <p>Your application is currently being reviewed. We will update you on the next steps soon.</p>
-                            </div>
-                        )}
-                    </div>
+                <div className="alert-content">
+                  <h4>{alert.title || 'Alert'}</h4>
+                  <p>{alert.message}</p>
                 </div>
-                
-                <div className="quick-actions">
-                    <h3>Quick Actions</h3>
-                    <div className="action-buttons">
-                        <Link to="/applicant/profile" className="action-btn">
-                            <i className="fas fa-user-edit"></i> Edit Profile
-                        </Link>
-                        <Link to="/applicant/upload" className="action-btn">
-                            <i className="fas fa-file-upload"></i> Upload Documents
-                        </Link>
-                        <Link to="/applicant/messages" className="action-btn">
-                            <i className="fas fa-envelope"></i> Messages
-                        </Link>
-                        <Link to="/applicant/help" className="action-btn">
-                            <i className="fas fa-question-circle"></i> Help Center
-                        </Link>
-                    </div>
-                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="dashboard-grid">
+        {/* Applications Card */}
+        <div className="dashboard-card">
+          <div className="card-header">
+            <div className="header-icon">
+              <Briefcase size={20} />
             </div>
-    );
+            <div className="header-content">
+              <h3>My Applications</h3>
+              <Link to="/applicant/applications" className="view-all-link">
+                View All
+              </Link>
+            </div>
+          </div>
+          <div className="card-content">
+            {myApplications.length > 0 ? (
+              myApplications.map((app) => (
+                <div key={app.application_id} className="application-item">
+                  <h4>{app.program_title}</h4>
+                  <div className="application-details">
+                    <div className="detail-item">
+                      <User size={14} className="icon-inline" />
+                      <span>Job Role: {app.job_role}</span>
+                    </div>
+                    <div className="detail-item">
+                      <Building size={14} className="icon-inline" />
+                      <span>Department: {app.department}</span>
+                    </div>
+                    <div className="detail-item">
+                      <FileText size={14} className="icon-inline" />
+                      <span>Status: <span className={`status-badge status-${app.status.toLowerCase()}`}>{app.status}</span></span>
+                    </div>
+                    {app.evaluation_score && (
+                      <div className="detail-item">
+                        <span>Evaluation Score: {app.evaluation_score}</span>
+                      </div>
+                    )}
+                    {app.fst_score && (
+                      <div className="detail-item">
+                        <span>FST Score: {app.fst_score}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="application-dates">
+                    <div className="date-item">
+                      <Calendar size={12} className="icon-inline" />
+                      <span>Applied: {new Date(app.applied_at).toLocaleDateString()}</span>
+                    </div>
+                    {app.updated_at && (
+                      <div className="date-item">
+                        <Calendar size={12} className="icon-inline" />
+                        <span>Updated: {new Date(app.updated_at).toLocaleDateString()}</span>
+                      </div>
+                    )}
+                  </div>
+                  <Link to={`/applicant/applications/${app.application_id}`} className="view-details-link">
+                    View Details <ChevronRight size={14} className="icon-inline" />
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <div className="no-data-message">
+                <p>You have not submitted any applications yet.</p>
+                <div className="card-actions">
+                  <Link to="/applicant/programs" className="action-button primary">
+                    Apply for a Program
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Notifications Card */}
+        <div className="dashboard-card">
+          <div className="card-header">
+            <div className="header-icon">
+              <Bell size={20} />
+            </div>
+            <div className="header-content">
+              <h3>Recent Notifications</h3>
+              <Link to="/applicant/notifications" className="view-all-link">
+                View All
+              </Link>
+            </div>
+          </div>
+          <div className="card-content">
+            {notifications.length > 0 ? (
+              notifications.map((notification) => (
+                <div key={notification.id} className={`notification-item notif-${notification.type}`}>
+                  <div className="notification-content">
+                    <h4>{notification.title}</h4>
+                    <p>{notification.message}</p>
+                    <div className="notification-time">
+                      <Calendar size={12} className="icon-inline" /> {new Date(notification.created_at).toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="no-data-message">
+                <p>No recent notifications.</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Additional Resources Card */}
+        <div className="dashboard-card">
+          <div className="card-header">
+            <div className="header-icon">
+              <FileText size={20} />
+            </div>
+            <div className="header-content">
+              <h3>Resources</h3>
+            </div>
+          </div>
+          <div className="card-content">
+            <div className="resource-list">
+              <Link to="/applicant/resources/faq" className="resource-item">
+                <h4>Frequently Asked Questions</h4>
+                <p>Find answers to common questions about the application process.</p>
+              </Link>
+              <Link to="/applicant/resources/tips" className="resource-item">
+                <h4>Application Tips</h4>
+                <p>Get tips on how to improve your application and stand out.</p>
+              </Link>
+              <Link to="/applicant/resources/requirements" className="resource-item">
+                <h4>Program Requirements</h4>
+                <p>Learn about the requirements for different programs.</p>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-actions">
+        <Link to="/applicant/programs" className="action-button primary">
+          <Briefcase size={16} className="icon-inline" /> Apply for a Program
+        </Link>
+      </div>
+    </div>
+  );
 };
 
 export default ApplicantDashboard;

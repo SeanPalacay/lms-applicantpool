@@ -1,0 +1,499 @@
+/* src/pages/trainer/milestones/styles/MilestoneDetails.css */
+
+.milestone-details-container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  /* Back Navigation */
+  .back-navigation {
+    margin-bottom: 20px;
+  }
+  
+  .back-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #007bff;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s;
+  }
+  
+  .back-link:hover {
+    color: #0056b3;
+  }
+  
+  /* Card Styles */
+  .card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+    border-radius: 8px 8px 0 0;
+    color: white;
+  }
+  
+  .gradient-purple { background: linear-gradient(135deg, #6f42c1, #4a00e0); }
+  .gradient-indigo { background: linear-gradient(135deg, #6610f2, #3d0066); }
+  .gradient-teal { background: linear-gradient(135deg, #20c997, #0d8f68); }
+  .gradient-amber { background: linear-gradient(135deg, #f5a623, #d97706); }
+  
+  .header-icon {
+    color: white;
+  }
+  
+  .header-content h3 {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  
+  .card-content {
+    padding: 20px;
+  }
+  
+  /* Milestone Header Card */
+  .milestone-header-card {
+    padding: 0;
+  }
+  
+  .milestone-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+  }
+  
+  .milestone-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    color: white;
+  }
+  
+  .milestone-title {
+    flex: 1;
+  }
+  
+  .milestone-title h2 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin: 0 0 5px;
+  }
+  
+  .milestone-subtitle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .milestone-subtitle svg {
+    margin-right: 5px;
+  }
+  
+  .milestone-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-edit,
+  .btn-delete,
+  .btn-assign {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-edit {
+    background: #007bff;
+  }
+  
+  .btn-edit:hover {
+    background: #0056b3;
+  }
+  
+  .btn-delete {
+    background: #dc3545;
+  }
+  
+  .btn-delete:hover {
+    background: #c82333;
+  }
+  
+  .btn-assign {
+    background: #20c997;
+  }
+  
+  .btn-assign:hover {
+    background: #0d8f68;
+  }
+  
+  /* Delete Confirmation Modal */
+  .delete-confirmation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .delete-confirmation-modal {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .delete-confirmation-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .warning-icon {
+    color: #dc3545;
+  }
+  
+  .delete-confirmation-header h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 0;
+  }
+  
+  .delete-confirmation-modal p {
+    font-size: 1rem;
+    color: #666;
+    margin: 0 0 10px;
+  }
+  
+  .delete-warning {
+    color: #dc3545;
+    font-weight: 500;
+  }
+  
+  .delete-confirmation-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .btn-cancel,
+  .btn-confirm-delete {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-cancel {
+    background: #6c757d;
+    color: white;
+  }
+  
+  .btn-cancel:hover:not(:disabled) {
+    background: #5a6268;
+  }
+  
+  .btn-confirm-delete {
+    background: #dc3545;
+    color: white;
+  }
+  
+  .btn-confirm-delete:hover:not(:disabled) {
+    background: #c82333;
+  }
+  
+  .btn-cancel:disabled,
+  .btn-confirm-delete:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .icon-spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Milestone Details Grid */
+  .milestone-details-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+  }
+  
+  .milestone-description-card {
+    grid-column: span 2;
+  }
+  
+  /* Description Card */
+  .milestone-description {
+    font-size: 1rem;
+    color: #666;
+    margin: 0;
+  }
+  
+  .milestone-no-description {
+    font-size: 1rem;
+    color: #888;
+    font-style: italic;
+    margin: 0;
+  }
+  
+  /* Trainees Card */
+  .trainees-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .trainee-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+  }
+  
+  .trainee-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e9ecef;
+    color: #666;
+  }
+  
+  .trainee-info {
+    flex: 1;
+  }
+  
+  .trainee-name {
+    font-size: 1rem;
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .trainee-name:hover {
+    text-decoration: underline;
+  }
+  
+  .trainee-status {
+    font-size: 0.9rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+  }
+  
+  .status-completed { background: #d4edda; color: #155724; }
+  .status-in-progress { background: #cce5ff; color: #004085; }
+  .status-not-started { background: #f8d7da; color: #721c24; }
+  
+  .trainee-completion {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .completion-badge,
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+  }
+  
+  .completion-badge {
+    background: #d4edda;
+    color: #155724;
+  }
+  
+  .status-badge svg {
+    color: #666;
+  }
+  
+  .no-trainees-message {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+  }
+  
+  .no-trainees-message svg {
+    margin-bottom: 10px;
+  }
+  
+  /* Progress Summary Card */
+  .progress-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .progress-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+  }
+  
+  .progress-metric {
+    text-align: center;
+  }
+
+  
+  .metric-label {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .progress-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .chart-title {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .chart-container {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .circular-chart {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .circle-bg {
+    fill: none;
+    stroke: #e9ecef;
+    stroke-width: 2.8;
+  }
+  
+  .circle {
+    fill: none;
+    stroke: #007bff;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.3s;
+  }
+  
+  .percentage {
+    fill: #333;
+    font-size: 0.5em;
+    text-anchor: middle;
+  }
+  
+  .no-progress-data {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+  }
+  
+  .no-progress-data svg {
+    margin-bottom: 10px;
+  }
+  
+  /* Animation */
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .milestone-details-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .milestone-description-card {
+      grid-column: span 1;
+    }
+  
+    .milestone-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  
+    .milestone-actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+  
+    .delete-confirmation-modal {
+      margin: 0 15px;
+    }
+  
+    .trainee-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .milestone-details-container {
+      padding: 10px;
+    }
+  
+    .milestone-title h2 {
+      font-size: 1.5rem;
+    }
+  
+    .btn-edit,
+    .btn-delete,
+    .btn-assign {
+      padding: 6px 12px;
+      font-size: 0.9rem;
+    }
+  
+    .delete-confirmation-actions {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .btn-cancel,
+    .btn-confirm-delete {
+      width: 100%;
+      justify-content: center;
+    }
+  }

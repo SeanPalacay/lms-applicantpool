@@ -1,0 +1,215 @@
+/* User Form Container */
+.user-form-container {
+    font-family: var(--primary-font);
+    background-color: var(--color-background);
+    padding: 1.5rem;
+    color: var(--color-text-primary);
+  }
+  
+  /* Page Header */
+  .page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+  }
+  
+  .back-button {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-default);
+  }
+  
+  .back-button:hover {
+    background-color: rgba(100, 116, 139, 0.1);
+    color: var(--color-text-primary);
+  }
+  
+  .back-button .icon-inline {
+    margin-right: 0.5rem;
+  }
+  
+  .page-header h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin: 0 0 0 1rem;
+    color: var(--color-text-primary);
+    letter-spacing: -0.025em;
+  }
+  
+  /* Form Card */
+  .user-form-card {
+    background-color: var(--color-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    transition: var(--transition-default);
+  }
+  
+  .user-form-card:hover {
+    box-shadow: var(--shadow-md);
+  }
+  
+  /* Form Styles */
+  .user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-group label .icon-inline {
+    margin-right: 0.5rem;
+    color: #4361ee;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    color: var(--color-text-primary);
+    background-color: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: #4361ee;
+    box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+    outline: none;
+  }
+  
+  .form-group input.error {
+    border-color: #ef4444;
+  }
+  
+  .error-message {
+    display: flex;
+    align-items: center;
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+  
+  .error-message .icon-inline {
+    margin-right: 0.25rem;
+  }
+  
+  /* Form Row for Side-by-Side Fields */
+  .form-row {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .form-row .form-group {
+    flex: 1;
+  }
+  
+  /* Form Actions */
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .button {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    transition: var(--transition-default);
+    cursor: pointer;
+  }
+  
+  .cancel-button {
+    background-color: rgba(100, 116, 139, 0.1);
+    color: var(--color-text-secondary);
+    border: none;
+  }
+  
+  .cancel-button:hover {
+    background-color: rgba(100, 116, 139, 0.15);
+  }
+  
+  .submit-button {
+    background: linear-gradient(135deg, #4361ee, #3a0ca3);
+    color: white;
+    border: none;
+  }
+  
+  .submit-button:hover {
+    background: linear-gradient(135deg, #3a56d4, #330b8f);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+  }
+  
+  .submit-button:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .user-form-container {
+      padding: 1rem;
+    }
+  
+    .page-header h1 {
+      font-size: 1.625rem;
+    }
+  
+    .form-row {
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  
+    .page-header h1 {
+      font-size: 1.5rem;
+      margin-left: 0;
+    }
+  
+    .form-actions {
+      flex-direction: column;
+    }
+  
+    .button {
+      width: 100%;
+    }
+  }

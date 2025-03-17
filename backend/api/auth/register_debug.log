@@ -26,3 +26,7 @@
 [2025-03-10 08:09:01] Database connection successful
 [2025-03-10 08:09:01] Raw request data {"first_name":"admin2","last_name":"admin2","email":"admin2@gmail.com","username":"admin2","password":"test123123","role":"administrator","full_name":"admin2 admin2"}
 [2025-03-10 08:09:01] User registered successfully {"id":"11","username":"admin2","role":"administrator"}
+[2025-03-14 16:17:21] Registration request received
+[2025-03-14 16:17:21] Database connection successful
+[2025-03-14 16:17:21] Raw request data {"first_name":"admin1","last_name":"admin1","email":"admin1@gmail.com","username":"admin1","password":"test123123","role":"administrator","full_name":"admin1 admin1"}
+[2025-03-14 16:17:21] User registered successfully {"id":"5","username":"admin1","role":"administrator"}

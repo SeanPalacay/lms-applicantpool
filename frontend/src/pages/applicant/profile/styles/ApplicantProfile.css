@@ -1,0 +1,405 @@
+/* ApplicantProfile.css */
+
+.applicant-profile-container {
+    padding: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+  
+  .success-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .success-message svg {
+    color: #2e7d32;
+  }
+  
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .profile-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  
+  
+  .profile-form,
+  .background-form,
+  .password-form {
+    padding: 1.5rem;
+  }
+  
+  .form-row {
+    margin-bottom: 1.25rem;
+  }
+  
+  .form-row:last-child {
+    margin-bottom: 0;
+  }
+  
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  
+  .form-group:last-child {
+    margin-bottom: 0;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: #3f51b5;
+    box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
+  }
+  
+  .form-control.disabled {
+    background-color: #f5f7fa;
+    cursor: not-allowed;
+  }
+  
+  .form-control.error {
+    border-color: #f44336;
+  }
+  
+  textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  .input-icon-wrapper {
+    position: relative;
+  }
+  
+  .input-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+  }
+  
+  .input-icon-wrapper .form-control {
+    padding-left: 2.5rem;
+  }
+  
+  .input-hint {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #666;
+  }
+  
+  .input-error {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #f44336;
+  }
+  
+  .password-input-wrapper {
+    position: relative;
+  }
+  
+  .toggle-password {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .btn-primary:hover {
+    background-color: #303f9f;
+  }
+  
+  .btn-primary:disabled {
+    background-color: #bdbdbd;
+    cursor: not-allowed;
+  }
+  
+  .spinner-icon {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .account-details {
+    padding: 1.5rem;
+  }
+  
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+  
+  .detail-label {
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .detail-value {
+    color: #333;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  
+  .status-badge.active {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  .status-badge.inactive {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+  
+  .status-badge.status-pending {
+    background-color: #ffecb3;
+    color: #ff8f00;
+  }
+  
+  .status-badge.status-shortlisted {
+    background-color: #e0f7fa;
+    color: #0097a7;
+  }
+  
+  .status-badge.status-hired {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  .status-badge.status-rejected {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+  
+  .activity-list,
+  .applications-list {
+    padding: 1.5rem;
+  }
+  
+  .no-activity,
+  .no-applications {
+    padding: 1.5rem;
+    text-align: center;
+    color: #666;
+  }
+  
+  .activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .activity-item:last-child {
+    border-bottom: none;
+  }
+  
+  .activity-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f7fa;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  
+  .activity-icon.login {
+    color: #3f51b5;
+  }
+  
+  .activity-icon.logout {
+    color: #f44336;
+  }
+  
+  .activity-icon.attendance {
+    color: #4caf50;
+  }
+  
+  .activity-details {
+    flex: 1;
+  }
+  
+  .activity-message {
+    margin-bottom: 0.25rem;
+    color: #333;
+  }
+  
+  .activity-time {
+    font-size: 0.85rem;
+    color: #666;
+  }
+  
+  .application-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .application-item:last-child {
+    border-bottom: none;
+  }
+  
+  .application-content {
+    flex: 1;
+  }
+  
+  .application-title {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    color: #333;
+  }
+  
+  .application-role {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    color: #555;
+  }
+  
+  .application-date {
+    font-size: 0.85rem;
+    color: #666;
+  }
+  
+  .application-status {
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: center;
+  }
+  
+  .profile-loading,
+  .profile-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    text-align: center;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(63, 81, 181, 0.2);
+    border-radius: 50%;
+    border-top-color: #3f51b5;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 1rem;
+  }
+  
+  .error-icon {
+    color: #f44336;
+    margin-bottom: 1rem;
+  }
+  
+  .retry-btn {
+    margin-top: 1rem;
+  }
+  
+  /* Media Queries */
+  @media (min-width: 768px) {
+    .profile-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .profile-card.recent-activity,
+    .profile-card.recent-applications {
+      grid-column: span 2;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .profile-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .profile-card.recent-activity,
+    .profile-card.recent-applications {
+      grid-column: span 3;
+    }
+  }

@@ -1,0 +1,440 @@
+/* src/pages/admin/incidents/details/IncidentDetails.css */
+
+.incident-details-container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  /* Section Header */
+  .section-header {
+    margin-bottom: 30px;
+  }
+  
+  .section-header h1 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin: 0;
+  }
+  
+  .header-line {
+    height: 3px;
+    width: 60px;
+    background: #007bff;
+    margin-top: 5px;
+    border-radius: 2px;
+  }
+  
+  /* Back Link */
+  .back-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #007bff;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+    margin-bottom: 20px;
+  }
+  
+  .back-link:hover {
+    background-color: #f0f0f0;
+  }
+  
+  /* Incident Content */
+  .incident-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .incident-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+
+  
+  .header-icon {
+    margin-right: 10px;
+  }
+  
+  .header-content h3 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  
+  .card-content {
+    padding: 20px;
+  }
+  
+  /* Incident Header */
+  .incident-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .incident-title-section {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .incident-type-badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .type-quiz { background: #cce5ff; color: #004085; }
+  .type-policy { background: #f8d7da; color: #721c24; }
+  .type-other { background: #fff3cd; color: #856404; }
+  
+  .incident-date-time {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #666;
+  }
+  
+  .incident-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .delete-confirmation {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+  }
+  
+  .confirm-yes, .confirm-no {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .confirm-yes {
+    background: #dc3545;
+    color: white;
+  }
+  
+  .confirm-no {
+    background: #6c757d;
+    color: white;
+  }
+  
+  /* Action Buttons */
+  .action-button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  
+  .action-button.secondary {
+    background: #6c757d;
+    color: white;
+  }
+  
+  .action-button.secondary:hover {
+    background: #545b62;
+  }
+  
+  .action-button.danger {
+    background: #dc3545;
+    color: white;
+  }
+  
+  .action-button.danger:hover {
+    background: #c82333;
+  }
+  
+  /* Incident Details */
+  .incident-details {
+    margin-bottom: 20px;
+  }
+  
+  .incident-details h4 {
+    color: #333;
+    margin: 0 0 10px;
+  }
+  
+  .incident-description {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+  
+  .incident-description p {
+    margin: 0;
+    color: #666;
+  }
+  
+  .incident-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .info-card {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+  }
+  
+
+  
+  .info-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .trainee-details,
+  .reporter-details {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .trainee-avatar,
+  .reporter-avatar,
+  .author-avatar {
+    width: 36px;
+    height: 36px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  
+  .reporter-avatar {
+    background: #6c757d;
+  }
+  
+  .trainee-meta,
+  .reporter-meta {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .trainee-name,
+  .reporter-name {
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .view-trainee-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  
+  .view-trainee-link:hover {
+    text-decoration: underline;
+  }
+  
+  .reporter-role {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .report-timestamp {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .other-incidents-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .other-incidents-header h5 {
+    margin: 0;
+    color: #333;
+  }
+  
+  .related-incidents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .related-incident {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .incident-badge {
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+  }
+  
+  .related-incident-date {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .no-related-incidents {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  /* Incident Notes */
+  .incident-notes {
+    margin-top: 20px;
+  }
+  
+  .notes-header h4 {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #333;
+    margin: 0 0 15px;
+  }
+  
+  .notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .note-item {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+  }
+  
+  .note-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .author-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .author-name {
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .note-date {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .note-content p {
+    margin: 0;
+    color: #666;
+  }
+  
+  .no-notes {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+  }
+  
+  .add-note {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .add-note-input textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+  
+  .add-note-input textarea:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  
+  .add-note-button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .add-note-button:hover:not(:disabled) {
+    background: #0056b3;
+  }
+  
+  .add-note-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .incident-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .incident-actions {
+      justify-content: flex-end;
+    }
+  
+    .incident-info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .incident-details-container {
+      padding: 10px;
+    }
+  
+    .section-header h1 {
+      font-size: 1.5rem;
+    }
+  
+    .action-button,
+    .add-note-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }

@@ -1,0 +1,25 @@
+/* src/components/admin/tasks/styles/TaskDetail.css */
+.task-detail {
+    padding: 20px;
+}
+
+.section-header h2 {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.icon-inline {
+    margin-right: 8px;
+}
+
+.task-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-content h3 {
+    margin-top: 0;
+}

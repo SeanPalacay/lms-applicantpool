@@ -1,3 +1,35 @@
+:root {
+    --primary-color: #1E88E5;
+    --primary-dark: #1565C0;
+    --primary-light: #64B5F6;
+    --accent-color: #2ec4b6;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --text-primary: #333;
+    --text-secondary: #64748b;
+    --text-tertiary: #94a3b8;
+    --card-bg: #ffffff;
+    --background-light: #f8fafc;
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 .register-container {
     display: flex;
     height: 100vh;
@@ -5,7 +37,7 @@
 }
 
 .register-image-section {
-    flex: 1;
+    flex: 1.2;
     background: url('https://jmhfi.com/wp-content/uploads/2021/06/Micro-Facade1.png') no-repeat center;
     background-size: cover;
     background-position: center;
@@ -18,61 +50,163 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(30, 136, 229, 0.6));
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     padding: 0 20px;
+    backdrop-filter: blur(1px);
 }
 
 .register-title {
     color: white;
-    font-size: 2.5rem;
+    font-size: 3rem;
     text-align: center;
     margin-bottom: 20px;
     line-height: 1.2;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 .register-title-highlight {
-    color: #3498db;
-    font-weight: bold;
+    color: var(--accent-color);
+    font-weight: 800;
+    position: relative;
+    display: inline-block;
+}
+
+.register-title-highlight::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: var(--primary-light);
+    border-radius: 2px;
 }
 
 .register-form-section {
-    flex: 1;
-    padding: 40px;
+    flex: 0.8;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background-color: #f9f9f9;
+    align-items: center;
+    background-color: var(--background-light);
     overflow-y: auto;
+    position: relative;
+}
+
+.register-form-wrapper {
+    width: 100%;
+    max-width: 500px;
+    padding: 30px 25px;
+    margin: 0 auto;
 }
 
 .register-logo-container {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .register-logo {
-    max-width: 150px;
+    max-width: 140px;
     height: auto;
+    transition: transform 0.3s ease;
+}
+
+.register-logo:hover {
+    transform: scale(1.05);
 }
 
 .register-heading {
     text-align: center;
-    margin-bottom: 30px;
-    color: #333;
-    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
-.register-form-container {
-    max-width: 500px;
-    margin: 0 auto;
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+.register-subheading {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+}
+
+/* Progress indicator */
+.register-progress {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding: 0 10px;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    transition: var(--transition);
+}
+
+.step-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.progress-step.active .step-number {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.progress-step.active .step-label {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.progress-line {
+    flex: 1;
+    height: 3px;
+    background-color: #e2e8f0;
+    position: relative;
+    margin: 0 8px;
+    margin-bottom: 25px;
+}
+
+.progress-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.register-form {
+    margin-bottom: 20px;
 }
 
 .register-input-row {
@@ -81,123 +215,348 @@
     margin-bottom: 15px;
 }
 
+.register-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
 .register-input-container {
-    position: relative;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     width: 100%;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .register-input {
     width: 100%;
     padding: 12px 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    font-size: 0.95rem;
+    transition: var(--transition);
+    background-color: white;
+    color: var(--text-primary);
+}
+
+.register-input[type="text"],
+.register-input[type="email"] {
     padding-left: 40px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
 }
 
 .register-input:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.15);
+}
+
+.register-input::placeholder {
+    color: var(--text-tertiary);
 }
 
 .register-input-icon {
     position: absolute;
     left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #999;
+    color: var(--text-tertiary);
+    z-index: 1;
 }
 
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+    color: var(--text-secondary);
+}
+
+/* Password strength indicator */
+.password-strength {
+    margin-top: 8px;
+}
+
+.strength-bar {
+    height: 6px;
+    background-color: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.strength-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-text {
+    font-size: 0.8rem;
+    display: block;
+}
+
+.password-mismatch {
+    color: var(--danger-color);
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+/* Role selection cards */
 .register-role-container {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .register-role-label {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
+    font-size: 0.95rem;
 }
 
 .register-role-options {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
 }
 
-.register-role-option {
+.role-card {
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+}
+
+.role-card:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.role-card.selected {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.2);
+}
+
+.role-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    flex-shrink: 0;
+    color: white;
+    font-size: 1.1rem;
+}
+
+.admin-icon {
+    background: linear-gradient(135deg, #4361ee, #3a0ca3);
+}
+
+.trainer-icon {
+    background: linear-gradient(135deg, #7209b7, #560bad);
+}
+
+.trainee-icon {
+    background: linear-gradient(135deg, #2ec4b6, #0db39e);
+}
+
+.applicant-icon {
+    background: linear-gradient(135deg, #fb8500, #ffb703);
+}
+
+.role-info {
+    flex-grow: 1;
+}
+
+.role-info h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 3px;
+    color: var(--text-primary);
+}
+
+.role-info p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.role-select {
+    position: relative;
+}
+
+.role-select input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkmark {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.role-card.selected .checkmark {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+}
+
+.role-card.selected .checkmark::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: white;
+}
+
+/* Error and success messages */
+.register-error, 
+.register-success {
+    padding: 12px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.register-role-option input[type="radio"] {
-    accent-color: #3498db;
-}
-
-.register-role-option label {
-    cursor: pointer;
-}
-
 .register-error {
-    background-color: #ffebee;
-    color: #f44336;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    text-align: center;
+    background-color: rgba(231, 76, 60, 0.1);
+    color: var(--danger-color);
 }
 
 .register-success {
-    background-color: #e8f5e9;
-    color: #4caf50;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    text-align: center;
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--success-color);
+}
+
+.register-error i,
+.register-success i {
+    font-size: 1rem;
+}
+
+/* Form navigation buttons */
+.form-navigation {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.register-back-button,
+.register-next-button,
+.register-submit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.register-back-button {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid #e2e8f0;
+}
+
+.register-back-button:hover {
+    background-color: #f1f5f9;
+    color: var(--text-primary);
+}
+
+.register-next-button,
+.register-submit-button {
+    background-color: var(--primary-color);
+    color: white;
+    flex-grow: 1;
+}
+
+.register-next-button:hover,
+.register-submit-button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.register-next-button:active,
+.register-submit-button:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.register-next-button:disabled,
+.register-submit-button:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.loading-spinner {
+    animation: spin 1s linear infinite;
+    color: white;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .register-footer {
     text-align: center;
-    margin-bottom: 20px;
-    color: #666;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 20px;
 }
 
 .register-link {
-    color: #3498db;
+    color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
+    transition: color 0.2s ease;
 }
 
 .register-link:hover {
+    color: var(--primary-dark);
     text-decoration: underline;
-}
-
-.register-button {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    background-color: #3498db;
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.register-button:hover {
-    background-color: #2980b9;
-}
-
-.register-button:disabled {
-    background-color: #95a5a6;
-    cursor: not-allowed;
 }
 
 /* Responsive styles */
@@ -207,15 +566,79 @@
     }
 
     .register-image-section {
-        height: 200px;
+        flex: 0 0 220px;
     }
 
     .register-form-section {
-        padding: 20px;
+        flex: 1;
     }
 
+    .register-form-wrapper {
+        padding: 25px 20px;
+    }
+
+    .register-title {
+        font-size: 2.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .register-form-wrapper {
+        max-width: 100%;
+    }
+    
+    .register-role-options {
+        grid-template-columns: 1fr;
+    }
+    
     .register-input-row {
         flex-direction: column;
         gap: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-progress {
+        flex-direction: column;
+        gap: 20px;
+        position: relative;
+        align-items: flex-start;
+        margin-left: 10px;
+    }
+    
+    .progress-line {
+        position: absolute;
+        left: 16px;
+        width: 3px;
+        height: calc(100% - 40px);
+        margin: 0;
+        top: 20px;
+    }
+    
+    .progress-step {
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .step-number {
+        margin-bottom: 0;
+        margin-right: 10px;
+    }
+    
+    .register-title {
+        font-size: 1.8rem;
+    }
+    
+    .register-heading {
+        font-size: 1.5rem;
+    }
+    
+    .form-navigation {
+        flex-direction: column;
+    }
+    
+    .register-back-button {
+        order: 2;
     }
 }

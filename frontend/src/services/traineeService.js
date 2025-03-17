@@ -1,366 +1,606 @@
-// Get API base URL from environment variables
+// traineeService.js
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
-// Helper function to check token expiration (optional - implement if needed)
 const isTokenExpired = () => {
     const loginTime = localStorage.getItem('loginTime');
     if (!loginTime) return true;
-    
-    // Set token expiration to 24 hours
     const expirationTime = new Date(loginTime).getTime() + (24 * 60 * 60 * 1000);
     return new Date().getTime() > expirationTime;
 };
 
 const traineeService = {
-    // Get dashboard data for trainee
     getDashboardData: async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            throw new Error('No token found. Please log in again.');
+        }
+
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Session expired. Please log in again.');
+        }
+
+        const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/dashboard.php`;
+
         try {
-            // Get authentication token from localStorage
-            const authToken = localStorage.getItem('authToken');
-            
-            if (!authToken) {
-                throw new Error('Authentication required. Please login again.');
-            }
-            
-            // Optional: Check token expiration
-            if (isTokenExpired()) {
-                localStorage.removeItem('authToken');
-                throw new Error('Your session has expired. Please login again.');
-            }
-            
-            const response = await fetch(`${API_BASE_URL}/lms-forbes/backend/api/trainee/dashboard.php`, {
+            const response = await fetch(endpoint, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
-            
-            // Check for HTTP errors
+
             if (!response.ok) {
                 if (response.status === 401) {
-                    // Clear invalid token
                     localStorage.removeItem('authToken');
                     throw new Error('Authentication failed. Please login again.');
                 }
-                
-                throw new Error(`HTTP error: ${response.status} - ${response.statusText}`);
+                const errorText = await response.text();
+                throw new Error(`HTTP error: ${response.status} - ${errorText}`);
             }
-            
-            return await response.json();
+
+            const data = await response.json();
+            return data;
         } catch (error) {
-            console.error('Error in getDashboardData:', error);
+            console.error('Error in traineeService.getDashboardData:', error);
             throw error;
         }
     },
     
-    // Get enrolled programs for trainee
-    getEnrolledPrograms: async () => {
+    // Get all programs for the trainee
+    getPrograms: async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            throw new Error('No token found. Please log in again.');
+        }
+
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Session expired. Please log in again.');
+        }
+
+        const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/programs.php`;
+
         try {
-            const authToken = localStorage.getItem('authToken');
-            
-            if (!authToken) {
-                throw new Error('Authentication required. Please login again.');
-            }
-            
-            const response = await fetch(`${API_BASE_URL}/lms-forbes/backend/api/trainee/programs.php`, {
+            const response = await fetch(endpoint, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
-            
+
             if (!response.ok) {
-                throw new Error(`Failed to fetch programs: ${response.status} ${response.statusText}`);
+                if (response.status === 401) {
+                    localStorage.removeItem('authToken');
+                    throw new Error('Authentication failed. Please login again.');
+                }
+                const errorText = await response.text();
+                throw new Error(`HTTP error: ${response.status} - ${errorText}`);
             }
-            
-            return await response.json();
+
+            const data = await response.json();
+            return data;
         } catch (error) {
-            console.error('Error in getEnrolledPrograms:', error);
+            console.error('Error in traineeService.getPrograms:', error);
             throw error;
         }
     },
     
-    // Get program details by ID
+    // Get a specific program by ID
     getProgramDetails: async (programId) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            throw new Error('No token found. Please log in again.');
+        }
+
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Session expired. Please log in again.');
+        }
+
+        const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/program_details.php?programId=${programId}`;
+
         try {
-            const authToken = localStorage.getItem('authToken');
-            
-            if (!authToken) {
-                throw new Error('Authentication required. Please login again.');
-            }
-            
-            const response = await fetch(`${API_BASE_URL}/lms-forbes/backend/api/trainee/programs.php?id=${programId}`, {
+            const response = await fetch(endpoint, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
-            
+
             if (!response.ok) {
-                throw new Error(`Failed to fetch program details: ${response.status} ${response.statusText}`);
+                if (response.status === 401) {
+                    localStorage.removeItem('authToken');
+                    throw new Error('Authentication failed. Please login again.');
+                }
+                const errorText = await response.text();
+                throw new Error(`HTTP error: ${response.status} - ${errorText}`);
             }
-            
-            return await response.json();
+
+            const data = await response.json();
+            return data;
         } catch (error) {
-            console.error('Error in getProgramDetails:', error);
+            console.error('Error in traineeService.getProgramDetails:', error);
             throw error;
         }
     },
     
-    // Get available quizzes
-    getQuizzes: async () => {
+    // Get milestones for a program
+    getProgramMilestones: async (programId) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            throw new Error('No token found. Please log in again.');
+        }
+
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Session expired. Please log in again.');
+        }
+
+        const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/milestones.php?programId=${programId}`;
+
         try {
-            const authToken = localStorage.getItem('authToken');
-            
-            if (!authToken) {
-                throw new Error('Authentication required. Please login again.');
-            }
-            
-            const response = await fetch(`${API_BASE_URL}/lms-forbes/backend/api/trainee/quizzes.php`, {
+            const response = await fetch(endpoint, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
-            
+
             if (!response.ok) {
-                throw new Error(`Failed to fetch quizzes: ${response.status} ${response.statusText}`);
-            }
-            
-            return await response.json();
-        } catch (error) {
-            console.error('Error in getQuizzes:', error);
-            throw error;
-        }
-    },
-    
-    // Get quiz details by ID
-    getQuizDetails: async (quizId) => {
-        try {
-            const authToken = localStorage.getItem('authToken');
-            
-            if (!authToken) {
-                throw new Error('Authentication required. Please login again.');
-            }
-            
-            const response = await fetch(`${API_BASE_URL}/lms-forbes/backend/api/trainee/quizzes.php?id=${quizId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                if (response.status === 401) {
+                    localStorage.removeItem('authToken');
+                    throw new Error('Authentication failed. Please login again.');
                 }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch quiz details: ${response.status} ${response.statusText}`);
+                const errorText = await response.text();
+                throw new Error(`HTTP error: ${response.status} - ${errorText}`);
             }
-            
-            return await response.json();
+
+            const data = await response.json();
+            return data;
         } catch (error) {
-            console.error('Error in getQuizDetails:', error);
-            throw error;
-        }
-    },
-    
-    // Submit a quiz attempt
-    submitQuizAttempt: async (quizId, answers) => {
-        try {
-            const authToken = localStorage.getItem('authToken');
-            
-            if (!authToken) {
-                throw new Error('Authentication required. Please login again.');
-            }
-            
-            const response = await fetch(`${API_BASE_URL}/lms-forbes/backend/api/trainee/quiz-submit.php`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
-                },
-                body: JSON.stringify({
-                    quiz_id: quizId,
-                    answers: answers
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Failed to submit quiz: ${response.status} ${response.statusText}`);
-            }
-            
-            return await response.json();
-        } catch (error) {
-            console.error('Error in submitQuizAttempt:', error);
-            throw error;
-        }
-    },
-    
-    // Get quiz result details
-    getQuizResult: async (attemptId) => {
-        try {
-            const authToken = localStorage.getItem('authToken');
-            
-            if (!authToken) {
-                throw new Error('Authentication required. Please login again.');
-            }
-            
-            const response = await fetch(`${API_BASE_URL}/lms-forbes/backend/api/trainee/quiz-results.php?attempt_id=${attemptId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch quiz result: ${response.status} ${response.statusText}`);
-            }
-            
-            return await response.json();
-        } catch (error) {
-            console.error('Error in getQuizResult:', error);
-            throw error;
-        }
-    },
-    
-    // Get milestones
-    getMilestones: async () => {
-        try {
-            const authToken = localStorage.getItem('authToken');
-            
-            if (!authToken) {
-                throw new Error('Authentication required. Please login again.');
-            }
-            
-            const response = await fetch(`${API_BASE_URL}/lms-forbes/backend/api/trainee/milestones.php`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch milestones: ${response.status} ${response.statusText}`);
-            }
-            
-            return await response.json();
-        } catch (error) {
-            console.error('Error in getMilestones:', error);
+            console.error('Error in traineeService.getProgramMilestones:', error);
             throw error;
         }
     },
     
     // Update milestone progress
     updateMilestoneProgress: async (milestoneId, status) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            throw new Error('No token found. Please log in again.');
+        }
+
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Session expired. Please log in again.');
+        }
+
+        const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/update_milestone.php`;
+
         try {
-            const authToken = localStorage.getItem('authToken');
-            
-            if (!authToken) {
-                throw new Error('Authentication required. Please login again.');
-            }
-            
-            const response = await fetch(`${API_BASE_URL}/lms-forbes/backend/api/trainee/milestone-update.php`, {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     milestone_id: milestoneId,
                     status: status
                 })
             });
-            
+
             if (!response.ok) {
-                throw new Error(`Failed to update milestone: ${response.status} ${response.statusText}`);
+                if (response.status === 401) {
+                    localStorage.removeItem('authToken');
+                    throw new Error('Authentication failed. Please login again.');
+                }
+                const errorText = await response.text();
+                throw new Error(`HTTP error: ${response.status} - ${errorText}`);
             }
-            
-            return await response.json();
+
+            const data = await response.json();
+            return data;
         } catch (error) {
-            console.error('Error in updateMilestoneProgress:', error);
+            console.error('Error in traineeService.updateMilestoneProgress:', error);
             throw error;
         }
     },
-    
-    // Get user profile
-    getUserProfile: async () => {
-        try {
-            const authToken = localStorage.getItem('authToken');
-            
-            if (!authToken) {
-                throw new Error('Authentication required. Please login again.');
+
+    // Inside traineeService object, after getAssessments
+getQuizDetails: async (quizId) => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        throw new Error('No token found. Please log in again.');
+    }
+
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/take_quiz.php?quizId=${quizId}`;
+    console.log('Fetching quiz details from:', endpoint);
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
-            
-            const response = await fetch(`${API_BASE_URL}/lms-forbes/backend/api/trainee/profile.php`, {
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Quiz details fetch failed:', response.status, errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in traineeService.getQuizDetails:', error);
+        throw error;
+    }
+},
+
+submitQuiz: async (quizId, answers) => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        throw new Error('No token found. Please log in again.');
+    }
+
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/take_quiz.php`;
+    console.log('Submitting quiz to:', endpoint);
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ quiz_id: quizId, answers })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Quiz submission failed:', response.status, errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in traineeService.submitQuiz:', error);
+        throw error;
+    }
+},
+
+getQuizFeedback: async (quizId, attemptId) => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        throw new Error('No token found. Please log in again.');
+    }
+
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/quiz_feedback.php?quizId=${quizId}&attemptId=${attemptId}`;
+    console.log('Fetching quiz feedback from:', endpoint);
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Quiz feedback fetch failed:', response.status, errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in traineeService.getQuizFeedback:', error);
+        throw error;
+    }
+},
+
+downloadQuizFeedbackPDF: async (quizId, attemptId) => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        throw new Error('No token found. Please log in again.');
+    }
+
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/quiz_feedback.php?quizId=${quizId}&attemptId=${attemptId}&format=pdf`;
+    console.log('Downloading quiz feedback PDF from:', endpoint);
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('PDF download failed:', response.status, errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+
+        const blob = await response.blob();
+        return blob;
+    } catch (error) {
+        console.error('Error in traineeService.downloadQuizFeedbackPDF:', error);
+        throw error;
+    }
+},
+
+    // Add this inside the traineeService object
+getAssessments: async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        throw new Error('No token found. Please log in again.');
+    }
+
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/assessments.php`;
+    console.log('Fetching assessments from:', endpoint); // Debug
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Assessments fetch failed:', response.status, errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in traineeService.getAssessments:', error);
+        throw error;
+    }
+},
+
+// Add after getProgramQuizzes
+getTraineeQuizAttempts: async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token) throw new Error('No token found. Please log in again.');
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/quiz_attempts.php`;
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            const errorText = await response.text();
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error in traineeService.getTraineeQuizAttempts:', error);
+        throw error;
+    }
+},
+
+getTraineeMilestones: async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token) throw new Error('No token found. Please log in again.');
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/milestone_progress.php`;
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            const errorText = await response.text();
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error in traineeService.getTraineeMilestones:', error);
+        throw error;
+    }
+},
+
+exportProgressPDF: async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token) throw new Error('No token found. Please log in again.');
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/progress_export.php`;
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            const errorText = await response.text();
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+        return await response.blob();
+    } catch (error) {
+        console.error('Error in traineeService.exportProgressPDF:', error);
+        throw error;
+    }
+},
+    
+    // Get quizzes for a program
+    getProgramQuizzes: async (programId) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            throw new Error('No token found. Please log in again.');
+        }
+    
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Session expired. Please log in again.');
+        }
+    
+        const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/quizzes.php?programId=${programId}`;
+    
+        try {
+            const response = await fetch(endpoint, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
-            
+    
             if (!response.ok) {
-                throw new Error(`Failed to fetch profile: ${response.status} ${response.statusText}`);
+                if (response.status === 401) {
+                    localStorage.removeItem('authToken');
+                    throw new Error('Authentication failed. Please login again.');
+                }
+                const errorText = await response.text();
+                throw new Error(`HTTP error: ${response.status} - ${errorText}`);
             }
-            
-            return await response.json();
+    
+            const data = await response.json();
+            return data;
         } catch (error) {
-            console.error('Error in getUserProfile:', error);
+            console.error('Error in traineeService.getProgramQuizzes:', error);
             throw error;
         }
     },
-    
-    // Update user profile
-    updateUserProfile: async (profileData) => {
-        try {
-            const authToken = localStorage.getItem('authToken');
-            
-            if (!authToken) {
-                throw new Error('Authentication required. Please login again.');
+// Add this to traineeService.js
+getCertificates: async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        throw new Error('No token found. Please log in again.');
+    }
+
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/certificates.php`;
+    console.log('Fetching certificates from:', endpoint);
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
-            
-            const response = await fetch(`${API_BASE_URL}/lms-forbes/backend/api/trainee/profile-update.php`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
-                },
-                body: JSON.stringify(profileData)
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Failed to update profile: ${response.status} ${response.statusText}`);
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Certificates fetch failed:', response.status, errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
             }
-            
-            return await response.json();
-        } catch (error) {
-            console.error('Error in updateUserProfile:', error);
-            throw error;
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
         }
-    },
-    
-    // Logout function
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in traineeService.getCertificates:', error);
+        throw error;
+    }
+},
     logout: () => {
         localStorage.removeItem('authToken');
         localStorage.removeItem('userRole');
         localStorage.removeItem('userName');
         localStorage.removeItem('loginTime');
-        
-        // Optionally make a logout API call if your backend tracks sessions
-        try {
-            fetch(`${API_BASE_URL}/lms-forbes/backend/api/auth/logout.php`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-        } catch (error) {
-            console.error('Error during logout:', error);
-        }
+        // Optionally POST to a logout endpoint
     }
 };
 

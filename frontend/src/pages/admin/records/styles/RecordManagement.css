@@ -1,0 +1,423 @@
+/* src/pages/admin/records/RecordManagement.css */
+
+.record-management-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Section Header */
+  .section-header {
+    margin-bottom: 30px;
+  }
+  
+  .section-header h1 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin: 0;
+  }
+  
+  .header-line {
+    height: 3px;
+    width: 60px;
+    background: #007bff;
+    margin-top: 5px;
+    border-radius: 2px;
+  }
+  
+  /* Records Actions */
+  .records-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .search-container {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    align-items: center;
+  }
+  
+  .search-input-wrapper {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+  }
+  
+  .search-icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #666;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 10px 10px 10px 35px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  
+  .clear-search {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+  }
+  
+  .filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .filter-toggle.active,
+  .filter-toggle:hover {
+    background: #f5f5f5;
+  }
+  
+  .button-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .bulk-actions {
+    position: relative;
+  }
+  
+  .bulk-actions-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 10;
+  }
+  
+  .bulk-actions-menu button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    color: #333;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 4px;
+  }
+  
+  .bulk-actions-menu button:hover {
+    background: #f0f0f0;
+  }
+  
+  .bulk-actions-menu .delete-action {
+    color: #dc3545;
+  }
+  
+  /* Filter Panel */
+  .filter-panel {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .filter-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .filter-group {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .filter-group label {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .filter-group select,
+  .filter-group input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .filter-actions {
+    display: flex;
+    align-items: flex-end;
+  }
+  
+  .reset-filters {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .reset-filters:hover {
+    background: #c82333;
+  }
+  
+  /* Records Table */
+  .records-table-container {
+    overflow-x: auto;
+  }
+  
+  .records-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .records-table th,
+  .records-table td {
+    padding: 12px 15px;
+    text-align: left;
+  }
+  
+  .records-table th {
+    background: #f8f9fa;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .records-table tr {
+    border-bottom: 1px solid #eee;
+  }
+  
+  .records-table tr:hover {
+    background: #f5f5f5;
+  }
+  
+  .checkbox-column {
+    width: 40px;
+    text-align: center;
+  }
+  
+  .actions-column {
+    width: 120px;
+    text-align: right;
+  }
+  
+  .record-description {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .record-description:hover {
+    text-decoration: underline;
+  }
+  
+  .record-type-badge {
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  
+  .type-training { background: #cce5ff; color: #004085; }
+  .type-applicant { background: #d4edda; color: #155724; }
+  .type-backup { background: #fff3cd; color: #856404; }
+  .type-other { background: #e2e3e5; color: #383d41; }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .user-avatar {
+    width: 24px;
+    height: 24px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .date-info {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #666;
+  }
+  
+  .record-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  
+  .action-icon {
+    color: #007bff;
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .action-icon:hover {
+    color: #0056b3;
+  }
+  
+  /* Action Button */
+  .action-button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+  
+  .action-button.primary {
+    background: #007bff;
+    color: white;
+  }
+  
+  .action-button.primary:hover {
+    background: #0056b3;
+  }
+  
+  .action-button.secondary {
+    background: #6c757d;
+    color: white;
+  }
+  
+  .action-button.secondary:hover {
+    background: #545b62;
+  }
+  
+  /* No Records State */
+  .no-records {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .no-records-icon {
+    color: #888;
+    margin-bottom: 15px;
+  }
+  
+  .no-records h3 {
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .no-records p {
+    color: #666;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .records-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .search-container {
+      flex-direction: column;
+    }
+  
+    .search-input-wrapper {
+      max-width: none;
+    }
+  
+    .filter-row {
+      flex-direction: column;
+    }
+  
+    .records-table th,
+    .records-table td {
+      font-size: 0.9rem;
+    }
+  
+    .actions-column {
+      width: 80px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .record-management-container {
+      padding: 10px;
+    }
+  
+    .section-header h1 {
+      font-size: 1.5rem;
+    }
+  
+    .records-table {
+      font-size: 0.8rem;
+    }
+  
+    .action-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }

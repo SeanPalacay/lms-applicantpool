@@ -1,0 +1,61 @@
+/* src/components/admin/activity/styles/ActivityLog.css */
+.activity-log {
+    padding: 20px;
+}
+
+.section-header h2 {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.icon-inline {
+    margin-right: 8px;
+}
+
+.activity-list {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+/* .activity-icon {
+    margin-right: 10px;
+    color: #4361ee;
+} */
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-text {
+    margin: 0;
+    font-size: 14px;
+}
+
+.activity-time {
+    font-size: 12px;
+    color: #888;
+    display: flex;
+    align-items: center;
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}

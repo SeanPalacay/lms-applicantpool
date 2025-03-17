@@ -1,0 +1,72 @@
+/* src/components/admin/system/styles/SystemHealth.css */
+.system-health {
+    padding: 20px;
+}
+
+.section-header h2 {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.icon-inline {
+    margin-right: 8px;
+}
+
+.health-metrics {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.health-metric {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.health-metric:last-child {
+    border-bottom: none;
+}
+
+.metric-info {
+    flex: 1;
+}
+
+.metric-label {
+    font-weight: 500;
+}
+
+
+.status-healthy {
+    color: #2dc653;
+}
+
+.status-warning {
+    color: #fb8500;
+}
+
+.status-error {
+    color: #ff0000;
+}
+
+.metric-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-left: 10px;
+}
+
+.healthy {
+    background-color: #2dc653;
+}
+
+.warning {
+    background-color: #fb8500;
+}
+
+.error {
+    background-color: #ff0000;
+}

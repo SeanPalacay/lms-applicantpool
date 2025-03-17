@@ -1,0 +1,474 @@
+/* Fixed TrainerProfile.css with improvements for the edit button */
+
+.trainer-profile-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 992px) {
+  .profile-grid {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  color: white;
+  position: relative; /* Add this to ensure proper positioning */
+}
+
+.header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
+.header-content {
+  flex: 1;
+}
+
+.header-content h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.header-actions {
+  display: flex;
+  position: relative; /* Ensure proper positioning */
+  z-index: 10; /* Make sure it's above other elements */
+}
+
+.gradient-indigo {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+}
+
+.gradient-rose {
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
+}
+
+.gradient-teal {
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+}
+
+.card-content {
+  padding: 20px;
+}
+
+/* Profile details */
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #4f46e5;
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.profile-avatar.large {
+  width: 120px;
+  height: 120px;
+  font-size: 3rem;
+}
+
+.profile-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.profile-role {
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.profile-info-list {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.profile-info-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.profile-info-item:last-child {
+  border-bottom: none;
+}
+
+.info-icon {
+  margin-right: 12px;
+  color: #4f46e5;
+}
+
+.profile-bio {
+  width: 100%;
+  text-align: left;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.profile-bio h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.profile-actions {
+  margin-top: 24px;
+}
+
+/* Form styles */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-group {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.required {
+  color: #e11d48;
+  margin-right: 2px;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #6b7280;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px 10px 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Improved edit button styling */
+.btn-edit-profile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  cursor: pointer !important; /* Force cursor to be pointer */
+  transition: background-color 0.2s;
+  position: relative; /* Ensure proper positioning */
+  z-index: 20; /* Higher z-index to ensure clickability */
+  pointer-events: auto !important; /* Force pointer events */
+  user-select: none; /* Prevent text selection */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  outline: none; /* Remove outline */
+}
+
+.btn-edit-profile:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.btn-edit-profile:active {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-edit-profile.active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-cancel {
+  background-color: #f3f4f6;
+  color: #1f2937;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #e5e7eb;
+}
+
+.btn-save {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-save:hover {
+  background-color: #4338ca;
+}
+
+.btn-save:disabled {
+  background-color: #a5b4fc;
+  cursor: not-allowed;
+}
+
+.btn-change-password {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f3f4f6;
+  color: #1f2937;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-change-password:hover {
+  background-color: #e5e7eb;
+}
+
+.btn-close-password {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
+  border-radius: 4px;
+  padding: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  z-index: 20; /* Higher z-index to ensure clickability */
+}
+
+.btn-close-password:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Password form */
+.password-card {
+  grid-column: 1 / -1;
+}
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.password-hint {
+  display: block;
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.password-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border-radius: 4px;
+}
+
+.password-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  border-radius: 4px;
+}
+
+/* Activity list */
+.activity-card {
+  grid-row: span 2;
+}
+
+.activity-list {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  display: flex;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.activity-login {
+  background-color: rgba(79, 70, 229, 0.1);
+  color: #4f46e5;
+}
+
+.activity-logout {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.activity-attendance {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+}
+
+.activity-profile_update {
+  background-color: rgba(14, 165, 233, 0.1);
+  color: #0ea5e9;
+}
+
+.activity-password_change {
+  background-color: rgba(249, 115, 22, 0.1);
+  color: #f97316;
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-details {
+  margin-bottom: 4px;
+}
+
+.activity-time {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.no-activity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #9ca3af;
+}
+
+.icon-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
