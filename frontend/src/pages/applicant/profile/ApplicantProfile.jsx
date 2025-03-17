@@ -4,7 +4,6 @@ import {
   Clock, RefreshCw, CheckCircle, Loader, FileText
 } from 'lucide-react';
 import applicantService from '../../../services/applicantService';
-import './styles/ApplicantProfile.css';
 
 const ApplicantProfile = () => {
   const [profile, setProfile] = useState({
@@ -42,27 +41,22 @@ const ApplicantProfile = () => {
     confirm_password: ''
   });
   
-  // Fetch profile data
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
         
-        // Get dashboard data which contains applications
         let dashboardData = { myApplications: [] };
         try {
           dashboardData = await applicantService.getDashboardData();
         } catch (dashboardError) {
           console.warn('Could not fetch dashboard data:', dashboardError);
-          // Continue with empty applications array
         }
         
-        // Get profile data
         let profileData = {};
         try {
           profileData = await applicantService.getUserProfile();
         } catch (profileError) {
-          // If we can't get profile data, use dashboard user data if available
           if (dashboardData && dashboardData.user) {
             profileData = dashboardData.user;
           } else {
@@ -70,25 +64,17 @@ const ApplicantProfile = () => {
           }
         }
         
-        // Get user activity if available
         let activityData = [];
         try {
           activityData = await applicantService.getUserActivity();
         } catch (activityError) {
           console.warn('Could not fetch activity data:', activityError);
-          // Continue with empty activity array
         }
         
-        // Store profile data
         setProfile(profileData);
-        
-        // Set applications from dashboard data
         setApplications(dashboardData.myApplications || []);
-        
-        // Set activity data
         setActivity(activityData);
         
-        // Get additional info if available
         if (profileData.additional_info) {
           try {
             const parsedInfo = typeof profileData.additional_info === 'string' 
@@ -101,11 +87,9 @@ const ApplicantProfile = () => {
             }));
           } catch (parseError) {
             console.warn('Error parsing additional info:', parseError);
-            // Continue with default empty additional info
           }
         }
         
-        // Update localStorage with full_name
         if (profileData.full_name) {
           localStorage.setItem('full_name', profileData.full_name);
         }
@@ -121,7 +105,6 @@ const ApplicantProfile = () => {
     fetchProfile();
   }, []);
   
-  // Handle profile form changes
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
     setProfile(prev => ({
@@ -129,13 +112,11 @@ const ApplicantProfile = () => {
       [name]: value
     }));
     
-    // Reset success message when form is changed
     if (updateSuccess) {
       setUpdateSuccess(false);
     }
   };
   
-  // Handle additional info changes
   const handleAdditionalInfoChange = (e) => {
     const { name, value } = e.target;
     setAdditionalInfo(prev => ({
@@ -143,13 +124,11 @@ const ApplicantProfile = () => {
       [name]: value
     }));
     
-    // Reset success message when form is changed
     if (updateSuccess) {
       setUpdateSuccess(false);
     }
   };
   
-  // Handle password form changes
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordData(prev => ({
@@ -157,42 +136,34 @@ const ApplicantProfile = () => {
       [name]: value
     }));
     
-    // Clear error for this field
     setPasswordFormErrors(prev => ({
       ...prev,
       [name]: null
     }));
     
-    // Reset success message when form is changed
     if (passwordChangeSuccess) {
       setPasswordChangeSuccess(false);
     }
   };
   
-  // Update profile
   const updateProfile = async (e) => {
     e.preventDefault();
     
     try {
       setIsSubmitting(true);
       
-      // Prepare update data - don't include additional_info if it's not needed
-      // This would avoid the issue if the database schema doesn't have this column
       const updateData = {
         full_name: profile.full_name,
         email: profile.email
       };
       
-      // Update profile data
       const response = await applicantService.updateUserProfile(updateData);
       
-      // Update localStorage with new full_name
       localStorage.setItem('full_name', response.full_name);
       
       setUpdateSuccess(true);
       setIsSubmitting(false);
       
-      // Reset success message after 5 seconds
       setTimeout(() => {
         setUpdateSuccess(false);
       }, 5000);
@@ -203,7 +174,6 @@ const ApplicantProfile = () => {
     }
   };
   
-  // Validate password form
   const validatePasswordForm = () => {
     const errors = {};
     
@@ -226,11 +196,9 @@ const ApplicantProfile = () => {
     return errors;
   };
   
-  // Change password
   const changePassword = async (e) => {
     e.preventDefault();
     
-    // Validate form
     const formErrors = validatePasswordForm();
     if (Object.keys(formErrors).length > 0) {
       setPasswordFormErrors(formErrors);
@@ -240,13 +208,11 @@ const ApplicantProfile = () => {
     try {
       setIsSubmitting(true);
       
-      // Use service to change password
       await applicantService.changePassword({
         current_password: passwordData.current_password,
         new_password: passwordData.new_password
       });
       
-      // Reset form
       setPasswordData({
         current_password: '',
         new_password: '',
@@ -256,7 +222,6 @@ const ApplicantProfile = () => {
       setPasswordChangeSuccess(true);
       setIsSubmitting(false);
       
-      // Reset success message after 5 seconds
       setTimeout(() => {
         setPasswordChangeSuccess(false);
       }, 5000);
@@ -275,24 +240,20 @@ const ApplicantProfile = () => {
     }
   };
   
-  // Handle retry button click
   const handleRetry = () => {
     setLoading(true);
     setError(null);
     
-    // Re-fetch data on next render cycle
     setTimeout(() => {
       window.location.reload();
     }, 100);
   };
   
-  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return 'Never';
     return new Date(dateString).toLocaleString();
   };
   
-  // Get application status class
   const getStatusClass = (status) => {
     switch (status) {
       case 'pending':
@@ -310,22 +271,32 @@ const ApplicantProfile = () => {
   
   if (loading) {
     return (
-      <div className="profile-loading">
-        <div className="spinner"></div>
-        <p>Loading profile...</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <Loader size={32} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
+        <p style={{ marginTop: '16px', fontSize: '14px', color: 'var(--text-secondary)' }}>Loading profile...</p>
       </div>
     );
   }
   
   if (error) {
     return (
-      <div className="profile-error">
-        <AlertTriangle size={48} className="error-icon" />
-        <h2>Error</h2>
-        <p>{error}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', textAlign: 'center' }}>
+        <AlertTriangle size={48} style={{ color: 'var(--danger-color)', marginBottom: '16px' }} />
+        <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Error</h2>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>{error}</p>
         <button 
           onClick={handleRetry} 
-          className="btn-primary retry-btn"
+          style={{ 
+            padding: '8px 16px', 
+            borderRadius: '4px', 
+            backgroundColor: 'var(--primary-color)', 
+            color: 'white', 
+            border: 'none', 
+            cursor: 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px' 
+          }}
         >
           <RefreshCw size={16} />
           Retry
@@ -335,110 +306,164 @@ const ApplicantProfile = () => {
   }
   
   return (
-    <div className="applicant-profile-container">
-      <h1 className="page-title">Profile Settings</h1>
+    <div style={{ padding: '32px', backgroundColor: 'var(--light-gray)', minHeight: '100vh' }}>
+      <h1 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '24px' }}>Profile Settings</h1>
       
       {updateSuccess && (
-        <div className="success-message">
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px', 
+          padding: '12px', 
+          backgroundColor: 'var(--success-color)', 
+          color: 'white', 
+          borderRadius: '4px', 
+          marginBottom: '24px' 
+        }}>
           <CheckCircle size={18} />
           <span>Profile updated successfully!</span>
         </div>
       )}
       
-      <div className="profile-grid">
-        <div className="profile-card">
-          <div className="card-header">
-            <h2><User size={20} /> Personal Information</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+        {/* Personal Information Card */}
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <User size={20} /> Personal Information
+            </h2>
           </div>
           
-          <form className="profile-form" onSubmit={updateProfile}>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="username">Username</label>
-                <div className="input-icon-wrapper">
-                  <User size={18} className="input-icon" />
-                  <input 
-                    type="text" 
-                    id="username" 
-                    name="username" 
-                    value={profile.username}
-                    disabled
-                    className="form-control disabled"
-                  />
-                </div>
-                <div className="input-hint">Username cannot be changed</div>
-              </div>
-            </div>
-            
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="full_name">Full Name</label>
+          <form onSubmit={updateProfile} style={{ padding: '16px' }}>
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="username" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Username</label>
+              <div style={{ position: 'relative' }}>
+                <User size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                 <input 
                   type="text" 
-                  id="full_name" 
-                  name="full_name" 
-                  value={profile.full_name}
+                  id="username" 
+                  name="username" 
+                  value={profile.username}
+                  disabled
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px 16px 8px 40px', 
+                    borderRadius: '4px', 
+                    border: '1px solid var(--medium-gray)', 
+                    backgroundColor: 'var(--light-gray)', 
+                    fontSize: '14px', 
+                    color: 'var(--text-secondary)' 
+                  }}
+                />
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Username cannot be changed</div>
+            </div>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="full_name" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Full Name</label>
+              <input 
+                type="text" 
+                id="full_name" 
+                name="full_name" 
+                value={profile.full_name}
+                onChange={handleProfileChange}
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  border: '1px solid var(--medium-gray)', 
+                  backgroundColor: 'white', 
+                  fontSize: '14px', 
+                  color: 'var(--text-primary)' 
+                }}
+                required
+              />
+            </div>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="email" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Email Address</label>
+              <div style={{ position: 'relative' }}>
+                <Mail size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  value={profile.email}
                   onChange={handleProfileChange}
-                  className="form-control"
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px 16px 8px 40px', 
+                    borderRadius: '4px', 
+                    border: '1px solid var(--medium-gray)', 
+                    backgroundColor: 'white', 
+                    fontSize: '14px', 
+                    color: 'var(--text-primary)' 
+                  }}
                   required
                 />
               </div>
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="email">Email Address</label>
-                <div className="input-icon-wrapper">
-                  <Mail size={18} className="input-icon" />
-                  <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    value={profile.email}
-                    onChange={handleProfileChange}
-                    className="form-control"
-                    required
-                  />
-                </div>
-              </div>
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="phone" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Phone Number</label>
+              <input 
+                type="tel" 
+                id="phone" 
+                name="phone" 
+                value={additionalInfo.phone || ''}
+                onChange={handleAdditionalInfoChange}
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  border: '1px solid var(--medium-gray)', 
+                  backgroundColor: 'white', 
+                  fontSize: '14px', 
+                  color: 'var(--text-primary)' 
+                }}
+              />
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="phone">Phone Number</label>
-                <input 
-                  type="tel" 
-                  id="phone" 
-                  name="phone" 
-                  value={additionalInfo.phone || ''}
-                  onChange={handleAdditionalInfoChange}
-                  className="form-control"
-                />
-              </div>
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="address" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Address</label>
+              <input 
+                type="text" 
+                id="address" 
+                name="address" 
+                value={additionalInfo.address || ''}
+                onChange={handleAdditionalInfoChange}
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  border: '1px solid var(--medium-gray)', 
+                  backgroundColor: 'white', 
+                  fontSize: '14px', 
+                  color: 'var(--text-primary)' 
+                }}
+              />
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="address">Address</label>
-                <input 
-                  type="text" 
-                  id="address" 
-                  name="address" 
-                  value={additionalInfo.address || ''}
-                  onChange={handleAdditionalInfoChange}
-                  className="form-control"
-                />
-              </div>
-            </div>
-            
-            <div className="form-actions">
+            <div style={{ textAlign: 'right' }}>
               <button 
                 type="submit" 
-                className="btn-primary" 
+                style={{ 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  backgroundColor: 'var(--primary-color)', 
+                  color: 'white', 
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  fontSize: '14px', 
+                  fontWeight: '500', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px' 
+                }}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
-                  <><Loader size={16} className="spinner-icon" /> Updating...</>
+                  <><Loader size={16} className="spin" style={{ animation: 'spin 1s linear infinite' }} /> Updating...</>
                 ) : (
                   <><Save size={16} /> Save Changes</>
                 )}
@@ -446,62 +471,99 @@ const ApplicantProfile = () => {
             </div>
           </form>
         </div>
-        
-        {/* Rest of the component remains the same */}
-        
-        <div className="profile-card">
-          <div className="card-header">
-            <h2><FileText size={20} /> Educational & Professional Information</h2>
+
+        {/* Educational & Professional Information Card */}
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <FileText size={20} /> Educational & Professional Information
+            </h2>
           </div>
           
-          <form className="background-form" onSubmit={updateProfile}>
-            <div className="form-group">
-              <label htmlFor="education">Education</label>
+          <form onSubmit={updateProfile} style={{ padding: '16px' }}>
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="education" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Education</label>
               <textarea 
                 id="education" 
                 name="education" 
                 value={additionalInfo.education || ''}
                 onChange={handleAdditionalInfoChange}
-                className="form-control"
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  border: '1px solid var(--medium-gray)', 
+                  backgroundColor: 'white', 
+                  fontSize: '14px', 
+                  color: 'var(--text-primary)', 
+                  minHeight: '100px' 
+                }}
                 placeholder="Enter your educational background (degrees, institutions, graduation years)"
-                rows="3"
               />
             </div>
             
-            <div className="form-group">
-              <label htmlFor="experience">Work Experience</label>
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="experience" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Work Experience</label>
               <textarea 
                 id="experience" 
                 name="experience" 
                 value={additionalInfo.experience || ''}
                 onChange={handleAdditionalInfoChange}
-                className="form-control"
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  border: '1px solid var(--medium-gray)', 
+                  backgroundColor: 'white', 
+                  fontSize: '14px', 
+                  color: 'var(--text-primary)', 
+                  minHeight: '100px' 
+                }}
                 placeholder="Enter your work experience (positions, companies, dates)"
-                rows="3"
               />
             </div>
             
-            <div className="form-group">
-              <label htmlFor="skills">Skills</label>
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="skills" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Skills</label>
               <textarea 
                 id="skills" 
                 name="skills" 
                 value={additionalInfo.skills || ''}
                 onChange={handleAdditionalInfoChange}
-                className="form-control"
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  border: '1px solid var(--medium-gray)', 
+                  backgroundColor: 'white', 
+                  fontSize: '14px', 
+                  color: 'var(--text-primary)', 
+                  minHeight: '100px' 
+                }}
                 placeholder="Enter your skills and competencies"
-                rows="3"
               />
             </div>
             
-            <div className="form-actions">
+            <div style={{ textAlign: 'right' }}>
               <button 
                 type="submit" 
-                className="btn-primary" 
+                style={{ 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  backgroundColor: 'var(--primary-color)', 
+                  color: 'white', 
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  fontSize: '14px', 
+                  fontWeight: '500', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px' 
+                }}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
-                  <><Loader size={16} className="spinner-icon" /> Updating...</>
+                  <><Loader size={16} className="spin" style={{ animation: 'spin 1s linear infinite' }} /> Updating...</>
                 ) : (
                   <><Save size={16} /> Save Changes</>
                 )}
@@ -509,105 +571,180 @@ const ApplicantProfile = () => {
             </div>
           </form>
         </div>
-        
-        <div className="profile-card">
-          <div className="card-header">
-            <h2><Key size={20} /> Change Password</h2>
+
+        {/* Change Password Card */}
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Key size={20} /> Change Password
+            </h2>
           </div>
           
           {passwordChangeSuccess && (
-            <div className="success-message">
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              padding: '12px', 
+              backgroundColor: 'var(--success-color)', 
+              color: 'white', 
+              borderRadius: '4px', 
+              margin: '16px' 
+            }}>
               <CheckCircle size={18} />
               <span>Password changed successfully!</span>
             </div>
           )}
           
-          <form className="password-form" onSubmit={changePassword}>
-            <div className="form-group">
-              <label htmlFor="current_password">Current Password</label>
-              <div className="password-input-wrapper">
+          <form onSubmit={changePassword} style={{ padding: '16px' }}>
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="current_password" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Current Password</label>
+              <div style={{ position: 'relative' }}>
                 <input 
                   type={showCurrentPassword ? "text" : "password"} 
                   id="current_password" 
                   name="current_password" 
                   value={passwordData.current_password}
                   onChange={handlePasswordChange}
-                  className={`form-control ${passwordFormErrors.current_password ? 'error' : ''}`}
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px 16px', 
+                    borderRadius: '4px', 
+                    border: `1px solid ${passwordFormErrors.current_password ? 'var(--danger-color)' : 'var(--medium-gray)'}`, 
+                    backgroundColor: 'white', 
+                    fontSize: '14px', 
+                    color: 'var(--text-primary)' 
+                  }}
                   required
                 />
                 <button 
                   type="button" 
-                  className="toggle-password" 
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  style={{ 
+                    position: 'absolute', 
+                    right: '12px', 
+                    top: '50%', 
+                    transform: 'translateY(-50%)', 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer', 
+                    color: 'var(--text-secondary)' 
+                  }}
                 >
                   {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               {passwordFormErrors.current_password && (
-                <div className="input-error">{passwordFormErrors.current_password}</div>
+                <div style={{ fontSize: '12px', color: 'var(--danger-color)', marginTop: '4px' }}>{passwordFormErrors.current_password}</div>
               )}
             </div>
             
-            <div className="form-group">
-              <label htmlFor="new_password">New Password</label>
-              <div className="password-input-wrapper">
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="new_password" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>New Password</label>
+              <div style={{ position: 'relative' }}>
                 <input 
                   type={showNewPassword ? "text" : "password"} 
                   id="new_password" 
                   name="new_password" 
                   value={passwordData.new_password}
                   onChange={handlePasswordChange}
-                  className={`form-control ${passwordFormErrors.new_password ? 'error' : ''}`}
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px 16px', 
+                    borderRadius: '4px', 
+                    border: `1px solid ${passwordFormErrors.new_password ? 'var(--danger-color)' : 'var(--medium-gray)'}`, 
+                    backgroundColor: 'white', 
+                    fontSize: '14px', 
+                    color: 'var(--text-primary)' 
+                  }}
                   required
                 />
                 <button 
                   type="button" 
-                  className="toggle-password" 
                   onClick={() => setShowNewPassword(!showNewPassword)}
+                  style={{ 
+                    position: 'absolute', 
+                    right: '12px', 
+                    top: '50%', 
+                    transform: 'translateY(-50%)', 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer', 
+                    color: 'var(--text-secondary)' 
+                  }}
                 >
                   {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               {passwordFormErrors.new_password ? (
-                <div className="input-error">{passwordFormErrors.new_password}</div>
+                <div style={{ fontSize: '12px', color: 'var(--danger-color)', marginTop: '4px' }}>{passwordFormErrors.new_password}</div>
               ) : (
-                <div className="input-hint">Must be at least 8 characters long</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Must be at least 8 characters long</div>
               )}
             </div>
             
-            <div className="form-group">
-              <label htmlFor="confirm_password">Confirm New Password</label>
-              <div className="password-input-wrapper">
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="confirm_password" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Confirm New Password</label>
+              <div style={{ position: 'relative' }}>
                 <input 
                   type={showConfirmPassword ? "text" : "password"} 
                   id="confirm_password" 
                   name="confirm_password" 
                   value={passwordData.confirm_password}
                   onChange={handlePasswordChange}
-                  className={`form-control ${passwordFormErrors.confirm_password ? 'error' : ''}`}
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px 16px', 
+                    borderRadius: '4px', 
+                    border: `1px solid ${passwordFormErrors.confirm_password ? 'var(--danger-color)' : 'var(--medium-gray)'}`, 
+                    backgroundColor: 'white', 
+                    fontSize: '14px', 
+                    color: 'var(--text-primary)' 
+                  }}
                   required
                 />
                 <button 
                   type="button" 
-                  className="toggle-password" 
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{ 
+                    position: 'absolute', 
+                    right: '12px', 
+                    top: '50%', 
+                    transform: 'translateY(-50%)', 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer', 
+                    color: 'var(--text-secondary)' 
+                  }}
                 >
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               {passwordFormErrors.confirm_password && (
-                <div className="input-error">{passwordFormErrors.confirm_password}</div>
+                <div style={{ fontSize: '12px', color: 'var(--danger-color)', marginTop: '4px' }}>{passwordFormErrors.confirm_password}</div>
               )}
             </div>
             
-            <div className="form-actions">
+            <div style={{ textAlign: 'right' }}>
               <button 
                 type="submit" 
-                className="btn-primary" 
+                style={{ 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  backgroundColor: 'var(--primary-color)', 
+                  color: 'white', 
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  fontSize: '14px', 
+                  fontWeight: '500', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px' 
+                }}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
-                  <><Loader size={16} className="spinner-icon" /> Updating...</>
+                  <><Loader size={16} className="spin" style={{ animation: 'spin 1s linear infinite' }} /> Updating...</>
                 ) : (
                   <><Key size={16} /> Change Password</>
                 )}
@@ -615,65 +752,85 @@ const ApplicantProfile = () => {
             </div>
           </form>
         </div>
-        
-        <div className="profile-card account-info">
-          <div className="card-header">
-            <h2><User size={20} /> Account Information</h2>
+
+        {/* Account Information Card */}
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <User size={20} /> Account Information
+            </h2>
           </div>
           
-          <div className="account-details">
-            <div className="detail-row">
-              <div className="detail-label">Account Status</div>
-              <div className={`status-badge ${profile.status}`}>
+          <div style={{ padding: '16px' }}>
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px' }}>Account Status</div>
+              <div style={{ 
+                display: 'inline-block', 
+                padding: '4px 8px', 
+                borderRadius: '4px', 
+                backgroundColor: profile.status === 'active' ? 'var(--success-color)' : 'var(--danger-color)', 
+                color: 'white', 
+                fontSize: '12px', 
+                fontWeight: '500' 
+              }}>
                 {profile.status}
               </div>
             </div>
             
-            <div className="detail-row">
-              <div className="detail-label">Account Type</div>
-              <div className="detail-value">Applicant</div>
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px' }}>Account Type</div>
+              <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Applicant</div>
             </div>
             
-            <div className="detail-row">
-              <div className="detail-label">Member Since</div>
-              <div className="detail-value">
-                {formatDate(profile.created_at)}
-              </div>
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px' }}>Member Since</div>
+              <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{formatDate(profile.created_at)}</div>
             </div>
             
-            <div className="detail-row">
-              <div className="detail-label">Last Login</div>
-              <div className="detail-value">
-                {formatDate(profile.last_login)}
-              </div>
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px' }}>Last Login</div>
+              <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{formatDate(profile.last_login)}</div>
             </div>
           </div>
         </div>
-        
-        <div className="profile-card recent-activity">
-          <div className="card-header">
-            <h2><Clock size={20} /> Recent Activity</h2>
+
+        {/* Recent Activity Card */}
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Clock size={20} /> Recent Activity
+            </h2>
           </div>
           
           {activity.length === 0 ? (
-            <div className="no-activity">
-              <p>No recent activity found.</p>
+            <div style={{ padding: '16px', textAlign: 'center' }}>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>No recent activity found.</p>
             </div>
           ) : (
-            <div className="activity-list">
+            <div style={{ padding: '16px' }}>
               {activity.map((item) => (
-                <div key={item.id} className="activity-item">
-                  <div className={`activity-icon ${item.activity_type}`}>
-                    {item.activity_type === 'login' && <User size={16} />}
-                    {item.activity_type === 'logout' && <User size={16} />}
-                    {item.activity_type === 'attendance' && <CheckCircle size={16} />}
-                  </div>
-                  <div className="activity-details">
-                    <div className="activity-message">
-                      {item.details || `${item.activity_type.charAt(0).toUpperCase() + item.activity_type.slice(1)} activity recorded`}
+                <div key={item.id} style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ 
+                      width: '32px', 
+                      height: '32px', 
+                      borderRadius: '50%', 
+                      backgroundColor: 'var(--light-gray)', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center' 
+                    }}>
+                      {item.activity_type === 'login' && <User size={16} color="var(--text-secondary)" />}
+                      {item.activity_type === 'logout' && <User size={16} color="var(--text-secondary)" />}
+                      {item.activity_type === 'attendance' && <CheckCircle size={16} color="var(--text-secondary)" />}
                     </div>
-                    <div className="activity-time">
-                      {formatDate(item.activity_time)}
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-primary)' }}>
+                        {item.details || `${item.activity_type.charAt(0).toUpperCase() + item.activity_type.slice(1)} activity recorded`}
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                        {formatDate(item.activity_time)}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -681,27 +838,42 @@ const ApplicantProfile = () => {
             </div>
           )}
         </div>
-        
-        <div className="profile-card recent-applications">
-          <div className="card-header">
-            <h2><FileText size={20} /> Recent Applications</h2>
+
+        {/* Recent Applications Card */}
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <FileText size={20} /> Recent Applications
+            </h2>
           </div>
           
           {applications.length === 0 ? (
-            <div className="no-applications">
-              <p>No applications found.</p>
+            <div style={{ padding: '16px', textAlign: 'center' }}>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>No applications found.</p>
             </div>
           ) : (
-            <div className="applications-list">
+            <div style={{ padding: '16px' }}>
               {applications.map((app) => (
-                <div key={app.application_id || app.id} className="application-item">
-                  <div className="application-content">
-                    <div className="application-title">{app.program_title}</div>
-                    <div className="application-role">{app.job_role} - {app.department}</div>
-                    <div className="application-date">Applied: {formatDate(app.applied_at)}</div>
-                  </div>
-                  <div className={`application-status ${getStatusClass(app.status)}`}>
-                    {app.status}
+                <div key={app.application_id || app.id} style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)' }}>{app.program_title}</div>
+                      <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{app.job_role} - {app.department}</div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Applied: {formatDate(app.applied_at)}</div>
+                    </div>
+                    <div style={{ 
+                      padding: '4px 8px', 
+                      borderRadius: '4px', 
+                      backgroundColor: app.status === 'pending' ? 'var(--warning-color)' : 
+                                    app.status === 'shortlisted' ? 'var(--info-color)' : 
+                                    app.status === 'hired' ? 'var(--success-color)' : 
+                                    app.status === 'rejected' ? 'var(--danger-color)' : 'var(--medium-gray)', 
+                      color: 'white', 
+                      fontSize: '12px', 
+                      fontWeight: '500' 
+                    }}>
+                      {app.status}
+                    </div>
                   </div>
                 </div>
               ))}

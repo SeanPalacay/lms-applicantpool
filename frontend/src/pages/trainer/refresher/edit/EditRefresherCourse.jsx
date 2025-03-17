@@ -6,12 +6,7 @@ import {
 } from 'lucide-react';
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
-import '../styles/RefresherForm.css';
 
-/**
- * EditRefresherCourse Component
- * Allows trainers to edit existing refresher courses
- */
 const EditRefresherCourse = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
@@ -326,10 +321,13 @@ const EditRefresherCourse = () => {
 
   if (!originalCourse && !loading) {
     return (
-      <div className="edit-refresher-container">
+      <div style={{ padding: '32px', backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
         <AlertBanner message="Refresher course not found" type="error" />
-        <div className="back-navigation">
-          <button onClick={() => navigate('/trainer/refresher-courses')} className="back-link">
+        <div style={{ marginBottom: '24px' }}>
+          <button 
+            onClick={() => navigate('/trainer/refresher-courses')} 
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#F8FAFC', color: '#64748B', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
+          >
             <ArrowLeft size={18} />
             <span>Back to Refresher Courses</span>
           </button>
@@ -339,38 +337,41 @@ const EditRefresherCourse = () => {
   }
 
   return (
-    <div className="edit-refresher-container">
+    <div style={{ padding: '32px', backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
       {error && <AlertBanner message={error} type="error" />}
       {successMessage && <AlertBanner message={successMessage} type="success" />}
       
-      <div className="back-navigation">
-        <button onClick={() => navigate(`/trainer/refresher-courses/${courseId}`)} className="back-link">
+      <div style={{ marginBottom: '24px' }}>
+        <button 
+          onClick={() => navigate(`/trainer/refresher-courses/${courseId}`)} 
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#F8FAFC', color: '#64748B', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
+        >
           <ArrowLeft size={18} />
           <span>Back to Course Details</span>
         </button>
       </div>
       
-      <div className="card">
-        <div className="card-header gradient-amber">
-          <div className="header-icon">
+      <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '24px', background: 'linear-gradient(135deg, #FFB74D, #FB8C00)', color: 'white' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '16px' }}>
             <RotateCw size={20} />
           </div>
-          <div className="header-content">
-            <h3>Edit Refresher Course</h3>
+          <div>
+            <h3 style={{ fontSize: '20px', fontWeight: '600', margin: '0' }}>Edit Refresher Course</h3>
           </div>
         </div>
         
-        <div className="card-content">
-          <form onSubmit={handleSubmit} className="refresher-form">
-            <div className="form-section">
-              <div className="section-header">
+        <div style={{ padding: '32px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                 <Info size={18} />
-                <h4>Course Information</h4>
+                <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1E293B', margin: '0' }}>Course Information</h4>
               </div>
               
-              <div className="form-group">
-                <label htmlFor="title">
-                  <span className="required">*</span> Title:
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="title" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>
+                  <span style={{ color: '#E53E3E', marginRight: '4px' }}>*</span> Title:
                 </label>
                 <input 
                   type="text" 
@@ -378,33 +379,32 @@ const EditRefresherCourse = () => {
                   name="title" 
                   value={formData.title} 
                   onChange={handleChange}
-                  required
-                  className="form-input"
+                  style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                   placeholder="Enter course title"
+                  required
                 />
               </div>
               
-              <div className="form-group">
-                <label htmlFor="description">Description:</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="description" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>Description:</label>
                 <textarea 
                   id="description" 
                   name="description" 
                   value={formData.description} 
                   onChange={handleChange}
-                  className="form-textarea"
+                  style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease', minHeight: '100px' }}
                   placeholder="Enter course description"
-                  rows={4}
                 />
               </div>
               
-              <div className="form-group">
-                <label htmlFor="related_program_id">Related Program:</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="related_program_id" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>Related Program:</label>
                 <select 
                   id="related_program_id" 
                   name="related_program_id" 
                   value={formData.related_program_id} 
                   onChange={handleChange}
-                  className="form-select"
+                  style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                 >
                   <option value="">None (Standalone Course)</option>
                   {programs.map((program) => (
@@ -415,9 +415,9 @@ const EditRefresherCourse = () => {
                 </select>
               </div>
               
-              <div className="form-group">
-                <label htmlFor="duration_days">
-                  <span className="required">*</span> Duration (days):
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="duration_days" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>
+                  <span style={{ color: '#E53E3E', marginRight: '4px' }}>*</span> Duration (days):
                 </label>
                 <input 
                   type="number" 
@@ -426,19 +426,19 @@ const EditRefresherCourse = () => {
                   value={formData.duration_days} 
                   onChange={handleChange}
                   min="1"
+                  style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                   required
-                  className="form-input"
                 />
               </div>
               
-              <div className="form-group">
-                <label htmlFor="status">Status:</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="status" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>Status:</label>
                 <select 
                   id="status" 
                   name="status" 
                   value={formData.status} 
                   onChange={handleChange}
-                  className="form-select"
+                  style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                 >
                   <option value="draft">Draft (Not Visible to Trainees)</option>
                   <option value="active">Active (Available for Enrollment)</option>
@@ -446,47 +446,46 @@ const EditRefresherCourse = () => {
               </div>
             </div>
             
-            <div className="form-section">
-              <div className="section-header">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                 <FileText size={18} />
-                <h4>Course Content</h4>
+                <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1E293B', margin: '0' }}>Course Content</h4>
               </div>
               
-              <div className="form-group">
-                <label htmlFor="content">Content:</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="content" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>Content:</label>
                 <textarea 
                   id="content" 
                   name="content" 
                   value={formData.content} 
                   onChange={handleChange}
-                  className="form-textarea content-textarea"
+                  style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease', minHeight: '200px' }}
                   placeholder="Enter course content (supports basic formatting)"
-                  rows={10}
                 />
               </div>
             </div>
             
-            <div className="form-section">
-              <div className="section-header">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                 <LinkIcon size={18} />
-                <h4>Course Materials</h4>
+                <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1E293B', margin: '0' }}>Course Materials</h4>
               </div>
               
               {/* Materials List */}
               {formData.materials.length > 0 && (
-                <div className="materials-list">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {formData.materials.map((material, index) => (
-                    <div key={index} className="material-item">
-                      <div className="material-icon">
+                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', backgroundColor: '#F8FAFC' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {material.type === 'link' ? <LinkIcon size={16} /> : <FileText size={16} />}
                       </div>
-                      <div className="material-info">
-                        <span className="material-name">{material.name}</span>
-                        <span className="material-type">{material.type === 'link' ? 'External Link' : 'Uploaded File'}</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>{material.name}</span>
+                        <span style={{ fontSize: '12px', color: '#64748B' }}>{material.type === 'link' ? 'External Link' : 'Uploaded File'}</span>
                       </div>
                       <button 
                         type="button" 
-                        className="btn-remove-material"
+                        style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px', borderRadius: '9999px', transition: 'background-color 0.15s ease, color 0.15s ease' }}
                         onClick={() => handleRemoveMaterial(index)}
                       >
                         <XCircle size={16} />
@@ -497,34 +496,34 @@ const EditRefresherCourse = () => {
               )}
               
               {/* Add Link Material */}
-              <div className="add-material-section">
-                <h5>Add External Link</h5>
-                <div className="add-link-form">
-                  <div className="form-group">
-                    <label htmlFor="material-name">Name:</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <h5 style={{ fontSize: '16px', fontWeight: '600', color: '#1E293B', margin: '0' }}>Add External Link</h5>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label htmlFor="material-name" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>Name:</label>
                     <input 
                       type="text" 
                       id="material-name" 
                       value={materialName} 
                       onChange={handleMaterialNameChange}
-                      className="form-input"
+                      style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                       placeholder="e.g., Policy Document"
                     />
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="material-url">URL:</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label htmlFor="material-url" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>URL:</label>
                     <input 
                       type="url" 
                       id="material-url" 
                       value={materialUrl} 
                       onChange={handleMaterialUrlChange}
-                      className="form-input"
+                      style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                       placeholder="https://example.com/document"
                     />
                   </div>
                   <button 
                     type="button" 
-                    className="btn-add-link"
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#1E88E5', color: 'white', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease' }}
                     onClick={handleAddLinkMaterial}
                   >
                     <LinkIcon size={16} />
@@ -534,38 +533,38 @@ const EditRefresherCourse = () => {
               </div>
               
               {/* Upload File Material */}
-              <div className="add-material-section">
-                <h5>Upload File</h5>
-                <div className="upload-file-form">
-                  <div className="form-group">
-                    <label htmlFor="file-name">Name:</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <h5 style={{ fontSize: '16px', fontWeight: '600', color: '#1E293B', margin: '0' }}>Upload File</h5>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label htmlFor="file-name" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>Name:</label>
                     <input 
                       type="text" 
                       id="file-name" 
                       value={materialName} 
                       onChange={handleMaterialNameChange}
-                      className="form-input"
+                      style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                       placeholder="e.g., Training Guide"
                     />
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="file-upload">File:</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label htmlFor="file-upload" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>File:</label>
                     <input 
                       type="file" 
                       id="file-upload" 
                       onChange={handleFileChange}
-                      className="form-file-input"
+                      style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                     />
                   </div>
                   <button 
                     type="button" 
-                    className="btn-upload-file"
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#1E88E5', color: 'white', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease', opacity: uploading ? 0.7 : 1 }}
                     onClick={handleUploadMaterial}
                     disabled={uploading}
                   >
                     {uploading ? (
                       <>
-                        <Clock size={16} className="icon-spin" />
+                        <Clock size={16} style={{ animation: 'spin 1s linear infinite' }} />
                         Uploading...
                       </>
                     ) : (
@@ -579,15 +578,23 @@ const EditRefresherCourse = () => {
               </div>
             </div>
             
-            <div className="form-actions">
-              <button type="button" onClick={handleCancel} className="btn-cancel">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '32px' }}>
+              <button 
+                type="button" 
+                onClick={handleCancel} 
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#F8FAFC', color: '#64748B', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
+              >
                 <XCircle size={18} />
                 Cancel
               </button>
-              <button type="submit" className="btn-save" disabled={submitting}>
+              <button 
+                type="submit" 
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#1E88E5', color: 'white', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease', opacity: submitting ? 0.7 : 1 }}
+                disabled={submitting}
+              >
                 {submitting ? (
                   <>
-                    <Clock size={18} className="icon-spin" />
+                    <Clock size={18} style={{ animation: 'spin 1s linear infinite' }} />
                     Saving...
                   </>
                 ) : (

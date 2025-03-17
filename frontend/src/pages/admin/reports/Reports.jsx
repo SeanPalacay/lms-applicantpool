@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { BarChart2, Calendar, Download, Filter, ChevronDown, Users, BookOpen, Award } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import adminService from '../../../services/adminService';
-import './styles/Reports.css';
 
 const Reports = () => {
     const [loading, setLoading] = useState(true);
@@ -181,19 +180,19 @@ const Reports = () => {
     // Render different report tabs based on activeTab state
     const renderReportContent = () => {
         if (loading) {
-            return <div className="loading-spinner">Loading reports data...</div>;
+            return <div style={{ textAlign: 'center', padding: '32px', fontSize: '16px', color: '#64748b' }}>Loading reports data...</div>;
         }
         
         if (error) {
-            return <div className="error-message">{error}</div>;
+            return <div style={{ textAlign: 'center', padding: '32px', fontSize: '16px', color: '#e74c3c' }}>{error}</div>;
         }
         
         switch (activeTab) {
             case 'enrollment':
                 return (
-                    <div className="report-section">
-                        <h3>Program Enrollment Statistics</h3>
-                        <div className="chart-container">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                        <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b' }}>Program Enrollment Statistics</h3>
+                        <div style={{ width: '100%', height: '400px', marginBottom: '24px' }}>
                             <ResponsiveContainer width="100%" height={400}>
                                 <BarChart data={enrollmentData}>
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -208,54 +207,54 @@ const Reports = () => {
                             </ResponsiveContainer>
                         </div>
                         
-                        <div className="stats-summary">
-                            <div className="stat-card">
-                                <h4>Total Programs</h4>
-                                <div className="stat-value">3</div>
+                        <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Total Programs</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>3</div>
                             </div>
-                            <div className="stat-card">
-                                <h4>Total Enrollments</h4>
-                                <div className="stat-value">3</div>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Total Enrollments</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>3</div>
                             </div>
-                            <div className="stat-card">
-                                <h4>Completion Rate</h4>
-                                <div className="stat-value">33.3%</div>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Completion Rate</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>33.3%</div>
                             </div>
                         </div>
                         
-                        <div className="data-table-container">
-                            <h4>Program Details</h4>
-                            <table className="data-table">
+                        <div style={{ marginTop: '24px' }}>
+                            <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', marginBottom: '16px' }}>Program Details</h4>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
                                 <thead>
-                                    <tr>
-                                        <th>Program Name</th>
-                                        <th>Type</th>
-                                        <th>Enrolled</th>
-                                        <th>Completed</th>
-                                        <th>Completion %</th>
+                                    <tr style={{ backgroundColor: '#f8fafc' }}>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Program Name</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Type</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Enrolled</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Completed</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Completion %</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Loan Officer Basics</td>
-                                        <td>Regular</td>
-                                        <td>1</td>
-                                        <td>0</td>
-                                        <td>0%</td>
+                                    <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Loan Officer Basics</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Regular</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>1</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>0</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>0%</td>
+                                    </tr>
+                                    <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Policy Refresher 2025</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Refresher</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>1</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>0</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>0%</td>
                                     </tr>
                                     <tr>
-                                        <td>Policy Refresher 2025</td>
-                                        <td>Refresher</td>
-                                        <td>1</td>
-                                        <td>0</td>
-                                        <td>0%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Advanced Loan Training</td>
-                                        <td>Regular</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>100%</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Advanced Loan Training</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Regular</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>1</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>1</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>100%</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -265,9 +264,9 @@ const Reports = () => {
                 
             case 'quiz':
                 return (
-                    <div className="report-section">
-                        <h3>Quiz Performance Analysis</h3>
-                        <div className="chart-container">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                        <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b' }}>Quiz Performance Analysis</h3>
+                        <div style={{ width: '100%', height: '400px', marginBottom: '24px' }}>
                             <ResponsiveContainer width="100%" height={400}>
                                 <BarChart data={quizData}>
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -281,54 +280,54 @@ const Reports = () => {
                             </ResponsiveContainer>
                         </div>
                         
-                        <div className="stats-summary">
-                            <div className="stat-card">
-                                <h4>Total Quizzes</h4>
-                                <div className="stat-value">3</div>
+                        <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Total Quizzes</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>3</div>
                             </div>
-                            <div className="stat-card">
-                                <h4>Quiz Attempts</h4>
-                                <div className="stat-value">3</div>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Quiz Attempts</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>3</div>
                             </div>
-                            <div className="stat-card">
-                                <h4>Avg. Score</h4>
-                                <div className="stat-value">81.7%</div>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Avg. Score</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>81.7%</div>
                             </div>
                         </div>
                         
-                        <div className="data-table-container">
-                            <h4>Quiz Performance Details</h4>
-                            <table className="data-table">
+                        <div style={{ marginTop: '24px' }}>
+                            <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', marginBottom: '16px' }}>Quiz Performance Details</h4>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
                                 <thead>
-                                    <tr>
-                                        <th>Quiz Name</th>
-                                        <th>Program</th>
-                                        <th>Pass Rate</th>
-                                        <th>Avg. Score</th>
-                                        <th>Total Attempts</th>
+                                    <tr style={{ backgroundColor: '#f8fafc' }}>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Quiz Name</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Program</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Pass Rate</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Avg. Score</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Total Attempts</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Loan Basics Quiz</td>
-                                        <td>Loan Officer Basics</td>
-                                        <td>85%</td>
-                                        <td>85.0</td>
-                                        <td>1</td>
+                                    <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Loan Basics Quiz</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Loan Officer Basics</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>85%</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>85.0</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>1</td>
+                                    </tr>
+                                    <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Policy Quiz</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Policy Refresher 2025</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>65%</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>68.0</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>1</td>
                                     </tr>
                                     <tr>
-                                        <td>Policy Quiz</td>
-                                        <td>Policy Refresher 2025</td>
-                                        <td>65%</td>
-                                        <td>68.0</td>
-                                        <td>1</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Advanced Loan Quiz</td>
-                                        <td>Advanced Loan Training</td>
-                                        <td>92%</td>
-                                        <td>92.0</td>
-                                        <td>1</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Advanced Loan Quiz</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Advanced Loan Training</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>92%</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>92.0</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>1</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -338,9 +337,9 @@ const Reports = () => {
                 
             case 'activity':
                 return (
-                    <div className="report-section">
-                        <h3>User Activity Trends</h3>
-                        <div className="chart-container">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                        <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b' }}>User Activity Trends</h3>
+                        <div style={{ width: '100%', height: '400px', marginBottom: '24px' }}>
                             <ResponsiveContainer width="100%" height={400}>
                                 <LineChart data={userActivityData}>
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -354,68 +353,68 @@ const Reports = () => {
                             </ResponsiveContainer>
                         </div>
                         
-                        <div className="stats-summary">
-                            <div className="stat-card">
-                                <h4>Active Users</h4>
-                                <div className="stat-value">4</div>
+                        <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Active Users</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>4</div>
                             </div>
-                            <div className="stat-card">
-                                <h4>Total Logins</h4>
-                                <div className="stat-value">18</div>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Total Logins</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>18</div>
                             </div>
-                            <div className="stat-card">
-                                <h4>Attendance Events</h4>
-                                <div className="stat-value">3</div>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Attendance Events</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>3</div>
                             </div>
                         </div>
                         
-                        <div className="data-table-container">
-                            <h4>Recent User Activity</h4>
-                            <table className="data-table">
+                        <div style={{ marginTop: '24px' }}>
+                            <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', marginBottom: '16px' }}>Recent User Activity</h4>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
                                 <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>User</th>
-                                        <th>Role</th>
-                                        <th>Activity</th>
-                                        <th>Time</th>
+                                    <tr style={{ backgroundColor: '#f8fafc' }}>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Date</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>User</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Role</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Activity</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Time</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>03/14/2025</td>
-                                        <td>Admin Admin</td>
-                                        <td>Administrator</td>
-                                        <td>Login</td>
-                                        <td>06:37:18</td>
+                                    <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>03/14/2025</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Admin Admin</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Administrator</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Login</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>06:37:18</td>
+                                    </tr>
+                                    <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>03/14/2025</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Trainer Trainer</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Trainer</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Login</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>07:12:16</td>
+                                    </tr>
+                                    <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>03/14/2025</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Trainee Trainee</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Trainee</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Login</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>07:12:25</td>
+                                    </tr>
+                                    <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>03/14/2025</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Trainee Trainee</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Trainee</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Attendance</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>07:15:00</td>
                                     </tr>
                                     <tr>
-                                        <td>03/14/2025</td>
-                                        <td>Trainer Trainer</td>
-                                        <td>Trainer</td>
-                                        <td>Login</td>
-                                        <td>07:12:16</td>
-                                    </tr>
-                                    <tr>
-                                        <td>03/14/2025</td>
-                                        <td>Trainee Trainee</td>
-                                        <td>Trainee</td>
-                                        <td>Login</td>
-                                        <td>07:12:25</td>
-                                    </tr>
-                                    <tr>
-                                        <td>03/14/2025</td>
-                                        <td>Trainee Trainee</td>
-                                        <td>Trainee</td>
-                                        <td>Attendance</td>
-                                        <td>07:15:00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>03/14/2025</td>
-                                        <td>Applicant Applicant</td>
-                                        <td>Applicant</td>
-                                        <td>Login</td>
-                                        <td>07:15:43</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>03/14/2025</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Applicant Applicant</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Applicant</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Login</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>07:15:43</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -425,114 +424,117 @@ const Reports = () => {
                 
             case 'applicants':
                 return (
-                    <div className="report-section">
-                        <h3>Applicant Statistics</h3>
-                        <div className="chart-container">
-                            <div className="pie-chart-wrapper">
-                                <h4>Application Status Distribution</h4>
-                                <ResponsiveContainer width="100%" height={300}>
-                                    <PieChart>
-                                        <Pie
-                                            data={applicationData}
-                                            cx="50%"
-                                            cy="50%"
-                                            labelLine={false}
-                                            outerRadius={100}
-                                            fill="#8884d8"
-                                            dataKey="value"
-                                            label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                        <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b' }}>Applicant Statistics</h3>
+                        <div style={{ display: 'flex', gap: '24px', marginBottom: '24px' }}>
+                            <div style={{ flex: 1 }}>
+                                <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', marginBottom: '16px' }}>Application Status Distribution</h4>
+                                <div style={{ width: '100%', height: '300px' }}>
+                                    <ResponsiveContainer width="100%" height={300}>
+                                        <PieChart>
+                                            <Pie
+                                                data={applicationData}
+                                                cx="50%"
+                                                cy="50%"
+                                                labelLine={false}
+                                                outerRadius={100}
+                                                fill="#8884d8"
+                                                dataKey="value"
+                                                label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                            >
+                                                {applicationData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip />
+                                            <Legend />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', marginBottom: '16px' }}>Evaluation Scores by Role</h4>
+                                <div style={{ width: '100%', height: '300px' }}>
+                                    <ResponsiveContainer width="100%" height={300}>
+                                        <BarChart
+                                            data={[
+                                                { name: 'Loan Officer', evaluation: 76.75, fst: 81.00 },
+                                                { name: 'Financial Educator', evaluation: 0, fst: 0 }
+                                            ]}
                                         >
-                                            {applicationData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip />
-                                        <Legend />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </div>
-                            
-                            <div className="bar-chart-wrapper">
-                                <h4>Evaluation Scores by Role</h4>
-                                <ResponsiveContainer width="100%" height={300}>
-                                    <BarChart
-                                        data={[
-                                            { name: 'Loan Officer', evaluation: 76.75, fst: 81.00 },
-                                            { name: 'Financial Educator', evaluation: 0, fst: 0 }
-                                        ]}
-                                    >
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="name" />
-                                        <YAxis />
-                                        <Tooltip />
-                                        <Legend />
-                                        <Bar dataKey="evaluation" fill="#8884d8" name="Evaluation Score" />
-                                        <Bar dataKey="fst" fill="#82ca9d" name="FST Score" />
-                                    </BarChart>
-                                </ResponsiveContainer>
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <XAxis dataKey="name" />
+                                            <YAxis />
+                                            <Tooltip />
+                                            <Legend />
+                                            <Bar dataKey="evaluation" fill="#8884d8" name="Evaluation Score" />
+                                            <Bar dataKey="fst" fill="#82ca9d" name="FST Score" />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
                             </div>
                         </div>
                         
-                        <div className="stats-summary">
-                            <div className="stat-card">
-                                <h4>Total Applications</h4>
-                                <div className="stat-value">3</div>
+                        <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Total Applications</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>3</div>
                             </div>
-                            <div className="stat-card">
-                                <h4>Pending Review</h4>
-                                <div className="stat-value">1</div>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Pending Review</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>1</div>
                             </div>
-                            <div className="stat-card">
-                                <h4>Shortlisted</h4>
-                                <div className="stat-value">1</div>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Shortlisted</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>1</div>
                             </div>
-                            <div className="stat-card">
-                                <h4>Rejected</h4>
-                                <div className="stat-value">1</div>
+                            <div style={{ flex: 1, padding: '16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+                                <h4 style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px' }}>Rejected</h4>
+                                <div style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b' }}>1</div>
                             </div>
                         </div>
                         
-                        <div className="data-table-container">
-                            <h4>Application Details</h4>
-                            <table className="data-table">
+                        <div style={{ marginTop: '24px' }}>
+                            <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', marginBottom: '16px' }}>Application Details</h4>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
                                 <thead>
-                                    <tr>
-                                        <th>Applicant</th>
-                                        <th>Program</th>
-                                        <th>Job Role</th>
-                                        <th>Status</th>
-                                        <th>Evaluation Score</th>
-                                        <th>FST Score</th>
-                                        <th>Applied Date</th>
+                                    <tr style={{ backgroundColor: '#f8fafc' }}>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Applicant</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Program</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Job Role</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Status</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Evaluation Score</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>FST Score</th>
+                                        <th style={{ padding: '8px', fontSize: '14px', fontWeight: '600', color: '#1e293b', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>Applied Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Applicant Applicant</td>
-                                        <td>Loan Officer Basics</td>
-                                        <td>Loan Officer</td>
-                                        <td>Shortlisted</td>
-                                        <td>88.50</td>
-                                        <td>92.00</td>
-                                        <td>03/10/2025</td>
+                                    <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Applicant Applicant</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Loan Officer Basics</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Loan Officer</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Shortlisted</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>88.50</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>92.00</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>03/10/2025</td>
+                                    </tr>
+                                    <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Applicant Applicant</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Policy Refresher 2025</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Financial Educator</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Pending</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>N/A</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>N/A</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>03/11/2025</td>
                                     </tr>
                                     <tr>
-                                        <td>Applicant Applicant</td>
-                                        <td>Policy Refresher 2025</td>
-                                        <td>Financial Educator</td>
-                                        <td>Pending</td>
-                                        <td>N/A</td>
-                                        <td>N/A</td>
-                                        <td>03/11/2025</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Applicant Applicant</td>
-                                        <td>Advanced Loan Training</td>
-                                        <td>Loan Officer</td>
-                                        <td>Rejected</td>
-                                        <td>65.00</td>
-                                        <td>70.00</td>
-                                        <td>03/12/2025</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Applicant Applicant</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Advanced Loan Training</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Loan Officer</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>Rejected</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>65.00</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>70.00</td>
+                                        <td style={{ padding: '8px', fontSize: '14px', color: '#64748b' }}>03/12/2025</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -546,16 +548,24 @@ const Reports = () => {
     };
 
     return (
-        <div className="reports">
-            <div className="section-header">
-                <h2><BarChart2 size={24} className="icon-inline" /> Reports</h2>
-                <div className="header-actions">
-                    <button className="filter-btn" onClick={() => setShowFilters(!showFilters)}>
+        <div style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <BarChart2 size={24} /> Reports
+                </h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <button 
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#64748b', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
+                        onClick={() => setShowFilters(!showFilters)}
+                    >
                         <Filter size={16} />
                         Filters
-                        <ChevronDown size={16} className={showFilters ? 'rotate' : ''} />
+                        <ChevronDown size={16} style={{ transform: showFilters ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.15s ease' }} />
                     </button>
-                    <button className="export-btn" onClick={handleExportData}>
+                    <button 
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#64748b', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
+                        onClick={handleExportData}
+                    >
                         <Download size={16} />
                         Export
                     </button>
@@ -563,12 +573,13 @@ const Reports = () => {
             </div>
             
             {showFilters && (
-                <div className="filters-panel">
-                    <div className="filter-group">
-                        <label>Date Range:</label>
+                <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)', marginBottom: '24px', display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <label style={{ fontSize: '14px', color: '#64748b' }}>Date Range:</label>
                         <select 
                             value={dateRange}
                             onChange={(e) => setDateRange(e.target.value)}
+                            style={{ padding: '4px 8px', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '14px', color: '#1e293b', backgroundColor: 'white' }}
                         >
                             <option value="week">Last Week</option>
                             <option value="month">Last Month</option>
@@ -580,19 +591,19 @@ const Reports = () => {
                     
                     {dateRange === 'custom' && (
                         <>
-                            <div className="filter-group">
-                                <label>From:</label>
-                                <input type="date" id="start-date" />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <label style={{ fontSize: '14px', color: '#64748b' }}>From:</label>
+                                <input type="date" id="start-date" style={{ padding: '4px 8px', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '14px', color: '#1e293b', backgroundColor: 'white' }} />
                             </div>
-                            <div className="filter-group">
-                                <label>To:</label>
-                                <input type="date" id="end-date" />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <label style={{ fontSize: '14px', color: '#64748b' }}>To:</label>
+                                <input type="date" id="end-date" style={{ padding: '4px 8px', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '14px', color: '#1e293b', backgroundColor: 'white' }} />
                             </div>
                         </>
                     )}
                     
                     <button 
-                        className="apply-filters-btn" 
+                        style={{ padding: '8px 16px', backgroundColor: '#1E88E5', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', transition: 'background-color 0.15s ease' }}
                         onClick={fetchReportData}
                     >
                         Apply Filters
@@ -600,30 +611,74 @@ const Reports = () => {
                 </div>
             )}
             
-            <div className="reports-tabs">
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
                 <button 
-                    className={activeTab === 'enrollment' ? 'active' : ''}
+                    style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px', 
+                        padding: '8px 16px', 
+                        backgroundColor: activeTab === 'enrollment' ? '#E3F2FD' : 'white', 
+                        border: '1px solid #e2e8f0', 
+                        borderRadius: '8px', 
+                        color: activeTab === 'enrollment' ? '#1E88E5' : '#64748b', 
+                        cursor: 'pointer', 
+                        transition: 'background-color 0.15s ease, color 0.15s ease' 
+                    }}
                     onClick={() => setActiveTab('enrollment')}
                 >
                     <BookOpen size={16} />
                     Program Enrollment
                 </button>
                 <button 
-                    className={activeTab === 'quiz' ? 'active' : ''}
+                    style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px', 
+                        padding: '8px 16px', 
+                        backgroundColor: activeTab === 'quiz' ? '#E3F2FD' : 'white', 
+                        border: '1px solid #e2e8f0', 
+                        borderRadius: '8px', 
+                        color: activeTab === 'quiz' ? '#1E88E5' : '#64748b', 
+                        cursor: 'pointer', 
+                        transition: 'background-color 0.15s ease, color 0.15s ease' 
+                    }}
                     onClick={() => setActiveTab('quiz')}
                 >
                     <Award size={16} />
                     Quiz Performance
                 </button>
                 <button 
-                    className={activeTab === 'activity' ? 'active' : ''}
+                    style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px', 
+                        padding: '8px 16px', 
+                        backgroundColor: activeTab === 'activity' ? '#E3F2FD' : 'white', 
+                        border: '1px solid #e2e8f0', 
+                        borderRadius: '8px', 
+                        color: activeTab === 'activity' ? '#1E88E5' : '#64748b', 
+                        cursor: 'pointer', 
+                        transition: 'background-color 0.15s ease, color 0.15s ease' 
+                    }}
                     onClick={() => setActiveTab('activity')}
                 >
                     <Users size={16} />
                     User Activity
                 </button>
                 <button 
-                    className={activeTab === 'applicants' ? 'active' : ''}
+                    style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px', 
+                        padding: '8px 16px', 
+                        backgroundColor: activeTab === 'applicants' ? '#E3F2FD' : 'white', 
+                        border: '1px solid #e2e8f0', 
+                        borderRadius: '8px', 
+                        color: activeTab === 'applicants' ? '#1E88E5' : '#64748b', 
+                        cursor: 'pointer', 
+                        transition: 'background-color 0.15s ease, color 0.15s ease' 
+                    }}
                     onClick={() => setActiveTab('applicants')}
                 >
                     <Calendar size={16} />
@@ -631,7 +686,7 @@ const Reports = () => {
                 </button>
             </div>
             
-            <div className="reports-content">
+            <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
                 {renderReportContent()}
             </div>
         </div>

@@ -6,7 +6,6 @@ import {
 } from 'lucide-react';
 import applicantService from '../../../services/applicantService';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
-import './styles/ApplicantPool.css';
 
 const ApplicantPool = ({ onBack }) => {
   const navigate = useNavigate();
@@ -43,7 +42,6 @@ const ApplicantPool = ({ onBack }) => {
       setApplications(data);
     } catch (err) {
       console.error('Error fetching applications:', err);
-      // We don't set error state here to avoid disrupting the UI if only applications fail to load
     }
   };
 
@@ -53,9 +51,7 @@ const ApplicantPool = ({ onBack }) => {
         setLoading(true);
         await applicantService.deleteApplicantPool(poolId);
         await fetchPools();
-        if (selectedPool && selectedPool.id === poolId) {
-          setSelectedPool(null);
-        }
+        if (selectedPool && selectedPool.id === poolId) setSelectedPool(null);
       } catch (err) {
         setError('Failed to delete applicant pool. Please try again.');
       } finally {
@@ -67,35 +63,22 @@ const ApplicantPool = ({ onBack }) => {
   const handleSelectPool = async (pool) => {
     try {
       setLoading(true);
-      // Fetch applicants first
       const applicants = await applicantService.getApplicantsByPool(pool.id);
-      
-      // Create a new pool object with the applicants attached
-      const updatedPool = {
-        ...pool,
-        applicants: applicants
-      };
-      
-      // Set the selected pool with applicants already attached
-      setSelectedPool(updatedPool);
+      setSelectedPool({ ...pool, applicants });
     } catch (err) {
       console.error('Error fetching applicants for pool:', err);
-      // Show error to user
       setError(`Failed to load applicants for ${pool.pool_name}. Please try again.`);
     } finally {
       setLoading(false);
     }
   };
+
   const handleUpdateStatus = async (applicationId, newStatus) => {
     try {
       await applicantService.updateApplicationStatus(applicationId, newStatus);
-      
-      // Update local state to reflect the change
       setApplications(applications.map(app => 
         app.id === applicationId ? { ...app, status: newStatus } : app
       ));
-      
-      // If this application is in the selectedPool, update that too
       if (selectedPool && selectedPool.applicants) {
         setSelectedPool({
           ...selectedPool,
@@ -112,15 +95,11 @@ const ApplicantPool = ({ onBack }) => {
 
   const handleAssignToPool = async (applicationId) => {
     if (!selectedPool) return;
-    
     try {
       await applicantService.assignApplicantToPool(applicationId, selectedPool.id);
-      
-      // Refresh the pool data to include the newly assigned applicant
       const pool = await applicantService.getApplicantPoolById(selectedPool.id);
       const applicants = await applicantService.getApplicantsByPool(selectedPool.id);
-      pool.applicants = applicants;
-      setSelectedPool(pool);
+      setSelectedPool({ ...pool, applicants });
     } catch (err) {
       console.error('Error assigning applicant to pool:', err);
       alert('Failed to assign applicant to pool. Please try again.');
@@ -131,13 +110,10 @@ const ApplicantPool = ({ onBack }) => {
     if (window.confirm('Are you sure you want to remove this applicant from the pool?')) {
       try {
         await applicantService.removeApplicantFromPool(assignmentId);
-        
-        // Refresh the pool data
         if (selectedPool) {
           const pool = await applicantService.getApplicantPoolById(selectedPool.id);
           const applicants = await applicantService.getApplicantsByPool(selectedPool.id);
-          pool.applicants = applicants;
-          setSelectedPool(pool);
+          setSelectedPool({ ...pool, applicants });
         }
       } catch (err) {
         console.error('Error removing applicant from pool:', err);
@@ -149,15 +125,10 @@ const ApplicantPool = ({ onBack }) => {
   const handleRefresh = () => {
     fetchPools();
     fetchApplications();
-    if (selectedPool) {
-      handleSelectPool(selectedPool);
-    }
+    if (selectedPool) handleSelectPool(selectedPool);
   };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
+  const handleSearch = (e) => setSearchTerm(e.target.value);
   const handleFilterChange = (e) => {
     setStatusFilter(e.target.value);
     fetchApplications({ status: e.target.value === 'all' ? '' : e.target.value });
@@ -170,9 +141,7 @@ const ApplicantPool = ({ onBack }) => {
       )
     : pools;
 
-  if (loading && pools.length === 0) {
-    return <LoadingSpinner />;
-  }
+  if (loading && pools.length === 0) return <LoadingSpinner />;
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -180,126 +149,262 @@ const ApplicantPool = ({ onBack }) => {
   };
 
   return (
-    <div className="applicant-pool-container">
-      {error && <div className="error-message">{error}</div>}
-      
-      <div className="pool-header">
-        <div className="header-left">
-          <button className="back-button" onClick={onBack}>
-            <ArrowLeft size={16} />
-            <span>Back to Dashboard</span>
-          </button>
-          <h1>Applicant Pools</h1>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#f8fafc', // --light-gray
+      padding: '32px', // --spacing-xl
+      fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif",
+      color: '#1e293b' // --text-primary
+    }}>
+      {error && (
+        <div style={{
+          backgroundColor: '#ffe6e6',
+          color: '#e74c3c', // --danger-color
+          padding: '16px',
+          borderRadius: '8px', // --radius-md
+          marginBottom: '32px', // --spacing-xl
+          boxShadow: '0 4px 6px rgba(0,0,0,0.07)' // --shadow-md
+        }}>
+          {error}
         </div>
-        <div className="header-actions">
-          <div className="search-bar">
-            <Search size={16} />
-            <input 
-              type="text" 
-              placeholder="Search pools..." 
+      )}
+
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '32px' // --spacing-xl
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button onClick={onBack} style={{
+            background: 'none',
+            border: 'none',
+            color: '#1E88E5', // --primary-color
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.875rem',
+            transition: 'color 0.3s ease' // --transition-normal
+          }}>
+            <ArrowLeft size={16} /> Back to Dashboard
+          </button>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600, color: '#1e293b' }}>Applicant Pools</h1>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ position: 'relative' }}>
+            <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+            <input
+              type="text"
+              placeholder="Search pools..."
               value={searchTerm}
               onChange={handleSearch}
+              style={{
+                padding: '8px 8px 8px 36px',
+                border: '1px solid #e2e8f0', // --medium-gray
+                borderRadius: '8px', // --radius-md
+                fontSize: '0.875rem',
+                color: '#1e293b',
+                outline: 'none',
+                minWidth: '200px',
+                ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+              }}
             />
           </div>
-          <button className="refresh-button" onClick={handleRefresh}>
+          <button onClick={handleRefresh} style={{
+            backgroundColor: '#ffffff',
+            color: '#1E88E5',
+            padding: '8px',
+            border: '1px solid #1E88E5',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center'
+          }}>
             <RefreshCw size={16} />
           </button>
-          <button 
-            className="create-button"
-            onClick={() => navigate('/admin/applicant-pools/create')}
-          >
-            <Plus size={16} />
-            <span>Create Pool</span>
+          <button onClick={() => navigate('/admin/applicant-pools/create')} style={{
+            backgroundColor: '#1E88E5',
+            color: '#ffffff',
+            padding: '8px 16px',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.875rem',
+            transition: 'background-color 0.3s ease',
+            ':hover': { backgroundColor: '#1565C0' } // --primary-dark
+          }}>
+            <Plus size={16} /> Create Pool
           </button>
         </div>
       </div>
-      
-      <div className="pool-content">
-        <div className="pools-list">
-          <div className="list-header">
-            <h2>Available Pools</h2>
-            <span className="pool-count">{pools.length} pools</span>
+
+      {/* Pool Content */}
+      <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
+        {/* Pools List */}
+        <div style={{
+          flex: '1 1 300px',
+          backgroundColor: '#ffffff',
+          borderRadius: '12px', // --radius-lg
+          boxShadow: '0 4px 6px rgba(0,0,0,0.07)', // --shadow-md
+          padding: '24px', // --spacing-lg
+          minWidth: '0'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '16px' // --spacing-md
+          }}>
+            <h2 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600, color: '#1e293b' }}>Available Pools</h2>
+            <span style={{ fontSize: '0.875rem', color: '#64748b' }}>{pools.length} pools</span>
           </div>
-          
           {filteredPools.length > 0 ? (
-            <div className="pool-items">
+            <div style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
               {filteredPools.map(pool => (
-                <div 
-                  key={pool.id} 
-                  className={`pool-item ${selectedPool && selectedPool.id === pool.id ? 'selected' : ''}`}
+                <div
+                  key={pool.id}
                   onClick={() => handleSelectPool(pool)}
+                  style={{
+                    padding: '16px',
+                    borderRadius: '8px',
+                    marginBottom: '8px',
+                    backgroundColor: selectedPool && selectedPool.id === pool.id ? '#E3F2FD' : '#ffffff', // --primary-ultralight
+                    cursor: 'pointer',
+                    transition: 'background-color 0.3s ease',
+                    ':hover': { backgroundColor: '#f8fafc' } // --light-gray
+                  }}
                 >
-                  <div className="pool-item-header">
-                    <h3>{pool.pool_name}</h3>
-                    <div className="pool-actions">
-                      <button 
-                        className="edit-button" 
-                        title="Edit Pool"
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>{pool.pool_name}</h3>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering pool selection
+                          e.stopPropagation();
                           navigate(`/admin/applicant-pools/edit/${pool.id}`);
+                        }}
+                        style={{
+                          backgroundColor: '#1E88E5',
+                          color: '#ffffff',
+                          padding: '4px',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
                         }}
                       >
                         <Edit size={16} />
                       </button>
-                      <button 
-                        className="delete-button" 
-                        title="Delete Pool"
+                      <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDeletePool(pool.id);
+                        }}
+                        style={{
+                          backgroundColor: '#e74c3c',
+                          color: '#ffffff',
+                          padding: '4px',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
                         }}
                       >
                         <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
-                  <p className="pool-description">{pool.description || 'No description'}</p>
-                  <div className="pool-meta">
-                    <div className="pool-date">Created: {formatDate(pool.created_at)}</div>
-                    <div className="pool-applicants">
-                      <Users size={14} />
-                      <span>{pool.applicant_count || 0} applicants</span>
-                    </div>
+                  <p style={{ margin: '8px 0 0 0', fontSize: '0.875rem', color: '#64748b' }}>
+                    {pool.description || 'No description'}
+                  </p>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginTop: '8px',
+                    fontSize: '0.75rem',
+                    color: '#94a3b8' // --text-muted
+                  }}>
+                    <span>Created: {formatDate(pool.created_at)}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Users size={14} /> {pool.applicant_count || 0} applicants
+                    </span>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="no-data-message">
+            <div style={{ textAlign: 'center', padding: '32px', color: '#64748b', fontSize: '0.875rem' }}>
               {searchTerm ? 'No pools match your search.' : 'No applicant pools available.'}
             </div>
           )}
         </div>
-        
-        <div className="pool-details">
+
+        {/* Pool Details */}
+        <div style={{
+          flex: '2 1 600px',
+          backgroundColor: '#ffffff',
+          borderRadius: '12px',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
+          padding: '24px',
+          minWidth: '0'
+        }}>
           {selectedPool ? (
             <>
-              <div className="details-header">
-                <h2>{selectedPool.pool_name}</h2>
-                <div className="details-meta">
-                  <div className="detail-item">
-                    <span className="label">Created:</span>
-                    <span className="value">{formatDate(selectedPool.created_at)}</span>
+              <div style={{ marginBottom: '24px' }}>
+                <h2 style={{ margin: '0 0 16px 0', fontSize: '1.25rem', fontWeight: 600, color: '#1e293b' }}>
+                  {selectedPool.pool_name}
+                </h2>
+                <div style={{ display: 'flex', gap: '16px', fontSize: '0.875rem', color: '#64748b' }}>
+                  <div>
+                    <span style={{ fontWeight: 600 }}>Created:</span> {formatDate(selectedPool.created_at)}
                   </div>
-                  <div className="detail-item">
-                    <span className="label">Total Applicants:</span>
-                    <span className="value">{selectedPool.applicants ? selectedPool.applicants.length : 0}</span>
+                  <div>
+                    <span style={{ fontWeight: 600 }}>Total Applicants:</span> {selectedPool.applicants ? selectedPool.applicants.length : 0}
                   </div>
                 </div>
               </div>
-              
-              <div className="description-box">
-                <h3>Description</h3>
-                <p>{selectedPool.description || 'No description provided for this pool.'}</p>
+
+              <div style={{
+                backgroundColor: '#E3F2FD',
+                padding: '16px',
+                borderRadius: '8px',
+                marginBottom: '24px'
+              }}>
+                <h3 style={{ margin: '0 0 8px 0', fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>Description</h3>
+                <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>
+                  {selectedPool.description || 'No description provided for this pool.'}
+                </p>
               </div>
-              
-              <div className="applicants-section">
-                <div className="section-header">
-                  <h3>Applicants in this Pool</h3>
-                  <div className="filter-dropdown">
-                    <Filter size={14} />
-                    <select value={statusFilter} onChange={handleFilterChange}>
+
+              {/* Applicants in Pool */}
+              <div style={{ marginBottom: '32px' }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '16px'
+                }}>
+                  <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>
+                    Applicants in this Pool
+                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Filter size={14} style={{ color: '#1E88E5' }} />
+                    <select
+                      value={statusFilter}
+                      onChange={handleFilterChange}
+                      style={{
+                        padding: '8px',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        fontSize: '0.875rem',
+                        color: '#1e293b',
+                        backgroundColor: '#ffffff',
+                        outline: 'none',
+                        ':focus': { borderColor: '#1E88E5' }
+                      }}
+                    >
                       <option value="all">All Statuses</option>
                       <option value="pending">Pending</option>
                       <option value="shortlisted">Shortlisted</option>
@@ -308,41 +413,76 @@ const ApplicantPool = ({ onBack }) => {
                     </select>
                   </div>
                 </div>
-                
                 {selectedPool.applicants && selectedPool.applicants.length > 0 ? (
-                  <div className="applicants-table">
-                    <table>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                       <thead>
-                        <tr>
-                          <th>Applicant</th>
-                          <th>Role</th>
-                          <th>Status</th>
-                          <th>Actions</th>
+                        <tr style={{ backgroundColor: '#E3F2FD', borderBottom: '1px solid #e2e8f0' }}>
+                          {['Applicant', 'Role', 'Status', 'Actions'].map((header, index) => (
+                            <th key={index} style={{
+                              padding: '16px',
+                              textAlign: 'left',
+                              fontSize: '0.875rem',
+                              fontWeight: 600,
+                              color: '#1e293b'
+                            }}>
+                              {header}
+                            </th>
+                          ))}
                         </tr>
                       </thead>
                       <tbody>
                         {selectedPool.applicants.map(applicant => (
-                          <tr key={applicant.id}>
-                            <td className="applicant-name">
-                              <div 
-                                className="applicant-info-container"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  navigate(`/admin/applicant-pools/${selectedPool.id}/applicant/${applicant.id}`);
-                                }}
+                          <tr key={applicant.id} style={{
+                            borderBottom: '1px solid #e2e8f0',
+                            transition: 'background-color 0.3s ease',
+                            ':hover': { backgroundColor: '#f8fafc' }
+                          }}>
+                            <td style={{ padding: '16px' }}>
+                              <div
+                                onClick={() => navigate(`/admin/applicant-pools/${selectedPool.id}/applicant/${applicant.id}`)}
+                                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
                               >
-                                <div className="applicant-avatar">
+                                <div style={{
+                                  width: '32px',
+                                  height: '32px',
+                                  backgroundColor: '#1E88E5',
+                                  borderRadius: '9999px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  color: '#ffffff',
+                                  fontSize: '14px',
+                                  fontWeight: 600
+                                }}>
                                   {applicant.full_name ? applicant.full_name.charAt(0) : 'A'}
                                 </div>
-                                <div className="applicant-info">
-                                  <div className="name">{applicant.full_name}</div>
-                                  <div className="applied-date">Applied: {formatDate(applicant.applied_at)}</div>
+                                <div>
+                                  <div style={{ fontSize: '0.875rem', color: '#1e293b' }}>{applicant.full_name}</div>
+                                  <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                                    Applied: {formatDate(applicant.applied_at)}
+                                  </div>
                                 </div>
                               </div>
                             </td>
-                            <td>{applicant.job_role || 'N/A'} - {applicant.department || 'N/A'}</td>
-                            <td>
-                              <div className={`status-badge status-${applicant.status}`}>
+                            <td style={{ padding: '16px', fontSize: '0.875rem', color: '#64748b' }}>
+                              {applicant.job_role || 'N/A'} - {applicant.department || 'N/A'}
+                            </td>
+                            <td style={{ padding: '16px' }}>
+                              <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                padding: '4px 8px',
+                                borderRadius: '4px',
+                                fontSize: '0.75rem',
+                                color: applicant.status === 'pending' ? '#f39c12' :
+                                        applicant.status === 'shortlisted' ? '#1E88E5' :
+                                        applicant.status === 'hired' ? '#2ecc71' : '#e74c3c',
+                                backgroundColor: applicant.status === 'pending' ? '#fff8e6' :
+                                               applicant.status === 'shortlisted' ? '#E3F2FD' :
+                                               applicant.status === 'hired' ? '#e6ffe6' : '#ffe6e6'
+                              }}>
                                 {applicant.status === 'pending' && <Clock size={14} />}
                                 {applicant.status === 'shortlisted' && <CheckCircle size={14} />}
                                 {applicant.status === 'hired' && <CheckCircle size={14} />}
@@ -350,23 +490,37 @@ const ApplicantPool = ({ onBack }) => {
                                 <span>{applicant.status}</span>
                               </div>
                             </td>
-                            <td className="actions-cell">
-                              <div className="table-actions">
-                                <div className="status-dropdown">
-                                  <select 
-                                    value={applicant.status} 
-                                    onChange={(e) => handleUpdateStatus(applicant.application_id, e.target.value)}
-                                  >
-                                    <option value="pending">Pending</option>
-                                    <option value="shortlisted">Shortlist</option>
-                                    <option value="hired">Hire</option>
-                                    <option value="rejected">Reject</option>
-                                  </select>
-                                </div>
-                                <button 
-                                  className="remove-button" 
+                            <td style={{ padding: '16px' }}>
+                              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <select
+                                  value={applicant.status}
+                                  onChange={(e) => handleUpdateStatus(applicant.application_id, e.target.value)}
+                                  style={{
+                                    padding: '4px 8px',
+                                    border: '1px solid #e2e8f0',
+                                    borderRadius: '4px',
+                                    fontSize: '0.875rem',
+                                    color: '#1e293b',
+                                    backgroundColor: '#ffffff',
+                                    outline: 'none',
+                                    ':focus': { borderColor: '#1E88E5' }
+                                  }}
+                                >
+                                  <option value="pending">Pending</option>
+                                  <option value="shortlisted">Shortlist</option>
+                                  <option value="hired">Hire</option>
+                                  <option value="rejected">Reject</option>
+                                </select>
+                                <button
                                   onClick={() => handleRemoveFromPool(applicant.id)}
-                                  title="Remove from Pool"
+                                  style={{
+                                    backgroundColor: '#e74c3c',
+                                    color: '#ffffff',
+                                    padding: '4px',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer'
+                                  }}
                                 >
                                   <Trash2 size={14} />
                                 </button>
@@ -378,49 +532,86 @@ const ApplicantPool = ({ onBack }) => {
                     </table>
                   </div>
                 ) : (
-                  <div className="no-data-message">
+                  <div style={{ textAlign: 'center', padding: '32px', color: '#64748b', fontSize: '0.875rem' }}>
                     No applicants in this pool.
                   </div>
                 )}
               </div>
-              
-              <div className="add-applicants-section">
-                <div className="section-header">
-                  <h3>Add Applicants to Pool</h3>
-                </div>
-                
+
+              {/* Add Applicants Section */}
+              <div>
+                <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>
+                  Add Applicants to Pool
+                </h3>
                 {applications.length > 0 ? (
-                  <div className="applicants-table">
-                    <table>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                       <thead>
-                        <tr>
-                          <th>Applicant</th>
-                          <th>Role</th>
-                          <th>Status</th>
-                          <th>Actions</th>
+                        <tr style={{ backgroundColor: '#E3F2FD', borderBottom: '1px solid #e2e8f0' }}>
+                          {['Applicant', 'Role', 'Status', 'Actions'].map((header, index) => (
+                            <th key={index} style={{
+                              padding: '16px',
+                              textAlign: 'left',
+                              fontSize: '0.875rem',
+                              fontWeight: 600,
+                              color: '#1e293b'
+                            }}>
+                              {header}
+                            </th>
+                          ))}
                         </tr>
                       </thead>
                       <tbody>
                         {applications
-                          .filter(app => 
-                            // Don't show applicants already in the pool
-                            !selectedPool.applicants || 
-                            !selectedPool.applicants.some(a => a.application_id === app.id)
-                          )
+                          .filter(app => !selectedPool.applicants || !selectedPool.applicants.some(a => a.application_id === app.id))
                           .map(app => (
-                            <tr key={app.id}>
-                              <td className="applicant-name">
-                                <div className="applicant-avatar">
-                                  {app.full_name ? app.full_name.charAt(0) : 'A'}
-                                </div>
-                                <div className="applicant-info">
-                                  <div className="name">{app.full_name}</div>
-                                  <div className="applied-date">Applied: {formatDate(app.applied_at)}</div>
+                            <tr key={app.id} style={{
+                              borderBottom: '1px solid #e2e8f0',
+                              transition: 'background-color 0.3s ease',
+                              ':hover': { backgroundColor: '#f8fafc' }
+                            }}>
+                              <td style={{ padding: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <div style={{
+                                    width: '32px',
+                                    height: '32px',
+                                    backgroundColor: '#1E88E5',
+                                    borderRadius: '9999px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#ffffff',
+                                    fontSize: '14px',
+                                    fontWeight: 600
+                                  }}>
+                                    {app.full_name ? app.full_name.charAt(0) : 'A'}
+                                  </div>
+                                  <div>
+                                    <div style={{ fontSize: '0.875rem', color: '#1e293b' }}>{app.full_name}</div>
+                                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                                      Applied: {formatDate(app.applied_at)}
+                                    </div>
+                                  </div>
                                 </div>
                               </td>
-                              <td>{app.job_role || 'N/A'} - {app.department || 'N/A'}</td>
-                              <td>
-                                <div className={`status-badge status-${app.status}`}>
+                              <td style={{ padding: '16px', fontSize: '0.875rem', color: '#64748b' }}>
+                                {app.job_role || 'N/A'} - {app.department || 'N/A'}
+                              </td>
+                              <td style={{ padding: '16px' }}>
+                                <div style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  fontSize: '0.75rem',
+                                  color: app.status === 'pending' ? '#f39c12' :
+                                          app.status === 'shortlisted' ? '#1E88E5' :
+                                          app.status === 'hired' ? '#2ecc71' : '#e74c3c',
+                                  backgroundColor: app.status === 'pending' ? '#fff8e6' :
+                                                 app.status === 'shortlisted' ? '#E3F2FD' :
+                                                 app.status === 'hired' ? '#e6ffe6' : '#ffe6e6'
+                                }}>
                                   {app.status === 'pending' && <Clock size={14} />}
                                   {app.status === 'shortlisted' && <CheckCircle size={14} />}
                                   {app.status === 'hired' && <CheckCircle size={14} />}
@@ -428,13 +619,23 @@ const ApplicantPool = ({ onBack }) => {
                                   <span>{app.status}</span>
                                 </div>
                               </td>
-                              <td>
-                                <button 
-                                  className="add-to-pool-button"
+                              <td style={{ padding: '16px' }}>
+                                <button
                                   onClick={() => handleAssignToPool(app.id)}
+                                  style={{
+                                    backgroundColor: '#1E88E5',
+                                    color: '#ffffff',
+                                    padding: '4px 8px',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    fontSize: '0.75rem'
+                                  }}
                                 >
-                                  <Plus size={14} />
-                                  <span>Add to Pool</span>
+                                  <Plus size={14} /> Add to Pool
                                 </button>
                               </td>
                             </tr>
@@ -443,17 +644,29 @@ const ApplicantPool = ({ onBack }) => {
                     </table>
                   </div>
                 ) : (
-                  <div className="no-data-message">
+                  <div style={{ textAlign: 'center', padding: '32px', color: '#64748b', fontSize: '0.875rem' }}>
                     No available applicants to add.
                   </div>
                 )}
               </div>
             </>
           ) : (
-            <div className="no-selection-message">
-              <Users size={48} className="icon" />
-              <h3>Select a pool to view details</h3>
-              <p>Choose an applicant pool from the list or create a new one to get started.</p>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              color: '#64748b',
+              textAlign: 'center'
+            }}>
+              <Users size={48} style={{ marginBottom: '16px', color: '#1E88E5' }} />
+              <h3 style={{ margin: '0 0 8px 0', fontSize: '1.125rem', fontWeight: 600, color: '#1e293b' }}>
+                Select a pool to view details
+              </h3>
+              <p style={{ margin: 0, fontSize: '0.875rem' }}>
+                Choose an applicant pool from the list or create a new one to get started.
+              </p>
             </div>
           )}
         </div>

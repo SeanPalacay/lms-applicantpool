@@ -13,14 +13,11 @@ import {
 } from 'lucide-react';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
-import './styles/TrainerDashboard.css'; 
 import trainerService from '../../../services/trainerService';
 
 const TrainerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Initial state with arrays for everything (avoid undefined)
   const [dashboardData, setDashboardData] = useState({
     user: { full_name: '' },
     createdPrograms: [],
@@ -34,62 +31,38 @@ const TrainerDashboard = () => {
 
   const navigate = useNavigate();
 
-  // Function to transform trainee data format to trainer format
   const transformApiDataToTrainerFormat = (apiData) => {
     console.log("Transforming API data to trainer format:", apiData);
-    
-    // If apiData already has the correct structure, just return it
-    if (apiData.createdPrograms) {
-      return apiData;
-    }
-
-    // Create a trainer data structure from trainee data
+    if (apiData.createdPrograms) return apiData;
     const transformedData = {
       user: apiData.user || { full_name: 'Trainer' },
-      
-      // Convert enrollments to createdPrograms
       createdPrograms: (apiData.enrollments || []).map(enrollment => ({
         id: enrollment.program_id,
         title: enrollment.program_title || "Program",
         type: "Course",
         created_at: enrollment.enrollment_date
       })),
-      
-      // Calculate total programs
       totalPrograms: (apiData.enrollments || []).length,
-      
-      // Estimate active trainees
       activeTrainees: Math.max(2, (apiData.enrollments || []).length),
-      
-      // Convert quiz attempts to created quizzes
       createdQuizzes: (apiData.quizAttempts || []).map(attempt => ({
         id: attempt.id,
         title: attempt.quiz_title || "Quiz",
         program_title: "Training Program",
         time_limit: 30
       })),
-      
-      // Convert milestone status to created milestones
       createdMilestones: (apiData.milestoneStatus || []).map(milestone => ({
         id: milestone.milestone_id,
         title: milestone.title || "Milestone",
         program_title: milestone.program_title || "Training Program",
         due_date: milestone.due_date
       })),
-      
-      // Create trainee progress from enrollments
-      traineeProgress: apiData.enrollments ? [
-        {
-          id: 1,
-          title: "Overall Progress",
-          enrolled_count: apiData.enrollments.length,
-          avg_completion: apiData.enrollments.reduce((sum, enr) => sum + (enr.completion_percentage || 0), 0) / 
-                          (apiData.enrollments.length || 1),
-          quiz_attempts: (apiData.quizAttempts || []).length
-        }
-      ] : [],
-      
-      // Map notifications to alerts
+      traineeProgress: apiData.enrollments ? [{
+        id: 1,
+        title: "Overall Progress",
+        enrolled_count: apiData.enrollments.length,
+        avg_completion: apiData.enrollments.reduce((sum, enr) => sum + (enr.completion_percentage || 0), 0) / (apiData.enrollments.length || 1),
+        quiz_attempts: (apiData.quizAttempts || []).length
+      }] : [],
       alerts: (apiData.notifications || []).map(notification => ({
         type: notification.type || "info",
         title: notification.title || "Notification",
@@ -107,7 +80,6 @@ const TrainerDashboard = () => {
         }))
       )
     };
-    
     console.log("Transformed data:", transformedData);
     return transformedData;
   };
@@ -116,10 +88,7 @@ const TrainerDashboard = () => {
     (async () => {
       try {
         const userRole = localStorage.getItem('userRole');
-        console.log('User Role:', userRole); // Debugging
-        
-        // For testing purposes, we'll allow even if the userRole is trainee
-        // In production, uncomment this check
+        console.log('User Role:', userRole);
         /*
         if (userRole !== 'trainer') {
           setError('You do not have permission to view the Trainer Dashboard.');
@@ -128,15 +97,10 @@ const TrainerDashboard = () => {
           return;
         }
         */
-  
         const apiData = await trainerService.getDashboardData();
-        console.log('Dashboard Data:', apiData); // Debugging
-        
-        // Transform data from API to match the expected format
+        console.log('Dashboard Data:', apiData);
         const transformedData = transformApiDataToTrainerFormat(apiData);
-        
         setDashboardData(transformedData);
-  
       } catch (err) {
         console.error('Error fetching trainer dashboard:', err);
         setError(err.message);
@@ -146,186 +110,233 @@ const TrainerDashboard = () => {
     })();
   }, [navigate]);
 
-  // Simple date formatter for milestones/alerts
   const formatDueDate = (dateString) => {
     if (!dateString) return 'No due date';
     const date = new Date(dateString);
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
-
     if (date.toDateString() === today.toDateString()) return 'Due Today';
     if (date.toDateString() === tomorrow.toDateString()) return 'Due Tomorrow';
     return date.toLocaleDateString();
   };
 
-  // Format percentage values for display
   const formatPercentage = (value) => {
     if (value === null || value === undefined) return '0.00%';
     return parseFloat(value).toFixed(2) + '%';
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <LoadingSpinner />;
+  if (error) return <AlertBanner message={error} type="error" />;
 
   return (
-    <div className="trainer-dashboard">
-      {error && <AlertBanner message={error} type="error" />}
-
-      {/* Alerts Section (using optional chaining for safe .length access) */}
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#f8fafc',
+      padding: '32px',
+      fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif",
+      color: '#1e293b'
+    }}>
       {dashboardData.alerts?.length > 0 && (
-        <div className="alerts-section">
-          <div className="section-header">
-            <h2>Alerts & Notifications</h2>
-            <div className="header-line"></div>
+        <div style={{ marginBottom: '32px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 600, margin: 0 }}>Alerts & Notifications</h2>
+            <div style={{ flex: 1, height: '2px', backgroundColor: '#e2e8f0' }}></div>
           </div>
-          <div className="alerts-container">
+          <div style={{ display: 'grid', gap: '16px' }}>
             {dashboardData.alerts.map((alert, index) => (
-              <div key={index} className={`alert-card alert-${alert.type || 'info'}`}>
-                <div className="alert-icon">
-                  {alert.type === 'warning' ? (
-                    <AlertTriangle size={20} />
-                  ) : (
-                    <Info size={20} />
-                  )}
+              <div key={index} style={{
+                backgroundColor: alert.type === 'warning' ? '#fff8e6' : '#e6f7ff',
+                borderRadius: '12px',
+                padding: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.07)'
+              }}>
+                <div style={{ color: alert.type === 'warning' ? '#f39c12' : '#1E88E5' }}>
+                  {alert.type === 'warning' ? <AlertTriangle size={20} /> : <Info size={20} />}
                 </div>
-                <div className="alert-content">
-                  <h4>{alert.title || 'Notification'}</h4>
-                  <p>
-                    {alert.message}
-                    {alert.dueDate && ` - ${formatDueDate(alert.dueDate)}`}
+                <div style={{ flex: 1 }}>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 600, margin: '0 0 4px 0' }}>{alert.title || 'Notification'}</h4>
+                  <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
+                    {alert.message}{alert.dueDate && ` - ${formatDueDate(alert.dueDate)}`}
                   </p>
                 </div>
-                <div className="alert-actions">
-                  {alert.actionLink && (
-                    <Link to={alert.actionLink} className="alert-action-btn">
-                      {alert.actionText || 'View Details'}
-                    </Link>
-                  )}
-                </div>
+                {alert.actionLink && (
+                  <Link
+                    to={alert.actionLink}
+                    style={{
+                      backgroundColor: alert.type === 'warning' ? '#f39c12' : '#1E88E5',
+                      color: '#ffffff',
+                      padding: '6px 12px',
+                      borderRadius: '8px',
+                      textDecoration: 'none',
+                      fontSize: '0.75rem',
+                      transition: 'background-color 0.3s ease',
+                      ':hover': { backgroundColor: alert.type === 'warning' ? '#e67e22' : '#1565C0' }
+                    }}
+                  >
+                    {alert.actionText || 'View Details'}
+                  </Link>
+                )}
               </div>
             ))}
           </div>
         </div>
       )}
 
-      <div className="dashboard-grid">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
         {/* 1. Created Programs */}
-        <div className="dashboard-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <GraduationCap size={20} />
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ color: '#1E88E5' }}><GraduationCap size={20} /></div>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0 }}>My Programs</h3>
             </div>
-            <div className="header-content">
-              <h3>My Programs</h3>
-              <Link to="/trainer/programs" className="view-all-link">
-                View All
-              </Link>
-            </div>
+            <Link to="/trainer/programs" style={{ color: '#1E88E5', fontSize: '0.875rem', textDecoration: 'none', ':hover': { textDecoration: 'underline' } }}>
+              View All
+            </Link>
           </div>
-          <div className="card-content">
+          <div style={{ display: 'grid', gap: '16px' }}>
             {dashboardData.createdPrograms?.length > 0 ? (
               dashboardData.createdPrograms.map((program, index) => (
-                <div key={index} className="program-item">
-                  <h4>{program.title || 'Untitled Program'}</h4>
-                  <p>
-                    {program.type || 'Standard'} • Created: {program.created_at 
-                      ? new Date(program.created_at).toLocaleDateString() 
-                      : 'Unknown Date'}
+                <div key={index} style={{ padding: '12px 0', borderBottom: index < dashboardData.createdPrograms.length - 1 ? '1px solid #e2e8f0' : 'none' }}>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 500, margin: '0 0 4px 0' }}>{program.title || 'Untitled Program'}</h4>
+                  <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '0 0 8px 0' }}>
+                    {program.type || 'Standard'} • Created: {program.created_at ? new Date(program.created_at).toLocaleDateString() : 'Unknown Date'}
                   </p>
-                  <Link to={`/trainer/programs/${program.id}`} className="continue-link">
-                    Manage <ChevronRight size={14} className="icon-inline" />
+                  <Link
+                    to={`/trainer/programs/${program.id}`}
+                    style={{
+                      color: '#1E88E5',
+                      fontSize: '0.875rem',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      ':hover': { textDecoration: 'underline' }
+                    }}
+                  >
+                    Manage <ChevronRight size={14} />
                   </Link>
                 </div>
               ))
             ) : (
-              <div className="no-data-message">
-                <p>You haven't created any programs yet.</p>
-                <div className="card-actions">
-                  <Link to="/trainer/programs/create" className="action-button primary">
-                    Create Program
-                  </Link>
-                </div>
+              <div style={{ textAlign: 'center', padding: '24px 0' }}>
+                <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '0 0 16px 0' }}>You haven't created any programs yet.</p>
+                <Link
+                  to="/trainer/programs/create"
+                  style={{
+                    backgroundColor: '#1E88E5',
+                    color: '#ffffff',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                    transition: 'background-color 0.3s ease',
+                    ':hover': { backgroundColor: '#1565C0' }
+                  }}
+                >
+                  Create Program
+                </Link>
               </div>
             )}
           </div>
         </div>
 
         {/* 2. Created Milestones */}
-        <div className="dashboard-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <Calendar size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Recent Milestones</h3>
-            </div>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <div style={{ color: '#1E88E5' }}><Calendar size={20} /></div>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0 }}>Recent Milestones</h3>
           </div>
-          <div className="card-content">
+          <div style={{ display: 'grid', gap: '16px' }}>
             {dashboardData.createdMilestones?.length > 0 ? (
               dashboardData.createdMilestones.map((milestone, index) => (
-                <div key={index} className="milestone-item">
-                  <div className="milestone-info">
-                    <h4>{milestone.title || 'Untitled Milestone'}</h4>
+                <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: index < dashboardData.createdMilestones.length - 1 ? '1px solid #e2e8f0' : 'none' }}>
+                  <div>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 500, margin: '0 0 4px 0' }}>{milestone.title || 'Untitled Milestone'}</h4>
                     {milestone.program_title && (
-                      <p className="program-name">{milestone.program_title}</p>
+                      <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>{milestone.program_title}</p>
                     )}
                   </div>
-                  <div className="milestone-date">
-                    <div className="due-date">{formatDueDate(milestone.due_date)}</div>
-                    <Link to={`/trainer/milestones/${milestone.id}`} className="milestone-link">
-                      Details <ChevronRight size={12} className="icon-inline" />
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '0.875rem', color: formatDueDate(milestone.due_date) === 'Due Today' ? '#e74c3c' : '#64748b', marginBottom: '4px' }}>
+                      {formatDueDate(milestone.due_date)}
+                    </div>
+                    <Link
+                      to={`/trainer/milestones/${milestone.id}`}
+                      style={{
+                        color: '#1E88E5',
+                        fontSize: '0.75rem',
+                        textDecoration: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        ':hover': { textDecoration: 'underline' }
+                      }}
+                    >
+                      Details <ChevronRight size={12} />
                     </Link>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="no-data-message">
-                <p>No milestones created yet.</p>
+              <div style={{ textAlign: 'center', padding: '24px 0' }}>
+                <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>No milestones created yet.</p>
               </div>
             )}
           </div>
         </div>
 
         {/* 3. Created Quizzes */}
-        <div className="dashboard-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <HelpCircle size={20} />
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ color: '#1E88E5' }}><HelpCircle size={20} /></div>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0 }}>Recent Quizzes</h3>
             </div>
-            <div className="header-content">
-              <h3>Recent Quizzes</h3>
-              <Link to="/trainer/quizzes" className="view-all-link">
-                View All
-              </Link>
-            </div>
+            <Link to="/trainer/quizzes" style={{ color: '#1E88E5', fontSize: '0.875rem', textDecoration: 'none', ':hover': { textDecoration: 'underline' } }}>
+              View All
+            </Link>
           </div>
-          <div className="card-content">
+          <div style={{ display: 'grid', gap: '16px' }}>
             {dashboardData.createdQuizzes?.length > 0 ? (
               dashboardData.createdQuizzes.map((quiz, index) => (
-                <div key={index} className="quiz-item">
-                  <div className="quiz-info">
-                    <h4>{quiz.title || 'Untitled Quiz'}</h4>
+                <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: index < dashboardData.createdQuizzes.length - 1 ? '1px solid #e2e8f0' : 'none' }}>
+                  <div>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 500, margin: '0 0 4px 0' }}>{quiz.title || 'Untitled Quiz'}</h4>
                     {quiz.program_title && (
-                      <p className="program-name">{quiz.program_title}</p>
+                      <p style={{ fontSize: '0.75rem', color: '#64748b', margin: '0 0 4px 0' }}>{quiz.program_title}</p>
                     )}
-                    <div className="quiz-details">
-                      <span className="time-limit">
-                        <Clock size={14} className="icon-inline" /> {quiz.time_limit || 'No'} minutes
-                      </span>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Clock size={14} /> {quiz.time_limit || 'No'} minutes
                     </div>
                   </div>
-                  <div className="quiz-actions">
-                    <Link to={`/trainer/quizzes/${quiz.id}`} className="take-quiz-btn">
-                      Edit <Edit size={14} className="icon-inline" />
-                    </Link>
-                  </div>
+                  <Link
+                    to={`/trainer/quizzes/${quiz.id}`}
+                    style={{
+                      backgroundColor: '#1E88E5',
+                      color: '#ffffff',
+                      padding: '6px 12px',
+                      borderRadius: '8px',
+                      textDecoration: 'none',
+                      fontSize: '0.75rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      transition: 'background-color 0.3s ease',
+                      ':hover': { backgroundColor: '#1565C0' }
+                    }}
+                  >
+                    Edit <Edit size={14} />
+                  </Link>
                 </div>
               ))
             ) : (
-              <div className="no-data-message">
-                <p>No quizzes created yet.</p>
+              <div style={{ textAlign: 'center', padding: '24px 0' }}>
+                <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>No quizzes created yet.</p>
               </div>
             )}
           </div>
@@ -333,47 +344,38 @@ const TrainerDashboard = () => {
 
         {/* 4. Trainee Progress */}
         {dashboardData.traineeProgress?.length > 0 && (
-          <div className="dashboard-card">
-            <div className="card-header">
-              <div className="header-icon">
-                <PieChart size={20} />
-              </div>
-              <div className="header-content">
-                <h3>Trainee Progress</h3>
-              </div>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <div style={{ color: '#1E88E5' }}><PieChart size={20} /></div>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0 }}>Trainee Progress</h3>
             </div>
-            <div className="card-content">
-              <div className="progress-overview">
-                <div className="progress-stats">
-                  <div className="stat-box">
-                    <span className="stat-value">{dashboardData.totalPrograms}</span>
-                    <span className="stat-label">Programs</span>
-                  </div>
-                  <div className="stat-box">
-                    <span className="stat-value">{dashboardData.activeTrainees}</span>
-                    <span className="stat-label">Active Trainees</span>
-                  </div>
+            <div style={{ display: 'grid', gap: '16px' }}>
+              <div style={{ display: 'flex', gap: '24px', marginBottom: '16px' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#1e293b', display: 'block' }}>{dashboardData.totalPrograms}</span>
+                  <span style={{ fontSize: '0.875rem', color: '#64748b' }}>Programs</span>
                 </div>
-                {dashboardData.traineeProgress.map((prog, index) => (
-                  <div key={index} className="progress-item">
-                    <h4>{prog.title || 'Overall Progress'}</h4>
-                    <div className="progress-metrics">
-                      <div className="progress-metric">
-                        <span className="metric-name">Enrolled:</span>
-                        <span className="metric-value">{prog.enrolled_count || 0}</span>
-                      </div>
-                      <div className="progress-metric">
-                        <span className="metric-name">Avg. Completion:</span>
-                        <span className="metric-value">{formatPercentage(prog.avg_completion)}</span>
-                      </div>
-                      <div className="progress-metric">
-                        <span className="metric-name">Quiz Attempts:</span>
-                        <span className="metric-value">{prog.quiz_attempts || 0}</span>
-                      </div>
+                <div style={{ textAlign: 'center' }}>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#1e293b', display: 'block' }}>{dashboardData.activeTrainees}</span>
+                  <span style={{ fontSize: '0.875rem', color: '#64748b' }}>Active Trainees</span>
+                </div>
+              </div>
+              {dashboardData.traineeProgress.map((prog, index) => (
+                <div key={index} style={{ padding: '12px 0', borderTop: index > 0 ? '1px solid #e2e8f0' : 'none' }}>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 500, margin: '0 0 8px 0' }}>{prog.title || 'Overall Progress'}</h4>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '0.875rem', color: '#64748b' }}>
+                    <div>
+                      <span style={{ fontWeight: 600 }}>Enrolled:</span> {prog.enrolled_count || 0}
+                    </div>
+                    <div>
+                      <span style={{ fontWeight: 600 }}>Avg. Completion:</span> {formatPercentage(prog.avg_completion)}
+                    </div>
+                    <div>
+                      <span style={{ fontWeight: 600 }}>Quiz Attempts:</span> {prog.quiz_attempts || 0}
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         )}

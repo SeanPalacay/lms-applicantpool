@@ -7,7 +7,6 @@ import {
 import LoadingSpinner from '../../../components/shared/LoadingSpinner'; // Assuming you have this
 import AlertBanner from '../../../components/shared/AlertBanner'; // Assuming you have this
 import traineeService from '../../../services/traineeService';
-import './styles/ProgressTracking.css';
 
 const ProgressTracking = () => {
   const [enrollments, setEnrollments] = useState([]);
@@ -71,9 +70,9 @@ const ProgressTracking = () => {
 
   const getMilestoneStatusClass = (status) => {
     switch (status) {
-      case 'completed': return 'status-completed';
-      case 'in_progress': return 'status-in-progress';
-      case 'not_started': default: return 'status-not-started';
+      case 'completed': return { backgroundColor: 'var(--primary-ultralight)', color: 'var(--primary-color)' };
+      case 'in_progress': return { backgroundColor: 'rgba(243, 156, 18, 0.1)', color: 'var(--warning-color)' };
+      case 'not_started': default: return { backgroundColor: 'var(--light-gray)', color: 'var(--text-secondary)' };
     }
   };
 
@@ -112,11 +111,35 @@ const ProgressTracking = () => {
 
   if (loading) return <LoadingSpinner />;
   if (error) return (
-    <div className="progress-error">
-      <AlertTriangle size={48} className="error-icon" />
-      <h2>Error</h2>
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      height: '100vh', 
+      gap: 'var(--spacing-md)', 
+      color: 'var(--text-secondary)',
+    }}>
+      <AlertTriangle size={48} style={{ color: 'var(--danger-color)' }} />
+      <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>Error</h2>
       <p>{error}</p>
-      <button onClick={refreshProgressData} className="btn-primary">
+      <button 
+        onClick={refreshProgressData} 
+        style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 'var(--spacing-xs)', 
+          padding: 'var(--spacing-sm) var(--spacing-md)', 
+          backgroundColor: 'var(--primary-color)', 
+          color: 'white', 
+          border: 'none', 
+          borderRadius: 'var(--radius-md)', 
+          cursor: 'pointer',
+          transition: 'background-color var(--transition-fast)',
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-dark)'}
+        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-color)'}
+      >
         <RefreshCw size={16} /> Retry
       </button>
     </div>
@@ -125,73 +148,215 @@ const ProgressTracking = () => {
   const filteredEnrollments = getFilteredEnrollments();
 
   return (
-    <div className="progress-tracking-container">
-      <div className="progress-header">
-        <div className="progress-title">
-          <h1>Progress Tracking</h1>
-          <p>Track your learning journey and achievements</p>
+    <div style={{ 
+      padding: 'var(--spacing-xl)', 
+      backgroundColor: 'var(--light-gray)', 
+      minHeight: '100vh',
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: 'var(--spacing-xl)',
+      }}>
+        <div>
+          <h1 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>Progress Tracking</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Track your learning journey and achievements</p>
         </div>
-        <div className="progress-actions">
-          <button className="btn-secondary" onClick={exportProgressPDF}>
+        <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+          <button 
+            onClick={exportProgressPDF} 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 'var(--spacing-xs)', 
+              padding: 'var(--spacing-sm) var(--spacing-md)', 
+              backgroundColor: 'transparent', 
+              color: 'var(--text-secondary)', 
+              border: '1px solid var(--medium-gray)', 
+              borderRadius: 'var(--radius-md)', 
+              cursor: 'pointer',
+              transition: 'all var(--transition-fast)',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--light-gray)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
             <Download size={16} /> Export Report
           </button>
-          <button className="btn-secondary" onClick={refreshProgressData}>
+          <button 
+            onClick={refreshProgressData} 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 'var(--spacing-xs)', 
+              padding: 'var(--spacing-sm) var(--spacing-md)', 
+              backgroundColor: 'transparent', 
+              color: 'var(--text-secondary)', 
+              border: '1px solid var(--medium-gray)', 
+              borderRadius: 'var(--radius-md)', 
+              cursor: 'pointer',
+              transition: 'all var(--transition-fast)',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--light-gray)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
             <RefreshCw size={16} /> Refresh
           </button>
         </div>
       </div>
 
-      <div className="progress-summary">
-        <div className="progress-stats-card">
-          <div className="card-icon"><BarChart size={24} className="icon-primary" /></div>
-          <div className="card-content">
-            <h3>Overall Progress</h3>
-            <div className="progress-bar-container">
-              <div className="progress-bar-fill" style={{ width: `${overallProgress}%` }}></div>
-            </div>
-            <div className="progress-percentage">{overallProgress.toFixed(2)}%</div>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+        gap: 'var(--spacing-md)', 
+        marginBottom: 'var(--spacing-xl)',
+      }}>
+        <div style={{ 
+          backgroundColor: 'white', 
+          padding: 'var(--spacing-md)', 
+          borderRadius: 'var(--radius-md)', 
+          boxShadow: 'var(--shadow-sm)',
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 'var(--spacing-sm)', 
+            marginBottom: 'var(--spacing-md)',
+          }}>
+            <BarChart size={24} style={{ color: 'var(--primary-color)' }} />
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)' }}>Overall Progress</h3>
+          </div>
+          <div style={{ 
+            height: '8px', 
+            backgroundColor: 'var(--light-gray)', 
+            borderRadius: 'var(--radius-full)', 
+            marginBottom: 'var(--spacing-sm)',
+          }}>
+            <div 
+              style={{ 
+                width: `${overallProgress}%`, 
+                height: '100%', 
+                backgroundColor: 'var(--primary-color)', 
+                borderRadius: 'var(--radius-full)',
+              }}
+            ></div>
+          </div>
+          <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)' }}>
+            {overallProgress.toFixed(2)}%
           </div>
         </div>
-        <div className="progress-stats-card">
-          <div className="card-icon"><BookOpen size={24} className="icon-success" /></div>
-          <div className="card-content">
-            <h3>Programs Enrolled</h3>
-            <div className="stat-value">{enrollments.length}</div>
+
+        <div style={{ 
+          backgroundColor: 'white', 
+          padding: 'var(--spacing-md)', 
+          borderRadius: 'var(--radius-md)', 
+          boxShadow: 'var(--shadow-sm)',
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 'var(--spacing-sm)', 
+            marginBottom: 'var(--spacing-md)',
+          }}>
+            <BookOpen size={24} style={{ color: 'var(--success-color)' }} />
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)' }}>Programs Enrolled</h3>
+          </div>
+          <div style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>
+            {enrollments.length}
           </div>
         </div>
-        <div className="progress-stats-card">
-          <div className="card-icon"><CheckCircle size={24} className="icon-info" /></div>
-          <div className="card-content">
-            <h3>Completed Programs</h3>
-            <div className="stat-value">{enrollments.filter(e => e.completion_status === 'completed').length}</div>
+
+        <div style={{ 
+          backgroundColor: 'white', 
+          padding: 'var(--spacing-md)', 
+          borderRadius: 'var(--radius-md)', 
+          boxShadow: 'var(--shadow-sm)',
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 'var(--spacing-sm)', 
+            marginBottom: 'var(--spacing-md)',
+          }}>
+            <CheckCircle size={24} style={{ color: 'var(--info-color)' }} />
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)' }}>Completed Programs</h3>
+          </div>
+          <div style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>
+            {enrollments.filter(e => e.completion_status === 'completed').length}
           </div>
         </div>
-        <div className="progress-stats-card">
-          <div className="card-icon"><Award size={24} className="icon-warning" /></div>
-          <div className="card-content">
-            <h3>Quiz Average</h3>
-            <div className="stat-value">
-              {quizAttempts.length > 0 
-                ? (quizAttempts.reduce((sum, attempt) => sum + parseFloat(attempt.score || 0), 0) / quizAttempts.length).toFixed(2)
-                : '0.00'}%
-            </div>
+
+        <div style={{ 
+          backgroundColor: 'white', 
+          padding: 'var(--spacing-md)', 
+          borderRadius: 'var(--radius-md)', 
+          boxShadow: 'var(--shadow-sm)',
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 'var(--spacing-sm)', 
+            marginBottom: 'var(--spacing-md)',
+          }}>
+            <Award size={24} style={{ color: 'var(--warning-color)' }} />
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)' }}>Quiz Average</h3>
+          </div>
+          <div style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>
+            {quizAttempts.length > 0 
+              ? (quizAttempts.reduce((sum, attempt) => sum + parseFloat(attempt.score || 0), 0) / quizAttempts.length).toFixed(2)
+              : '0.00'}%
           </div>
         </div>
       </div>
 
-      <div className="progress-filters">
-        <div className="filter-group">
-          <span className="filter-label"><Filter size={16} /> Filter by Status:</span>
-          <div className="filter-buttons">
-            <button className={`filter-btn ${filterActive === 'all' ? 'active' : ''}`} onClick={() => setFilterActive('all')}>All</button>
-            <button className={`filter-btn ${filterActive === 'in_progress' ? 'active' : ''}`} onClick={() => setFilterActive('in_progress')}>In Progress</button>
-            <button className={`filter-btn ${filterActive === 'completed' ? 'active' : ''}`} onClick={() => setFilterActive('completed')}>Completed</button>
-            <button className={`filter-btn ${filterActive === 'not_started' ? 'active' : ''}`} onClick={() => setFilterActive('not_started')}>Not Started</button>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: 'var(--spacing-md)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+            <Filter size={16} style={{ color: 'var(--text-secondary)' }} />
+            <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Filter by Status:</span>
+          </div>
+          <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
+            {['all', 'in_progress', 'completed', 'not_started'].map(status => (
+              <button
+                key={status}
+                onClick={() => setFilterActive(status)}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 'var(--spacing-xs)', 
+                  padding: 'var(--spacing-xs) var(--spacing-sm)', 
+                  backgroundColor: filterActive === status ? 'var(--primary-color)' : 'transparent', 
+                  color: filterActive === status ? 'white' : 'var(--text-secondary)', 
+                  border: `1px solid ${filterActive === status ? 'var(--primary-color)' : 'var(--medium-gray)'}`, 
+                  borderRadius: 'var(--radius-md)', 
+                  cursor: 'pointer',
+                  transition: 'all var(--transition-fast)',
+                }}
+              >
+                {status.replace('_', ' ')}
+              </button>
+            ))}
           </div>
         </div>
-        <div className="sort-group">
-          <span className="sort-label">Sort by:</span>
-          <select className="sort-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+          <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Sort by:</span>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            style={{ 
+              padding: 'var(--spacing-xs) var(--spacing-sm)', 
+              border: '1px solid var(--medium-gray)', 
+              borderRadius: 'var(--radius-md)', 
+              outline: 'none', 
+              fontSize: '14px', 
+              color: 'var(--text-primary)',
+            }}
+          >
             <option value="recent">Recently Enrolled</option>
             <option value="progress">Progress (High to Low)</option>
             <option value="alphabetical">Alphabetical</option>
@@ -199,107 +364,259 @@ const ProgressTracking = () => {
         </div>
       </div>
 
-      <div className="progress-section">
-        <h2 className="section-title"><BookOpen size={20} /> Program Progress</h2>
+      <div style={{ marginBottom: 'var(--spacing-xl)' }}>
+        <h2 style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 'var(--spacing-sm)', 
+          fontSize: '20px', 
+          fontWeight: '600', 
+          color: 'var(--text-primary)', 
+          marginBottom: 'var(--spacing-md)',
+        }}>
+          <BookOpen size={20} /> Program Progress
+        </h2>
         {filteredEnrollments.length === 0 ? (
-          <div className="no-data-message">
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            padding: 'var(--spacing-md)', 
+            color: 'var(--text-secondary)',
+          }}>
             <p>No program enrollments found. Enroll in programs to track your progress.</p>
           </div>
         ) : (
-          <div className="program-progress-list">
+          <div style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
             {filteredEnrollments.map(enrollment => (
-              <div key={enrollment.id} className="program-progress-card">
-                <div className="program-info">
-                  <h3 className="program-title">{enrollment.title}</h3>
-                  <div className="program-details">
-                    <span className="enrollment-date"><Calendar size={14} /> Enrolled: {new Date(enrollment.enrollment_date).toLocaleDateString()}</span>
-                    <span className={`program-status status-${enrollment.completion_status}`}>
-                      {enrollment.completion_status === 'completed' && <CheckCircle size={14} />}
-                      {enrollment.completion_status === 'in_progress' && <Clock size={14} />}
-                      {enrollment.completion_status === 'not_started' && <AlertTriangle size={14} />}
+              <div key={enrollment.id} style={{ 
+                backgroundColor: 'white', 
+                padding: 'var(--spacing-md)', 
+                borderRadius: 'var(--radius-md)', 
+                boxShadow: 'var(--shadow-sm)',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-md)' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)' }}>{enrollment.title}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+                      <Calendar size={14} /> Enrolled: {new Date(enrollment.enrollment_date).toLocaleDateString()}
+                    </span>
+                    <span style={{ 
+                      padding: 'var(--spacing-xs) var(--spacing-sm)', 
+                      backgroundColor: enrollment.completion_status === 'completed' ? 'var(--primary-ultralight)' : 'var(--light-gray)', 
+                      color: enrollment.completion_status === 'completed' ? 'var(--primary-color)' : 'var(--text-secondary)', 
+                      borderRadius: 'var(--radius-sm)', 
+                      fontSize: '14px', 
+                      fontWeight: '500',
+                    }}>
                       {enrollment.completion_status.replace('_', ' ')}
                     </span>
                   </div>
                 </div>
-                <div className="program-progress">
-                  <div className="progress-bar-label">
-                    <span>Progress</span>
-                    <span className="progress-percentage">{enrollment.completion_percentage}%</span>
+                <div style={{ marginBottom: 'var(--spacing-md)' }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginBottom: 'var(--spacing-xs)',
+                  }}>
+                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Progress</span>
+                    <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-primary)' }}>
+                      {enrollment.completion_percentage}%
+                    </span>
                   </div>
-                  <div className="progress-bar-container">
-                    <div className="progress-bar-fill" style={{ width: `${enrollment.completion_percentage}%` }}></div>
+                  <div style={{ 
+                    height: '8px', 
+                    backgroundColor: 'var(--light-gray)', 
+                    borderRadius: 'var(--radius-full)',
+                  }}>
+                    <div 
+                      style={{ 
+                        width: `${enrollment.completion_percentage}%`, 
+                        height: '100%', 
+                        backgroundColor: 'var(--primary-color)', 
+                        borderRadius: 'var(--radius-full)',
+                      }}
+                    ></div>
                   </div>
                 </div>
-                <Link to={`/trainee/programs/${enrollment.id}`} className="btn-primary view-details-btn">View Details</Link>
+                <Link 
+                  to={`/trainee/programs/${enrollment.id}`} 
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    padding: 'var(--spacing-sm) var(--spacing-md)', 
+                    backgroundColor: 'var(--primary-color)', 
+                    color: 'white', 
+                    borderRadius: 'var(--radius-md)', 
+                    textDecoration: 'none',
+                    transition: 'background-color var(--transition-fast)',
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-dark)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-color)'}
+                >
+                  View Details
+                </Link>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      <div className="progress-section">
-        <h2 className="section-title"><TrendingUp size={20} /> Milestone Progress</h2>
+      <div style={{ marginBottom: 'var(--spacing-xl)' }}>
+        <h2 style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 'var(--spacing-sm)', 
+          fontSize: '20px', 
+          fontWeight: '600', 
+          color: 'var(--text-primary)', 
+          marginBottom: 'var(--spacing-md)',
+        }}>
+          <TrendingUp size={20} /> Milestone Progress
+        </h2>
         {milestones.length === 0 ? (
-          <div className="no-data-message">
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            padding: 'var(--spacing-md)', 
+            color: 'var(--text-secondary)',
+          }}>
             <p>No milestones assigned yet. Milestones will appear here as they are assigned.</p>
           </div>
         ) : (
-          <div className="milestone-list">
+          <div style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
             {milestones.map(milestone => (
-              <div key={milestone.id} className="milestone-card">
-                <div className={`milestone-status ${getMilestoneStatusClass(milestone.status)}`}>
-                  {getMilestoneStatusIcon(milestone.status)}
-                </div>
-                <div className="milestone-info">
-                  <h3 className="milestone-title">{milestone.title}</h3>
-                  <p className="milestone-description">{milestone.description}</p>
-                  <div className="milestone-meta">
-                    <span className="program-name">{milestone.program_title}</span>
-                    <span className="due-date"><Clock size={14} /> Due: {new Date(milestone.due_date).toLocaleDateString()}</span>
+              <div key={milestone.id} style={{ 
+                backgroundColor: 'white', 
+                padding: 'var(--spacing-md)', 
+                borderRadius: 'var(--radius-md)', 
+                boxShadow: 'var(--shadow-sm)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)' }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    width: '40px', 
+                    height: '40px', 
+                    borderRadius: 'var(--radius-full)', 
+                    ...getMilestoneStatusClass(milestone.status),
+                  }}>
+                    {getMilestoneStatusIcon(milestone.status)}
                   </div>
-                </div>
-                {milestone.completion_date && (
-                  <div className="milestone-completion">
-                    <CheckCircle size={16} className="completion-icon" />
-                    <span>Completed on {new Date(milestone.completion_date).toLocaleDateString()}</span>
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)' }}>{milestone.title}</h3>
+                    <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-sm)' }}>
+                      {milestone.description}
+                    </p>
+                    <div style={{ display: 'flex', gap: 'var(--spacing-md)', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                      <span>{milestone.program_title}</span>
+                      <span><Clock size={14} /> Due: {new Date(milestone.due_date).toLocaleDateString()}</span>
+                    </div>
                   </div>
-                )}
+                  {milestone.completion_date && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+                      <CheckCircle size={16} style={{ color: 'var(--primary-color)' }} />
+                      <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+                        Completed on {new Date(milestone.completion_date).toLocaleDateString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      <div className="progress-section">
-        <h2 className="section-title"><PieChart size={20} /> Quiz Performance</h2>
+      <div>
+        <h2 style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 'var(--spacing-sm)', 
+          fontSize: '20px', 
+          fontWeight: '600', 
+          color: 'var(--text-primary)', 
+          marginBottom: 'var(--spacing-md)',
+        }}>
+          <PieChart size={20} /> Quiz Performance
+        </h2>
         {quizAttempts.length === 0 ? (
-          <div className="no-data-message">
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            padding: 'var(--spacing-md)', 
+            color: 'var(--text-secondary)',
+          }}>
             <p>No quiz attempts found. Complete quizzes to see your performance.</p>
           </div>
         ) : (
-          <div className="quiz-performance-table">
-            <div className="table-header">
-              <div className="column-quiz">Quiz Name</div>
-              <div className="column-program">Program</div>
-              <div className="column-date">Attempt Date</div>
-              <div className="column-score">Score</div>
-              <div className="column-status">Status</div>
-              <div className="column-actions">Actions</div>
+          <div style={{ 
+            backgroundColor: 'white', 
+            padding: 'var(--spacing-md)', 
+            borderRadius: 'var(--radius-md)', 
+            boxShadow: 'var(--shadow-sm)',
+          }}>
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+              gap: 'var(--spacing-md)', 
+              marginBottom: 'var(--spacing-md)',
+            }}>
+              <div style={{ fontWeight: '600', color: 'var(--text-secondary)' }}>Quiz Name</div>
+              <div style={{ fontWeight: '600', color: 'var(--text-secondary)' }}>Program</div>
+              <div style={{ fontWeight: '600', color: 'var(--text-secondary)' }}>Attempt Date</div>
+              <div style={{ fontWeight: '600', color: 'var(--text-secondary)' }}>Score</div>
+              <div style={{ fontWeight: '600', color: 'var(--text-secondary)' }}>Status</div>
+              <div style={{ fontWeight: '600', color: 'var(--text-secondary)' }}>Actions</div>
             </div>
-            <div className="table-body">
+            <div style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
               {quizAttempts.map(attempt => (
-                <div key={attempt.id} className="table-row">
-                  <div className="column-quiz">{attempt.quiz_title}</div>
-                  <div className="column-program">{attempt.program_title}</div>
-                  <div className="column-date">{new Date(attempt.attempt_date).toLocaleString()}</div>
-                  <div className="column-score">{attempt.score}%</div>
-                  <div className="column-status">
-                    <span className={`status-badge ${parseFloat(attempt.score) >= parseFloat(attempt.passing_score) ? 'passed' : 'failed'}`}>
+                <div key={attempt.id} style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+                  gap: 'var(--spacing-md)', 
+                  alignItems: 'center',
+                }}>
+                  <div style={{ color: 'var(--text-primary)' }}>{attempt.quiz_title}</div>
+                  <div style={{ color: 'var(--text-primary)' }}>{attempt.program_title}</div>
+                  <div style={{ color: 'var(--text-primary)' }}>{new Date(attempt.attempt_date).toLocaleString()}</div>
+                  <div style={{ color: 'var(--text-primary)' }}>{attempt.score}%</div>
+                  <div>
+                    <span style={{ 
+                      padding: 'var(--spacing-xs) var(--spacing-sm)', 
+                      backgroundColor: parseFloat(attempt.score) >= parseFloat(attempt.passing_score) ? 'var(--primary-ultralight)' : 'rgba(231, 76, 60, 0.1)', 
+                      color: parseFloat(attempt.score) >= parseFloat(attempt.passing_score) ? 'var(--primary-color)' : 'var(--danger-color)', 
+                      borderRadius: 'var(--radius-sm)', 
+                      fontSize: '14px', 
+                      fontWeight: '500',
+                    }}>
                       {parseFloat(attempt.score) >= parseFloat(attempt.passing_score) ? 'Passed' : 'Failed'}
                     </span>
                   </div>
-                  <div className="column-actions">
-                    <Link to={`/trainee/assessments/quiz/${attempt.quiz_id}/feedback?attempt=${attempt.id}`} className="btn-small">View Feedback</Link>
+                  <div>
+                    <Link 
+                      to={`/trainee/assessments/quiz/${attempt.quiz_id}/feedback?attempt=${attempt.id}`} 
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        padding: 'var(--spacing-xs) var(--spacing-sm)', 
+                        backgroundColor: 'var(--primary-color)', 
+                        color: 'white', 
+                        borderRadius: 'var(--radius-md)', 
+                        textDecoration: 'none',
+                        transition: 'background-color var(--transition-fast)',
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-dark)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-color)'}
+                    >
+                      View Feedback
+                    </Link>
                   </div>
                 </div>
               ))}

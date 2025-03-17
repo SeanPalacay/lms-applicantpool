@@ -1,27 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
-  UserCheck, 
-  Briefcase, 
-  FileText, 
-  Mail, 
-  Phone,
-  Clock,
-  Calendar,
-  ArrowLeft,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Download,
-  Award,
-  BarChart2,
-  Clipboard,
-  User
+  UserCheck,Clock,Briefcase, FileText, Mail, Calendar, ArrowLeft, CheckCircle, XCircle, 
+  AlertTriangle, Download, Award, BarChart2, Clipboard, User
 } from 'lucide-react';
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
 import applicantService from '../../../../services/applicantService';
-import '../styles/ApplicantDetails.css';
 
 const ApplicantDetails = () => {
   const { poolId, applicantId } = useParams();
@@ -31,117 +16,56 @@ const ApplicantDetails = () => {
   const [success, setSuccess] = useState(null);
   const [confirmAction, setConfirmAction] = useState(null);
   const [applicant, setApplicant] = useState({
-    id: '',
-    user_id: '',
-    program_id: '',
-    application_id: '',
-    full_name: '',
-    email: '',
-    job_role: '',
-    department: '',
-    status: 'pending', // pending, shortlisted, hired, rejected
-    evaluation_score: null,
-    fst_score: null,
-    applied_at: '',
-    updated_at: '',
-    documents: [],
-    program: {
-      title: '',
-      type: ''
-    },
-    notes: []
+    id: '', user_id: '', program_id: '', application_id: '', full_name: '', email: '',
+    job_role: '', department: '', status: 'pending', evaluation_score: null, fst_score: null,
+    applied_at: '', updated_at: '', documents: [], program: { title: '', type: '' }, notes: []
   });
 
   useEffect(() => {
     const fetchApplicantDetails = async () => {
-        setLoading(true);
-        setError(null);
-        
-        try {
-          // Check if token exists
-          const token = localStorage.getItem('authToken');
-          if (!token) {
-            setError('You are not logged in. Please log in to access this page.');
-            setLoading(false);
-            setTimeout(() => navigate('/login'), 2000);
-            return;
-          }
-          
-          // Fetch applicant data
-          const response = await applicantService.getApplicantDetails(poolId, applicantId);
-          console.log('Received applicant details:', response);
-          
-          // Handle the response which might be an array or object
-          const data = Array.isArray(response) ? response[0] : response;
-          
-          if (!data) {
-            throw new Error('No data returned from API');
-          }
-          
-          // Map the API response to our component's data structure
-          const mappedData = {
-            id: data.id || '',
-            user_id: data.user_id || '',
-            program_id: data.program_id || '',
-            application_id: data.application_id || '',
-            full_name: data.full_name || '',
-            email: data.email || '',
-            job_role: data.job_role || '',
-            department: data.department || '',
-            status: data.status || 'pending',
-            evaluation_score: data.evaluation_score || null,
-            fst_score: data.fst_score || null,
-            applied_at: data.applied_at || '',
-            updated_at: data.updated_at || '',
-            program: {
-              title: data.program_title || '',
-              type: 'regular' // Default to regular since we don't have this info
-            },
-            documents: data.documents || [],
-            notes: data.notes || []
-          };
-          
-          console.log('Mapped applicant data:', mappedData);
-          setApplicant(mappedData);
-        } catch (err) {
-          console.error('Error fetching applicant details:', err);
-          setError('Failed to load applicant details. Please try again.');
-        } finally {
-          setLoading(false);
+      setLoading(true);
+      setError(null);
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          setError('You are not logged in. Please log in to access this page.');
+          setTimeout(() => navigate('/login'), 2000);
+          return;
         }
-      };
-
+        const response = await applicantService.getApplicantDetails(poolId, applicantId);
+        const data = Array.isArray(response) ? response[0] : response;
+        if (!data) throw new Error('No data returned from API');
+        setApplicant({
+          id: data.id || '', user_id: data.user_id || '', program_id: data.program_id || '',
+          application_id: data.application_id || '', full_name: data.full_name || '',
+          email: data.email || '', job_role: data.job_role || '', department: data.department || '',
+          status: data.status || 'pending', evaluation_score: data.evaluation_score || null,
+          fst_score: data.fst_score || null, applied_at: data.applied_at || '', updated_at: data.updated_at || '',
+          program: { title: data.program_title || '', type: 'regular' }, documents: data.documents || [], notes: data.notes || []
+        });
+      } catch (err) {
+        console.error('Error fetching applicant details:', err);
+        setError('Failed to load applicant details. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchApplicantDetails();
   }, [poolId, applicantId, navigate]);
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
-  const handleStatusChange = async (newStatus) => {
-    setConfirmAction({ type: 'status', value: newStatus });
-  };
+  const handleStatusChange = async (newStatus) => setConfirmAction({ type: 'status', value: newStatus });
 
   const handleConfirmStatusChange = async () => {
     if (!confirmAction) return;
-    
     setLoading(true);
-    
     try {
-      await applicantService.updateApplicationStatus(
-        applicant.application_id, 
-        confirmAction.value
-      );
-      
-      // Update local state
-      setApplicant({
-        ...applicant,
-        status: confirmAction.value,
-        updated_at: new Date().toISOString()
-      });
-      
+      await applicantService.updateApplicationStatus(applicant.application_id, confirmAction.value);
+      setApplicant({ ...applicant, status: confirmAction.value, updated_at: new Date().toISOString() });
       setSuccess(`Applicant status updated to ${confirmAction.value}.`);
     } catch (err) {
       console.error('Error updating applicant status:', err);
@@ -155,74 +79,25 @@ const ApplicantDetails = () => {
   const handleDownloadDocument = async (documentId, documentName) => {
     try {
       await applicantService.downloadDocument(documentId);
-      // Browser will handle the download
     } catch (err) {
       console.error('Error downloading document:', err);
       setError('Failed to download document. Please try again.');
     }
   };
 
-  const cancelAction = () => {
-    setConfirmAction(null);
-  };
-
-  const goBack = () => {
-    navigate(`/admin/applicant-pools/`);
-  };
-
-  const getStatusClass = (status) => {
-    switch(status) {
-      case 'shortlisted': return 'status-info';
-      case 'hired': return 'status-success';
-      case 'rejected': return 'status-danger';
-      default: return 'status-warning'; // pending
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch(status) {
-      case 'shortlisted': return <UserCheck size={16} />;
-      case 'hired': return <CheckCircle size={16} />;
-      case 'rejected': return <XCircle size={16} />;
-      default: return <Clock size={16} />; // pending
-    }
-  };
-  
-  // This function safely formats the status string with a capitalized first letter
-  const formatStatus = (status) => {
-    if (!status) return 'Pending';
-    return status.charAt(0).toUpperCase() + status.slice(1);
-  };
-
   const handleAddNote = async (e) => {
     e.preventDefault();
     const noteContent = e.target.elements.note.value.trim();
-    
     if (!noteContent) return;
-    
     try {
       setLoading(true);
-      
-      // Assuming you have an API endpoint to add notes
       await applicantService.addApplicantNote(applicant.id, noteContent);
-      
-      // Update local state with the new note
-      // This is a simplified approach; in reality, you'd get the full note data from the API
       const newNote = {
-        id: Date.now(), // Temporary ID
-        content: noteContent,
-        author_name: localStorage.getItem('userName') || 'User',
+        id: Date.now(), content: noteContent, author_name: localStorage.getItem('userName') || 'User',
         created_at: new Date().toISOString()
       };
-      
-      setApplicant({
-        ...applicant,
-        notes: [newNote, ...(applicant.notes || [])]
-      });
-      
-      // Clear the form
+      setApplicant({ ...applicant, notes: [newNote, ...(applicant.notes || [])] });
       e.target.elements.note.value = '';
-      
       setSuccess('Note added successfully.');
     } catch (err) {
       console.error('Error adding note:', err);
@@ -232,290 +107,331 @@ const ApplicantDetails = () => {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="applicant-details-container">
-      <div className="section-header">
-        <h1>Applicant Details</h1>
-        <div className="header-line"></div>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#f8fafc', // --light-gray
+      padding: '32px', // --spacing-xl
+      fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif",
+      color: '#1e293b' // --text-primary
+    }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ margin: '0 0 8px 0', fontSize: '1.5rem', fontWeight: 600, color: '#1e293b' }}>Applicant Details</h1>
+        <div style={{ height: '2px', width: '80px', backgroundColor: '#1E88E5' }}></div>
       </div>
-      
-      {error && (
-        <AlertBanner 
-          message={error} 
-          type="error" 
-          onDismiss={() => setError(null)} 
-        />
-      )}
-      
-      {success && (
-        <AlertBanner 
-          message={success} 
-          type="success" 
-          onDismiss={() => setSuccess(null)} 
-        />
-      )}
-      
-      <div className="back-link" onClick={goBack}>
-        <ArrowLeft size={16} className="icon-inline" />
-        <span>Back to Applicant Pool</span>
+
+      {error && <AlertBanner message={error} type="error" onDismiss={() => setError(null)} />}
+      {success && <AlertBanner message={success} type="success" onDismiss={() => setSuccess(null)} />}
+
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        color: '#1E88E5',
+        cursor: 'pointer',
+        marginBottom: '24px',
+        fontSize: '0.875rem'
+      }} onClick={() => navigate(`/admin/applicant-pools/`)}>
+        <ArrowLeft size={16} /> Back to Applicant Pool
       </div>
-      
-      <div className="applicant-header">
-        <div className="applicant-title-section">
-          <h2>{applicant.full_name || 'Applicant'}</h2>
-          <div className={`applicant-status ${getStatusClass(applicant.status)}`}>
-            {getStatusIcon(applicant.status)}
-            <span>{formatStatus(applicant.status)}</span>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600, color: '#1e293b' }}>
+            {applicant.full_name || 'Applicant'}
+          </h2>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            padding: '4px 8px',
+            borderRadius: '4px',
+            fontSize: '0.75rem',
+            color: applicant.status === 'pending' ? '#f39c12' :
+                    applicant.status === 'shortlisted' ? '#1E88E5' :
+                    applicant.status === 'hired' ? '#2ecc71' : '#e74c3c',
+            backgroundColor: applicant.status === 'pending' ? '#fff8e6' :
+                           applicant.status === 'shortlisted' ? '#E3F2FD' :
+                           applicant.status === 'hired' ? '#e6ffe6' : '#ffe6e6'
+          }}>
+            {applicant.status === 'pending' && <Clock size={16} />}
+            {applicant.status === 'shortlisted' && <UserCheck size={16} />}
+            {applicant.status === 'hired' && <CheckCircle size={16} />}
+            {applicant.status === 'rejected' && <XCircle size={16} />}
+            <span>{applicant.status.charAt(0).toUpperCase() + applicant.status.slice(1)}</span>
           </div>
         </div>
-        
-        <div className="applicant-actions">
+        <div style={{ display: 'flex', gap: '8px' }}>
           {confirmAction ? (
-            <div className="confirm-action">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.875rem', color: '#1e293b' }}>
               <span>Confirm status change to <strong>{confirmAction.value}</strong>?</span>
-              <button className="confirm-yes" onClick={handleConfirmStatusChange}>Yes</button>
-              <button className="confirm-no" onClick={cancelAction}>No</button>
+              <button onClick={handleConfirmStatusChange} style={{
+                backgroundColor: '#1E88E5',
+                color: '#ffffff',
+                padding: '4px 12px',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}>Yes</button>
+              <button onClick={() => setConfirmAction(null)} style={{
+                backgroundColor: '#e74c3c',
+                color: '#ffffff',
+                padding: '4px 12px',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}>No</button>
             </div>
           ) : (
-            <div className="status-actions">
-              <button 
-                className={`action-button ${applicant.status === 'shortlisted' ? 'active' : ''}`}
-                onClick={() => handleStatusChange('shortlisted')}
-                disabled={applicant.status === 'shortlisted'}
-              >
-                <UserCheck size={16} className="icon-inline" /> Shortlist
+            <>
+              <button onClick={() => handleStatusChange('shortlisted')} disabled={applicant.status === 'shortlisted'} style={{
+                backgroundColor: applicant.status === 'shortlisted' ? '#E3F2FD' : '#1E88E5',
+                color: applicant.status === 'shortlisted' ? '#1E88E5' : '#ffffff',
+                padding: '8px 16px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: applicant.status === 'shortlisted' ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.875rem'
+              }}>
+                <UserCheck size={16} /> Shortlist
               </button>
-              <button 
-                className={`action-button ${applicant.status === 'hired' ? 'active success' : ''}`}
-                onClick={() => handleStatusChange('hired')}
-                disabled={applicant.status === 'hired'}
-              >
-                <CheckCircle size={16} className="icon-inline" /> Hire
+              <button onClick={() => handleStatusChange('hired')} disabled={applicant.status === 'hired'} style={{
+                backgroundColor: applicant.status === 'hired' ? '#e6ffe6' : '#2ecc71',
+                color: applicant.status === 'hired' ? '#2ecc71' : '#ffffff',
+                padding: '8px 16px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: applicant.status === 'hired' ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.875rem'
+              }}>
+                <CheckCircle size={16} /> Hire
               </button>
-              <button 
-                className={`action-button ${applicant.status === 'rejected' ? 'active danger' : ''}`}
-                onClick={() => handleStatusChange('rejected')}
-                disabled={applicant.status === 'rejected'}
-              >
-                <XCircle size={16} className="icon-inline" /> Reject
+              <button onClick={() => handleStatusChange('rejected')} disabled={applicant.status === 'rejected'} style={{
+                backgroundColor: applicant.status === 'rejected' ? '#ffe6e6' : '#e74c3c',
+                color: applicant.status === 'rejected' ? '#e74c3c' : '#ffffff',
+                padding: '8px 16px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: applicant.status === 'rejected' ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.875rem'
+              }}>
+                <XCircle size={16} /> Reject
               </button>
-            </div>
+            </>
           )}
         </div>
       </div>
-      
-      <div className="applicant-content">
-        <div className="applicant-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <User size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Personal Information</h3>
-            </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px', marginBottom: '32px' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
+          <div style={{ backgroundColor: '#E3F2FD', padding: '16px', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <User size={20} style={{ color: '#1E88E5' }} />
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>Personal Information</h3>
           </div>
-          
-          <div className="card-content">
-            <div className="applicant-info">
-              <div className="info-item">
-                <div className="info-icon">
-                  <Mail size={16} />
-                </div>
-                <div className="info-content">
-                  <div className="info-label">Email</div>
-                  <div className="info-value">{applicant.email || 'N/A'}</div>
-                </div>
-              </div>
-              
-              <div className="info-item">
-                <div className="info-icon">
-                  <Briefcase size={16} />
-                </div>
-                <div className="info-content">
-                  <div className="info-label">Applied Position</div>
-                  <div className="info-value">{applicant.job_role || 'N/A'}</div>
+          <div style={{ padding: '24px' }}>
+            {[
+              { icon: Mail, label: 'Email', value: applicant.email || 'N/A' },
+              { icon: Briefcase, label: 'Applied Position', value: applicant.job_role || 'N/A' },
+              { icon: FileText, label: 'Department', value: applicant.department || 'N/A' },
+              { icon: Calendar, label: 'Applied Date', value: formatDate(applicant.applied_at) }
+            ].map((item, index) => (
+              <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+                <item.icon size={16} style={{ color: '#64748b' }} />
+                <div>
+                  <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>{item.label}</div>
+                  <div style={{ fontSize: '0.875rem', color: '#64748b' }}>{item.value}</div>
                 </div>
               </div>
-              
-              <div className="info-item">
-                <div className="info-icon">
-                  <FileText size={16} />
+            ))}
+            <div style={{ marginTop: '24px' }}>
+              <h4 style={{ margin: '0 0 8px 0', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>Program Information</h4>
+              <div style={{ backgroundColor: '#f8fafc', padding: '16px', borderRadius: '8px' }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>
+                  {applicant.program?.title || 'N/A'}
                 </div>
-                <div className="info-content">
-                  <div className="info-label">Department</div>
-                  <div className="info-value">{applicant.department || 'N/A'}</div>
-                </div>
-              </div>
-              
-              <div className="info-item">
-                <div className="info-icon">
-                  <Calendar size={16} />
-                </div>
-                <div className="info-content">
-                  <div className="info-label">Applied Date</div>
-                  <div className="info-value">{formatDate(applicant.applied_at)}</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="program-info">
-              <h4>Program Information</h4>
-              <div className="program-box">
-                <div className="program-title">{(applicant.program && applicant.program.title) || 'N/A'}</div>
-                <div className="program-type">
-                  {(applicant.program && applicant.program.type === 'regular') ? 'Regular Program' : 'Refresher Program'}
+                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                  {applicant.program?.type === 'regular' ? 'Regular Program' : 'Refresher Program'}
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
-        <div className="applicant-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <BarChart2 size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Evaluation Scores</h3>
-            </div>
+
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
+          <div style={{ backgroundColor: '#E3F2FD', padding: '16px', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <BarChart2 size={20} style={{ color: '#1E88E5' }} />
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>Evaluation Scores</h3>
           </div>
-          
-          <div className="card-content">
-            <div className="scores-container">
-              <div className="score-card">
-                <div className="score-header">
-                  <Clipboard size={20} />
-                  <h4>Evaluation Score</h4>
-                </div>
-                <div className="score-value">
-                  {applicant.evaluation_score !== null ? (
-                    <div className="score-circle">
-                      <span>{applicant.evaluation_score}</span>
+          <div style={{ padding: '24px' }}>
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+              {[
+                { icon: Clipboard, label: 'Evaluation Score', value: applicant.evaluation_score },
+                { icon: Award, label: 'Field Stress Test (FST)', value: applicant.fst_score }
+              ].map((score, index) => (
+                <div key={index} style={{ flex: 1, textAlign: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', marginBottom: '8px' }}>
+                    <score.icon size={20} style={{ color: '#1E88E5' }} />
+                    <h4 style={{ margin: 0, fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>{score.label}</h4>
+                  </div>
+                  {score.value !== null ? (
+                    <div style={{
+                      width: '60px',
+                      height: '60px',
+                      borderRadius: '9999px',
+                      backgroundColor: '#E3F2FD',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: '0 auto',
+                      fontSize: '1.25rem',
+                      fontWeight: 600,
+                      color: '#1e293b'
+                    }}>
+                      {score.value}
                     </div>
                   ) : (
-                    <div className="no-score">
-                      <AlertTriangle size={16} className="icon-inline" />
-                      <span>Not evaluated</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center', color: '#f39c12' }}>
+                      <AlertTriangle size={16} /> <span style={{ fontSize: '0.875rem' }}>{score.label.includes('FST') ? 'Not taken' : 'Not evaluated'}</span>
                     </div>
                   )}
                 </div>
-              </div>
-              
-              <div className="score-card">
-                <div className="score-header">
-                  <Award size={20} />
-                  <h4>Field Stress Test (FST)</h4>
-                </div>
-                <div className="score-value">
-                  {applicant.fst_score !== null ? (
-                    <div className="score-circle">
-                      <span>{applicant.fst_score}</span>
-                    </div>
-                  ) : (
-                    <div className="no-score">
-                      <AlertTriangle size={16} className="icon-inline" />
-                      <span>Not taken</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+              ))}
             </div>
-            
-            <div className="score-actions">
-              <Link to={`/admin/applicants/${applicant.application_id}/evaluate`} className="action-button primary">
-                <Clipboard size={16} className="icon-inline" /> Update Evaluation
+            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+              <Link to={`/admin/applicants/${applicant.application_id}/evaluate`} style={{
+                backgroundColor: '#1E88E5',
+                color: '#ffffff',
+                padding: '8px 16px',
+                border: 'none',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.875rem'
+              }}>
+                <Clipboard size={16} /> Update Evaluation
               </Link>
-              
-              <Link to={`/admin/applicants/${applicant.application_id}/fst`} className="action-button secondary">
-                <Award size={16} className="icon-inline" /> Record FST Score
+              <Link to={`/admin/applicants/${applicant.application_id}/fst`} style={{
+                backgroundColor: '#ffffff',
+                color: '#1E88E5',
+                padding: '8px 16px',
+                border: '1px solid #1E88E5',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.875rem'
+              }}>
+                <Award size={16} /> Record FST Score
               </Link>
             </div>
           </div>
         </div>
       </div>
-      
-      <div className="applicant-documents-section">
-        <div className="applicant-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <FileText size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Documents</h3>
-            </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
+          <div style={{ backgroundColor: '#E3F2FD', padding: '16px', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <FileText size={20} style={{ color: '#1E88E5' }} />
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>Documents</h3>
           </div>
-          
-          <div className="card-content">
+          <div style={{ padding: '24px' }}>
             {applicant.documents && applicant.documents.length > 0 ? (
-              <div className="document-list">
-                {applicant.documents.map((doc, index) => (
-                  <div key={index} className="document-item">
-                    <div className="document-icon">
-                      <FileText size={20} />
-                    </div>
-                    <div className="document-details">
-                      <div className="document-name">{doc.description || 'Document'}</div>
-                      <div className="document-date">Uploaded: {formatDate(doc.created_at)}</div>
-                    </div>
-                    <button 
-                      className="document-download" 
-                      onClick={() => handleDownloadDocument(doc.id, doc.description)}
-                    >
-                      <Download size={16} />
-                    </button>
+              applicant.documents.map((doc, index) => (
+                <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '8px 0', borderBottom: index < applicant.documents.length - 1 ? '1px solid #e2e8f0' : 'none' }}>
+                  <FileText size={20} style={{ color: '#64748b' }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.875rem', color: '#1e293b' }}>{doc.description || 'Document'}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Uploaded: {formatDate(doc.created_at)}</div>
                   </div>
-                ))}
-              </div>
+                  <button onClick={() => handleDownloadDocument(doc.id, doc.description)} style={{
+                    backgroundColor: '#1E88E5',
+                    color: '#ffffff',
+                    padding: '4px',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}>
+                    <Download size={16} />
+                  </button>
+                </div>
+              ))
             ) : (
-              <div className="no-data-message">
-                <p>No documents have been uploaded by this applicant.</p>
+              <div style={{ textAlign: 'center', padding: '32px', color: '#64748b', fontSize: '0.875rem' }}>
+                No documents have been uploaded by this applicant.
               </div>
             )}
           </div>
         </div>
-        
-        <div className="applicant-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <Clipboard size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Notes</h3>
-            </div>
+
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
+          <div style={{ backgroundColor: '#E3F2FD', padding: '16px', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Clipboard size={20} style={{ color: '#1E88E5' }} />
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>Notes</h3>
           </div>
-          
-          <div className="card-content">
+          <div style={{ padding: '24px' }}>
             {applicant.notes && applicant.notes.length > 0 ? (
-              <div className="notes-list">
-                {applicant.notes.map((note, index) => (
-                  <div key={index} className="note-item">
-                    <div className="note-header">
-                      <div className="note-author">{note.author_name || 'User'}</div>
-                      <div className="note-date">{formatDate(note.created_at)}</div>
-                    </div>
-                    <div className="note-content">{note.content}</div>
+              applicant.notes.map((note, index) => (
+                <div key={index} style={{ padding: '8px 0', borderBottom: index < applicant.notes.length - 1 ? '1px solid #e2e8f0' : 'none' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>{note.author_name || 'User'}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{formatDate(note.created_at)}</div>
                   </div>
-                ))}
-              </div>
+                  <div style={{ fontSize: '0.875rem', color: '#64748b' }}>{note.content}</div>
+                </div>
+              ))
             ) : (
-              <div className="no-data-message">
-                <p>No notes have been added for this applicant.</p>
+              <div style={{ textAlign: 'center', padding: '32px 0', color: '#64748b', fontSize: '0.875rem' }}>
+                No notes have been added for this applicant.
               </div>
             )}
-            
-            <form className="add-note-form" onSubmit={handleAddNote}>
-              <textarea 
+            <form onSubmit={handleAddNote} style={{ marginTop: '24px' }}>
+              <textarea
                 name="note"
                 placeholder="Add a note about this applicant..."
                 rows="3"
                 required
-              ></textarea>
-              <button type="submit" className="action-button primary">
-                <Clipboard size={16} className="icon-inline" /> Add Note
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '0.875rem',
+                  color: '#1e293b',
+                  outline: 'none',
+                  resize: 'vertical',
+                  ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                }}
+              />
+              <button type="submit" style={{
+                backgroundColor: '#1E88E5',
+                color: '#ffffff',
+                padding: '8px 16px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.875rem',
+                marginTop: '16px',
+                transition: 'background-color 0.3s ease',
+                ':hover': { backgroundColor: '#1565C0' }
+              }}>
+                <Clipboard size={16} /> Add Note
               </button>
             </form>
           </div>

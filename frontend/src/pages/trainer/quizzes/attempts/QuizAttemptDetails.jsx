@@ -14,7 +14,6 @@ import {
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
 import trainerService from '../../../../services/trainerService';
-import '../styles/QuizAttemptDetails.css'; // Create this CSS file
 
 const QuizAttemptDetails = () => {
   const { quizId, attemptId } = useParams();
@@ -88,72 +87,97 @@ const QuizAttemptDetails = () => {
   }
 
   return (
-    <div className="quiz-attempt-details-container">
-      <div className="section-header">
-        <h1>Quiz Attempt Details</h1>
-        <div className="header-line"></div>
+    <div style={{
+      padding: '20px',
+      maxWidth: '1200px',
+      margin: '0 auto'
+    }}>
+      <div style={{
+        marginBottom: '20px'
+      }}>
+        <h1 style={{ fontSize: '24px', margin: '0 0 10px 0' }}>Quiz Attempt Details</h1>
+        <div style={{ height: '2px', background: '#ddd' }}></div>
       </div>
 
-      {error && (
-        <AlertBanner 
-          message={error} 
-          type="error" 
-          onDismiss={() => setError(null)} 
-        />
-      )}
+      {error && <AlertBanner message={error} type="error" onDismiss={() => setError(null)} />}
 
-      <div className="back-link" onClick={goBack}>
-        <ArrowLeft size={16} className="icon-inline" />
+      <div 
+        onClick={goBack}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          cursor: 'pointer',
+          marginBottom: '20px',
+          color: '#007bff'
+        }}
+      >
+        <ArrowLeft size={16} style={{ marginRight: '5px' }} />
         <span>Back to Results</span>
       </div>
 
-      <div className="attempt-header">
-        <h2>{attempt.quiz_title}</h2>
-        <div className="attempt-meta">
-          <div className="meta-item">
-            <User size={16} className="icon-inline" />
+      <div style={{ marginBottom: '30px' }}>
+        <h2 style={{ fontSize: '20px', marginBottom: '10px' }}>{attempt.quiz_title}</h2>
+        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <User size={16} style={{ marginRight: '5px' }} />
             <span>{attempt.trainee_name}</span>
           </div>
-          <div className="meta-item">
-            <Clock size={16} className="icon-inline" />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Clock size={16} style={{ marginRight: '5px' }} />
             <span>{formatDate(attempt.attempt_date)}</span>
           </div>
-          <div className="meta-item">
-            <span className={`score ${getPassStatus() ? 'passing' : 'failing'}`}>
-              Score: {attempt.score}% 
-              {getPassStatus() ? (
-                <CheckCircle size={14} className="icon-inline" />
-              ) : (
-                <XCircle size={14} className="icon-inline" />
-              )}
-            </span>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center',
+            color: getPassStatus() ? '#28a745' : '#dc3545'
+          }}>
+            <span>Score: {attempt.score}%</span>
+            {getPassStatus() ? (
+              <CheckCircle size={14} style={{ marginLeft: '5px' }} />
+            ) : (
+              <XCircle size={14} style={{ marginLeft: '5px' }} />
+            )}
           </div>
         </div>
       </div>
 
-      <div className="attempt-details-card">
-        <div className="card-header gradient-blue">
-          <div className="header-icon">
-            <HelpCircle size={20} />
-          </div>
-          <div className="header-content">
-            <h3>Attempt Overview</h3>
-          </div>
+      <div style={{
+        background: '#fff',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        marginBottom: '30px'
+      }}>
+        <div style={{
+          background: 'linear-gradient(to right, #007bff, #00b7ff)',
+          color: 'white',
+          padding: '10px 15px',
+          borderRadius: '8px 8px 0 0',
+          display: 'flex',
+          alignItems: 'center'
+        }}>
+          <HelpCircle size={20} style={{ marginRight: '10px' }} />
+          <h3 style={{ margin: 0 }}>Attempt Overview</h3>
         </div>
-
-        <div className="card-content">
-          <div className="overview-grid">
-            <div className="overview-item">
-              <span className="label">Passing Score:</span>
-              <span className="value">{attempt.passing_score}%</span>
+        <div style={{ padding: '15px' }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '15px'
+          }}>
+            <div>
+              <span style={{ fontWeight: 'bold' }}>Passing Score:</span>
+              <span style={{ marginLeft: '5px' }}>{attempt.passing_score}%</span>
             </div>
-            <div className="overview-item">
-              <span className="label">Time Taken:</span>
-              <span className="value">{attempt.time_taken ? `${attempt.time_taken} min` : 'N/A'}</span>
+            <div>
+              <span style={{ fontWeight: 'bold' }}>Time Taken:</span>
+              <span style={{ marginLeft: '5px' }}>{attempt.time_taken ? `${attempt.time_taken} min` : 'N/A'}</span>
             </div>
-            <div className="overview-item">
-              <span className="label">Status:</span>
-              <span className={`value ${getPassStatus() ? 'passed' : 'failed'}`}>
+            <div>
+              <span style={{ fontWeight: 'bold' }}>Status:</span>
+              <span style={{ 
+                marginLeft: '5px',
+                color: getPassStatus() ? '#28a745' : '#dc3545'
+              }}>
                 {getPassStatus() ? 'Passed' : 'Failed'}
               </span>
             </div>
@@ -161,32 +185,45 @@ const QuizAttemptDetails = () => {
         </div>
       </div>
 
-      <div className="answers-section">
-        <h2>Answers</h2>
+      <div>
+        <h2 style={{ fontSize: '20px', marginBottom: '15px' }}>Answers</h2>
         {attempt.answers.length > 0 ? (
-          <div className="answers-list">
+          <div>
             {attempt.answers.map((answer, index) => (
-              <div key={index} className="answer-item">
-                <div className="question-header">
-                  <span className="question-number">Q{index + 1}</span>
-                  <span className="question-text">{answer.question_text}</span>
+              <div key={index} style={{
+                background: '#fff',
+                borderRadius: '8px',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                marginBottom: '15px',
+                padding: '15px'
+              }}>
+                <div style={{ marginBottom: '10px' }}>
+                  <span style={{ 
+                    fontWeight: 'bold', 
+                    marginRight: '10px' 
+                  }}>Q{index + 1}</span>
+                  <span>{answer.question_text}</span>
                 </div>
-                <div className="answer-details">
-                  <div className="answer-row">
-                    <span className="label">Selected Answer:</span>
-                    <span className="value">{answer.selected_answer || 'Not answered'}</span>
+                <div style={{ display: 'grid', gap: '8px' }}>
+                  <div>
+                    <span style={{ fontWeight: 'bold' }}>Selected Answer:</span>
+                    <span style={{ marginLeft: '5px' }}>{answer.selected_answer || 'Not answered'}</span>
                   </div>
-                  <div className="answer-row">
-                    <span className="label">Correct Answer:</span>
-                    <span className="value">{answer.correct_answer}</span>
+                  <div>
+                    <span style={{ fontWeight: 'bold' }}>Correct Answer:</span>
+                    <span style={{ marginLeft: '5px' }}>{answer.correct_answer}</span>
                   </div>
-                  <div className="answer-row">
-                    <span className="label">Result:</span>
-                    <span className={`value ${answer.is_correct ? 'correct' : 'incorrect'}`}>
+                  <div style={{ 
+                    color: answer.is_correct ? '#28a745' : '#dc3545',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}>
+                    <span style={{ fontWeight: 'bold' }}>Result:</span>
+                    <span style={{ marginLeft: '5px' }}>
                       {answer.is_correct ? (
-                        <CheckCircle size={14} className="icon-inline" />
+                        <CheckCircle size={14} style={{ marginRight: '5px' }} />
                       ) : (
-                        <XCircle size={14} className="icon-inline" />
+                        <XCircle size={14} style={{ marginRight: '5px' }} />
                       )}
                       {answer.is_correct ? 'Correct' : 'Incorrect'}
                     </span>
@@ -196,16 +233,31 @@ const QuizAttemptDetails = () => {
             ))}
           </div>
         ) : (
-          <div className="no-answers">
-            <AlertTriangle size={36} className="warning-icon" />
-            <p>No answer details available for this attempt.</p>
+          <div style={{
+            textAlign: 'center',
+            padding: '20px',
+            background: '#fff',
+            borderRadius: '8px'
+          }}>
+            <AlertTriangle size={36} style={{ color: '#ffc107' }} />
+            <p style={{ margin: '10px 0 0' }}>No answer details available for this attempt.</p>
           </div>
         )}
       </div>
 
-      <div className="export-section">
-        <button className="export-button">
-          <FileText size={16} className="icon-inline" /> Export Attempt Details
+      <div style={{ marginTop: '20px' }}>
+        <button style={{
+          padding: '8px 15px',
+          background: '#007bff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '5px'
+        }}>
+          <FileText size={16} /> Export Attempt Details
         </button>
       </div>
     </div>

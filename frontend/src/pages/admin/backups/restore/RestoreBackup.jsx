@@ -1,21 +1,9 @@
-// src/pages/admin/backups/restore/RestoreBackup.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Database, 
-  AlertTriangle, 
-  Calendar,
-  Clock,
-  ArrowLeft,
-  RefreshCw,
-  XCircle,
-  User,
-  RotateCcw
-} from 'lucide-react';
+import { Database, AlertTriangle, Calendar, Clock, ArrowLeft, RefreshCw, XCircle, User, RotateCcw } from 'lucide-react';
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
 import adminService from '../../../../services/adminService';
-import '../styles/RestoreBackup.css';
 
 const RestoreBackup = () => {
   const { backupId } = useParams();
@@ -26,32 +14,20 @@ const RestoreBackup = () => {
   const [success, setSuccess] = useState(null);
   const [confirmRestore, setConfirmRestore] = useState(false);
   const [backup, setBackup] = useState({
-    id: '',
-    backup_name: '',
-    file_path: '',
-    backup_type: '',
-    created_by: '',
-    created_at: '',
-    size: '',
-    created_by_name: ''
+    id: '', backup_name: '', file_path: '', backup_type: '', created_by: '', created_at: '', size: '', created_by_name: ''
   });
 
   useEffect(() => {
     const fetchBackupData = async () => {
       setLoading(true);
       setError(null);
-      
       try {
-        // Check if token exists
         const token = localStorage.getItem('authToken');
         if (!token) {
           setError('You are not logged in. Please log in to access this page.');
-          setLoading(false);
           setTimeout(() => navigate('/login'), 2000);
           return;
         }
-        
-        // Fetch backup data
         const data = await adminService.getBackupById(backupId);
         setBackup(data);
       } catch (err) {
@@ -61,7 +37,6 @@ const RestoreBackup = () => {
         setLoading(false);
       }
     };
-
     fetchBackupData();
   }, [backupId, navigate]);
 
@@ -70,19 +45,13 @@ const RestoreBackup = () => {
       setConfirmRestore(true);
       return;
     }
-    
     setRestoring(true);
     setError(null);
     setSuccess(null);
-    
     try {
       await adminService.restoreBackup(backupId);
       setSuccess('System backup restored successfully. The system will redirect you shortly.');
-      
-      // Redirect after short delay
-      setTimeout(() => {
-        navigate('/admin/backups');
-      }, 3000);
+      setTimeout(() => navigate('/admin/backups'), 3000);
     } catch (err) {
       console.error('Error restoring backup:', err);
       setError('Failed to restore backup. Please try again.');
@@ -92,184 +61,205 @@ const RestoreBackup = () => {
     }
   };
 
-  const cancelRestore = () => {
-    setConfirmRestore(false);
-  };
-
-  const handleCancel = () => {
-    navigate('/admin/backups');
-  };
+  const cancelRestore = () => setConfirmRestore(false);
+  const handleCancel = () => navigate('/admin/backups');
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
   const formatSize = (sizeInBytes) => {
     if (!sizeInBytes) return 'Unknown';
-    
-    const units = ['B', 'KB', 'MB', 'GB'];
     let size = parseInt(sizeInBytes);
     let unitIndex = 0;
-    
+    const units = ['B', 'KB', 'MB', 'GB'];
     while (size >= 1024 && unitIndex < units.length - 1) {
       size /= 1024;
       unitIndex++;
     }
-    
     return `${size.toFixed(2)} ${units[unitIndex]}`;
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="restore-backup-container">
-      <div className="section-header">
-        <h1>Restore System Backup</h1>
-        <div className="header-line"></div>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#f8fafc',
+      padding: '32px',
+      fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif",
+      color: '#1e293b'
+    }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ margin: '0 0 8px 0', fontSize: '1.5rem', fontWeight: 600, color: '#1e293b' }}>
+          Restore System Backup
+        </h1>
+        <div style={{ height: '2px', width: '80px', backgroundColor: '#1E88E5' }}></div>
       </div>
-      
-      {error && (
-        <AlertBanner 
-          message={error} 
-          type="error" 
-          onDismiss={() => setError(null)} 
-        />
-      )}
-      
-      {success && (
-        <AlertBanner 
-          message={success} 
-          type="success" 
-          onDismiss={() => setSuccess(null)} 
-        />
-      )}
-      
-      <div className="back-link" onClick={handleCancel}>
-        <ArrowLeft size={16} className="icon-inline" />
-        <span>Back to Backups</span>
+
+      {error && <AlertBanner message={error} type="error" onDismiss={() => setError(null)} />}
+      {success && <AlertBanner message={success} type="success" onDismiss={() => setSuccess(null)} />}
+
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        color: '#1E88E5',
+        cursor: 'pointer',
+        marginBottom: '24px',
+        fontSize: '0.875rem'
+      }} onClick={handleCancel}>
+        <ArrowLeft size={16} /> Back to Backups
       </div>
-      
-      <div className="backup-content">
-        <div className="backup-card">
-          <div className="card-header gradient-teal">
-            <div className="header-icon">
-              <Database size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Backup Information</h3>
+
+      <div style={{
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
+        maxWidth: '600px',
+        margin: '0 auto'
+      }}>
+        <div style={{
+          backgroundColor: '#E3F2FD',
+          padding: '16px',
+          borderRadius: '12px 12px 0 0',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px'
+        }}>
+          <Database size={20} style={{ color: '#1E88E5' }} />
+          <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>Backup Information</h3>
+        </div>
+        <div style={{ padding: '24px' }}>
+          <div style={{
+            backgroundColor: '#ffe6e6',
+            padding: '16px',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+            marginBottom: '24px'
+          }}>
+            <AlertTriangle size={20} style={{ color: '#e74c3c' }} />
+            <div style={{ fontSize: '0.875rem', color: '#e74c3c' }}>
+              <strong>Warning:</strong> Restoring this backup will replace all current data in the system. This action cannot be undone. Make sure you want to proceed.
             </div>
           </div>
-          
-          <div className="card-content">
-            <div className="warning-message">
-              <AlertTriangle size={20} className="warning-icon" />
-              <div className="warning-text">
-                <strong>Warning:</strong> Restoring this backup will replace all current data in the system.
-                This action cannot be undone. Make sure you want to proceed.
-              </div>
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ fontSize: '1rem', fontWeight: 600, color: '#1e293b', marginBottom: '16px' }}>{backup.backup_name}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              {[
+                { icon: Calendar, label: 'Date Created', value: formatDate(backup.created_at) },
+                { icon: User, label: 'Created By', value: backup.created_by_name || 'System' },
+                { icon: Database, label: 'Backup Type', value: backup.backup_type === 'scheduled' ? 'Scheduled' : 'Manual' },
+                { icon: Clock, label: 'Size', value: formatSize(backup.size) }
+              ].map((item, index) => (
+                <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <item.icon size={16} style={{ color: '#64748b' }} />
+                  <div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{item.label}</div>
+                    <div style={{ fontSize: '0.875rem', color: '#1e293b' }}>{item.value}</div>
+                  </div>
+                </div>
+              ))}
             </div>
-            
-            <div className="backup-details">
-              <div className="backup-name">{backup.backup_name}</div>
-              
-              <div className="details-grid">
-                <div className="detail-item">
-                  <div className="detail-icon">
-                    <Calendar size={16} />
-                  </div>
-                  <div className="detail-content">
-                    <div className="detail-label">Date Created</div>
-                    <div className="detail-value">{formatDate(backup.created_at)}</div>
-                  </div>
-                </div>
-                
-                <div className="detail-item">
-                  <div className="detail-icon">
-                    <User size={16} />
-                  </div>
-                  <div className="detail-content">
-                    <div className="detail-label">Created By</div>
-                    <div className="detail-value">{backup.created_by_name || 'System'}</div>
-                  </div>
-                </div>
-                
-                <div className="detail-item">
-                  <div className="detail-icon">
-                    <Database size={16} />
-                  </div>
-                  <div className="detail-content">
-                    <div className="detail-label">Backup Type</div>
-                    <div className="detail-value">{backup.backup_type === 'scheduled' ? 'Scheduled' : 'Manual'}</div>
-                  </div>
-                </div>
-                
-                <div className="detail-item">
-                  <div className="detail-icon">
-                    <Clock size={16} />
-                  </div>
-                  <div className="detail-content">
-                    <div className="detail-label">Size</div>
-                    <div className="detail-value">{formatSize(backup.size)}</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="file-path">
-                <div className="detail-label">File Path</div>
-                <div className="path-value">{backup.file_path}</div>
-              </div>
+            <div style={{ marginTop: '16px' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>File Path</div>
+              <div style={{ fontSize: '0.875rem', color: '#1e293b', wordBreak: 'break-all' }}>{backup.file_path}</div>
             </div>
-            
-            <div className="restore-actions">
-              {confirmRestore ? (
-                <div className="confirm-restore">
-                  <div className="confirm-message">Are you absolutely sure you want to restore this backup?</div>
-                  <div className="confirm-buttons">
-                    <button 
-                      className="action-button danger" 
-                      onClick={handleRestoreBackup}
-                      disabled={restoring}
-                    >
-                      {restoring ? (
-                        <>
-                          <RefreshCw size={16} className="icon-inline spin" /> Restoring...
-                        </>
-                      ) : (
-                        <>
-                          <RotateCcw size={16} className="icon-inline" /> Yes, Restore Backup
-                        </>
-                      )}
-                    </button>
-                    <button 
-                      className="action-button secondary" 
-                      onClick={cancelRestore}
-                      disabled={restoring}
-                    >
-                      <XCircle size={16} className="icon-inline" /> Cancel
-                    </button>
-                  </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
+            {confirmRestore ? (
+              <>
+                <div style={{ fontSize: '0.875rem', color: '#1e293b', marginRight: '16px' }}>
+                  Are you absolutely sure you want to restore this backup?
                 </div>
-              ) : (
-                <div className="buttons-row">
-                  <button 
-                    className="action-button danger" 
-                    onClick={handleRestoreBackup}
-                  >
-                    <RotateCcw size={16} className="icon-inline" /> Restore Backup
-                  </button>
-                  <button 
-                    className="action-button secondary" 
-                    onClick={handleCancel}
-                  >
-                    <XCircle size={16} className="icon-inline" /> Cancel
-                  </button>
-                </div>
-              )}
-            </div>
+                <button
+                  onClick={handleRestoreBackup}
+                  disabled={restoring}
+                  style={{
+                    backgroundColor: '#e74c3c',
+                    color: '#ffffff',
+                    padding: '8px 16px',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: restoring ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '0.875rem'
+                  }}
+                >
+                  {restoring ? (
+                    <>
+                      <RefreshCw size={16} style={{ animation: 'spin 1s linear infinite' }} /> Restoring...
+                    </>
+                  ) : (
+                    <>
+                      <RotateCcw size={16} /> Yes, Restore Backup
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={cancelRestore}
+                  disabled={restoring}
+                  style={{
+                    backgroundColor: '#ffffff',
+                    color: '#1E88E5',
+                    padding: '8px 16px',
+                    border: '1px solid #1E88E5',
+                    borderRadius: '8px',
+                    cursor: restoring ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '0.875rem'
+                  }}
+                >
+                  <XCircle size={16} /> Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={handleCancel}
+                  style={{
+                    backgroundColor: '#ffffff',
+                    color: '#1E88E5',
+                    padding: '8px 16px',
+                    border: '1px solid #1E88E5',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '0.875rem'
+                  }}
+                >
+                  <XCircle size={16} /> Cancel
+                </button>
+                <button
+                  onClick={handleRestoreBackup}
+                  style={{
+                    backgroundColor: '#e74c3c',
+                    color: '#ffffff',
+                    padding: '8px 16px',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '0.875rem',
+                    transition: 'background-color 0.3s ease',
+                    ':hover': { backgroundColor: '#c0392b' }
+                  }}
+                >
+                  <RotateCcw size={16} /> Restore Backup
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

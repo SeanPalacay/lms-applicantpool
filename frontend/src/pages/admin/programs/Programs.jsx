@@ -1,22 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { 
-    ChevronDown,ChevronUp,
-  BookOpen, 
-  Edit, 
-  Trash2, 
-  Search, 
-  Filter, 
-  RefreshCw,
-  CheckCircle,
-  Clock,
-  XCircle,
-  Plus
-} from 'lucide-react';
+import { ChevronDown, ChevronUp, BookOpen, Edit, Trash2, Search, Filter, RefreshCw, CheckCircle, Clock, XCircle, Plus } from 'lucide-react';
 import adminService from '../../../services/adminService';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
-import './styles/Programs.css';
 
 const Programs = () => {
   const [programs, setPrograms] = useState([]);
@@ -31,13 +18,8 @@ const Programs = () => {
 
   useEffect(() => {
     fetchPrograms();
-    
-    // Check for success message from navigation
     if (location.state?.message) {
-      const timer = setTimeout(() => {
-        navigate(location.pathname, { replace: true, state: {} });
-      }, 3000);
-      
+      const timer = setTimeout(() => navigate(location.pathname, { replace: true, state: {} }), 3000);
       return () => clearTimeout(timer);
     }
   }, [location, navigate]);
@@ -45,7 +27,6 @@ const Programs = () => {
   const fetchPrograms = async () => {
     setLoading(true);
     setError(null);
-    
     try {
       const data = await adminService.getProgramList();
       setPrograms(data);
@@ -72,132 +53,129 @@ const Programs = () => {
     }
   };
 
-  const cancelDelete = () => {
-    setDeleteConfirm(null);
-  };
+  const cancelDelete = () => setDeleteConfirm(null);
+  const handleSearch = (e) => setSearchTerm(e.target.value);
+  const handleFilterChange = (e) => setFilterStatus(e.target.value);
+  const toggleFilters = () => setShowFilters(!showFilters);
+  const handleRefresh = () => fetchPrograms();
+  const handleViewDetails = (programId) => navigate(`/admin/programs/details/${programId}`);
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  const filteredPrograms = programs.filter(program => {
+    const searchMatch = program.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (program.description && program.description.toLowerCase().includes(searchTerm.toLowerCase()));
+    const statusMatch = filterStatus === 'all' || program.status === filterStatus;
+    return searchMatch && statusMatch;
+  });
 
-  const handleFilterChange = (e) => {
-    setFilterStatus(e.target.value);
-  };
-
-  const toggleFilters = () => {
-    setShowFilters(!showFilters);
-  };
-
-  const handleRefresh = () => {
-    fetchPrograms();
-  };
-
-  const handleViewDetails = (programId) => {
-    navigate(`/admin/programs/details/${programId}`);
-  };
-
-  const filteredPrograms = programs
-    .filter(program => {
-      // Search filter
-      const searchMatch = program.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (program.description && program.description.toLowerCase().includes(searchTerm.toLowerCase()));
-      
-      // Status filter
-      let statusMatch = true;
-      if (filterStatus !== 'all') {
-        statusMatch = program.status === filterStatus;
-      }
-      
-      return searchMatch && statusMatch;
-    });
-    
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'active':
-        return (
-          <div className="status-badge status-active">
-            <CheckCircle size={14} />
-            <span>Active</span>
-          </div>
-        );
-      case 'inactive':
-        return (
-          <div className="status-badge status-inactive">
-            <XCircle size={14} />
-            <span>Inactive</span>
-          </div>
-        );
-      case 'draft':
-        return (
-          <div className="status-badge status-draft">
-            <Clock size={14} />
-            <span>Draft</span>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  if (loading && programs.length === 0) {
-    return <LoadingSpinner />;
-  }
+  if (loading && programs.length === 0) return <LoadingSpinner />;
 
   return (
-    <div className="programs-container">
-      {error && <div className="error-message">{error}</div>}
-      {location.state?.message && (
-        <AlertBanner 
-          message={location.state.message} 
-          type="success" 
-        />
-      )}
-      
-      <div className="programs-header">
-        <div className="header-title">
-          <BookOpen size={24} className="header-icon" />
-          <h1>Training Programs</h1>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#f8fafc',
+      padding: '32px',
+      fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif",
+      color: '#1e293b'
+    }}>
+      {error && <AlertBanner message={error} type="error" onDismiss={() => setError(null)} />}
+      {location.state?.message && <AlertBanner message={location.state.message} type="success" />}
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <BookOpen size={24} style={{ color: '#1E88E5' }} />
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600, color: '#1e293b' }}>Training Programs</h1>
         </div>
-        <div className="header-actions">
-          <div className="search-bar">
-            <Search size={16} />
-            <input 
-              type="text" 
-              placeholder="Search programs..." 
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <Search size={16} style={{ position: 'absolute', left: '12px', color: '#64748b' }} />
+            <input
+              type="text"
+              placeholder="Search programs..."
               value={searchTerm}
               onChange={handleSearch}
+              style={{
+                padding: '8px 8px 8px 36px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                color: '#1e293b',
+                width: '200px',
+                outline: 'none',
+                ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+              }}
             />
           </div>
-          <button className="refresh-button" onClick={handleRefresh}>
+          <button onClick={handleRefresh} style={{
+            backgroundColor: '#1E88E5',
+            color: '#ffffff',
+            padding: '8px',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease',
+            ':hover': { backgroundColor: '#1565C0' }
+          }}>
             <RefreshCw size={16} />
           </button>
-          <button 
-            className="create-button"
-            onClick={() => navigate('/admin/programs/create')}
-          >
-            <Plus size={16} />
-            <span>Create Program</span>
+          <button onClick={() => navigate('/admin/programs/create')} style={{
+            backgroundColor: '#1E88E5',
+            color: '#ffffff',
+            padding: '8px 16px',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.875rem',
+            transition: 'background-color 0.3s ease',
+            ':hover': { backgroundColor: '#1565C0' }
+          }}>
+            <Plus size={16} /> Create Program
           </button>
         </div>
       </div>
-      
-      <div className="search-filter-bar">
-        <button onClick={toggleFilters} className="btn-toggle-filters">
-          <Filter size={18} />
-          <span>Filters</span>
-          {showFilters ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+
+      <div style={{ marginBottom: '16px' }}>
+        <button onClick={toggleFilters} style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '8px 16px',
+          border: '1px solid #e2e8f0',
+          borderRadius: '8px',
+          backgroundColor: '#ffffff',
+          cursor: 'pointer',
+          fontSize: '0.875rem',
+          color: '#1e293b'
+        }}>
+          <Filter size={18} /> Filters {showFilters ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </button>
       </div>
-      
+
       {showFilters && (
-        <div className="filters-panel">
-          <div className="filter-group">
-            <label htmlFor="status-filter">Status:</label>
-            <select 
-              id="status-filter" 
+        <div style={{
+          backgroundColor: '#ffffff',
+          padding: '16px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
+          marginBottom: '24px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <label htmlFor="status-filter" style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>Status:</label>
+            <select
+              id="status-filter"
               value={filterStatus}
               onChange={handleFilterChange}
-              className="filter-select"
+              style={{
+                padding: '8px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                color: '#1e293b',
+                outline: 'none',
+                ':focus': { borderColor: '#1E88E5' }
+              }}
             >
               <option value="all">All Statuses</option>
               <option value="active">Active</option>
@@ -207,69 +185,114 @@ const Programs = () => {
           </div>
         </div>
       )}
-      
+
       {filteredPrograms.length > 0 ? (
-        <div className="programs-list">
-          <table className="programs-table">
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr>
-                <th className="title-column">Program Title</th>
-                <th className="description-column">Description</th>
-                <th className="status-column">Status</th>
-                <th className="actions-column">Actions</th>
+              <tr style={{ backgroundColor: '#E3F2FD', borderBottom: '1px solid #e2e8f0' }}>
+                {['Program Title', 'Description', 'Status', 'Actions'].map((header, index) => (
+                  <th key={index} style={{
+                    padding: '16px',
+                    textAlign: 'left',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    color: '#1e293b',
+                    ':first-child': { minWidth: '200px' }
+                  }}>{header}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {filteredPrograms.map(program => (
-                <tr key={program.id}>
-                  <td 
-                    className="title-column program-title"
-                    onClick={() => handleViewDetails(program.id)}
-                  >
-                    <BookOpen size={16} className="icon-inline" />
-                    {program.title}
-                  </td>
-                  <td className="description-column">
-                    <div className="description-truncate">
-                      {program.description}
+                <tr key={program.id} style={{ borderBottom: '1px solid #e2e8f0', ':hover': { backgroundColor: '#f8fafc' } }}>
+                  <td style={{ padding: '16px', cursor: 'pointer' }} onClick={() => handleViewDetails(program.id)}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', color: '#1E88E5' }}>
+                      <BookOpen size={16} /> {program.title}
                     </div>
                   </td>
-                  <td className="status-column">
-                    {getStatusBadge(program.status)}
+                  <td style={{ padding: '16px', fontSize: '0.875rem', color: '#64748b', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {program.description}
                   </td>
-                  <td className="actions-column">
-                    <div className="program-actions">
-                      <button 
-                        className="view-button"
-                        onClick={() => handleViewDetails(program.id)}
-                        title="View Details"
-                      >
-                        <BookOpen size={16} />
-                      </button>
-                      <button 
-                        className="edit-button"
-                        onClick={() => navigate(`/admin/programs/edit/${program.id}`)}
-                        title="Edit Program"
-                      >
-                        <Edit size={16} />
-                      </button>
+                  <td style={{ padding: '16px' }}>
+  <span style={{
+    padding: '4px 8px',
+    borderRadius: '4px',
+    fontSize: '0.75rem',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    ...(program.status === 'active' ? { backgroundColor: '#e6ffe6', color: '#2ecc71' } :
+      program.status === 'inactive' ? { backgroundColor: '#ffe6e6', color: '#e74c3c' } :
+      { backgroundColor: '#f1f5f9', color: '#64748b' })
+  }}>
+    {program.status === 'active' ? <CheckCircle size={14} /> :
+     program.status === 'inactive' ? <XCircle size={14} /> :
+     <Clock size={14} />}
+    {program.status 
+      ? program.status.charAt(0).toUpperCase() + program.status.slice(1) 
+      : 'Unknown'}
+  </span>
+</td>
+
+                  <td style={{ padding: '16px' }}>
+                    <div style={{ display: 'flex', gap: '8px' }}>
                       {deleteConfirm === program.id ? (
-                        <div className="delete-confirmation inline">
-                          <button className="confirm-yes" onClick={() => handleDeleteProgram(program.id)}>
+                        <>
+                          <button onClick={() => handleDeleteProgram(program.id)} style={{
+                            backgroundColor: '#2ecc71',
+                            color: '#ffffff',
+                            padding: '4px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}>
                             <CheckCircle size={16} />
                           </button>
-                          <button className="confirm-no" onClick={cancelDelete}>
+                          <button onClick={cancelDelete} style={{
+                            backgroundColor: '#e74c3c',
+                            color: '#ffffff',
+                            padding: '4px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}>
                             <XCircle size={16} />
                           </button>
-                        </div>
+                        </>
                       ) : (
-                        <button 
-                          className="delete-button"
-                          onClick={() => handleDeleteProgram(program.id)}
-                          title="Delete Program"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <>
+                          <button onClick={() => handleViewDetails(program.id)} style={{
+                            backgroundColor: '#1E88E5',
+                            color: '#ffffff',
+                            padding: '4px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}>
+                            <BookOpen size={16} />
+                          </button>
+                          <button onClick={() => navigate(`/admin/programs/edit/${program.id}`)} style={{
+                            backgroundColor: '#2ecc71',
+                            color: '#ffffff',
+                            padding: '4px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}>
+                            <Edit size={16} />
+                          </button>
+                          <button onClick={() => handleDeleteProgram(program.id)} style={{
+                            backgroundColor: '#e74c3c',
+                            color: '#ffffff',
+                            padding: '4px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}>
+                            <Trash2 size={16} />
+                          </button>
+                        </>
                       )}
                     </div>
                   </td>
@@ -279,9 +302,8 @@ const Programs = () => {
           </table>
         </div>
       ) : (
-        <div className="no-data-message">
-          {searchTerm || filterStatus !== 'all' ? 
-            'No programs match your search or filter criteria.' : 
+        <div style={{ textAlign: 'center', padding: '32px', color: '#64748b', fontSize: '0.875rem' }}>
+          {searchTerm || filterStatus !== 'all' ? 'No programs match your search or filter criteria.' :
             'No programs available. Create your first program to get started.'}
         </div>
       )}

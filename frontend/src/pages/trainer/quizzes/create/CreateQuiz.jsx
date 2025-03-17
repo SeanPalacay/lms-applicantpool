@@ -12,12 +12,13 @@ import {
   Save,
   RefreshCw,
   XCircle,
-  AlertTriangle
+  AlertTriangle,
+  BarChart2
 } from 'lucide-react';
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
+import QuizGradingSettings from '../QuizGradingSettings';
 import trainerService from '../../../../services/trainerService';
-import '../styles/CreateQuiz.css';
 
 const CreateQuiz = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const CreateQuiz = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [programs, setPrograms] = useState([]);
+  const [activeTab, setActiveTab] = useState('questions'); // 'questions' or 'grading'
   const [quizData, setQuizData] = useState({
     title: '',
     description: '',
@@ -37,7 +39,25 @@ const CreateQuiz = () => {
     time_limit: 30,
     passing_score: 70,
     status: 'draft',
-    questions: []
+    questions: [],
+    // Add these new fields
+    auto_grade: true,
+    grade_on_submission: true,
+    show_correct_answers: false,
+    show_grade_immediately: true,
+    grade_weighting: 'equal' // 'equal', 'custom'
+  });
+  
+  const [gradingSettings, setGradingSettings] = useState({
+    grading_type: 'standard',
+    passing_score: 70,
+    auto_feedback: false,
+    question_weights: [],
+    feedback_templates: [
+      { min_score: 0, max_score: 60, template: 'You need to review the material and try again.' },
+      { min_score: 60, max_score: 80, template: 'Good job! You\'ve passed but there\'s still room for improvement.' },
+      { min_score: 80, max_score: 100, template: 'Excellent work! You\'ve mastered this content.' }
+    ]
   });
   
   // Question template
@@ -110,6 +130,10 @@ const CreateQuiz = () => {
       ...quizData,
       questions: updatedQuestions
     });
+  };
+
+  const handleGradingSettingsChange = (newSettings) => {
+    setGradingSettings(newSettings);
   };
 
   const addQuestion = () => {
@@ -192,15 +216,26 @@ const CreateQuiz = () => {
     setSaving(true);
     
     try {
-      // Process form data for API
-      const formData = {
+      // Map grading type from our component to existing fields
+      const mappedQuizData = {
         ...quizData,
         time_limit: parseInt(quizData.time_limit),
-        passing_score: parseFloat(quizData.passing_score)
+        passing_score: parseFloat(quizData.passing_score),
+        grade_weighting: gradingSettings.grading_type === 'weighted' ? 'custom' : 'equal'
       };
       
       // Save quiz
-      const response = await trainerService.createQuiz(formData);
+      const response = await trainerService.createQuiz(mappedQuizData);
+      
+      // If quiz was created successfully, configure grading settings
+      if (response && response.quizId) {
+        const gradingData = {
+          ...gradingSettings,
+          passing_score: parseFloat(gradingSettings.passing_score)
+        };
+        
+        await trainerService.configureQuizGrading(response.quizId, gradingData);
+      }
       
       setSuccess('Quiz created successfully.');
       
@@ -237,130 +272,201 @@ const CreateQuiz = () => {
   }
 
   return (
-    <div className="create-quiz-container">
-      <div className="section-header">
-        <h1>Create New Quiz</h1>
-        <div className="header-line"></div>
+    <div style={{
+      padding: '20px',
+      maxWidth: '1200px',
+      margin: '0 auto'
+    }}>
+      <div style={{ marginBottom: '20px' }}>
+        <h1 style={{ fontSize: '24px', margin: '0 0 10px 0' }}>Create New Quiz</h1>
+        <div style={{ height: '2px', background: '#ddd' }}></div>
       </div>
-      
-      {error && (
-        <AlertBanner 
-          message={error} 
-          type="error" 
-          onDismiss={() => setError(null)} 
-        />
-      )}
-      
-      {success && (
-        <AlertBanner 
-          message={success} 
-          type="success" 
-          onDismiss={() => setSuccess(null)} 
-        />
-      )}
-      
-      <div className="back-link" onClick={handleCancel}>
-        <ArrowLeft size={16} className="icon-inline" />
+
+      {error && <AlertBanner message={error} type="error" onDismiss={() => setError(null)} />}
+      {success && <AlertBanner message={success} type="success" onDismiss={() => setSuccess(null)} />}
+
+      <div 
+        onClick={handleCancel}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          cursor: 'pointer',
+          marginBottom: '20px',
+          color: '#007bff'
+        }}
+      >
+        <ArrowLeft size={16} style={{ marginRight: '5px' }} />
         <span>Back to Quizzes</span>
       </div>
-      
-      <form onSubmit={handleSubmit} className="quiz-form">
-        <div className="quiz-card">
-          <div className="card-header gradient-rose">
-            <div className="header-icon">
-              <HelpCircle size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Quiz Information</h3>
-            </div>
+
+      <div style={{
+        display: 'flex',
+        gap: '10px',
+        marginBottom: '20px'
+      }}>
+        <button
+          type="button"
+          onClick={() => setActiveTab('questions')}
+          style={{
+            padding: '8px 15px',
+            background: activeTab === 'questions' ? '#007bff' : '#f8f9fa',
+            color: activeTab === 'questions' ? 'white' : '#333',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px'
+          }}
+        >
+          <HelpCircle size={16} /> Questions
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('grading')}
+          style={{
+            padding: '8px 15px',
+            background: activeTab === 'grading' ? '#007bff' : '#f8f9fa',
+            color: activeTab === 'grading' ? 'white' : '#333',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px'
+          }}
+        >
+          <BarChart2 size={16} /> Grading
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          marginBottom: '30px'
+        }}>
+          <div style={{
+            background: 'linear-gradient(to right, #ff416c, #ff4b2b)',
+            color: 'white',
+            padding: '10px 15px',
+            borderRadius: '8px 8px 0 0',
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+            <HelpCircle size={20} style={{ marginRight: '10px' }} />
+            <h3 style={{ margin: 0 }}>Quiz Information</h3>
           </div>
-          
-          <div className="card-content">
-            <div className="form-row">
-              <div className="form-group full">
-                <label htmlFor="title">Quiz Title</label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  value={quizData.title}
-                  onChange={handleInputChange}
-                  placeholder="Enter quiz title"
-                  required
-                />
-              </div>
+          <div style={{ padding: '15px' }}>
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px' }}>Quiz Title</label>
+              <input
+                type="text"
+                name="title"
+                value={quizData.title}
+                onChange={handleInputChange}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px'
+                }}
+                placeholder="Enter quiz title"
+                required
+              />
             </div>
-            
-            <div className="form-row">
-              <div className="form-group full">
-                <label htmlFor="description">Description</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={quizData.description}
-                  onChange={handleInputChange}
-                  placeholder="Enter quiz description"
-                  rows="3"
-                ></textarea>
-              </div>
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px' }}>Description</label>
+              <textarea
+                name="description"
+                value={quizData.description}
+                onChange={handleInputChange}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  minHeight: '80px'
+                }}
+                placeholder="Enter quiz description"
+              />
             </div>
-            
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="program_id">Program</label>
-                <div className="select-with-icon">
-                  <BookOpen size={18} className="select-icon" />
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '15px'
+            }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '5px' }}>Program</label>
+                <div style={{ position: 'relative' }}>
+                  <BookOpen size={18} style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)' }} />
                   <select
-                    id="program_id"
                     name="program_id"
                     value={quizData.program_id}
                     onChange={handleInputChange}
+                    style={{
+                      width: '100%',
+                      padding: '8px 8px 8px 30px',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px'
+                    }}
                     required
                   >
                     <option value="">Select Program</option>
                     {programs.map((program) => (
-                      <option key={program.id} value={program.id}>
-                        {program.title}
-                      </option>
+                      <option key={program.id} value={program.id}>{program.title}</option>
                     ))}
                   </select>
                 </div>
-                
                 {quizData.program_id && (
-                  <div className="selected-program">
-                    <BookOpen size={14} className="icon-inline" />
+                  <div style={{ 
+                    marginTop: '5px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '5px' 
+                  }}>
+                    <BookOpen size={14} />
                     <span>{getProgramName(quizData.program_id)}</span>
                   </div>
                 )}
               </div>
-              
-              <div className="form-group">
-                <label htmlFor="time_limit">Time Limit (minutes)</label>
-                <div className="input-with-icon">
-                  <Clock size={18} className="input-icon" />
+              <div>
+                <label style={{ display: 'block', marginBottom: '5px' }}>Time Limit (minutes)</label>
+                <div style={{ position: 'relative' }}>
+                  <Clock size={18} style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="number"
-                    id="time_limit"
                     name="time_limit"
                     value={quizData.time_limit}
                     onChange={handleInputChange}
+                    style={{
+                      width: '100%',
+                      padding: '8px 8px 8px 30px',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px'
+                    }}
                     min="1"
                     max="180"
                     required
                   />
                 </div>
               </div>
-              
-              <div className="form-group">
-                <label htmlFor="passing_score">Passing Score (%)</label>
-                <div className="input-with-icon">
-                  <CheckSquare size={18} className="input-icon" />
+              <div>
+                <label style={{ display: 'block', marginBottom: '5px' }}>Passing Score (%)</label>
+                <div style={{ position: 'relative' }}>
+                  <CheckSquare size={18} style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)' }} />
                   <input
                     type="number"
-                    id="passing_score"
                     name="passing_score"
                     value={quizData.passing_score}
                     onChange={handleInputChange}
+                    style={{
+                      width: '100%',
+                      padding: '8px 8px 8px 30px',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px'
+                    }}
                     min="0"
                     max="100"
                     required
@@ -370,174 +476,209 @@ const CreateQuiz = () => {
             </div>
           </div>
         </div>
-        
-        <div className="questions-section">
-          <div className="questions-header">
-            <h2>Quiz Questions</h2>
-            <div className="questions-count">
+
+        {activeTab === 'questions' ? (
+          <div>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '15px'
+            }}>
+              <h2 style={{ fontSize: '20px', margin: 0 }}>Quiz Questions</h2>
               <span>{quizData.questions.length} Question{quizData.questions.length !== 1 ? 's' : ''}</span>
             </div>
-          </div>
-          
-          {quizData.questions.length === 0 ? (
-            <div className="no-questions-message">
-              <AlertTriangle size={24} className="warning-icon" />
-              <p>No questions added yet. Click "Add Question" to begin creating this quiz.</p>
-            </div>
-          ) : (
-            <div className="questions-list">
-              {quizData.questions.map((question, index) => (
-                <div key={index} className="question-card">
-                  <div className="question-header">
-                    <h3>Question {index + 1}</h3>
-                    <button 
-                      type="button" 
-                      className="remove-question" 
-                      onClick={() => removeQuestion(index)}
-                      disabled={quizData.questions.length === 1}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                  
-                  <div className="question-content">
-                    <div className="form-group full">
-                      <label htmlFor={`question_${index}`}>Question Text</label>
+
+            {quizData.questions.length === 0 ? (
+              <div style={{
+                textAlign: 'center',
+                padding: '20px',
+                background: '#fff',
+                borderRadius: '8px'
+              }}>
+                <AlertTriangle size={24} style={{ color: '#ffc107' }} />
+                <p style={{ margin: '10px 0 0' }}>No questions added yet. Click "Add Question" to begin creating this quiz.</p>
+              </div>
+            ) : (
+              <div>
+                {quizData.questions.map((question, index) => (
+                  <div key={index} style={{
+                    background: '#fff',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    marginBottom: '15px',
+                    padding: '15px'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '10px'
+                    }}>
+                      <h3 style={{ margin: 0 }}>Question {index + 1}</h3>
+                      <button
+                        type="button"
+                        onClick={() => removeQuestion(index)}
+                        disabled={quizData.questions.length === 1}
+                        style={{
+                          padding: '5px',
+                          background: '#dc3545',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: quizData.questions.length === 1 ? 'not-allowed' : 'pointer'
+                        }}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                    <div style={{ marginBottom: '15px' }}>
+                      <label style={{ display: 'block', marginBottom: '5px' }}>Question Text</label>
                       <textarea
-                        id={`question_${index}`}
                         value={question.question_text}
                         onChange={(e) => handleQuestionChange(index, 'question_text', e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '8px',
+                          border: '1px solid #ddd',
+                          borderRadius: '4px',
+                          minHeight: '60px'
+                        }}
                         placeholder="Enter your question here"
-                        rows="2"
                         required
-                      ></textarea>
+                      />
                     </div>
-                    
-                    <div className="options-grid">
-                      <div className="form-group">
-                        <div className="option-label">
-                          <input 
-                            type="radio"
-                            name={`correct_answer_${index}`}
-                            value="a"
-                            checked={question.correct_answer === 'a'}
-                            onChange={() => handleQuestionChange(index, 'correct_answer', 'a')}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(2, 1fr)',
+                      gap: '15px'
+                    }}>
+                      {['a', 'b', 'c', 'd'].map((option) => (
+                        <div key={option}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
+                            <input
+                              type="radio"
+                              name={`correct_answer_${index}`}
+                              value={option}
+                              checked={question.correct_answer === option}
+                              onChange={() => handleQuestionChange(index, 'correct_answer', option)}
+                            />
+                            <label>Option {option.toUpperCase()}</label>
+                          </div>
+                          <input
+                            value={question[`option_${option}`]}
+                            onChange={(e) => handleQuestionChange(index, `option_${option}`, e.target.value)}
+                            style={{
+                              width: '100%',
+                              padding: '8px',
+                              border: '1px solid #ddd',
+                              borderRadius: '4px'
+                            }}
+                            placeholder={`Enter option ${option.toUpperCase()} ${option <= 'b' ? '' : '(optional)'}`}
+                            required={option <= 'b'}
                           />
-                          <label htmlFor={`option_a_${index}`}>Option A</label>
                         </div>
-                        <input
-                          id={`option_a_${index}`}
-                          value={question.option_a}
-                          onChange={(e) => handleQuestionChange(index, 'option_a', e.target.value)}
-                          placeholder="Enter option A"
-                          required
-                        />
-                      </div>
-                      
-                      <div className="form-group">
-                        <div className="option-label">
-                          <input 
-                            type="radio"
-                            name={`correct_answer_${index}`}
-                            value="b"
-                            checked={question.correct_answer === 'b'}
-                            onChange={() => handleQuestionChange(index, 'correct_answer', 'b')}
-                          />
-                          <label htmlFor={`option_b_${index}`}>Option B</label>
-                        </div>
-                        <input
-                          id={`option_b_${index}`}
-                          value={question.option_b}
-                          onChange={(e) => handleQuestionChange(index, 'option_b', e.target.value)}
-                          placeholder="Enter option B"
-                          required
-                        />
-                      </div>
-                      
-                      <div className="form-group">
-                        <div className="option-label">
-                          <input 
-                            type="radio"
-                            name={`correct_answer_${index}`}
-                            value="c"
-                            checked={question.correct_answer === 'c'}
-                            onChange={() => handleQuestionChange(index, 'correct_answer', 'c')}
-                          />
-                          <label htmlFor={`option_c_${index}`}>Option C</label>
-                        </div>
-                        <input
-                          id={`option_c_${index}`}
-                          value={question.option_c}
-                          onChange={(e) => handleQuestionChange(index, 'option_c', e.target.value)}
-                          placeholder="Enter option C (optional)"
-                        />
-                      </div>
-                      
-                      <div className="form-group">
-                        <div className="option-label">
-                          <input 
-                            type="radio"
-                            name={`correct_answer_${index}`}
-                            value="d"
-                            checked={question.correct_answer === 'd'}
-                            onChange={() => handleQuestionChange(index, 'correct_answer', 'd')}
-                          />
-                          <label htmlFor={`option_d_${index}`}>Option D</label>
-                        </div>
-                        <input
-                          id={`option_d_${index}`}
-                          value={question.option_d}
-                          onChange={(e) => handleQuestionChange(index, 'option_d', e.target.value)}
-                          placeholder="Enter option D (optional)"
-                        />
-                      </div>
+                      ))}
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            )}
+
+            <div style={{ marginTop: '15px' }}>
+              <button
+                type="button"
+                onClick={addQuestion}
+                style={{
+                  padding: '8px 15px',
+                  background: '#28a745',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px'
+                }}
+              >
+                <Plus size={16} /> Add Question
+              </button>
             </div>
-          )}
-          
-          <div className="add-question-container">
-            <button 
-              type="button" 
-              className="add-question-button"
-              onClick={addQuestion}
-            >
-              <Plus size={16} className="icon-inline" /> Add Question
-            </button>
           </div>
-        </div>
-        
-        <div className="form-actions">
-          <button type="button" className="action-button secondary" onClick={handleCancel}>
-            <XCircle size={16} className="icon-inline" /> Cancel
+        ) : (
+          <QuizGradingSettings 
+            quizData={quizData} 
+            questions={quizData.questions} 
+            onChange={handleGradingSettingsChange} 
+          />
+        )}
+
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginTop: '20px',
+          gap: '10px'
+        }}>
+          <button
+            type="button"
+            onClick={handleCancel}
+            style={{
+              padding: '8px 15px',
+              background: '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+          >
+            <XCircle size={16} /> Cancel
           </button>
-          
-          <div className="primary-actions">
-            <button 
-              type="submit" 
-              className="action-button primary"
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              type="submit"
               disabled={saving}
+              style={{
+                padding: '8px 15px',
+                background: saving ? '#6c757d' : '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: saving ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}
             >
               {saving ? (
                 <>
-                  <RefreshCw size={16} className="icon-inline spin" /> Saving...
+                  <RefreshCw size={16} style={{ animation: 'spin 1s linear infinite' }} /> Saving...
                 </>
               ) : (
                 <>
-                  <Save size={16} className="icon-inline" /> Save as Draft
+                  <Save size={16} /> Save as Draft
                 </>
               )}
             </button>
-            
-            <button 
-              type="button" 
-              className="action-button publish"
+            <button
+              type="button"
               onClick={handlePublish}
               disabled={saving}
+              style={{
+                padding: '8px 15px',
+                background: saving ? '#6c757d' : '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: saving ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}
             >
-              <CheckSquare size={16} className="icon-inline" /> Save & Publish
+              <CheckSquare size={16} /> Save & Publish
             </button>
           </div>
         </div>

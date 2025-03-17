@@ -4,7 +4,6 @@ import {
   Award, Download, Printer, Share2, ArrowLeft, 
   AlertTriangle, Calendar, Check, BookOpen
 } from 'lucide-react';
-import '../styles/CertificateDetails.css';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
@@ -18,19 +17,14 @@ const CertificateDetails = () => {
   const [shareLink, setShareLink] = useState('');
   const [linkCopied, setLinkCopied] = useState(false);
   const certificateRef = useRef(null);
-  
-  // Fetch certificate details
+
   useEffect(() => {
     const fetchCertificate = async () => {
       try {
         setLoading(true);
-        
         const token = localStorage.getItem('authToken');
-        if (!token) {
-          throw new Error('No token found. Please log in again.');
-        }
+        if (!token) throw new Error('No token found. Please log in again.');
         
-        // Get certificate details
         const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/certificate_details.php?id=${certificateId}`;
         const response = await fetch(endpoint, {
           method: 'GET',
@@ -50,8 +44,6 @@ const CertificateDetails = () => {
         }
         
         const data = await response.json();
-        
-        // Verify this is a certificate record
         if (data.record_type !== 'training' || data.category !== 'certificate') {
           throw new Error('Invalid certificate record');
         }
@@ -64,19 +56,14 @@ const CertificateDetails = () => {
         setLoading(false);
       }
     };
-
     fetchCertificate();
   }, [certificateId]);
-  
-  // Generate share link
+
   const generateShareLink = async () => {
     try {
       setSharing(true);
-      
       const token = localStorage.getItem('authToken');
-      if (!token) {
-        throw new Error('No token found. Please log in again.');
-      }
+      if (!token) throw new Error('No token found. Please log in again.');
       
       const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/certificate_share.php`;
       const response = await fetch(endpoint, {
@@ -106,8 +93,7 @@ const CertificateDetails = () => {
       setSharing(false);
     }
   };
-  
-  // Copy share link to clipboard
+
   const copyShareLink = () => {
     navigator.clipboard.writeText(shareLink)
       .then(() => {
@@ -119,21 +105,16 @@ const CertificateDetails = () => {
         alert('Failed to copy link to clipboard. Please copy it manually.');
       });
   };
-  
-  // Download certificate
+
   const downloadCertificate = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      if (!token) {
-        throw new Error('No token found. Please log in again.');
-      }
+      if (!token) throw new Error('No token found. Please log in again.');
       
       const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/certificate_download.php?id=${certificateId}`;
       const response = await fetch(endpoint, {
         method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       
       if (!response.ok) {
@@ -158,183 +139,364 @@ const CertificateDetails = () => {
       alert('Failed to download certificate. Please try again.');
     }
   };
-  
-  // Print certificate
+
   const printCertificate = () => {
-    // Open the certificate print view in a new window
     window.open(`/trainee/certificate-print/${certificateId}`, '_blank');
   };
-  
+
   if (loading) {
     return (
-      <div className="certificate-details-loading">
-        <div className="spinner"></div>
-        <p>Loading certificate...</p>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        height: '100vh', 
+        gap: '15px' 
+      }}>
+        <div style={{ 
+          width: '40px', 
+          height: '40px', 
+          border: '4px solid #007bff', 
+          borderTop: '4px solid transparent', 
+          borderRadius: '50%', 
+          animation: 'spin 1s linear infinite' 
+        }}></div>
+        <p style={{ fontSize: '16px', color: '#666', margin: 0 }}>Loading certificate...</p>
+        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
-  
+
   if (error) {
     return (
-      <div className="certificate-details-error">
-        <AlertTriangle size={48} className="error-icon" />
-        <h2>Error</h2>
-        <p>{error}</p>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        height: '100vh', 
+        gap: '15px', 
+        textAlign: 'center' 
+      }}>
+        <AlertTriangle size={48} style={{ color: '#dc3545' }} />
+        <h2 style={{ fontSize: '24px', margin: 0 }}>Error</h2>
+        <p style={{ fontSize: '16px', color: '#666', margin: 0 }}>{error}</p>
         <button 
           onClick={() => navigate('/trainee/certificates')} 
-          className="btn-primary back-btn"
+          style={{ 
+            padding: '10px 20px', 
+            background: '#007bff', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '4px', 
+            cursor: 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '5px' 
+          }}
         >
-          <ArrowLeft size={16} />
-          Back to Certificates
+          <ArrowLeft size={16} /> Back to Certificates
         </button>
       </div>
     );
   }
-  
-  // Check if certificate is expired
+
   const isExpired = certificate.expiry_date && new Date(certificate.expiry_date) < new Date();
-  
+
   return (
-    <div className="certificate-details-container">
-      <div className="certificate-actions-bar">
+    <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: '20px', 
+        flexWrap: 'wrap', 
+        gap: '15px' 
+      }}>
         <button 
-          className="btn-secondary back-btn"
           onClick={() => navigate('/trainee/certificates')}
+          style={{ 
+            padding: '10px 15px', 
+            background: '#6c757d', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '4px', 
+            cursor: 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '5px' 
+          }}
         >
-          <ArrowLeft size={16} />
-          Back to Certificates
+          <ArrowLeft size={16} /> Back to Certificates
         </button>
-        
-        <div className="certificate-actions">
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <button 
-            className="btn-primary"
             onClick={downloadCertificate}
+            style={{ 
+              padding: '10px 15px', 
+              background: '#007bff', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '4px', 
+              cursor: 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '5px' 
+            }}
           >
-            <Download size={16} />
-            Download
+            <Download size={16} /> Download
           </button>
-          
           <button 
-            className="btn-secondary"
             onClick={printCertificate}
+            style={{ 
+              padding: '10px 15px', 
+              background: '#6c757d', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '4px', 
+              cursor: 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '5px' 
+            }}
           >
-            <Printer size={16} />
-            Print
+            <Printer size={16} /> Print
           </button>
-          
           <button 
-            className="btn-secondary"
             onClick={generateShareLink}
             disabled={sharing}
+            style={{ 
+              padding: '10px 15px', 
+              background: '#6c757d', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '4px', 
+              cursor: sharing ? 'not-allowed' : 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '5px', 
+              opacity: sharing ? 0.7 : 1 
+            }}
           >
-            <Share2 size={16} />
-            {sharing ? 'Generating...' : 'Share'}
+            <Share2 size={16} /> {sharing ? 'Generating...' : 'Share'}
           </button>
         </div>
       </div>
-      
+
       {shareLink && (
-        <div className="share-link-container">
-          <div className="share-link-box">
+        <div style={{ 
+          background: '#f8f9fa', 
+          padding: '15px', 
+          borderRadius: '8px', 
+          marginBottom: '20px' 
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            gap: '10px', 
+            marginBottom: '5px', 
+            flexWrap: 'wrap' 
+          }}>
             <input 
               type="text" 
               value={shareLink} 
               readOnly 
-              className="share-link-input"
+              style={{ 
+                flex: 1, 
+                padding: '8px', 
+                border: '1px solid #ddd', 
+                borderRadius: '4px', 
+                fontSize: '14px', 
+                minWidth: '200px' 
+              }}
             />
             <button 
-              className="copy-link-btn"
               onClick={copyShareLink}
+              style={{ 
+                padding: '8px 15px', 
+                background: linkCopied ? '#28a745' : '#007bff', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '4px', 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '5px' 
+              }}
             >
               {linkCopied ? <Check size={16} /> : 'Copy'}
             </button>
           </div>
-          <p className="share-link-info">
+          <p style={{ fontSize: '12px', color: '#666', margin: 0 }}>
             This link will expire in 7 days. Anyone with this link can view your certificate.
           </p>
         </div>
       )}
-      
-      <div className="certificate-meta-info">
-        <div className="meta-item">
-          <BookOpen size={16} />
-          <span>Program: {certificate.program_title}</span>
+
+      <div style={{ 
+        display: 'flex', 
+        flexWrap: 'wrap', 
+        gap: '15px', 
+        marginBottom: '20px', 
+        fontSize: '14px', 
+        color: '#666' 
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <BookOpen size={16} /> <span>Program: {certificate.program_title}</span>
         </div>
-        
-        <div className="meta-item">
-          <Calendar size={16} />
-          <span>Issued: {new Date(certificate.created_at).toLocaleDateString()}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <Calendar size={16} /> <span>Issued: {new Date(certificate.created_at).toLocaleDateString()}</span>
         </div>
-        
         {certificate.expiry_date && (
-          <div className={`meta-item ${isExpired ? 'expired' : ''}`}>
-            <Calendar size={16} />
-            <span>
-              {isExpired ? 'Expired: ' : 'Expires: '}
-              {new Date(certificate.expiry_date).toLocaleDateString()}
-            </span>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '5px', 
+            color: isExpired ? '#dc3545' : '#666' 
+          }}>
+            <Calendar size={16} /> 
+            <span>{isExpired ? 'Expired: ' : 'Expires: '}{new Date(certificate.expiry_date).toLocaleDateString()}</span>
           </div>
         )}
       </div>
-      
-      <div className="certificate-preview-container" ref={certificateRef}>
-        <div className="certificate-document">
-          <div className="certificate-header">
-            <img src="/assets/images/logocolor.png" alt="Company Logo" className="logo" />
-            <h1 className="certificate-title">Certificate of Completion</h1>
+
+      <div style={{ 
+        background: '#fff', 
+        borderRadius: '8px', 
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)', 
+        padding: '20px', 
+        position: 'relative' 
+      }} ref={certificateRef}>
+        <div style={{ 
+          border: '2px solid #007bff', 
+          padding: '20px', 
+          background: '#fff', 
+          borderRadius: '4px', 
+          position: 'relative' 
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            marginBottom: '20px', 
+            flexWrap: 'wrap', 
+            gap: '15px' 
+          }}>
+            <img 
+              src="/assets/images/logocolor.png" 
+              alt="Company Logo" 
+              style={{ maxWidth: '150px', height: 'auto' }} 
+            />
+            <h1 style={{ 
+              fontSize: '24px', 
+              color: '#007bff', 
+              fontWeight: 'bold', 
+              margin: 0, 
+              textAlign: 'right' 
+            }}>
+              Certificate of Completion
+            </h1>
           </div>
-          
-          <div className="certificate-body">
-            <div className="certificate-award-icon">
-              <Award size={80} />
+
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ margin: '20px 0' }}>
+              <Award size={80} style={{ color: '#007bff' }} />
             </div>
-            
-            <p className="certificate-text">This is to certify that</p>
-            <h2 className="certificate-recipient">{localStorage.getItem('userName') || 'Trainee'}</h2>
-            <p className="certificate-text">has successfully completed</p>
-            <h3 className="certificate-program">{certificate.program_title}</h3>
-            
-            <div className="certificate-description">
+            <p style={{ fontSize: '16px', color: '#666', margin: '10px 0' }}>This is to certify that</p>
+            <h2 style={{ fontSize: '28px', color: '#333', margin: '10px 0', fontWeight: 'bold' }}>
+              {localStorage.getItem('userName') || 'Trainee'}
+            </h2>
+            <p style={{ fontSize: '16px', color: '#666', margin: '10px 0' }}>has successfully completed</p>
+            <h3 style={{ fontSize: '20px', color: '#007bff', margin: '10px 0' }}>{certificate.program_title}</h3>
+            <div style={{ 
+              maxWidth: '500px', 
+              margin: '20px auto', 
+              fontSize: '14px', 
+              color: '#666' 
+            }}>
               <p>{certificate.description}</p>
             </div>
-            
-            <div className="certificate-date">
+            <div style={{ fontSize: '14px', color: '#666' }}>
               Issued on {new Date(certificate.created_at).toLocaleDateString()}
             </div>
           </div>
-          
-          <div className="certificate-footer">
-            <div className="certificate-signature">
-              <div className="signature-line"></div>
-              <p className="signature-name">Training Director</p>
+
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            marginTop: '40px', 
+            flexWrap: 'wrap', 
+            gap: '20px' 
+          }}>
+            <div style={{ textAlign: 'center', flex: 1 }}>
+              <div style={{ width: '150px', height: '1px', background: '#007bff', margin: '0 auto 5px' }}></div>
+              <p style={{ fontSize: '12px', color: '#666', margin: 0 }}>Training Director</p>
             </div>
-            
-            <div className="certificate-seal">
-              <div className="seal-circle">
-                <Award size={40} />
+            <div style={{ 
+              textAlign: 'center', 
+              flex: 1, 
+              display: 'flex', 
+              justifyContent: 'center' 
+            }}>
+              <div style={{ 
+                width: '60px', 
+                height: '60px', 
+                borderRadius: '50%', 
+                border: '2px solid #007bff', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center' 
+              }}>
+                <Award size={40} style={{ color: '#007bff' }} />
               </div>
             </div>
-            
-            <div className="certificate-signature">
-              <div className="signature-line"></div>
-              <p className="signature-name">Program Instructor</p>
+            <div style={{ textAlign: 'center', flex: 1 }}>
+              <div style={{ width: '150px', height: '1px', background: '#007bff', margin: '0 auto 5px' }}></div>
+              <p style={{ fontSize: '12px', color: '#666', margin: 0 }}>Program Instructor</p>
             </div>
           </div>
-          
+
           {isExpired && (
-            <div className="expired-watermark">EXPIRED</div>
+            <div style={{ 
+              position: 'absolute', 
+              top: '50%', 
+              left: '50%', 
+              transform: 'translate(-50%, -50%) rotate(-45deg)', 
+              fontSize: '48px', 
+              color: '#dc3545', 
+              opacity: 0.3, 
+              fontWeight: 'bold', 
+              pointerEvents: 'none' 
+            }}>
+              EXPIRED
+            </div>
           )}
-          
-          <div className="certificate-id">
+
+          <div style={{ 
+            position: 'absolute', 
+            bottom: '10px', 
+            right: '10px', 
+            fontSize: '12px', 
+            color: '#666' 
+          }}>
             Certificate ID: {certificate.id}
           </div>
         </div>
       </div>
-      
-      <div className="certificate-verification">
-        <h3>Verify this Certificate</h3>
-        <p>
-          To verify the authenticity of this certificate, please visit <strong>verify.example.com</strong> and enter the Certificate ID: <strong>{certificate.id}</strong>
+
+      <div style={{ 
+        marginTop: '20px', 
+        background: '#f8f9fa', 
+        padding: '15px', 
+        borderRadius: '8px', 
+        textAlign: 'center' 
+      }}>
+        <h3 style={{ fontSize: '16px', margin: '0 0 10px 0' }}>Verify this Certificate</h3>
+        <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
+          To verify the authenticity of this certificate, please visit{' '}
+          <strong>verify.example.com</strong> and enter the Certificate ID:{' '}
+          <strong>{certificate.id}</strong>
         </p>
       </div>
     </div>

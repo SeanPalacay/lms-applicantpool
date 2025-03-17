@@ -38,6 +38,100 @@ const trainerService = {
     return response.json();
   },
 
+  // Add these methods to your existing trainerService.js file
+
+// Set quiz grading options
+configureQuizGrading: async (quizId, gradingOptions) => {
+  const token = localStorage.getItem('authToken');
+  if (!token) throw new Error('No token found. Please log in again.');
+  if (isTokenExpired()) {
+    localStorage.removeItem('authToken');
+    throw new Error('Session expired. Please log in again.');
+  }
+
+  const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainer/configure_quiz_grading.php?quizId=${quizId}`;
+  const response = await fetch(endpoint, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(gradingOptions)
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      localStorage.removeItem('authToken');
+      throw new Error('Authentication failed. Please login again.');
+    }
+    const errorText = await response.text();
+    throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+  }
+
+  return response.json();
+},
+
+// Get grading results for a quiz
+getQuizGradingResults: async (quizId, includeDetails = false) => {
+  const token = localStorage.getItem('authToken');
+  if (!token) throw new Error('No token found. Please log in again.');
+  if (isTokenExpired()) {
+    localStorage.removeItem('authToken');
+    throw new Error('Session expired. Please log in again.');
+  }
+
+  const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainer/quiz_grading_results.php?quizId=${quizId}&details=${includeDetails ? 1 : 0}`;
+  const response = await fetch(endpoint, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      localStorage.removeItem('authToken');
+      throw new Error('Authentication failed. Please login again.');
+    }
+    const errorText = await response.text();
+    throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+  }
+
+  return response.json();
+},
+
+// Generate automated feedback for a quiz attempt
+generateQuizFeedback: async (attemptId) => {
+  const token = localStorage.getItem('authToken');
+  if (!token) throw new Error('No token found. Please log in again.');
+  if (isTokenExpired()) {
+    localStorage.removeItem('authToken');
+    throw new Error('Session expired. Please log in again.');
+  }
+
+  const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainer/generate_feedback.php?attemptId=${attemptId}`;
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      localStorage.removeItem('authToken');
+      throw new Error('Authentication failed. Please login again.');
+    }
+    const errorText = await response.text();
+    throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+  }
+
+  return response.json();
+},
+
+
   getPrograms: async () => {
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error('No token found. Please log in again.');

@@ -7,12 +7,7 @@ import {
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
 import traineeService from '../../../services/traineeService';
-import './styles/TraineePrograms.css';
 
-/**
- * TraineePrograms Component
- * Displays a list of programs the trainee is enrolled in
- */
 const TraineePrograms = () => {
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,12 +18,10 @@ const TraineePrograms = () => {
   const [sortField, setSortField] = useState('enrollment_date');
   const [sortDirection, setSortDirection] = useState('desc');
 
-  // Fetch trainee's programs on component mount
   useEffect(() => {
     const fetchPrograms = async () => {
       setLoading(true);
       setError('');
-      
       try {
         const data = await traineeService.getPrograms();
         setPrograms(data);
@@ -39,127 +32,122 @@ const TraineePrograms = () => {
         setLoading(false);
       }
     };
-
     fetchPrograms();
   }, []);
 
-  // Handle search query change
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
+  const handleSearchChange = (e) => setSearchQuery(e.target.value);
+  const handleStatusFilterChange = (e) => setFilterStatus(e.target.value);
+  const toggleFilters = () => setShowFilters(!showFilters);
 
-  // Handle status filter change
-  const handleStatusFilterChange = (e) => {
-    setFilterStatus(e.target.value);
-  };
-
-  // Toggle filters visibility
-  const toggleFilters = () => {
-    setShowFilters(!showFilters);
-  };
-
-  // Handle sort
   const handleSort = (field) => {
     if (sortField === field) {
-      // Toggle sort direction if same field
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
-      // Set new sort field and default to ascending
       setSortField(field);
       setSortDirection('asc');
     }
   };
 
-  // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
-  // Filter and sort programs
   const filteredPrograms = programs
     .filter(program => {
-      // Search filter
       const searchMatch = program.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (program.description && program.description.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      // Status filter
-      let statusMatch = true;
-      if (filterStatus !== 'all') {
-        statusMatch = program.completion_status === filterStatus;
-      }
-      
+      const statusMatch = filterStatus === 'all' || program.completion_status === filterStatus;
       return searchMatch && statusMatch;
     })
     .sort((a, b) => {
-      // Sorting logic
       let comparison = 0;
-      
       if (sortField === 'title') {
         comparison = a.title.localeCompare(b.title);
       } else if (sortField === 'enrollment_date') {
         comparison = new Date(a.enrollment_date || 0) - new Date(b.enrollment_date || 0);
       } else if (sortField === 'completion_percentage') {
-        const percentA = parseFloat(a.completion_percentage) || 0;
-        const percentB = parseFloat(b.completion_percentage) || 0;
-        comparison = percentA - percentB;
+        comparison = (parseFloat(a.completion_percentage) || 0) - (parseFloat(b.completion_percentage) || 0);
       }
-      
-      // Apply sort direction
       return sortDirection === 'asc' ? comparison : -comparison;
     });
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="trainee-programs-container">
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       {error && <AlertBanner message={error} type="error" />}
-      
-      {/* Header */}
-      <div className="programs-header">
-        <div className="header-title">
-          <BookOpen size={24} className="header-icon" />
-          <h2>My Programs</h2>
-        </div>
+
+      <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <BookOpen size={24} style={{ color: '#007bff' }} />
+        <h2 style={{ fontSize: '24px', margin: 0, color: '#333' }}>My Programs</h2>
       </div>
-      
-      {/* Search and filter bar */}
-      <div className="search-filter-bar">
-        <div className="search-container">
-          <Search size={18} className="search-icon" />
+
+      <div style={{ 
+        display: 'flex', 
+        gap: '15px', 
+        marginBottom: '20px', 
+        flexWrap: 'wrap', 
+        alignItems: 'center' 
+      }}>
+        <div style={{ flex: '1', minWidth: '250px', position: 'relative' }}>
+          <Search size={18} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#666' }} />
           <input 
             type="text" 
             placeholder="Search programs..." 
             value={searchQuery}
             onChange={handleSearchChange}
-            className="search-input"
+            style={{ 
+              width: '100%', 
+              padding: '10px 10px 10px 35px', 
+              border: '1px solid #ddd', 
+              borderRadius: '4px', 
+              fontSize: '14px' 
+            }}
           />
         </div>
-        
         <button 
-          onClick={toggleFilters} 
-          className="btn-toggle-filters"
-          type="button"
+          onClick={toggleFilters}
+          style={{ 
+            padding: '10px 15px', 
+            background: '#f8f9fa', 
+            border: '1px solid #ddd', 
+            borderRadius: '4px', 
+            cursor: 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '5px', 
+            fontSize: '14px', 
+            color: '#666' 
+          }}
         >
-          <Filter size={18} />
-          <span>Filters</span>
-          {showFilters ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          <Filter size={18} /> <span>Filters</span> {showFilters ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </button>
       </div>
-      
-      {/* Filters panel */}
+
       {showFilters && (
-        <div className="filters-panel">
-          <div className="filter-group">
-            <label htmlFor="status-filter">Status:</label>
+        <div style={{ 
+          background: '#f8f9fa', 
+          padding: '15px', 
+          borderRadius: '8px', 
+          marginBottom: '20px', 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          gap: '20px' 
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: '1', minWidth: '200px' }}>
+            <label htmlFor="status-filter" style={{ fontSize: '14px', color: '#666' }}>Status:</label>
             <select 
               id="status-filter" 
               value={filterStatus}
               onChange={handleStatusFilterChange}
-              className="filter-select"
+              style={{ 
+                padding: '8px', 
+                border: '1px solid #ddd', 
+                borderRadius: '4px', 
+                fontSize: '14px', 
+                flex: '1' 
+              }}
             >
               <option value="all">All Statuses</option>
               <option value="completed">Completed</option>
@@ -167,109 +155,164 @@ const TraineePrograms = () => {
               <option value="not_started">Not Started</option>
             </select>
           </div>
-          
-          <div className="filter-group">
-            <label htmlFor="sort-field">Sort By:</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: '1', minWidth: '200px' }}>
+            <label htmlFor="sort-field" style={{ fontSize: '14px', color: '#666' }}>Sort By:</label>
             <select
               id="sort-field"
               value={sortField}
               onChange={(e) => setSortField(e.target.value)}
-              className="filter-select"
+              style={{ 
+                padding: '8px', 
+                border: '1px solid #ddd', 
+                borderRadius: '4px', 
+                fontSize: '14px', 
+                flex: '1' 
+              }}
             >
               <option value="enrollment_date">Enrollment Date</option>
               <option value="title">Title</option>
               <option value="completion_percentage">Completion Percentage</option>
             </select>
-            
             <button
-              type="button"
               onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}
-              className="btn-sort-direction"
+              style={{ 
+                padding: '8px', 
+                background: '#f8f9fa', 
+                border: '1px solid #ddd', 
+                borderRadius: '4px', 
+                cursor: 'pointer' 
+              }}
             >
               {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           </div>
         </div>
       )}
-      
-      {/* Programs Grid */}
+
       {filteredPrograms.length > 0 ? (
-        <div className="programs-grid">
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
+          gap: '20px' 
+        }}>
           {filteredPrograms.map(program => (
             <Link 
               to={`/trainee/programs/${program.id}`} 
               key={program.id}
-              className="program-card"
+              style={{ 
+                textDecoration: 'none', 
+                background: '#fff', 
+                borderRadius: '8px', 
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)', 
+                padding: '15px', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '15px' 
+              }}
             >
-              <div className="program-header">
-                <div className="program-icon">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ color: '#007bff' }}>
                   <BookOpen size={24} />
                 </div>
-                <div className="program-status">
+                <div style={{ fontSize: '12px' }}>
                   {program.completion_status === 'completed' && (
-                    <div className="status-badge status-completed">
-                      <CheckCircle size={16} />
-                      <span>Completed</span>
+                    <div style={{ 
+                      padding: '4px 8px', 
+                      background: '#d4edda', 
+                      color: '#155724', 
+                      borderRadius: '4px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '5px' 
+                    }}>
+                      <CheckCircle size={16} /> <span>Completed</span>
                     </div>
                   )}
                   {program.completion_status === 'in_progress' && (
-                    <div className="status-badge status-in-progress">
-                      <Clock size={16} />
-                      <span>In Progress</span>
+                    <div style={{ 
+                      padding: '4px 8px', 
+                      background: '#cce5ff', 
+                      color: '#004085', 
+                      borderRadius: '4px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '5px' 
+                    }}>
+                      <Clock size={16} /> <span>In Progress</span>
                     </div>
                   )}
                   {program.completion_status === 'not_started' && (
-                    <div className="status-badge status-not-started">
-                      <AlertTriangle size={16} />
-                      <span>Not Started</span>
+                    <div style={{ 
+                      padding: '4px 8px', 
+                      background: '#fff3cd', 
+                      color: '#856404', 
+                      borderRadius: '4px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '5px' 
+                    }}>
+                      <AlertTriangle size={16} /> <span>Not Started</span>
                     </div>
                   )}
                 </div>
               </div>
-              
-              <div className="program-content">
-                <h3 className="program-title">{program.title}</h3>
+
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '16px', margin: '0 0 10px 0', color: '#333' }}>{program.title}</h3>
                 {program.description && (
-                  <p className="program-description">
-                    {program.description.length > 120 
-                      ? program.description.substring(0, 120) + '...' 
-                      : program.description}
+                  <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
+                    {program.description.length > 120 ? program.description.substring(0, 120) + '...' : program.description}
                   </p>
                 )}
               </div>
-              
-              <div className="program-footer">
-                <div className="program-meta">
-                  <div className="meta-item">
-                    <Calendar size={14} className="meta-icon" />
-                    <span>Enrolled: {formatDate(program.enrollment_date)}</span>
+
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <Calendar size={14} /> <span>Enrolled: {formatDate(program.enrollment_date)}</span>
                   </div>
-                  <div className="meta-item">
-                    <span className="program-type">{program.type || 'Regular'}</span>
-                  </div>
+                  <span style={{ 
+                    padding: '2px 6px', 
+                    background: '#e9ecef', 
+                    borderRadius: '4px' 
+                  }}>
+                    {program.type || 'Regular'}
+                  </span>
                 </div>
-                
-                <div className="program-progress">
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
-                      style={{ width: `${program.completion_percentage || 0}%` }}
-                    ></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ 
+                    width: '100%', 
+                    height: '6px', 
+                    background: '#e9ecef', 
+                    borderRadius: '3px', 
+                    overflow: 'hidden' 
+                  }}>
+                    <div style={{ 
+                      width: `${program.completion_percentage || 0}%`, 
+                      height: '100%', 
+                      background: '#007bff', 
+                      transition: 'width 0.3s' 
+                    }}></div>
                   </div>
-                  <span className="progress-text">{program.completion_percentage || 0}% complete</span>
+                  <span>{program.completion_percentage || 0}% complete</span>
                 </div>
               </div>
             </Link>
           ))}
         </div>
       ) : (
-        <div className="no-programs-message">
-          <BookOpen size={48} />
-          <h3>No programs found</h3>
-          <p>
-            {searchQuery || filterStatus !== 'all'
-              ? 'Try adjusting your search or filters'
-              : 'You are not enrolled in any programs yet'}
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          padding: '40px', 
+          textAlign: 'center' 
+        }}>
+          <BookOpen size={48} style={{ color: '#666', marginBottom: '15px' }} />
+          <h3 style={{ fontSize: '18px', margin: '0 0 10px 0', color: '#333' }}>No programs found</h3>
+          <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
+            {searchQuery || filterStatus !== 'all' ? 'Try adjusting your search or filters' : 'You are not enrolled in any programs yet'}
           </p>
         </div>
       )}

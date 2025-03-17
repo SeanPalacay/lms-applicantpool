@@ -14,12 +14,10 @@ import {
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
 import traineeService from '../../../services/traineeService';
-import './styles/TraineeDashboard.css';
 
 const TraineeDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [dashboardData, setDashboardData] = useState({
     user: { full_name: '', email: '', role: '' },
     enrollments: [],
@@ -28,7 +26,6 @@ const TraineeDashboard = () => {
     notifications: [],
     alerts: []
   });
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,34 +70,43 @@ const TraineeDashboard = () => {
   } = dashboardData;
 
   return (
-    <div className="trainee-dashboard">
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       {error && <AlertBanner type="error" message={error} />}
 
-      <div className="welcome-section">
-        <h1>Welcome, {user.full_name}</h1>
-        <p>Here's an overview of your learning progress and activities.</p>
+      <div style={{ marginBottom: '20px' }}>
+        <h1 style={{ fontSize: '24px', margin: '0 0 5px 0' }}>Welcome, {user.full_name}</h1>
+        <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
+          Here's an overview of your learning progress and activities.
+        </p>
       </div>
 
-      {/* Alerts Section */}
       {alerts && alerts.length > 0 && (
-        <div className="alerts-section">
-          <div className="section-header">
-            <h2>Alerts & Notifications</h2>
-            <div className="header-line"></div>
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '15px' }}>
+            <h2 style={{ fontSize: '18px', margin: '0 0 5px 0' }}>Alerts & Notifications</h2>
+            <div style={{ height: '2px', background: '#ddd' }}></div>
           </div>
-          <div className="alerts-container">
+          <div style={{ background: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
             {alerts.map((alert, index) => (
-              <div key={index} className={`alert-card alert-${alert.type || 'info'}`}>
-                <div className="alert-icon">
-                  {alert.type === 'warning' ? (
-                    <AlertTriangle size={20} />
-                  ) : (
-                    <Info size={20} />
-                  )}
+              <div 
+                key={index} 
+                style={{ 
+                  padding: '15px', 
+                  borderBottom: index < alerts.length - 1 ? '1px solid #eee' : 'none',
+                  display: 'flex',
+                  gap: '15px',
+                  background: alert.type === 'warning' ? '#fff3cd' : '#cce5ff'
+                }}
+              >
+                <div style={{ 
+                  color: alert.type === 'warning' ? '#856404' : '#004085',
+                  flexShrink: 0 
+                }}>
+                  {alert.type === 'warning' ? <AlertTriangle size={20} /> : <Info size={20} />}
                 </div>
-                <div className="alert-content">
-                  <h4>{alert.title || 'Alert'}</h4>
-                  <p>{alert.message}</p>
+                <div>
+                  <h4 style={{ fontSize: '16px', margin: '0 0 5px 0' }}>{alert.title || 'Alert'}</h4>
+                  <p style={{ fontSize: '14px', margin: 0, color: '#666' }}>{alert.message}</p>
                 </div>
               </div>
             ))}
@@ -108,173 +114,283 @@ const TraineeDashboard = () => {
         </div>
       )}
 
-      <div className="dashboard-grid">
-        {/* Enrollments Card */}
-        <div className="dashboard-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <GraduationCap size={20} />
-            </div>
-            <div className="header-content">
-              <h3>My Programs</h3>
-              <Link to="/trainee/enrollments" className="view-all-link">
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+        gap: '20px' 
+      }}>
+        <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <div style={{ 
+            background: 'linear-gradient(to right, #007bff, #00b7ff)', 
+            color: 'white', 
+            padding: '10px 15px', 
+            borderRadius: '8px 8px 0 0', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '10px' 
+          }}>
+            <GraduationCap size={20} />
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontSize: '16px', margin: 0 }}>My Programs</h3>
+              <Link to="/trainee/enrollments" style={{ color: 'white', textDecoration: 'none', fontSize: '14px' }}>
                 View All
               </Link>
             </div>
           </div>
-          <div className="card-content">
+          <div style={{ padding: '15px' }}>
             {enrollments.length > 0 ? (
               enrollments.map((enrollment) => (
-                <div key={enrollment.id} className="program-item">
-                  <h4>{enrollment.program_title}</h4>
-                  <div className="program-progress">
-                    <div className="progress-bar">
-                      <div 
-                        className="progress-fill" 
-                        style={{ width: `${enrollment.completion_percentage}%` }}
-                      ></div>
+                <div 
+                  key={enrollment.id} 
+                  style={{ 
+                    paddingBottom: '15px', 
+                    marginBottom: '15px', 
+                    borderBottom: enrollments.length > 1 ? '1px solid #eee' : 'none',
+                    ':last-child': { borderBottom: 'none', marginBottom: 0 }
+                  }}
+                >
+                  <h4 style={{ fontSize: '16px', margin: '0 0 5px 0' }}>{enrollment.program_title}</h4>
+                  <div style={{ marginBottom: '10px' }}>
+                    <div style={{ 
+                      width: '100%', 
+                      height: '6px', 
+                      background: '#eee', 
+                      borderRadius: '3px', 
+                      overflow: 'hidden' 
+                    }}>
+                      <div style={{ 
+                        width: `${enrollment.completion_percentage}%`, 
+                        height: '100%', 
+                        background: '#007bff' 
+                      }}></div>
                     </div>
-                    <span className="progress-text">{enrollment.completion_percentage}% Complete</span>
+                    <span style={{ fontSize: '12px', color: '#666' }}>{enrollment.completion_percentage}% Complete</span>
                   </div>
-                  <p>
-                    <Clock size={14} className="icon-inline" /> Enrolled on: {new Date(enrollment.enrollment_date).toLocaleDateString()}
+                  <p style={{ fontSize: '14px', color: '#666', margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <Clock size={14} /> Enrolled on: {new Date(enrollment.enrollment_date).toLocaleDateString()}
                   </p>
-                  <Link to={`/trainee/programs/${enrollment.id}`} className="continue-link">
-                    Continue Learning <ChevronRight size={14} className="icon-inline" />
+                  <Link 
+                    to={`/trainee/programs/${enrollment.id}`} 
+                    style={{ 
+                      color: '#007bff', 
+                      textDecoration: 'none', 
+                      fontSize: '14px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '5px' 
+                    }}
+                  >
+                    Continue Learning <ChevronRight size={14} />
                   </Link>
                 </div>
               ))
             ) : (
-              <div className="no-data-message">
-                <p>You have not enrolled in any programs yet.</p>
-                <div className="card-actions">
-                  <Link to="/trainee/browse-programs" className="action-button primary">
-                    Browse Programs
-                  </Link>
-                </div>
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <p style={{ fontSize: '14px', color: '#666', margin: '0 0 15px 0' }}>
+                  You have not enrolled in any programs yet.
+                </p>
+                <Link 
+                  to="/trainee/browse-programs" 
+                  style={{ 
+                    padding: '8px 15px', 
+                    background: '#007bff', 
+                    color: 'white', 
+                    borderRadius: '4px', 
+                    textDecoration: 'none', 
+                    fontSize: '14px' 
+                  }}
+                >
+                  Browse Programs
+                </Link>
               </div>
             )}
           </div>
         </div>
 
-        {/* Quiz Attempts Card */}
-        <div className="dashboard-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <BookOpen size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Recent Quizzes</h3>
-              <Link to="/trainee/quizzes" className="view-all-link">
+        <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <div style={{ 
+            background: 'linear-gradient(to right, #7209b7, #b517ff)', 
+            color: 'white', 
+            padding: '10px 15px', 
+            borderRadius: '8px 8px 0 0', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '10px' 
+          }}>
+            <BookOpen size={20} />
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontSize: '16px', margin: 0 }}>Recent Quizzes</h3>
+              <Link to="/trainee/assessments" style={{ color: 'white', textDecoration: 'none', fontSize: '14px' }}>
                 View All
               </Link>
             </div>
           </div>
-          <div className="card-content">
+          <div style={{ padding: '15px' }}>
             {quizAttempts.length > 0 ? (
               quizAttempts.map((quiz) => (
-                <div key={quiz.id} className="quiz-item">
-                  <div className="quiz-info">
-                    <h4>{quiz.quiz_title}</h4>
-                    <div className="quiz-score">
-                      <div className="score-badge">
-                        Score: {quiz.score}
-                      </div>
+                <div 
+                  key={quiz.id} 
+                  style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    paddingBottom: '15px', 
+                    marginBottom: '15px', 
+                    borderBottom: quizAttempts.length > 1 ? '1px solid #eee' : 'none',
+                    ':last-child': { borderBottom: 'none', marginBottom: 0 }
+                  }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ fontSize: '16px', margin: '0 0 5px 0' }}>{quiz.quiz_title}</h4>
+                    <div style={{ 
+                      display: 'inline-block', 
+                      padding: '4px 8px', 
+                      background: quiz.score >= 70 ? '#d4edda' : '#f8d7da', 
+                      color: quiz.score >= 70 ? '#155724' : '#721c24', 
+                      borderRadius: '12px', 
+                      fontSize: '12px',
+                      marginBottom: '5px'
+                    }}>
+                      Score: {quiz.score}
                     </div>
-                    {quiz.feedback && <p className="quiz-feedback">{quiz.feedback}</p>}
-                    <p className="attempt-date">
-                      <Clock size={14} className="icon-inline" /> {new Date(quiz.attempt_date).toLocaleString()}
+                    {quiz.feedback && (
+                      <p style={{ fontSize: '14px', color: '#666', margin: '5px 0' }}>{quiz.feedback}</p>
+                    )}
+                    <p style={{ fontSize: '14px', color: '#666', margin: 0, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <Clock size={14} /> {new Date(quiz.attempt_date).toLocaleString()}
                     </p>
-                  </div>
-                  <div className="quiz-actions">
-                    <Link to={`/trainee/quizzes/${quiz.id}`} className="review-quiz-btn">
-                      Review
-                    </Link>
-                  </div>
+                  </div>  
                 </div>
               ))
             ) : (
-              <div className="no-data-message">
-                <p>No quiz attempts recorded.</p>
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>No quiz attempts recorded.</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Milestone Status Card */}
-        <div className="dashboard-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <CheckSquare size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Milestone Progress</h3>
-              <Link to="/trainee/milestones" className="view-all-link">
+        <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <div style={{ 
+            background: 'linear-gradient(to right, #ff8c00, #ffbc00)', 
+            color: 'white', 
+            padding: '10px 15px', 
+            borderRadius: '8px 8px 0 0', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '10px' 
+          }}>
+            <CheckSquare size={20} />
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontSize: '16px', margin: 0 }}>Milestone Progress</h3>
+              <Link to="/trainee/milestones" style={{ color: 'white', textDecoration: 'none', fontSize: '14px' }}>
                 View All
               </Link>
             </div>
           </div>
-          <div className="card-content">
+          <div style={{ padding: '15px' }}>
             {milestoneStatus.length > 0 ? (
               milestoneStatus.map((milestone) => (
-                <div key={milestone.milestone_id} className="milestone-item">
-                  <div className="milestone-info">
-                    <h4>{milestone.title}</h4>
-                    <p className="program-name">{milestone.program_title}</p>
-                    <div className={`milestone-status status-${milestone.status.toLowerCase()}`}>
+                <div 
+                  key={milestone.milestone_id} 
+                  style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    paddingBottom: '15px', 
+                    marginBottom: '15px', 
+                    borderBottom: milestoneStatus.length > 1 ? '1px solid #eee' : 'none',
+                    ':last-child': { borderBottom: 'none', marginBottom: 0 }
+                  }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ fontSize: '16px', margin: '0 0 5px 0' }}>{milestone.title}</h4>
+                    <p style={{ fontSize: '14px', color: '#666', margin: '0 0 5px 0' }}>{milestone.program_title}</p>
+                    <div style={{ 
+                      display: 'inline-block', 
+                      padding: '4px 8px', 
+                      borderRadius: '12px', 
+                      fontSize: '12px',
+                      background: milestone.status.toLowerCase() === 'completed' ? '#d4edda' : 
+                                 milestone.status.toLowerCase() === 'in_progress' ? '#cce5ff' : '#fff3cd',
+                      color: milestone.status.toLowerCase() === 'completed' ? '#155724' : 
+                            milestone.status.toLowerCase() === 'in_progress' ? '#004085' : '#856404'
+                    }}>
                       {milestone.status}
                     </div>
                   </div>
-                  <div className="milestone-date">
-                    <div className="due-date">Due: {new Date(milestone.due_date).toLocaleDateString()}</div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '5px' }}>
+                      Due: {new Date(milestone.due_date).toLocaleDateString()}
+                    </div>
                     {milestone.completion_date && (
-                      <div className="completed-date">
+                      <div style={{ fontSize: '12px', color: '#28a745' }}>
                         Completed: {new Date(milestone.completion_date).toLocaleDateString()}
                       </div>
                     )}
-                    <Link to={`/trainee/milestones/${milestone.milestone_id}`} className="milestone-link">
-                      Details <ChevronRight size={12} className="icon-inline" />
+                    <Link 
+                      to={`/trainee/milestones/${milestone.milestone_id}`} 
+                      style={{ 
+                        color: '#ff8c00', 
+                        textDecoration: 'none', 
+                        fontSize: '12px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '5px',
+                        marginTop: '5px'
+                      }}
+                    >
+                      Details <ChevronRight size={12} />
                     </Link>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="no-data-message">
-                <p>No milestones to display.</p>
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>No milestones to display.</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Notifications Card */}
-        <div className="dashboard-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <Bell size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Recent Notifications</h3>
-              <Link to="/notifications" className="view-all-link">
+        <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <div style={{ 
+            background: 'linear-gradient(to right, #00b7b7, #00e0e0)', 
+            color: 'white', 
+            padding: '10px 15px', 
+            borderRadius: '8px 8px 0 0', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '10px' 
+          }}>
+            <Bell size={20} />
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontSize: '16px', margin: 0 }}>Recent Notifications</h3>
+              <Link to="/notifications" style={{ color: 'white', textDecoration: 'none', fontSize: '14px' }}>
                 View All
               </Link>
             </div>
           </div>
-          <div className="card-content">
+          <div style={{ padding: '15px' }}>
             {notifications.length > 0 ? (
               notifications.map((notification) => (
-                <div key={notification.id} className={`notification-item notif-${notification.type}`}>
-                  <div className="notification-content">
-                    <h4>{notification.title}</h4>
-                    <p>{notification.message}</p>
-                    <div className="notification-time">
-                      <Calendar size={12} className="icon-inline" /> {new Date(notification.created_at).toLocaleString()}
-                    </div>
+                <div 
+                  key={notification.id} 
+                  style={{ 
+                    paddingBottom: '15px', 
+                    marginBottom: '15px', 
+                    borderBottom: notifications.length > 1 ? '1px solid #eee' : 'none',
+                    ':last-child': { borderBottom: 'none', marginBottom: 0 }
+                  }}
+                >
+                  <h4 style={{ fontSize: '16px', margin: '0 0 5px 0' }}>{notification.title}</h4>
+                  <p style={{ fontSize: '14px', color: '#666', margin: '0 0 5px 0' }}>{notification.message}</p>
+                  <div style={{ fontSize: '12px', color: '#666', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <Calendar size={12} /> {new Date(notification.created_at).toLocaleString()}
                   </div>
                 </div>
               ))
             ) : (
-              <div className="no-data-message">
-                <p>You have no recent notifications.</p>
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>You have no recent notifications.</p>
               </div>
             )}
           </div>

@@ -1,4 +1,3 @@
-// src/components/shared/Notifications.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -16,7 +15,6 @@ import {
 } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
 import AlertBanner from './AlertBanner';
-import './styles/Notifications.css';
 
 const Notifications = ({ standalone = true }) => {
   const navigate = useNavigate();
@@ -311,13 +309,190 @@ const Notifications = ({ standalone = true }) => {
     }
   };
 
+  // Styles
+  const containerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    padding: standalone ? '24px' : '0',
+    backgroundColor: standalone ? '#f8fafc' : 'transparent',
+    borderRadius: standalone ? '12px' : '0',
+    boxShadow: standalone ? '0 4px 6px rgba(0, 0, 0, 0.1)' : 'none',
+  };
+
+  const headerStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '16px',
+  };
+
+  const backLinkStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    cursor: 'pointer',
+    color: '#3b82f6',
+    fontWeight: '500',
+  };
+
+  const headerActionsStyle = {
+    display: 'flex',
+    gap: '12px',
+  };
+
+  const filterToggleStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 12px',
+    borderRadius: '8px',
+    backgroundColor: '#e2e8f0',
+    cursor: 'pointer',
+    border: 'none',
+  };
+
+  const markAllReadStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 12px',
+    borderRadius: '8px',
+    backgroundColor: '#3b82f6',
+    color: '#ffffff',
+    cursor: 'pointer',
+    border: 'none',
+  };
+
+  const filterPanelStyle = {
+    marginBottom: '16px',
+    padding: '16px',
+    backgroundColor: '#ffffff',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  };
+
+  const filterRowStyle = {
+    display: 'flex',
+    gap: '16px',
+    marginBottom: '16px',
+  };
+
+  const filterGroupStyle = {
+    flex: 1,
+  };
+
+  const filterLabelStyle = {
+    display: 'block',
+    marginBottom: '8px',
+    fontSize: '14px',
+    color: '#475569',
+  };
+
+  const filterSelectStyle = {
+    width: '100%',
+    padding: '8px',
+    borderRadius: '8px',
+    border: '1px solid #e2e8f0',
+    backgroundColor: '#ffffff',
+  };
+
+  const filterActionsStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  };
+
+  const resetFiltersStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 12px',
+    borderRadius: '8px',
+    backgroundColor: '#f8fafc',
+    cursor: 'pointer',
+    border: 'none',
+  };
+
+  const notificationsListStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  };
+
+  const notificationItemStyle = {
+    display: 'flex',
+    gap: '16px',
+    padding: '16px',
+    backgroundColor: '#ffffff',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s ease',
+  };
+
+  const notificationIconStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    backgroundColor: '#e2e8f0',
+  };
+
+  const notificationContentStyle = {
+    flex: 1,
+  };
+
+  const notificationHeaderStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '8px',
+  };
+
+  const notificationTitleStyle = {
+    fontSize: '16px',
+    fontWeight: '600',
+    color: '#1e293b',
+  };
+
+  const notificationActionsStyle = {
+    display: 'flex',
+    gap: '8px',
+  };
+
+  const notificationMessageStyle = {
+    fontSize: '14px',
+    color: '#64748b',
+  };
+
+  const notificationMetaStyle = {
+    display: 'flex',
+    gap: '16px',
+    marginTop: '8px',
+    fontSize: '12px',
+    color: '#94a3b8',
+  };
+
+  const noNotificationsStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '32px',
+    backgroundColor: '#ffffff',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  };
+
   if (loading) {
     return <LoadingSpinner />;
   }
 
-  // Main content to render
-  const notificationsContent = (
-    <div className="notifications-container">
+  return (
+    <div style={containerStyle}>
       {error && (
         <AlertBanner 
           message={error} 
@@ -327,23 +502,23 @@ const Notifications = ({ standalone = true }) => {
       )}
       
       {standalone && (
-        <div className="notifications-header">
-          <div className="back-link" onClick={goBack}>
-            <ArrowLeft size={16} className="icon-inline" />
+        <div style={headerStyle}>
+          <div style={backLinkStyle} onClick={goBack}>
+            <ArrowLeft size={16} />
             <span>Back</span>
           </div>
           
-          <div className="header-actions">
+          <div style={headerActionsStyle}>
             <button 
-              className={`filter-toggle ${filterOpen ? 'active' : ''}`} 
+              style={filterToggleStyle} 
               onClick={toggleFilter}
             >
               <Filter size={18} />
               <span>Filter</span>
             </button>
             
-            <button className="mark-all-read" onClick={markAllAsRead}>
-              <CheckSquare size={16} className="icon-inline" />
+            <button style={markAllReadStyle} onClick={markAllAsRead}>
+              <CheckSquare size={16} />
               <span>Mark All as Read</span>
             </button>
           </div>
@@ -351,85 +526,86 @@ const Notifications = ({ standalone = true }) => {
       )}
       
       {filterOpen && (
-        <div className="filter-panel">
-          <div className="filter-form">
-            <div className="filter-row">
-              <div className="filter-group">
-                <label htmlFor="type">Notification Type</label>
-                <select 
-                  id="type" 
-                  name="type" 
-                  value={filters.type}
-                  onChange={handleFilterChange}
-                >
-                  {notificationTypes.map((type, index) => (
-                    <option key={index} value={type.value}>{type.label}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="filter-group">
-                <label htmlFor="read">Read Status</label>
-                <select 
-                  id="read" 
-                  name="read" 
-                  value={filters.read}
-                  onChange={handleFilterChange}
-                >
-                  {readOptions.map((option, index) => (
-                    <option key={index} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="filter-group">
-                <label htmlFor="date">Time Period</label>
-                <select 
-                  id="date" 
-                  name="date" 
-                  value={filters.date}
-                  onChange={handleFilterChange}
-                >
-                  {dateOptions.map((option, index) => (
-                    <option key={index} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="filter-actions">
-                <button className="reset-filters" onClick={resetFilters}>
-                  <X size={14} className="icon-inline" />
-                  <span>Reset Filters</span>
-                </button>
-              </div>
+        <div style={filterPanelStyle}>
+          <div style={filterRowStyle}>
+            <div style={filterGroupStyle}>
+              <label style={filterLabelStyle} htmlFor="type">Notification Type</label>
+              <select 
+                id="type" 
+                name="type" 
+                value={filters.type}
+                onChange={handleFilterChange}
+                style={filterSelectStyle}
+              >
+                {notificationTypes.map((type, index) => (
+                  <option key={index} value={type.value}>{type.label}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div style={filterGroupStyle}>
+              <label style={filterLabelStyle} htmlFor="read">Read Status</label>
+              <select 
+                id="read" 
+                name="read" 
+                value={filters.read}
+                onChange={handleFilterChange}
+                style={filterSelectStyle}
+              >
+                {readOptions.map((option, index) => (
+                  <option key={index} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div style={filterGroupStyle}>
+              <label style={filterLabelStyle} htmlFor="date">Time Period</label>
+              <select 
+                id="date" 
+                name="date" 
+                value={filters.date}
+                onChange={handleFilterChange}
+                style={filterSelectStyle}
+              >
+                {dateOptions.map((option, index) => (
+                  <option key={index} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div style={filterActionsStyle}>
+              <button style={resetFiltersStyle} onClick={resetFilters}>
+                <X size={14} />
+                <span>Reset Filters</span>
+              </button>
             </div>
           </div>
         </div>
       )}
       
-      <div className="notifications-list">
+      <div style={notificationsListStyle}>
         {filteredNotifications.length > 0 ? (
           filteredNotifications.map((notification) => (
             <div 
               key={notification.id} 
-              className={`notification-item ${notification.read_at ? 'read' : 'unread'}`}
+              style={notificationItemStyle}
               onClick={() => {
                 if (!notification.read_at) {
                   markAsRead(notification.id);
                 }
               }}
             >
-              <div className={`notification-icon ${notification.type}`}>
+              <div style={notificationIconStyle}>
                 {getNotificationIcon(notification.type)}
               </div>
               
-              <div className="notification-content">
-                <div className="notification-header">
-                  <h3 className="notification-title">{notification.title}</h3>
-                  <div className="notification-actions">
+              <div style={notificationContentStyle}>
+                <div style={notificationHeaderStyle}>
+                  <h3 style={notificationTitleStyle}>{notification.title}</h3>
+                  <div style={notificationActionsStyle}>
                     {!notification.read_at && (
                       <button 
-                        className="mark-read-button"
+                        style={{ border: 'none', background: 'none', cursor: 'pointer' }}
                         onClick={(e) => {
                           e.stopPropagation();
                           markAsRead(notification.id);
@@ -440,7 +616,7 @@ const Notifications = ({ standalone = true }) => {
                       </button>
                     )}
                     <button 
-                      className="delete-button"
+                      style={{ border: 'none', background: 'none', cursor: 'pointer' }}
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteNotification(notification.id);
@@ -452,17 +628,17 @@ const Notifications = ({ standalone = true }) => {
                   </div>
                 </div>
                 
-                <p className="notification-message">{notification.message}</p>
+                <p style={notificationMessageStyle}>{notification.message}</p>
                 
-                <div className="notification-meta">
-                  <div className="notification-time">
-                    <Clock size={14} className="icon-inline" />
+                <div style={notificationMetaStyle}>
+                  <div>
+                    <Clock size={14} />
                     <span>{formatTimeAgo(notification.created_at)}</span>
                   </div>
                   
                   {notification.read_at && (
-                    <div className="notification-read-status">
-                      <CheckCircle size={14} className="icon-inline" />
+                    <div>
+                      <CheckCircle size={14} />
                       <span>Read</span>
                     </div>
                   )}
@@ -471,8 +647,8 @@ const Notifications = ({ standalone = true }) => {
             </div>
           ))
         ) : (
-          <div className="no-notifications">
-            <Bell size={48} className="no-notifications-icon" />
+          <div style={noNotificationsStyle}>
+            <Bell size={48} />
             <h3>No Notifications</h3>
             <p>You don't have any notifications that match your filters.</p>
           </div>
@@ -480,17 +656,6 @@ const Notifications = ({ standalone = true }) => {
       </div>
     </div>
   );
-
-  // If used as a standalone page, wrap in main container; otherwise, return just the notifications content
-  if (standalone) {
-    return (
-      <div className="notifications-page-container">
-        {notificationsContent}
-      </div>
-    );
-  }
-
-  return notificationsContent;
 };
 
 export default Notifications;

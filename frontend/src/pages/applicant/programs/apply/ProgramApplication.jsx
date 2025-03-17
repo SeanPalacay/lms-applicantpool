@@ -5,7 +5,6 @@ import {
   RefreshCw, Upload, Send, Loader, Calendar, User
 } from 'lucide-react';
 import axios from 'axios';
-import '../styles/ProgramApplication.css';
 
 const ProgramApplication = () => {
   const { programId } = useParams();
@@ -25,20 +24,17 @@ const ProgramApplication = () => {
   const [formErrors, setFormErrors] = useState({});
   const [hasExistingApplication, setHasExistingApplication] = useState(false);
   
-  // Fetch program details and check for existing application
   useEffect(() => {
     const fetchProgramAndApplication = async () => {
       try {
         setLoadingProgram(true);
         
-        // Get program details
         const programResponse = await axios.get(`/api/programs/${programId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
         
-        // Check if user already has an application for this program
         const applicationsResponse = await axios.get('/api/applications/user', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -65,7 +61,6 @@ const ProgramApplication = () => {
     fetchProgramAndApplication();
   }, [programId]);
   
-  // Get existing documents
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
@@ -88,7 +83,6 @@ const ProgramApplication = () => {
     fetchDocuments();
   }, []);
   
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -96,7 +90,6 @@ const ProgramApplication = () => {
       [name]: value
     });
     
-    // Clear validation error when field is changed
     if (formErrors[name]) {
       setFormErrors({
         ...formErrors,
@@ -105,12 +98,10 @@ const ProgramApplication = () => {
     }
   };
   
-  // Handle file upload
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     
-    // Validate file type (PDF, DOC, DOCX)
     const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     if (!validTypes.includes(file.type)) {
       alert('Please upload a PDF or Word document.');
@@ -118,7 +109,6 @@ const ProgramApplication = () => {
       return;
     }
     
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('File size should be less than 5MB.');
       e.target.value = '';
@@ -139,12 +129,8 @@ const ProgramApplication = () => {
         }
       });
       
-      // Add the new document to the list
       setDocuments([...documents, response.data]);
-      
-      // Clear the file input
       e.target.value = '';
-      
       alert('Document uploaded successfully!');
     } catch (err) {
       console.error('Error uploading document:', err);
@@ -152,7 +138,6 @@ const ProgramApplication = () => {
     }
   };
   
-  // Validate form
   const validateForm = () => {
     const errors = {};
     
@@ -167,11 +152,9 @@ const ProgramApplication = () => {
     return errors;
   };
   
-  // Submit application
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate form
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -181,7 +164,6 @@ const ProgramApplication = () => {
     try {
       setSubmitting(true);
       
-      // Submit application
       await axios.post('/api/applications', {
         program_id: parseInt(programId),
         job_role: formData.job_role,
@@ -196,7 +178,6 @@ const ProgramApplication = () => {
       
       setSuccess(true);
       
-      // Redirect after 3 seconds
       setTimeout(() => {
         navigate('/applicant/applications');
       }, 3000);
@@ -209,22 +190,32 @@ const ProgramApplication = () => {
   
   if (loadingProgram) {
     return (
-      <div className="program-application-loading">
-        <div className="spinner"></div>
-        <p>Loading program details...</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <Loader size={32} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
+        <p style={{ marginTop: '16px', fontSize: '14px', color: 'var(--text-secondary)' }}>Loading program details...</p>
       </div>
     );
   }
   
   if (error) {
     return (
-      <div className="program-application-error">
-        <AlertTriangle size={48} className="error-icon" />
-        <h2>Error</h2>
-        <p>{error}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', textAlign: 'center' }}>
+        <AlertTriangle size={48} style={{ color: 'var(--danger-color)', marginBottom: '16px' }} />
+        <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Error</h2>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>{error}</p>
         <button 
           onClick={() => navigate('/applicant/programs')} 
-          className="btn-primary back-btn"
+          style={{ 
+            padding: '8px 16px', 
+            borderRadius: '4px', 
+            backgroundColor: 'var(--primary-color)', 
+            color: 'white', 
+            border: 'none', 
+            cursor: 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px' 
+          }}
         >
           <ArrowLeft size={16} />
           Back to Programs
@@ -235,20 +226,36 @@ const ProgramApplication = () => {
   
   if (hasExistingApplication) {
     return (
-      <div className="existing-application">
-        <AlertTriangle size={48} className="warning-icon" />
-        <h2>Application Already Exists</h2>
-        <p>You have already applied to this program.</p>
-        <div className="action-buttons">
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', textAlign: 'center' }}>
+        <AlertTriangle size={48} style={{ color: 'var(--warning-color)', marginBottom: '16px' }} />
+        <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Application Already Exists</h2>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>You have already applied to this program.</p>
+        <div style={{ display: 'flex', gap: '16px' }}>
           <Link 
             to="/applicant/applications" 
-            className="btn-primary"
+            style={{ 
+              padding: '8px 16px', 
+              borderRadius: '4px', 
+              backgroundColor: 'var(--primary-color)', 
+              color: 'white', 
+              textDecoration: 'none', 
+              fontSize: '14px', 
+              fontWeight: '500' 
+            }}
           >
             View My Applications
           </Link>
           <Link 
             to="/applicant/programs" 
-            className="btn-secondary"
+            style={{ 
+              padding: '8px 16px', 
+              borderRadius: '4px', 
+              backgroundColor: 'var(--medium-gray)', 
+              color: 'var(--text-primary)', 
+              textDecoration: 'none', 
+              fontSize: '14px', 
+              fontWeight: '500' 
+            }}
           >
             <ArrowLeft size={16} />
             Back to Programs
@@ -260,55 +267,83 @@ const ProgramApplication = () => {
   
   if (success) {
     return (
-      <div className="application-success">
-        <CheckCircle size={48} className="success-icon" />
-        <h2>Application Submitted!</h2>
-        <p>Your application has been successfully submitted for review.</p>
-        <p className="redirect-message">You will be redirected to your applications page shortly...</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', textAlign: 'center' }}>
+        <CheckCircle size={48} style={{ color: 'var(--success-color)', marginBottom: '16px' }} />
+        <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Application Submitted!</h2>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>Your application has been successfully submitted for review.</p>
+        <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>You will be redirected to your applications page shortly...</p>
       </div>
     );
   }
   
   return (
-    <div className="program-application-container">
-      <div className="application-header">
-        <Link to="/applicant/programs" className="back-link">
+    <div style={{ padding: '32px', backgroundColor: 'var(--light-gray)', minHeight: '100vh' }}>
+      <div style={{ marginBottom: '24px' }}>
+        <Link 
+          to="/applicant/programs" 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px', 
+            color: 'var(--primary-color)', 
+            textDecoration: 'none', 
+            fontSize: '14px', 
+            marginBottom: '16px' 
+          }}
+        >
           <ArrowLeft size={16} />
           Back to Programs
         </Link>
-        <h1>Apply for Program</h1>
+        <h1 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>Apply for Program</h1>
       </div>
       
-      <div className="program-overview">
-        <div className="program-icon">
-          <BookOpen size={32} />
-        </div>
-        <div className="program-details">
-          <h2 className="program-title">{program.title}</h2>
-          {program.description && (
-            <p className="program-description">{program.description}</p>
-          )}
-          <div className="program-meta">
-            <span className="program-type">
-              {program.type === 'regular' ? 'Regular Program' : 'Refresher Program'}
-            </span>
-            <span className="program-date">
-              <Calendar size={14} />
-              Created on {new Date(program.created_at).toLocaleDateString()}
-            </span>
+      <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)', padding: '24px', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+          <div style={{ 
+            width: '48px', 
+            height: '48px', 
+            borderRadius: '8px', 
+            backgroundColor: 'var(--primary-ultralight)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center' 
+          }}>
+            <BookOpen size={24} color="var(--primary-color)" />
+          </div>
+          <div>
+            <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '4px' }}>{program.title}</h2>
+            {program.description && (
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{program.description}</p>
+            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+              <span style={{ 
+                padding: '4px 8px', 
+                borderRadius: '4px', 
+                backgroundColor: program.type === 'regular' ? 'var(--primary-ultralight)' : 'var(--info-color)', 
+                color: program.type === 'regular' ? 'var(--primary-color)' : 'white', 
+                fontSize: '12px', 
+                fontWeight: '500' 
+              }}>
+                {program.type === 'regular' ? 'Regular Program' : 'Refresher Program'}
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                <Calendar size={12} />
+                Created on {new Date(program.created_at).toLocaleDateString()}
+              </span>
+            </div>
           </div>
         </div>
       </div>
       
-      <div className="application-form-container">
-        <h3>Application Form</h3>
+      <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)', padding: '24px' }}>
+        <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '24px' }}>Application Form</h3>
         
-        <form className="application-form" onSubmit={handleSubmit}>
-          <div className="form-section">
-            <h4>Position Information</h4>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div>
+            <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '16px' }}>Position Information</h4>
             
-            <div className="form-group">
-              <label htmlFor="job_role">Job Role *</label>
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="job_role" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Job Role *</label>
               <input 
                 type="text"
                 id="job_role"
@@ -316,16 +351,24 @@ const ProgramApplication = () => {
                 placeholder="e.g. Loan Officer, Financial Educator"
                 value={formData.job_role}
                 onChange={handleInputChange}
-                className={formErrors.job_role ? 'error' : ''}
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  border: `1px solid ${formErrors.job_role ? 'var(--danger-color)' : 'var(--medium-gray)'}`, 
+                  backgroundColor: 'white', 
+                  fontSize: '14px', 
+                  color: 'var(--text-primary)' 
+                }}
                 required
               />
               {formErrors.job_role && (
-                <div className="error-message">{formErrors.job_role}</div>
+                <div style={{ fontSize: '12px', color: 'var(--danger-color)', marginTop: '4px' }}>{formErrors.job_role}</div>
               )}
             </div>
             
-            <div className="form-group">
-              <label htmlFor="department">Department *</label>
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="department" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Department *</label>
               <input 
                 type="text"
                 id="department"
@@ -333,79 +376,117 @@ const ProgramApplication = () => {
                 placeholder="e.g. Operations, Training"
                 value={formData.department}
                 onChange={handleInputChange}
-                className={formErrors.department ? 'error' : ''}
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  border: `1px solid ${formErrors.department ? 'var(--danger-color)' : 'var(--medium-gray)'}`, 
+                  backgroundColor: 'white', 
+                  fontSize: '14px', 
+                  color: 'var(--text-primary)' 
+                }}
                 required
               />
               {formErrors.department && (
-                <div className="error-message">{formErrors.department}</div>
+                <div style={{ fontSize: '12px', color: 'var(--danger-color)', marginTop: '4px' }}>{formErrors.department}</div>
               )}
             </div>
           </div>
           
-          <div className="form-section">
-            <h4>Cover Letter</h4>
+          <div>
+            <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '16px' }}>Cover Letter</h4>
             
-            <div className="form-group">
-              <label htmlFor="cover_letter">Cover Letter</label>
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="cover_letter" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Cover Letter</label>
               <textarea 
                 id="cover_letter"
                 name="cover_letter"
                 placeholder="Briefly explain why you're applying for this program and what makes you a good candidate."
                 value={formData.cover_letter}
                 onChange={handleInputChange}
-                rows="6"
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  border: '1px solid var(--medium-gray)', 
+                  backgroundColor: 'white', 
+                  fontSize: '14px', 
+                  color: 'var(--text-primary)', 
+                  minHeight: '150px' 
+                }}
               />
             </div>
           </div>
           
-          <div className="form-section">
-            <h4>Additional Information</h4>
+          <div>
+            <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '16px' }}>Additional Information</h4>
             
-            <div className="form-group">
-              <label htmlFor="additional_info">Additional Information (Optional)</label>
+            <div style={{ marginBottom: '16px' }}>
+              <label htmlFor="additional_info" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Additional Information (Optional)</label>
               <textarea 
                 id="additional_info"
                 name="additional_info"
                 placeholder="Include any additional information that may support your application."
                 value={formData.additional_info}
                 onChange={handleInputChange}
-                rows="4"
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  border: '1px solid var(--medium-gray)', 
+                  backgroundColor: 'white', 
+                  fontSize: '14px', 
+                  color: 'var(--text-primary)', 
+                  minHeight: '100px' 
+                }}
               />
             </div>
           </div>
           
-          <div className="form-section">
-            <h4>Supporting Documents</h4>
+          <div>
+            <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '16px' }}>Supporting Documents</h4>
             
-            <div className="document-upload">
-              <div className="upload-button">
-                <label htmlFor="document-upload" className="btn-upload">
-                  <Upload size={16} />
-                  Upload Document
-                </label>
-                <input 
-                  type="file" 
-                  id="document-upload" 
-                  accept=".pdf,.doc,.docx"
-                  onChange={handleFileUpload}
-                  style={{ display: 'none' }}
-                />
-              </div>
-              <div className="upload-help">
-                <p>Upload a resume, CV, or other supporting document (PDF or Word, max 5MB)</p>
-              </div>
+            <div style={{ marginBottom: '16px' }}>
+              <label 
+                htmlFor="document-upload" 
+                style={{ 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  backgroundColor: 'var(--primary-color)', 
+                  color: 'white', 
+                  cursor: 'pointer', 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  fontSize: '14px', 
+                  fontWeight: '500' 
+                }}
+              >
+                <Upload size={16} />
+                Upload Document
+              </label>
+              <input 
+                type="file" 
+                id="document-upload" 
+                accept=".pdf,.doc,.docx"
+                onChange={handleFileUpload}
+                style={{ display: 'none' }}
+              />
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px' }}>Upload a resume, CV, or other supporting document (PDF or Word, max 5MB)</p>
             </div>
             
             {documents.length > 0 && (
-              <div className="uploaded-documents">
-                <h5>Your Documents</h5>
-                <ul className="document-list">
+              <div style={{ marginBottom: '16px' }}>
+                <h5 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Your Documents</h5>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                   {documents.map(doc => (
-                    <li key={doc.id} className="document-item">
-                      <span className="document-name">{doc.description}</span>
-                      <span className="document-date">
-                        Uploaded on {new Date(doc.created_at).toLocaleDateString()}
-                      </span>
+                    <li key={doc.id} style={{ marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{doc.description}</span>
+                        <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                          Uploaded on {new Date(doc.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -413,23 +494,44 @@ const ProgramApplication = () => {
             )}
           </div>
           
-          <div className="form-actions">
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end' }}>
             <button
               type="button"
-              className="btn-secondary"
               onClick={() => navigate('/applicant/programs')}
               disabled={submitting}
+              style={{ 
+                padding: '8px 16px', 
+                borderRadius: '4px', 
+                backgroundColor: 'var(--medium-gray)', 
+                color: 'var(--text-primary)', 
+                border: 'none', 
+                cursor: 'pointer', 
+                fontSize: '14px', 
+                fontWeight: '500' 
+              }}
             >
               Cancel
             </button>
             
             <button
               type="submit"
-              className="btn-primary submit-btn"
               disabled={submitting}
+              style={{ 
+                padding: '8px 16px', 
+                borderRadius: '4px', 
+                backgroundColor: 'var(--primary-color)', 
+                color: 'white', 
+                border: 'none', 
+                cursor: 'pointer', 
+                fontSize: '14px', 
+                fontWeight: '500', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px' 
+              }}
             >
               {submitting ? (
-                <><Loader size={16} className="spinner-icon" /> Submitting...</>
+                <><Loader size={16} className="spin" style={{ animation: 'spin 1s linear infinite' }} /> Submitting...</>
               ) : (
                 <><Send size={16} /> Submit Application</>
               )}

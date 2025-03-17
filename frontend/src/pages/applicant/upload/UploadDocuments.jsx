@@ -4,8 +4,7 @@ import {
   Upload, FileText, Trash2, Check, AlertTriangle, 
   RefreshCw, Eye, Download, ArrowLeft, File, X, Loader
 } from 'lucide-react';
-import applicantService from '../../../services/applicantService'; // Import the service
-import './styles/UploadDocuments.css';
+import applicantService from '../../../services/applicantService';
 
 const UploadDocuments = () => {
   const [documents, setDocuments] = useState([]);
@@ -19,15 +18,11 @@ const UploadDocuments = () => {
   const [fileDescription, setFileDescription] = useState('');
   const fileInputRef = useRef(null);
   
-  // Fetch existing documents
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
         setLoading(true);
-        
-        // Use applicantService instead of axios
         const data = await applicantService.getUserDocuments();
-        
         setDocuments(data || []);
         setLoading(false);
       } catch (err) {
@@ -40,7 +35,6 @@ const UploadDocuments = () => {
     fetchDocuments();
   }, []);
   
-  // Handle drag events
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -52,7 +46,6 @@ const UploadDocuments = () => {
     }
   };
   
-  // Handle drop event
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -63,23 +56,19 @@ const UploadDocuments = () => {
     }
   };
   
-  // Handle file selection
   const handleFileSelect = (e) => {
     if (e.target.files && e.target.files[0]) {
       handleFile(e.target.files[0]);
     }
   };
   
-  // Process selected file
   const handleFile = (file) => {
-    // Validate file type (PDF, DOC, DOCX)
     const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     if (!validTypes.includes(file.type)) {
       alert('Please upload a PDF or Word document.');
       return;
     }
     
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('File size should be less than 5MB.');
       return;
@@ -89,7 +78,6 @@ const UploadDocuments = () => {
     setFileDescription(file.name);
   };
   
-  // Clear selected file
   const clearSelectedFile = () => {
     setSelectedFile(null);
     setFileDescription('');
@@ -98,12 +86,10 @@ const UploadDocuments = () => {
     }
   };
   
-  // Handle description change
   const handleDescriptionChange = (e) => {
     setFileDescription(e.target.value);
   };
   
-  // Upload document
   const uploadDocument = async () => {
     if (!selectedFile || !fileDescription.trim()) {
       alert('Please select a file and provide a description.');
@@ -120,21 +106,14 @@ const UploadDocuments = () => {
       formData.append('category', 'evaluations');
       formData.append('description', fileDescription);
       
-      // Use the service for upload
       const response = await applicantService.uploadDocument(formData, (percentCompleted) => {
         setUploadProgress(percentCompleted);
       });
       
-      // Add the new document to the list
       setDocuments([...documents, response]);
-      
-      // Clear selected file
       clearSelectedFile();
-      
-      // Show success message
       setUploadSuccess(true);
       setTimeout(() => setUploadSuccess(false), 5000);
-      
       setUploading(false);
     } catch (err) {
       console.error('Error uploading document:', err);
@@ -143,17 +122,13 @@ const UploadDocuments = () => {
     }
   };
   
-  // Delete document
   const deleteDocument = async (documentId) => {
     if (!window.confirm('Are you sure you want to delete this document?')) {
       return;
     }
     
     try {
-      // Use the service to delete
       await applicantService.deleteDocument(documentId);
-      
-      // Remove document from list
       setDocuments(documents.filter(doc => doc.id !== documentId));
     } catch (err) {
       console.error('Error deleting document:', err);
@@ -161,10 +136,8 @@ const UploadDocuments = () => {
     }
   };
   
-  // View document
   const viewDocument = async (documentId) => {
     try {
-      // Use the service to view
       await applicantService.viewDocument(documentId);
     } catch (err) {
       console.error('Error viewing document:', err);
@@ -172,10 +145,8 @@ const UploadDocuments = () => {
     }
   };
   
-  // Download document
   const downloadDocument = async (documentId, filename) => {
     try {
-      // Use the service to download
       await applicantService.downloadDocument(documentId);
     } catch (err) {
       console.error('Error downloading document:', err);
@@ -183,7 +154,6 @@ const UploadDocuments = () => {
     }
   };
   
-  // Format file size
   const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes';
     
@@ -194,12 +164,10 @@ const UploadDocuments = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
   
-  // Format date
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();
   };
   
-  // Get file extension icon
   const getFileIcon = (filename) => {
     if (!filename) return <File size={24} />;
     
@@ -216,12 +184,10 @@ const UploadDocuments = () => {
     }
   };
   
-  // Handle retry
   const handleRetry = () => {
     setLoading(true);
     setError(null);
     
-    // Re-fetch data on next render cycle
     setTimeout(() => {
       window.location.reload();
     }, 100);
@@ -229,22 +195,32 @@ const UploadDocuments = () => {
   
   if (loading) {
     return (
-      <div className="documents-loading">
-        <div className="spinner"></div>
-        <p>Loading documents...</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <Loader size={32} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
+        <p style={{ marginTop: '16px', fontSize: '14px', color: 'var(--text-secondary)' }}>Loading documents...</p>
       </div>
     );
   }
   
   if (error) {
     return (
-      <div className="documents-error">
-        <AlertTriangle size={48} className="error-icon" />
-        <h2>Error</h2>
-        <p>{error}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', textAlign: 'center' }}>
+        <AlertTriangle size={48} style={{ color: 'var(--danger-color)', marginBottom: '16px' }} />
+        <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Error</h2>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>{error}</p>
         <button 
           onClick={handleRetry} 
-          className="btn-primary retry-btn"
+          style={{ 
+            padding: '8px 16px', 
+            borderRadius: '4px', 
+            backgroundColor: 'var(--primary-color)', 
+            color: 'white', 
+            border: 'none', 
+            cursor: 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px' 
+          }}
         >
           <RefreshCw size={16} />
           Retry
@@ -254,40 +230,78 @@ const UploadDocuments = () => {
   }
   
   return (
-    <div className="upload-documents-container">
-      <div className="documents-header">
-        <div className="header-title">
-          <h1><Upload size={24} /> Upload Documents</h1>
-          <p>Upload supporting documents for your applications</p>
+    <div style={{ padding: '32px', backgroundColor: 'var(--light-gray)', minHeight: '100vh' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div>
+          <h1 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Upload size={24} /> Upload Documents
+          </h1>
+          <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Upload supporting documents for your applications</p>
         </div>
         
-        <Link to="/applicant/applications" className="btn-secondary back-link">
+        <Link 
+          to="/applicant/applications" 
+          style={{ 
+            padding: '8px 16px', 
+            borderRadius: '4px', 
+            backgroundColor: 'var(--medium-gray)', 
+            color: 'var(--text-primary)', 
+            textDecoration: 'none', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px' 
+          }}
+        >
           <ArrowLeft size={16} />
           Back to Applications
         </Link>
       </div>
       
       {uploadSuccess && (
-        <div className="success-message">
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px', 
+          padding: '12px', 
+          backgroundColor: 'var(--success-color)', 
+          color: 'white', 
+          borderRadius: '4px', 
+          marginBottom: '24px' 
+        }}>
           <Check size={18} />
           <span>Document uploaded successfully!</span>
         </div>
       )}
       
-      <div className="upload-section">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '24px', marginBottom: '32px' }}>
         <div 
-          className={`dropzone ${dragActive ? 'active' : ''} ${selectedFile ? 'has-file' : ''}`}
+          style={{ 
+            border: `2px dashed ${dragActive ? 'var(--primary-color)' : 'var(--medium-gray)'}`, 
+            borderRadius: '8px', 
+            padding: '24px', 
+            backgroundColor: dragActive ? 'var(--primary-ultralight)' : 'white', 
+            transition: 'all 0.3s ease' 
+          }}
           onDragEnter={handleDrag}
           onDragOver={handleDrag}
           onDragLeave={handleDrag}
           onDrop={handleDrop}
         >
           {!selectedFile ? (
-            <div className="dropzone-content">
-              <Upload size={48} className="upload-icon" />
-              <h3>Drag & Drop your file here</h3>
-              <p>or</p>
-              <label className="btn-primary browse-btn">
+            <div style={{ textAlign: 'center' }}>
+              <Upload size={48} style={{ color: dragActive ? 'var(--primary-color)' : 'var(--text-secondary)', marginBottom: '16px' }} />
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Drag & Drop your file here</h3>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>or</p>
+              <label 
+                style={{ 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  backgroundColor: 'var(--primary-color)', 
+                  color: 'white', 
+                  cursor: 'pointer', 
+                  display: 'inline-block' 
+                }}
+              >
                 Browse Files
                 <input 
                   type="file" 
@@ -297,47 +311,76 @@ const UploadDocuments = () => {
                   style={{ display: 'none' }}
                 />
               </label>
-              <p className="file-requirements">
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '16px' }}>
                 Acceptable file types: PDF, DOC, DOCX<br />
                 Maximum file size: 5MB
               </p>
             </div>
           ) : (
-            <div className="selected-file">
-              <div className="file-preview">
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
                 {getFileIcon(selectedFile.name)}
-                <div className="file-info">
-                  <div className="file-name">{selectedFile.name}</div>
-                  <div className="file-size">{formatFileSize(selectedFile.size)}</div>
+                <div>
+                  <div style={{ fontSize: '16px', fontWeight: '500', color: 'var(--text-primary)' }}>{selectedFile.name}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{formatFileSize(selectedFile.size)}</div>
                 </div>
                 <button 
-                  className="btn-icon remove-file" 
                   onClick={clearSelectedFile}
+                  style={{ 
+                    marginLeft: 'auto', 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer', 
+                    color: 'var(--text-secondary)' 
+                  }}
                 >
                   <X size={16} />
                 </button>
               </div>
               
-              <div className="file-description">
-                <label htmlFor="description">Description</label>
+              <div style={{ marginBottom: '16px' }}>
+                <label htmlFor="description" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Description</label>
                 <input 
                   type="text" 
                   id="description" 
                   value={fileDescription}
                   onChange={handleDescriptionChange}
                   placeholder="Enter a description for this document"
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px 16px', 
+                    borderRadius: '4px', 
+                    border: '1px solid var(--medium-gray)', 
+                    backgroundColor: 'white', 
+                    fontSize: '14px', 
+                    color: 'var(--text-primary)' 
+                  }}
                   required
                 />
               </div>
               
               <button 
-                className="btn-primary upload-btn"
                 onClick={uploadDocument}
                 disabled={uploading}
+                style={{ 
+                  width: '100%', 
+                  padding: '12px 16px', 
+                  borderRadius: '4px', 
+                  backgroundColor: 'var(--primary-color)', 
+                  color: 'white', 
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  fontSize: '14px', 
+                  fontWeight: '500', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  gap: '8px' 
+                }}
               >
                 {uploading ? (
                   <>
-                    <Loader size={16} className="spinner-icon" />
+                    <Loader size={16} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
                     Uploading... ({uploadProgress}%)
                   </>
                 ) : (
@@ -351,65 +394,86 @@ const UploadDocuments = () => {
           )}
         </div>
         
-        <div className="upload-tips">
-          <h3>Tips for Document Uploads</h3>
-          <ul>
-            <li>Ensure all documents are clear and legible.</li>
-            <li>Use descriptive names for your documents.</li>
-            <li>Upload your most recent and relevant documents.</li>
-            <li>Make sure any scanned documents are properly aligned.</li>
-            <li>For resumes, use a professional format and ensure all information is up-to-date.</li>
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '24px', boxShadow: 'var(--shadow-md)' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '16px' }}>Tips for Document Uploads</h3>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <li style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Ensure all documents are clear and legible.</li>
+            <li style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Use descriptive names for your documents.</li>
+            <li style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Upload your most recent and relevant documents.</li>
+            <li style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Make sure any scanned documents are properly aligned.</li>
+            <li style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>For resumes, use a professional format and ensure all information is up-to-date.</li>
           </ul>
         </div>
       </div>
       
-      <div className="documents-section">
-        <h2>My Documents</h2>
+      <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '24px', boxShadow: 'var(--shadow-md)' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '24px' }}>My Documents</h2>
         
         {documents.length === 0 ? (
-          <div className="no-documents">
-            <FileText size={48} className="no-data-icon" />
-            <h3>No documents found</h3>
-            <p>You haven't uploaded any documents yet.</p>
+          <div style={{ textAlign: 'center', padding: '32px' }}>
+            <FileText size={48} style={{ color: 'var(--text-secondary)', marginBottom: '16px' }} />
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>No documents found</h3>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>You haven't uploaded any documents yet.</p>
           </div>
         ) : (
-          <div className="documents-list">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
             {documents.map(document => (
-              <div key={document.id} className="document-card">
-                <div className="document-icon">
+              <div key={document.id} style={{ border: '1px solid var(--medium-gray)', borderRadius: '8px', padding: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
                   {getFileIcon(document.file_path)}
-                </div>
-                
-                <div className="document-details">
-                  <h3 className="document-name">{document.description}</h3>
-                  <div className="document-meta">
-                    <span className="document-date">Uploaded: {formatDate(document.created_at)}</span>
+                  <div>
+                    <h3 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)' }}>{document.description}</h3>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Uploaded: {formatDate(document.created_at)}</div>
                   </div>
                 </div>
                 
-                <div className="document-actions">
+                <div style={{ display: 'flex', gap: '8px' }}>
                   <button 
-                    className="btn-icon view-btn"
                     onClick={() => viewDocument(document.id)}
-                    title="View Document"
+                    style={{ 
+                      padding: '8px', 
+                      borderRadius: '4px', 
+                      backgroundColor: 'var(--light-gray)', 
+                      border: 'none', 
+                      cursor: 'pointer', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center' 
+                    }}
                   >
-                    <Eye size={16} />
+                    <Eye size={16} color="var(--text-secondary)" />
                   </button>
                   
                   <button 
-                    className="btn-icon download-btn"
                     onClick={() => downloadDocument(document.id, document.description)}
-                    title="Download Document"
+                    style={{ 
+                      padding: '8px', 
+                      borderRadius: '4px', 
+                      backgroundColor: 'var(--light-gray)', 
+                      border: 'none', 
+                      cursor: 'pointer', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center' 
+                    }}
                   >
-                    <Download size={16} />
+                    <Download size={16} color="var(--text-secondary)" />
                   </button>
                   
                   <button 
-                    className="btn-icon delete-btn"
                     onClick={() => deleteDocument(document.id)}
-                    title="Delete Document"
+                    style={{ 
+                      padding: '8px', 
+                      borderRadius: '4px', 
+                      backgroundColor: 'var(--light-gray)', 
+                      border: 'none', 
+                      cursor: 'pointer', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center' 
+                    }}
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={16} color="var(--danger-color)" />
                   </button>
                 </div>
               </div>
@@ -418,9 +482,11 @@ const UploadDocuments = () => {
         )}
       </div>
       
-      <div className="documents-help">
-        <h3>Need Help?</h3>
-        <p>If you're having trouble uploading documents or have questions about required documentation, please contact our support team at <a href="mailto:support@example.com">support@example.com</a>.</p>
+      <div style={{ marginTop: '32px', padding: '24px', backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '16px' }}>Need Help?</h3>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+          If you're having trouble uploading documents or have questions about required documentation, please contact our support team at <a href="mailto:support@example.com" style={{ color: 'var(--primary-color)', textDecoration: 'none' }}>support@example.com</a>.
+        </p>
       </div>
     </div>
   );

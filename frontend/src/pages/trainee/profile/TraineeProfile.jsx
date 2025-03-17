@@ -4,7 +4,6 @@ import {
   Clock, RefreshCw, CheckCircle, Loader
 } from 'lucide-react';
 import traineeService from '../../../services/traineeService';
-import './styles/TraineeProfile.css';
 
 // Recreate the isTokenExpired function since it's not exported
 const isTokenExpired = () => {
@@ -349,8 +348,16 @@ const TraineeProfile = () => {
   
   if (loading) {
     return (
-      <div className="profile-loading">
-        <div className="spinner"></div>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        height: '100vh', 
+        gap: 'var(--spacing-md)', 
+        color: 'var(--text-secondary)',
+      }}>
+        <Loader size={32} className="spinner" style={{ animation: 'spin 1s linear infinite' }} />
         <p>Loading profile...</p>
       </div>
     );
@@ -358,125 +365,223 @@ const TraineeProfile = () => {
   
   if (error) {
     return (
-      <div className="profile-error">
-        <AlertTriangle size={48} className="error-icon" />
-        <h2>Error</h2>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        height: '100vh', 
+        gap: 'var(--spacing-md)', 
+        color: 'var(--text-secondary)',
+      }}>
+        <AlertTriangle size={48} style={{ color: 'var(--danger-color)' }} />
+        <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>Error</h2>
         <p>{error}</p>
         <button 
           onClick={() => window.location.reload()} 
-          className="btn-primary retry-btn"
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 'var(--spacing-xs)', 
+            padding: 'var(--spacing-sm) var(--spacing-md)', 
+            backgroundColor: 'var(--primary-color)', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: 'var(--radius-md)', 
+            cursor: 'pointer',
+            transition: 'background-color var(--transition-fast)',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-dark)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-color)'}
         >
-          <RefreshCw size={16} />
-          Retry
+          <RefreshCw size={16} /> Retry
         </button>
       </div>
     );
   }
   
   return (
-    <div className="trainee-profile-container">
-      <h1 className="page-title">Profile Settings</h1>
+    <div style={{ 
+      padding: 'var(--spacing-xl)', 
+      backgroundColor: 'var(--light-gray)', 
+      minHeight: '100vh',
+    }}>
+      <h1 style={{ 
+        fontSize: '24px', 
+        fontWeight: '600', 
+        color: 'var(--text-primary)', 
+        marginBottom: 'var(--spacing-md)',
+      }}>
+        Profile Settings
+      </h1>
       
       {updateSuccess && (
-        <div className="success-message">
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 'var(--spacing-xs)', 
+          padding: 'var(--spacing-sm)', 
+          backgroundColor: 'var(--primary-ultralight)', 
+          color: 'var(--primary-color)', 
+          borderRadius: 'var(--radius-md)', 
+          marginBottom: 'var(--spacing-md)',
+        }}>
           <CheckCircle size={18} />
           <span>Profile updated successfully!</span>
         </div>
       )}
       
-      <div className="profile-grid">
-        <div className="profile-card">
-          <div className="card-header">
-            <h2><User size={20} /> Personal Information</h2>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+        gap: 'var(--spacing-xl)',
+      }}>
+        <div style={{ 
+          backgroundColor: 'white', 
+          padding: 'var(--spacing-md)', 
+          borderRadius: 'var(--radius-md)', 
+          boxShadow: 'var(--shadow-sm)',
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 'var(--spacing-sm)', 
+            marginBottom: 'var(--spacing-md)',
+          }}>
+            <User size={20} style={{ color: 'var(--primary-color)' }} />
+            <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)' }}>Personal Information</h2>
           </div>
           
-          <form className="profile-form" onSubmit={updateProfile}>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="username">Username</label>
-                <div className="input-icon-wrapper">
-                  <User size={18} className="input-icon" />
-                  <input 
-                    type="text" 
-                    id="username" 
-                    name="username" 
-                    value={profile.username}
-                    disabled
-                    className="form-control disabled"
-                  />
-                </div>
-                <div className="input-hint">Username cannot be changed</div>
-              </div>
-            </div>
-            
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="full_name">Full Name</label>
+          <form onSubmit={updateProfile} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xs)' }}>
+              <label htmlFor="username" style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Username</label>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 'var(--spacing-xs)', 
+                padding: 'var(--spacing-xs)', 
+                border: '1px solid var(--medium-gray)', 
+                borderRadius: 'var(--radius-sm)',
+              }}>
+                <User size={18} style={{ color: 'var(--text-secondary)' }} />
                 <input 
                   type="text" 
-                  id="full_name" 
-                  name="full_name" 
-                  value={profile.full_name}
+                  id="username" 
+                  name="username" 
+                  value={profile.username}
+                  disabled
+                  style={{ 
+                    flex: 1, 
+                    border: 'none', 
+                    outline: 'none', 
+                    fontSize: '14px', 
+                    color: 'var(--text-primary)',
+                    backgroundColor: 'transparent',
+                  }}
+                />
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Username cannot be changed</div>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xs)' }}>
+              <label htmlFor="full_name" style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Full Name</label>
+              <input 
+                type="text" 
+                id="full_name" 
+                name="full_name" 
+                value={profile.full_name}
+                onChange={handleProfileChange}
+                style={{ 
+                  padding: 'var(--spacing-xs)', 
+                  border: '1px solid var(--medium-gray)', 
+                  borderRadius: 'var(--radius-sm)', 
+                  outline: 'none', 
+                  fontSize: '14px', 
+                  color: 'var(--text-primary)',
+                }}
+                required
+              />
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xs)' }}>
+              <label htmlFor="email" style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Email Address</label>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 'var(--spacing-xs)', 
+                padding: 'var(--spacing-xs)', 
+                border: '1px solid var(--medium-gray)', 
+                borderRadius: 'var(--radius-sm)',
+              }}>
+                <Mail size={18} style={{ color: 'var(--text-secondary)' }} />
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  value={profile.email}
                   onChange={handleProfileChange}
-                  className="form-control"
+                  style={{ 
+                    flex: 1, 
+                    border: 'none', 
+                    outline: 'none', 
+                    fontSize: '14px', 
+                    color: 'var(--text-primary)',
+                    backgroundColor: 'transparent',
+                  }}
                   required
                 />
               </div>
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="email">Email Address</label>
-                <div className="input-icon-wrapper">
-                  <Mail size={18} className="input-icon" />
-                  <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    value={profile.email}
-                    onChange={handleProfileChange}
-                    className="form-control"
-                    required
-                  />
-                </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xs)' }}>
+              <label style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Account Status</label>
+              <div style={{ 
+                padding: 'var(--spacing-xs) var(--spacing-sm)', 
+                backgroundColor: profile.status === 'active' ? 'var(--primary-ultralight)' : 'var(--light-gray)', 
+                color: profile.status === 'active' ? 'var(--primary-color)' : 'var(--text-secondary)', 
+                borderRadius: 'var(--radius-sm)', 
+                fontSize: '14px', 
+                fontWeight: '500',
+              }}>
+                {profile.status}
               </div>
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
-                <label>Account Status</label>
-                <div className={`status-badge ${profile.status}`}>
-                  {profile.status}
-                </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xs)' }}>
+              <label style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Member Since</label>
+              <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>
+                {formatDate(profile.created_at)}
               </div>
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
-                <label>Member Since</label>
-                <div className="static-value">
-                  {formatDate(profile.created_at)}
-                </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xs)' }}>
+              <label style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Last Login</label>
+              <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>
+                {formatDate(profile.last_login)}
               </div>
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
-                <label>Last Login</label>
-                <div className="static-value">
-                  {formatDate(profile.last_login)}
-                </div>
-              </div>
-            </div>
-            
-            <div className="form-actions">
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <button 
                 type="submit" 
-                className="btn-primary" 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 'var(--spacing-xs)', 
+                  padding: 'var(--spacing-sm) var(--spacing-md)', 
+                  backgroundColor: 'var(--primary-color)', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: 'var(--radius-md)', 
+                  cursor: 'pointer',
+                  transition: 'background-color var(--transition-fast)',
+                }}
                 disabled={isSubmitting}
+                onMouseEnter={(e) => !isSubmitting && (e.currentTarget.style.backgroundColor = 'var(--primary-dark)')}
+                onMouseLeave={(e) => !isSubmitting && (e.currentTarget.style.backgroundColor = 'var(--primary-color)')}
               >
                 {isSubmitting ? (
-                  <><Loader size={16} className="spinner-icon" /> Updating...</>
+                  <><Loader size={16} style={{ animation: 'spin 1s linear infinite' }} /> Updating...</>
                 ) : (
                   <><Save size={16} /> Save Changes</>
                 )}
@@ -485,136 +590,61 @@ const TraineeProfile = () => {
           </form>
         </div>
         
-        {/* <div className="profile-card">
-          <div className="card-header">
-            <h2><Key size={20} /> Change Password</h2>
-          </div>
-          
-          {passwordChangeSuccess && (
-            <div className="success-message">
-              <CheckCircle size={18} />
-              <span>Password changed successfully!</span>
-            </div>
-          )}
-          
-          <form className="profile-form" onSubmit={changePassword}>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="current_password">Current Password</label>
-                <div className="password-input-wrapper">
-                  <input 
-                    type={showCurrentPassword ? "text" : "password"} 
-                    id="current_password" 
-                    name="current_password" 
-                    value={passwordData.current_password}
-                    onChange={handlePasswordChange}
-                    className={`form-control ${passwordFormErrors.current_password ? 'error' : ''}`}
-                  />
-                  <button 
-                    type="button" 
-                    className="toggle-password" 
-                    onClick={() => togglePasswordVisibility('current')}
-                  >
-                    {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-                {passwordFormErrors.current_password && (
-                  <div className="error-message">{passwordFormErrors.current_password}</div>
-                )}
-              </div>
-            </div>
-            
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="new_password">New Password</label>
-                <div className="password-input-wrapper">
-                  <input 
-                    type={showNewPassword ? "text" : "password"} 
-                    id="new_password" 
-                    name="new_password" 
-                    value={passwordData.new_password}
-                    onChange={handlePasswordChange}
-                    className={`form-control ${passwordFormErrors.new_password ? 'error' : ''}`}
-                  />
-                  <button 
-                    type="button" 
-                    className="toggle-password" 
-                    onClick={() => togglePasswordVisibility('new')}
-                  >
-                    {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-                {passwordFormErrors.new_password && (
-                  <div className="error-message">{passwordFormErrors.new_password}</div>
-                )}
-              </div>
-            </div>
-            
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="confirm_password">Confirm New Password</label>
-                <div className="password-input-wrapper">
-                  <input 
-                    type={showConfirmPassword ? "text" : "password"} 
-                    id="confirm_password" 
-                    name="confirm_password" 
-                    value={passwordData.confirm_password}
-                    onChange={handlePasswordChange}
-                    className={`form-control ${passwordFormErrors.confirm_password ? 'error' : ''}`}
-                  />
-                  <button 
-                    type="button" 
-                    className="toggle-password" 
-                    onClick={() => togglePasswordVisibility('confirm')}
-                  >
-                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-                {passwordFormErrors.confirm_password && (
-                  <div className="error-message">{passwordFormErrors.confirm_password}</div>
-                )}
-              </div>
-            </div>
-            
-            <div className="form-actions">
-              <button 
-                type="submit" 
-                className="btn-primary" 
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <><Loader size={16} className="spinner-icon" /> Updating...</>
-                ) : (
-                  <><Key size={16} /> Change Password</>
-                )}
-              </button>
-            </div>
-          </form>
-        </div> */}
-        
-        <div className="profile-card recent-activity">
-          <div className="card-header">
-            <h2><Clock size={20} /> Recent Activity</h2>
+        <div style={{ 
+          backgroundColor: 'white', 
+          padding: 'var(--spacing-md)', 
+          borderRadius: 'var(--radius-md)', 
+          boxShadow: 'var(--shadow-sm)',
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 'var(--spacing-sm)', 
+            marginBottom: 'var(--spacing-md)',
+          }}>
+            <Clock size={20} style={{ color: 'var(--primary-color)' }} />
+            <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)' }}>Recent Activity</h2>
           </div>
           
           {activity.length === 0 ? (
-            <div className="no-activity">
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              padding: 'var(--spacing-md)', 
+              color: 'var(--text-secondary)',
+            }}>
               <p>No recent activity found.</p>
             </div>
           ) : (
-            <div className="activity-list">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
               {activity.slice(0, 10).map((item, index) => (
-                <div key={item.id || index} className="activity-item">
-                  <div className={`activity-icon ${item.activity_type}`}>
+                <div key={item.id || index} style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 'var(--spacing-sm)', 
+                  padding: 'var(--spacing-sm)', 
+                  borderBottom: '1px solid var(--medium-gray)',
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    width: '32px', 
+                    height: '32px', 
+                    borderRadius: 'var(--radius-full)', 
+                    backgroundColor: 'var(--light-gray)', 
+                    color: 'var(--text-secondary)',
+                  }}>
                     {item.activity_type === 'login' && <User size={16} />}
                     {item.activity_type === 'logout' && <User size={16} />}
                     {item.activity_type === 'attendance' && <CheckCircle size={16} />}
                   </div>
-                  <div className="activity-details">
-                    <div className="activity-message">
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>
                       {item.details || `${item.activity_type.charAt(0).toUpperCase() + item.activity_type.slice(1)} activity recorded`}
                     </div>
-                    <div className="activity-time">
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                       {formatDate(item.activity_time)}
                     </div>
                   </div>

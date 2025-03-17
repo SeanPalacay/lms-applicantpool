@@ -1,23 +1,9 @@
-// src/pages/admin/backups/Backups.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  Database, 
-  Download, 
-  Calendar, 
-  RotateCcw, 
-  Trash2, 
-  FileText,
-  AlertTriangle,
-  Plus,
-  RefreshCw,
-  Clock,
-  Server
-} from 'lucide-react';
+import { Database, Download, Calendar, RotateCcw, Trash2, FileText, AlertTriangle, Plus, RefreshCw, Server } from 'lucide-react';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
 import adminService from '../../../services/adminService';
-import './styles/Backups.css';
 
 const Backups = () => {
   const navigate = useNavigate();
@@ -34,18 +20,13 @@ const Backups = () => {
     const fetchBackups = async () => {
       setLoading(true);
       setError(null);
-      
       try {
-        // Check if token exists
         const token = localStorage.getItem('authToken');
         if (!token) {
           setError('You are not logged in. Please log in to access this page.');
-          setLoading(false);
           setTimeout(() => navigate('/login'), 2000);
           return;
         }
-        
-        // Fetch backups data
         const data = await adminService.getBackups();
         setBackups(data.backups || []);
       } catch (err) {
@@ -55,7 +36,6 @@ const Backups = () => {
         setLoading(false);
       }
     };
-
     fetchBackups();
   }, [navigate]);
 
@@ -63,12 +43,9 @@ const Backups = () => {
     setCreating(true);
     setError(null);
     setSuccess(null);
-    
     try {
       const result = await adminService.createBackup();
       setSuccess('Backup created successfully.');
-      
-      // Refresh backups list to show the new backup
       const data = await adminService.getBackups();
       setBackups(data.backups || []);
     } catch (err) {
@@ -82,36 +59,21 @@ const Backups = () => {
   const handleDownloadBackup = async (backupId, backupName) => {
     try {
       await adminService.downloadBackup(backupId);
-      // Browser will handle the download
     } catch (err) {
       console.error('Error downloading backup:', err);
       setError('Failed to download backup. Please try again.');
     }
   };
 
-  const startRestoreConfirmation = (backupId) => {
-    setRestoreConfirm(backupId);
-    setDeleteConfirm(null);
-  };
-
-  const cancelRestoreConfirmation = () => {
-    setRestoreConfirm(null);
-  };
-
-  const startDeleteConfirmation = (backupId) => {
-    setDeleteConfirm(backupId);
-    setRestoreConfirm(null);
-  };
-
-  const cancelDeleteConfirmation = () => {
-    setDeleteConfirm(null);
-  };
+  const startRestoreConfirmation = (backupId) => setRestoreConfirm(backupId);
+  const cancelRestoreConfirmation = () => setRestoreConfirm(null);
+  const startDeleteConfirmation = (backupId) => setDeleteConfirm(backupId);
+  const cancelDeleteConfirmation = () => setDeleteConfirm(null);
 
   const handleRestoreBackup = async (backupId) => {
     setRestoring(true);
     setError(null);
     setSuccess(null);
-    
     try {
       await adminService.restoreBackup(backupId);
       setSuccess('Backup restored successfully. The system has been reset to the selected backup point.');
@@ -128,13 +90,10 @@ const Backups = () => {
     setLoading(true);
     setError(null);
     setSuccess(null);
-    
     try {
       await adminService.deleteBackup(backupId);
       setSuccess('Backup deleted successfully.');
       setDeleteConfirm(null);
-      
-      // Refresh the list after deletion
       const data = await adminService.getBackups();
       setBackups(data.backups || []);
     } catch (err) {
@@ -147,212 +106,252 @@ const Backups = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
-    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
-  const getBackupTypeLabel = (type) => {
-    switch(type) {
-      case 'scheduled': return 'Scheduled';
-      case 'manual': return 'Manual';
-      default: return type;
-    }
-  };
-
-  const getBackupTypeClass = (type) => {
-    switch(type) {
-      case 'scheduled': return 'type-scheduled';
-      case 'manual': return 'type-manual';
-      default: return 'type-other';
-    }
-  };
-
-  if (loading && !backups.length) {
-    return <LoadingSpinner />;
-  }
+  if (loading && !backups.length) return <LoadingSpinner />;
 
   return (
-    <div className="backups-container">
-      <div className="section-header">
-        <h1>System Backups</h1>
-        <div className="header-line"></div>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#f8fafc',
+      padding: '32px',
+      fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif",
+      color: '#1e293b'
+    }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ margin: '0 0 8px 0', fontSize: '1.5rem', fontWeight: 600, color: '#1e293b' }}>System Backups</h1>
+        <div style={{ height: '2px', width: '80px', backgroundColor: '#1E88E5' }}></div>
       </div>
-      
-      {error && (
-        <AlertBanner 
-          message={error} 
-          type="error" 
-          onDismiss={() => setError(null)} 
-        />
-      )}
-      
-      {success && (
-        <AlertBanner 
-          message={success} 
-          type="success" 
-          onDismiss={() => setSuccess(null)} 
-        />
-      )}
-      
-      <div className="backup-actions">
-        <button 
-          className="action-button primary"
+
+      {error && <AlertBanner message={error} type="error" onDismiss={() => setError(null)} />}
+      {success && <AlertBanner message={success} type="success" onDismiss={() => setSuccess(null)} />}
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <button
           onClick={handleCreateBackup}
           disabled={creating}
+          style={{
+            backgroundColor: '#1E88E5',
+            color: '#ffffff',
+            padding: '8px 16px',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: creating ? 'not-allowed' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.875rem',
+            transition: 'background-color 0.3s ease',
+            ':hover': creating ? {} : { backgroundColor: '#1565C0' }
+          }}
         >
           {creating ? (
             <>
-              <RefreshCw size={16} className="icon-inline spin" /> Creating Backup...
+              <RefreshCw size={16} style={{ animation: 'spin 1s linear infinite' }} /> Creating Backup...
             </>
           ) : (
             <>
-              <Plus size={16} className="icon-inline" /> Create New Backup
+              <Plus size={16} /> Create New Backup
             </>
           )}
         </button>
-        
-        <div className="backup-info">
-          <AlertTriangle size={16} className="icon-inline warning" />
-          <span>
-            Restoring a backup will replace all current data. Make sure to create a backup of the current state first.
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', color: '#f39c12' }}>
+          <AlertTriangle size={16} />
+          <span>Restoring a backup will replace all current data. Make sure to create a backup of the current state first.</span>
         </div>
       </div>
-      
+
       {restoring && (
-        <div className="restoration-in-progress">
-          <div className="restoration-message">
-            <RefreshCw size={24} className="spin" />
-            <h3>System Restoration in Progress</h3>
-            <p>Please do not close this window or navigate away during the restoration process.</p>
-          </div>
+        <div style={{
+          backgroundColor: '#E3F2FD',
+          padding: '24px',
+          borderRadius: '8px',
+          textAlign: 'center',
+          marginBottom: '24px'
+        }}>
+          <RefreshCw size={24} style={{ animation: 'spin 1s linear infinite', color: '#1E88E5' }} />
+          <h3 style={{ margin: '8px 0', fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>
+            System Restoration in Progress
+          </h3>
+          <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>
+            Please do not close this window or navigate away during the restoration process.
+          </p>
         </div>
       )}
-      
-      <div className="backups-table-container">
+
+      <div style={{
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
+        padding: '24px',
+        marginBottom: '32px'
+      }}>
         {backups.length > 0 ? (
-          <table className="backups-table">
-            <thead>
-              <tr>
-                <th>Backup Name</th>
-                <th>Type</th>
-                <th>Created By</th>
-                <th>Date</th>
-                <th className="actions-column">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {backups.map((backup) => (
-                <tr key={backup.id}>
-                  <td>
-                    <div className="backup-name">
-                      <FileText size={16} className="icon-inline" />
-                      <span>{backup.backup_name}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <span className={`backup-type-badge ${getBackupTypeClass(backup.backup_type)}`}>
-                      {getBackupTypeLabel(backup.backup_type)}
-                    </span>
-                  </td>
-                  <td>{backup.created_by_name || 'System'}</td>
-                  <td>
-                    <div className="date-info">
-                      <Calendar size={14} className="icon-inline" />
-                      <span>{formatDate(backup.created_at)}</span>
-                    </div>
-                  </td>
-                  <td className="actions-column">
-                    {restoreConfirm === backup.id ? (
-                      <div className="confirmation-buttons">
-                        <span>Restore?</span>
-                        <button 
-                          className="confirm-yes" 
-                          onClick={() => handleRestoreBackup(backup.id)}
-                        >
-                          Yes
-                        </button>
-                        <button 
-                          className="confirm-no"
-                          onClick={cancelRestoreConfirmation}
-                        >
-                          No
-                        </button>
-                      </div>
-                    ) : deleteConfirm === backup.id ? (
-                      <div className="confirmation-buttons">
-                        <span>Delete?</span>
-                        <button 
-                          className="confirm-yes" 
-                          onClick={() => handleDeleteBackup(backup.id)}
-                        >
-                          Yes
-                        </button>
-                        <button 
-                          className="confirm-no"
-                          onClick={cancelDeleteConfirmation}
-                        >
-                          No
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="backup-actions">
-                        <button 
-                          className="action-icon" 
-                          onClick={() => handleDownloadBackup(backup.id, backup.backup_name)}
-                          title="Download backup"
-                        >
-                          <Download size={16} />
-                        </button>
-                        <button 
-                          className="action-icon" 
-                          onClick={() => startRestoreConfirmation(backup.id)}
-                          title="Restore from this backup"
-                        >
-                          <RotateCcw size={16} />
-                        </button>
-                        <button 
-                          className="action-icon delete" 
-                          onClick={() => startDeleteConfirmation(backup.id)}
-                          title="Delete backup"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    )}
-                  </td>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#E3F2FD', borderBottom: '1px solid #e2e8f0' }}>
+                  {['Backup Name', 'Type', 'Created By', 'Date', 'Actions'].map((header, index) => (
+                    <th key={index} style={{
+                      padding: '16px',
+                      textAlign: 'left',
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      color: '#1e293b'
+                    }}>
+                      {header}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {backups.map(backup => (
+                  <tr key={backup.id} style={{ borderBottom: '1px solid #e2e8f0', ':hover': { backgroundColor: '#f8fafc' } }}>
+                    <td style={{ padding: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <FileText size={16} style={{ color: '#64748b' }} />
+                        <span style={{ fontSize: '0.875rem', color: '#1e293b' }}>{backup.backup_name}</span>
+                      </div>
+                    </td>
+                    <td style={{ padding: '16px' }}>
+                      <span style={{
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '0.75rem',
+                        color: backup.backup_type === 'scheduled' ? '#2ecc71' : '#1E88E5',
+                        backgroundColor: backup.backup_type === 'scheduled' ? '#e6ffe6' : '#E3F2FD'
+                      }}>
+                        {backup.backup_type === 'scheduled' ? 'Scheduled' : 'Manual'}
+                      </span>
+                    </td>
+                    <td style={{ padding: '16px', fontSize: '0.875rem', color: '#64748b' }}>
+                      {backup.created_by_name || 'System'}
+                    </td>
+                    <td style={{ padding: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem', color: '#64748b' }}>
+                        <Calendar size={14} />
+                        <span>{formatDate(backup.created_at)}</span>
+                      </div>
+                    </td>
+                    <td style={{ padding: '16px' }}>
+                      {restoreConfirm === backup.id ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem' }}>
+                          <span>Restore?</span>
+                          <button onClick={() => handleRestoreBackup(backup.id)} style={{
+                            backgroundColor: '#1E88E5',
+                            color: '#ffffff',
+                            padding: '4px 12px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}>Yes</button>
+                          <button onClick={cancelRestoreConfirmation} style={{
+                            backgroundColor: '#e74c3c',
+                            color: '#ffffff',
+                            padding: '4px 12px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}>No</button>
+                        </div>
+                      ) : deleteConfirm === backup.id ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem' }}>
+                          <span>Delete?</span>
+                          <button onClick={() => handleDeleteBackup(backup.id)} style={{
+                            backgroundColor: '#1E88E5',
+                            color: '#ffffff',
+                            padding: '4px 12px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}>Yes</button>
+                          <button onClick={cancelDeleteConfirmation} style={{
+                            backgroundColor: '#e74c3c',
+                            color: '#ffffff',
+                            padding: '4px 12px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}>No</button>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button onClick={() => handleDownloadBackup(backup.id, backup.backup_name)} style={{
+                            backgroundColor: '#1E88E5',
+                            color: '#ffffff',
+                            padding: '4px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}>
+                            <Download size={16} />
+                          </button>
+                          <button onClick={() => startRestoreConfirmation(backup.id)} style={{
+                            backgroundColor: '#2ecc71',
+                            color: '#ffffff',
+                            padding: '4px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}>
+                            <RotateCcw size={16} />
+                          </button>
+                          <button onClick={() => startDeleteConfirmation(backup.id)} style={{
+                            backgroundColor: '#e74c3c',
+                            color: '#ffffff',
+                            padding: '4px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}>
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <div className="no-backups">
-            <Database size={48} className="no-backups-icon" />
-            <h3>No Backups Found</h3>
-            <p>You haven't created any backups yet. Create your first backup to protect your data.</p>
+          <div style={{ textAlign: 'center', padding: '32px' }}>
+            <Database size={48} style={{ color: '#1E88E5', marginBottom: '16px' }} />
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '1.125rem', fontWeight: 600, color: '#1e293b' }}>
+              No Backups Found
+            </h3>
+            <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>
+              You haven't created any backups yet. Create your first backup to protect your data.
+            </p>
           </div>
         )}
       </div>
-      
-      <div className="backup-info-card">
-        <div className="info-header">
-          <Server size={20} className="icon-inline" />
-          <h3>About System Backups</h3>
+
+      <div style={{
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
+        padding: '24px',
+        maxWidth: '600px',
+        margin: '0 auto'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+          <Server size={20} style={{ color: '#1E88E5' }} />
+          <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>About System Backups</h3>
         </div>
-        <div className="info-content">
-          <p>
-            Backups are essential for data protection and recovery. They capture the complete state of your LMS at a specific point in time, including:
-          </p>
-          <ul>
-            <li>User accounts and permissions</li>
-            <li>Training programs and content</li>
-            <li>Applicant data and evaluations</li>
-            <li>Quiz results and progress tracking</li>
-          </ul>
-          <p>
-            <strong>Scheduled backups</strong> are automatically created by the system, while <strong>manual backups</strong> are created by administrators. It's recommended to create a manual backup before making significant changes to the system.
-          </p>
-        </div>
+        <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '0 0 16px 0' }}>
+          Backups are essential for data protection and recovery. They capture the complete state of your LMS at a specific point in time, including:
+        </p>
+        <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: '0 0 16px 0', fontSize: '0.875rem', color: '#64748b' }}>
+          <li>User accounts and permissions</li>
+          <li>Training programs and content</li>
+          <li>Applicant data and evaluations</li>
+          <li>Quiz results and progress tracking</li>
+        </ul>
+        <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
+          <strong>Scheduled backups</strong> are automatically created by the system, while <strong>manual backups</strong> are created by administrators. It's recommended to create a manual backup before making significant changes to the system.
+        </p>
       </div>
     </div>
   );

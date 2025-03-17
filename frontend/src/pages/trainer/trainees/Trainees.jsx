@@ -7,12 +7,7 @@ import {
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
 import trainerService from '../../../services/trainerService';
-import './styles/Trainees.css';
 
-/**
- * Trainees Component
- * Displays a list of trainees for trainers to manage
- */
 const Trainees = () => {
   const navigate = useNavigate();
   const [trainees, setTrainees] = useState([]);
@@ -26,7 +21,6 @@ const Trainees = () => {
   const [sortField, setSortField] = useState('name');
   const [sortDirection, setSortDirection] = useState('asc');
 
-  // Fetch trainees and programs on component mount
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -49,11 +43,9 @@ const Trainees = () => {
           return;
         }
         
-        // Fetch trainees using trainerService
         const traineesData = await trainerService.getTrainees();
         setTrainees(traineesData);
         
-        // Fetch programs for filtering
         const programsData = await trainerService.getPrograms();
         setPrograms(programsData);
       } catch (err) {
@@ -67,58 +59,46 @@ const Trainees = () => {
     fetchData();
   }, [navigate]);
 
-  // Handle search query change
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  // Handle status filter change
   const handleStatusFilterChange = (e) => {
     setFilterStatus(e.target.value);
   };
 
-  // Handle program filter change
   const handleProgramFilterChange = (e) => {
     setFilterProgram(e.target.value);
   };
 
-  // Toggle filters visibility
   const toggleFilters = () => {
     setShowFilters(!showFilters);
   };
 
-  // Format date for display
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Handle sorting
   const handleSort = (field) => {
     if (sortField === field) {
-      // Toggle sort direction if same field
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
-      // Set new sort field and default to ascending
       setSortField(field);
       setSortDirection('asc');
     }
   };
 
-  // Filter and sort trainees
   const filteredTrainees = trainees
     .filter(trainee => {
-      // Search filter
       const searchMatch = trainee.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         trainee.email.toLowerCase().includes(searchQuery.toLowerCase());
       
-      // Status filter
       let statusMatch = true;
       if (filterStatus !== 'all') {
         statusMatch = trainee.status === filterStatus;
       }
       
-      // Program filter
       let programMatch = true;
       if (filterProgram !== 'all') {
         programMatch = trainee.programs?.some(program => 
@@ -129,7 +109,6 @@ const Trainees = () => {
       return searchMatch && statusMatch && programMatch;
     })
     .sort((a, b) => {
-      // Sorting logic
       let comparison = 0;
       
       if (sortField === 'name') {
@@ -144,11 +123,9 @@ const Trainees = () => {
         comparison = new Date(a.enrollment_date || 0) - new Date(b.enrollment_date || 0);
       }
       
-      // Apply sort direction
       return sortDirection === 'asc' ? comparison : -comparison;
     });
 
-  // Calculate overall progress for a trainee
   const calculateProgress = (trainee) => {
     if (!trainee.programs || trainee.programs.length === 0) {
       return 0;
@@ -177,16 +154,15 @@ const Trainees = () => {
     }
   };
 
-  // Determine trainee status badge
   const getStatusBadge = (trainee) => {
     const progress = calculateProgress(trainee);
     
     if (progress === 100) {
-      return { class: 'status-completed', icon: <CheckCircle size={14} />, label: 'Completed' };
+      return { style: { background: '#d4edda', color: '#155724' }, icon: <CheckCircle size={14} />, label: 'Completed' };
     } else if (progress > 0) {
-      return { class: 'status-in-progress', icon: <Clock size={14} />, label: 'In Progress' };
+      return { style: { background: '#cce5ff', color: '#004085' }, icon: <Clock size={14} />, label: 'In Progress' };
     } else {
-      return { class: 'status-not-started', icon: <AlertTriangle size={14} />, label: 'Not Started' };
+      return { style: { background: '#fff3cd', color: '#856404' }, icon: <AlertTriangle size={14} />, label: 'Not Started' };
     }
   };
 
@@ -195,86 +171,198 @@ const Trainees = () => {
   }
 
   return (
-    <div className="trainees-container">
+    <div style={{
+      padding: '20px',
+      maxWidth: '1200px',
+      margin: '0 auto'
+    }}>
       {error && <AlertBanner message={error} type="error" />}
       
-      {/* Header with action buttons */}
-      <div className="trainees-header">
-        <div className="header-title">
-          <Users size={24} className="header-icon" />
-          <h2>Trainees</h2>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+        flexWrap: 'wrap',
+        gap: '15px'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '10px' 
+        }}>
+          <Users size={24} style={{ color: '#007bff' }} />
+          <h2 style={{ 
+            fontSize: '24px', 
+            margin: 0 
+          }}>Trainees</h2>
         </div>
-        <div className="header-actions">
-          <Link to="/trainer/trainees/export" className="btn-export">
-            <span>Export List</span>
+        <div>
+          <Link 
+            to="/trainer/trainees/export"
+            style={{
+              padding: '8px 15px',
+              background: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              textDecoration: 'none',
+              fontSize: '14px'
+            }}
+          >
+            Export List
           </Link>
         </div>
       </div>
       
-      {/* Search and filter bar */}
-      <div className="search-filter-bar">
-        <div className="search-container">
-          <Search size={18} className="search-icon" />
+      <div style={{
+        display: 'flex',
+        gap: '10px',
+        marginBottom: '20px',
+        flexWrap: 'wrap'
+      }}>
+        <div style={{ 
+          position: 'relative', 
+          flex: '1', 
+          minWidth: '200px' 
+        }}>
+          <Search size={18} style={{ 
+            position: 'absolute', 
+            left: '10px', 
+            top: '50%', 
+            transform: 'translateY(-50%)',
+            color: '#666'
+          }} />
           <input 
             type="text" 
             placeholder="Search trainees..." 
             value={searchQuery}
             onChange={handleSearchChange}
-            className="search-input"
+            style={{
+              width: '100%',
+              padding: '8px 10px 8px 35px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              fontSize: '14px'
+            }}
           />
         </div>
         
-        <button onClick={toggleFilters} className="btn-toggle-filters">
+        <button 
+          onClick={toggleFilters}
+          style={{
+            padding: '8px 15px',
+            background: showFilters ? '#007bff' : '#f8f9fa',
+            color: showFilters ? 'white' : '#333',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            fontSize: '14px'
+          }}
+        >
           <Filter size={18} />
           <span>Filters</span>
           {showFilters ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </button>
       </div>
       
-      {/* Filters panel */}
       {showFilters && (
-        <div className="filters-panel">
-          <div className="filter-group">
-            <label htmlFor="status-filter">Status:</label>
-            <select 
-              id="status-filter" 
-              value={filterStatus}
-              onChange={handleStatusFilterChange}
-              className="filter-select"
-            >
-              <option value="all">All Statuses</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-          
-          <div className="filter-group">
-            <label htmlFor="program-filter">Program:</label>
-            <select 
-              id="program-filter" 
-              value={filterProgram}
-              onChange={handleProgramFilterChange}
-              className="filter-select"
-            >
-              <option value="all">All Programs</option>
-              {programs.map(program => (
-                <option key={program.id} value={program.id.toString()}>
-                  {program.title}
-                </option>
-              ))}
-            </select>
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          padding: '15px',
+          marginBottom: '20px'
+        }}>
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '20px'
+          }}>
+            <div style={{ minWidth: '200px' }}>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '5px',
+                fontSize: '14px',
+                fontWeight: 'bold'
+              }} htmlFor="status-filter">Status:</label>
+              <select 
+                id="status-filter" 
+                value={filterStatus}
+                onChange={handleStatusFilterChange}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              >
+                <option value="all">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+            
+            <div style={{ minWidth: '200px' }}>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '5px',
+                fontSize: '14px',
+                fontWeight: 'bold'
+              }} htmlFor="program-filter">Program:</label>
+              <select 
+                id="program-filter" 
+                value={filterProgram}
+                onChange={handleProgramFilterChange}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              >
+                <option value="all">All Programs</option>
+                {programs.map(program => (
+                  <option key={program.id} value={program.id.toString()}>
+                    {program.title}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       )}
       
-      {/* Trainees list */}
       {filteredTrainees.length > 0 ? (
-        <div className="trainees-list">
-          {/* Table header */}
-          <div className="trainees-table-header">
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          overflowX: 'auto'
+        }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr 1fr',
+            background: '#f8f9fa',
+            padding: '10px 15px',
+            borderBottom: '1px solid #eee',
+            fontWeight: 'bold',
+            fontSize: '14px'
+          }}>
             <div 
-              className={`trainee-header name-col ${sortField === 'name' ? 'sorted' : ''}`}
               onClick={() => handleSort('name')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                cursor: 'pointer',
+                color: sortField === 'name' ? '#007bff' : '#333'
+              }}
             >
               <span>Name</span>
               {sortField === 'name' && (
@@ -282,20 +370,32 @@ const Trainees = () => {
               )}
             </div>
             <div 
-              className={`trainee-header email-col ${sortField === 'email' ? 'sorted' : ''}`}
               onClick={() => handleSort('email')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                cursor: 'pointer',
+                color: sortField === 'email' ? '#007bff' : '#333'
+              }}
             >
               <span>Email</span>
               {sortField === 'email' && (
                 sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
               )}
             </div>
-            <div className="trainee-header phone-col">
+            <div style={{ display: 'flex', alignItems: 'center' }}>
               <span>Phone</span>
             </div>
             <div 
-              className={`trainee-header enrollment-col ${sortField === 'enrollment_date' ? 'sorted' : ''}`}
               onClick={() => handleSort('enrollment_date')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                cursor: 'pointer',
+                color: sortField === 'enrollment_date' ? '#007bff' : '#333'
+              }}
             >
               <span>Enrollment Date</span>
               {sortField === 'enrollment_date' && (
@@ -303,20 +403,25 @@ const Trainees = () => {
               )}
             </div>
             <div 
-              className={`trainee-header progress-col ${sortField === 'progress' ? 'sorted' : ''}`}
               onClick={() => handleSort('progress')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                cursor: 'pointer',
+                color: sortField === 'progress' ? '#007bff' : '#333'
+              }}
             >
               <span>Progress</span>
               {sortField === 'progress' && (
                 sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
               )}
             </div>
-            <div className="trainee-header status-col">
+            <div style={{ display: 'flex', alignItems: 'center' }}>
               <span>Status</span>
             </div>
           </div>
           
-          {/* Table rows */}
           {filteredTrainees.map(trainee => {
             const statusBadge = getStatusBadge(trainee);
             const progress = calculateProgress(trainee);
@@ -325,37 +430,98 @@ const Trainees = () => {
               <Link 
                 to={`/trainer/trainees/${trainee.id}`} 
                 key={trainee.id}
-                className="trainee-item"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '2fr 2fr 1fr 1fr 1fr 1fr',
+                  padding: '15px',
+                  borderBottom: '1px solid #eee',
+                  textDecoration: 'none',
+                  color: '#333',
+                  transition: 'background 0.2s',
+                  ':hover': { background: '#f8f9fa' }
+                }}
               >
-                <div className="trainee-col name-col">
-                  <div className="trainee-avatar">
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '10px' 
+                }}>
+                  <div style={{
+                    width: '30px',
+                    height: '30px',
+                    borderRadius: '50%',
+                    background: '#007bff',
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '14px'
+                  }}>
                     {trainee.full_name.charAt(0)}
                   </div>
-                  <span className="trainee-name">{trainee.full_name}</span>
+                  <span style={{ fontSize: '14px' }}>{trainee.full_name}</span>
                 </div>
-                <div className="trainee-col email-col">
-                  <Mail size={16} className="col-icon" />
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '5px',
+                  fontSize: '14px'
+                }}>
+                  <Mail size={16} style={{ color: '#666' }} />
                   <span>{trainee.email}</span>
                 </div>
-                <div className="trainee-col phone-col">
-                  <Phone size={16} className="col-icon" />
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '5px',
+                  fontSize: '14px'
+                }}>
+                  <Phone size={16} style={{ color: '#666' }} />
                   <span>{trainee.phone || 'N/A'}</span>
                 </div>
-                <div className="trainee-col enrollment-col">
-                  <Calendar size={16} className="col-icon" />
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '5px',
+                  fontSize: '14px'
+                }}>
+                  <Calendar size={16} style={{ color: '#666' }} />
                   <span>{trainee.enrollment_date ? formatDate(trainee.enrollment_date) : 'N/A'}</span>
                 </div>
-                <div className="trainee-col progress-col">
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
-                      style={{ width: `${progress}%` }}
-                    ></div>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '10px' 
+                }}>
+                  <div style={{
+                    width: '100px',
+                    height: '6px',
+                    background: '#eee',
+                    borderRadius: '3px',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      width: `${progress}%`,
+                      height: '100%',
+                      background: '#007bff',
+                      transition: 'width 0.3s'
+                    }}></div>
                   </div>
-                  <span className="progress-text">{progress}%</span>
+                  <span style={{ fontSize: '14px' }}>{progress}%</span>
                 </div>
-                <div className="trainee-col status-col">
-                  <div className={`status-badge ${statusBadge.class}`}>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center' 
+                }}>
+                  <div style={{
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    fontSize: '12px',
+                    ...statusBadge.style
+                  }}>
                     {statusBadge.icon}
                     <span>{statusBadge.label}</span>
                   </div>
@@ -365,10 +531,26 @@ const Trainees = () => {
           })}
         </div>
       ) : (
-        <div className="no-trainees-message">
-          <Users size={48} />
-          <h3>No trainees found</h3>
-          <p>
+        <div style={{
+          textAlign: 'center',
+          padding: '40px',
+          background: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        }}>
+          <Users size={48} style={{ 
+            color: '#007bff', 
+            marginBottom: '15px' 
+          }} />
+          <h3 style={{ 
+            margin: '0 0 10px 0',
+            fontSize: '20px'
+          }}>No trainees found</h3>
+          <p style={{ 
+            margin: 0,
+            color: '#666',
+            fontSize: '14px'
+          }}>
             {searchQuery || filterStatus !== 'all' || filterProgram !== 'all'
               ? 'Try adjusting your search or filters'
               : 'No trainees are currently enrolled in your programs'}

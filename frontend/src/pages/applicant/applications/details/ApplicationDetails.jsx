@@ -6,7 +6,8 @@ import {
   FileUp, Download
 } from 'lucide-react';
 import applicantService from '../../../../services/applicantService';
-import '../styles/ApplicationDetails.css';
+import LoadingSpinner from '../../../../components/shared/LoadingSpinner'; // Assuming this exists
+import AlertBanner from '../../../../components/shared/AlertBanner'; // Assuming this exists
 
 const ApplicationDetails = () => {
   const { applicationId } = useParams();
@@ -15,90 +16,46 @@ const ApplicationDetails = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  // Fetch application details
+
   useEffect(() => {
     const fetchApplicationDetails = async () => {
       try {
         setLoading(true);
-        
-        // Get dashboard data which contains all applications
         const dashboardData = await applicantService.getDashboardData();
-        
-        // Find the specific application from the applications list
         const applicationData = dashboardData.myApplications.find(
           app => app.application_id === parseInt(applicationId) || app.id === parseInt(applicationId)
         );
-        
-        if (!applicationData) {
-          throw new Error('Application not found');
-        }
-        
-        // Get documents associated with this application (if implemented)
+        if (!applicationData) throw new Error('Application not found');
         let documentsData = [];
         try {
           documentsData = await applicantService.getApplicationDocuments(applicationId);
         } catch (docError) {
           console.warn('Could not fetch documents:', docError);
-          // Continue with empty documents array
         }
-        
         setApplication(applicationData);
         setDocuments(documentsData || []);
-        setLoading(false);
       } catch (err) {
         console.error('Error fetching application details:', err);
         setError('Failed to load application details. Please try again later.');
+      } finally {
         setLoading(false);
       }
     };
-
     fetchApplicationDetails();
   }, [applicationId]);
-  
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleString();
-  };
-  
-  // Get status icon and class
+
+  const formatDate = (dateString) => dateString ? new Date(dateString).toLocaleString() : 'N/A';
+
   const getStatusInfo = (status) => {
     switch (status) {
-      case 'pending':
-        return { 
-          icon: <Clock size={18} />,
-          class: 'status-pending',
-          message: 'Your application is currently under review by our team.'
-        };
-      case 'shortlisted':
-        return { 
-          icon: <CheckCircle size={18} />,
-          class: 'status-shortlisted',
-          message: 'Congratulations! You\'ve been shortlisted for this program. Our team may contact you soon for further assessment.'
-        };
-      case 'hired':
-        return { 
-          icon: <CheckCircle size={18} />,
-          class: 'status-hired',
-          message: 'Congratulations! You\'ve been selected for this program. Please check your email for enrollment details.'
-        };
-      case 'rejected':
-        return { 
-          icon: <XCircle size={18} />,
-          class: 'status-rejected',
-          message: 'We\'re sorry, your application was not successful at this time. We encourage you to apply for other programs.'
-        };
-      default:
-        return { 
-          icon: null,
-          class: '',
-          message: ''
-        };
+      case 'pending': return { icon: <Clock size={18} />, color: '#f39c12', bg: '#fef5e7', message: 'Your application is currently under review by our team.' };
+      case 'shortlisted': return { icon: <CheckCircle size={18} />, color: '#2ecc71', bg: '#e6ffe6', message: 'Congratulations! You’ve been shortlisted for this program. Our team may contact you soon for further assessment.' };
+      case 'hired': return { icon: <CheckCircle size={18} />, color: '#2ecc71', bg: '#e6ffe6', message: 'Congratulations! You’ve been selected for this program. Please check your email for enrollment details.' };
+      case 'rejected': return { icon: <XCircle size={18} />, color: '#e74c3c', bg: '#ffe6e6', message: 'We’re sorry, your application was not successful at this time. We encourage you to apply for other programs.' };
+      default: return { icon: null, color: '#64748b', bg: '#f1f5f9', message: '' };
     }
   };
-  
-  // Download document using the service
+
   const downloadDocument = async (documentId, filename) => {
     try {
       await applicantService.downloadDocument(documentId);
@@ -107,237 +64,309 @@ const ApplicationDetails = () => {
       alert('Failed to download document. Please try again.');
     }
   };
-  
-  // Retry loading functionality
+
   const handleRetry = () => {
     setLoading(true);
     setError(null);
+    window.location.reload();
   };
-  
-  if (loading) {
-    return (
-      <div className="application-details-loading">
-        <div className="spinner"></div>
-        <p>Loading application details...</p>
-      </div>
-    );
-  }
-  
-  if (error) {
-    return (
-      <div className="application-details-error">
-        <AlertTriangle size={48} className="error-icon" />
-        <h2>Error</h2>
-        <p>{error}</p>
-        <div className="error-actions">
-          <button 
-            onClick={handleRetry} 
-            className="btn-primary retry-btn"
+
+  if (loading) return <LoadingSpinner />;
+  if (error || !application) return (
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#f8fafc',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif",
+      color: '#1e293b'
+    }}>
+      <AlertTriangle size={48} style={{ color: '#e74c3c', marginBottom: '16px' }} />
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 600, margin: '0 0 8px 0' }}>{error ? 'Error' : 'Application Not Found'}</h2>
+      <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '0 0 24px 0' }}>{error || 'The application you’re looking for could not be found.'}</p>
+      <div style={{ display: 'flex', gap: '16px' }}>
+        {error && (
+          <button
+            onClick={handleRetry}
+            style={{
+              backgroundColor: '#1E88E5',
+              color: '#ffffff',
+              padding: '8px 16px',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '0.875rem',
+              transition: 'background-color 0.3s ease',
+              ':hover': { backgroundColor: '#1565C0' }
+            }}
           >
-            <RefreshCw size={16} />
-            Retry
+            <RefreshCw size={16} /> Retry
           </button>
-          <button 
-            onClick={() => navigate('/applicant/applications')} 
-            className="btn-secondary back-btn"
-          >
-            <ArrowLeft size={16} />
-            Back to Applications
-          </button>
-        </div>
-      </div>
-    );
-  }
-  
-  if (!application) {
-    return (
-      <div className="application-details-error">
-        <AlertTriangle size={48} className="error-icon" />
-        <h2>Application Not Found</h2>
-        <p>The application you're looking for could not be found.</p>
-        <button 
-          onClick={() => navigate('/applicant/applications')} 
-          className="btn-primary back-btn"
+        )}
+        <button
+          onClick={() => navigate('/applicant/applications')}
+          style={{
+            backgroundColor: '#ffffff',
+            color: '#1E88E5',
+            padding: '8px 16px',
+            border: '1px solid #1E88E5',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.875rem',
+            transition: 'background-color 0.3s ease',
+            ':hover': { backgroundColor: '#E3F2FD' }
+          }}
         >
-          <ArrowLeft size={16} />
-          Back to Applications
+          <ArrowLeft size={16} /> Back to Applications
         </button>
       </div>
-    );
-  }
-  
+    </div>
+  );
+
   const statusInfo = getStatusInfo(application.status);
-  
+
   return (
-    <div className="application-details-container">
-      <div className="application-details-header">
-        <Link to="/applicant/applications" className="back-link">
-          <ArrowLeft size={16} />
-          Back to Applications
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#f8fafc',
+      padding: '32px',
+      fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif",
+      color: '#1e293b'
+    }}>
+      <div style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <Link
+          to="/applicant/applications"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            color: '#1E88E5',
+            fontSize: '0.875rem',
+            textDecoration: 'none',
+            ':hover': { textDecoration: 'underline' }
+          }}
+        >
+          <ArrowLeft size={16} /> Back to Applications
         </Link>
-        <h1>Application Details</h1>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 600, margin: 0 }}>Application Details</h1>
       </div>
-      
-      <div className="application-overview">
-        <div className="program-info">
-          <div className="program-icon">
+
+      <div style={{
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
+        padding: '24px',
+        marginBottom: '24px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ backgroundColor: '#E3F2FD', padding: '12px', borderRadius: '9999px', color: '#1E88E5' }}>
             <BookOpen size={32} />
           </div>
-          <div className="program-details">
-            <h2 className="program-title">{application.program_title}</h2>
-            <div className="application-meta">
-              <div className="meta-item">
-                <Calendar size={14} />
-                <span>Applied: {formatDate(application.applied_at)}</span>
+          <div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, margin: '0 0 8px 0' }}>{application.program_title}</h2>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '0.875rem', color: '#64748b' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Calendar size={14} /> Applied: {formatDate(application.applied_at)}
               </div>
               {application.updated_at && application.updated_at !== application.applied_at && (
-                <div className="meta-item">
-                  <Clock size={14} />
-                  <span>Last Updated: {formatDate(application.updated_at)}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Clock size={14} /> Last Updated: {formatDate(application.updated_at)}
                 </div>
               )}
             </div>
           </div>
         </div>
-        
-        <div className={`application-status ${statusInfo.class}`}>
-          {statusInfo.icon}
-          <span>{application.status}</span>
+        <div style={{
+          backgroundColor: statusInfo.bg,
+          color: statusInfo.color,
+          padding: '8px 16px',
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontSize: '0.875rem',
+          fontWeight: 500
+        }}>
+          {statusInfo.icon} <span>{application.status.charAt(0).toUpperCase() + application.status.slice(1)}</span>
         </div>
       </div>
-      
-      <div className="status-message">
+
+      <div style={{ backgroundColor: statusInfo.bg, padding: '16px', borderRadius: '8px', marginBottom: '24px', color: statusInfo.color, fontSize: '0.875rem' }}>
         {statusInfo.message}
       </div>
-      
-      <div className="application-details-grid">
-        <div className="details-card">
-          <div className="card-header">
-            <h3><User size={18} /> Position Details</h3>
-          </div>
-          <div className="card-content">
-            <div className="detail-row">
-              <div className="detail-label">Job Role</div>
-              <div className="detail-value">{application.job_role || 'Not specified'}</div>
+
+      <div style={{ display: 'grid', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0' }}>
+            <User size={18} /> Position Details
+          </h3>
+          <div style={{ fontSize: '0.875rem', color: '#64748b' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #e2e8f0' }}>
+              <span style={{ fontWeight: 600 }}>Job Role</span>
+              <span>{application.job_role || 'Not specified'}</span>
             </div>
-            <div className="detail-row">
-              <div className="detail-label">Department</div>
-              <div className="detail-value">{application.department || 'Not specified'}</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
+              <span style={{ fontWeight: 600 }}>Department</span>
+              <span>{application.department || 'Not specified'}</span>
             </div>
           </div>
         </div>
-        
+
         {application.cover_letter && (
-          <div className="details-card">
-            <div className="card-header">
-              <h3><FileText size={18} /> Cover Letter</h3>
-            </div>
-            <div className="card-content">
-              <div className="cover-letter">
-                {application.cover_letter}
-              </div>
-            </div>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0' }}>
+              <FileText size={18} /> Cover Letter
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#1e293b', lineHeight: '1.5', margin: 0 }}>{application.cover_letter}</p>
           </div>
         )}
-        
+
         {application.additional_info && (
-          <div className="details-card">
-            <div className="card-header">
-              <h3><FileText size={18} /> Additional Information</h3>
-            </div>
-            <div className="card-content">
-              <div className="additional-info">
-                {application.additional_info}
-              </div>
-            </div>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0' }}>
+              <FileText size={18} /> Additional Information
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#1e293b', lineHeight: '1.5', margin: 0 }}>{application.additional_info}</p>
           </div>
         )}
-        
-        <div className="details-card">
-          <div className="card-header">
-            <h3><FileUp size={18} /> Supporting Documents</h3>
-          </div>
-          <div className="card-content">
-            {documents.length > 0 ? (
-              <div className="documents-list">
-                {documents.map(doc => (
-                  <div key={doc.id} className="document-item">
-                    <div className="document-info">
-                      <span className="document-name">{doc.description}</span>
-                      <span className="document-date">Uploaded: {formatDate(doc.created_at)}</span>
-                    </div>
-                    <button 
-                      className="btn-icon download-btn"
-                      onClick={() => downloadDocument(doc.id, doc.description)}
-                      title="Download Document"
-                    >
-                      <Download size={16} />
-                    </button>
+
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0' }}>
+            <FileUp size={18} /> Supporting Documents
+          </h3>
+          {documents.length > 0 ? (
+            <div style={{ display: 'grid', gap: '12px' }}>
+              {documents.map(doc => (
+                <div key={doc.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #e2e8f0' }}>
+                  <div>
+                    <span style={{ fontSize: '0.875rem', color: '#1e293b', fontWeight: 500 }}>{doc.description}</span>
+                    <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>Uploaded: {formatDate(doc.created_at)}</span>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="no-documents">
-                <p>No supporting documents found for this application.</p>
-              </div>
-            )}
-            
-            <div className="upload-more">
-              <Link to="/applicant/upload" className="btn-primary">
-                Upload More Documents
-              </Link>
+                  <button
+                    onClick={() => downloadDocument(doc.id, doc.description)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#1E88E5',
+                      cursor: 'pointer',
+                      padding: '4px',
+                      ':hover': { color: '#1565C0' }
+                    }}
+                  >
+                    <Download size={16} />
+                  </button>
+                </div>
+              ))}
             </div>
+          ) : (
+            <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '0 0 16px 0' }}>No supporting documents found for this application.</p>
+          )}
+          <div style={{ textAlign: 'right' }}>
+            <Link
+              to="/applicant/upload"
+              style={{
+                backgroundColor: '#1E88E5',
+                color: '#ffffff',
+                padding: '8px 16px',
+                border: 'none',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.875rem',
+                transition: 'background-color 0.3s ease',
+                ':hover': { backgroundColor: '#1565C0' }
+              }}
+            >
+              Upload More Documents
+            </Link>
           </div>
         </div>
-        
+
         {(application.evaluation_score || application.fst_score) && (
-          <div className="details-card">
-            <div className="card-header">
-              <h3><CheckCircle size={18} /> Evaluation Results</h3>
-            </div>
-            <div className="card-content">
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0' }}>
+              <CheckCircle size={18} /> Evaluation Results
+            </h3>
+            <div style={{ fontSize: '0.875rem', color: '#64748b' }}>
               {application.evaluation_score && (
-                <div className="detail-row">
-                  <div className="detail-label">Evaluation Score</div>
-                  <div className="detail-value score">
-                    <div className="score-badge">{application.evaluation_score}</div>
-                  </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #e2e8f0' }}>
+                  <span style={{ fontWeight: 600 }}>Evaluation Score</span>
+                  <span style={{ backgroundColor: '#E3F2FD', color: '#1E88E5', padding: '4px 8px', borderRadius: '4px', fontWeight: 500 }}>{application.evaluation_score}</span>
                 </div>
               )}
-              
               {application.fst_score && (
-                <div className="detail-row">
-                  <div className="detail-label">Field Stress Test (FST) Score</div>
-                  <div className="detail-value score">
-                    <div className="score-badge">{application.fst_score}</div>
-                  </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
+                  <span style={{ fontWeight: 600 }}>Field Stress Test (FST) Score</span>
+                  <span style={{ backgroundColor: '#E3F2FD', color: '#1E88E5', padding: '4px 8px', borderRadius: '4px', fontWeight: 500 }}>{application.fst_score}</span>
                 </div>
               )}
-              
-              <div className="evaluation-note">
-                <AlertTriangle size={16} />
-                <p>Note: Evaluation scores are based on multiple factors including your application materials, assessments, and interviews if conducted.</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '16px', fontSize: '0.75rem', color: '#f39c12' }}>
+                <AlertTriangle size={16} /> Note: Evaluation scores are based on multiple factors including your application materials, assessments, and interviews if conducted.
               </div>
             </div>
           </div>
         )}
       </div>
-      
-      <div className="application-actions">
-        <Link to="/applicant/applications" className="btn-secondary">
-          <ArrowLeft size={16} />
-          Back to Applications
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px', maxWidth: '1200px', marginLeft: 'auto', marginRight: 'auto' }}>
+        <Link
+          to="/applicant/applications"
+          style={{
+            backgroundColor: '#ffffff',
+            color: '#1E88E5',
+            padding: '8px 16px',
+            border: '1px solid #1E88E5',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.875rem',
+            transition: 'background-color 0.3s ease',
+            ':hover': { backgroundColor: '#E3F2FD' }
+          }}
+        >
+          <ArrowLeft size={16} /> Back to Applications
         </Link>
-        
-        <Link to="/applicant/programs" className="btn-primary">
-          <BookOpen size={16} />
-          View Programs
+        <Link
+          to="/applicant/programs"
+          style={{
+            backgroundColor: '#1E88E5',
+            color: '#ffffff',
+            padding: '8px 16px',
+            border: 'none',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.875rem',
+            transition: 'background-color 0.3s ease',
+            ':hover': { backgroundColor: '#1565C0' }
+          }}
+        >
+          <BookOpen size={16} /> View Programs
         </Link>
       </div>
-      
-      <div className="application-help">
-        <h3>Need Help?</h3>
-        <p>If you have any questions about your application status or the recruitment process, please contact our HR department at <a href="mailto:hr@example.com">hr@example.com</a>.</p>
+
+      <div style={{ marginTop: '48px', maxWidth: '1200px', marginLeft: 'auto', marginRight: 'auto', padding: '24px', backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: 600, margin: '0 0 8px 0' }}>Need Help?</h3>
+        <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
+          If you have any questions about your application status or the recruitment process, please contact our HR department at <a href="mailto:hr@example.com" style={{ color: '#1E88E5', textDecoration: 'none', ':hover': { textDecoration: 'underline' } }}>hr@example.com</a>.
+        </p>
       </div>
     </div>
   );

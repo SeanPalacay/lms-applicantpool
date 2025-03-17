@@ -7,12 +7,7 @@ import {
 } from 'lucide-react';
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
-import '../styles/RefresherEnrollment.css';
 
-/**
- * RefresherEnrollment Component
- * Allows trainers to enroll trainees in refresher courses
- */
 const RefresherEnrollment = () => {
   const navigate = useNavigate();
   const [refresherCourses, setRefresherCourses] = useState([]);
@@ -344,32 +339,32 @@ const RefresherEnrollment = () => {
   }
 
   return (
-    <div className="refresher-enrollment-container">
+    <div style={{ padding: '32px', backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
       {error && <AlertBanner message={error} type="error" />}
       {successMessage && <AlertBanner message={successMessage} type="success" />}
       
-      <div className="card">
-        <div className="card-header gradient-amber">
-          <div className="header-icon">
+      <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '24px', background: 'linear-gradient(135deg, #FFB74D, #FB8C00)', color: 'white' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '16px' }}>
             <Users size={20} />
           </div>
-          <div className="header-content">
-            <h3>Enroll Trainees in Refresher Course</h3>
+          <div>
+            <h3 style={{ fontSize: '20px', fontWeight: '600', margin: '0' }}>Enroll Trainees in Refresher Course</h3>
           </div>
         </div>
         
-        <div className="card-content">
-          <form onSubmit={handleSubmit} className="enrollment-form">
-            <div className="form-section">
-              <div className="form-group">
-                <label htmlFor="course_id">
-                  <span className="required">*</span> Select Refresher Course:
+        <div style={{ padding: '32px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="course_id" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>
+                  <span style={{ color: '#E53E3E', marginRight: '4px' }}>*</span> Select Refresher Course:
                 </label>
                 <select 
                   id="course_id" 
                   value={selectedCourse} 
                   onChange={handleCourseChange}
-                  className="form-select"
+                  style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                   required
                 >
                   <option value="">-- Select a Course --</option>
@@ -382,49 +377,43 @@ const RefresherEnrollment = () => {
               </div>
               
               {selectedCourse && courseDetails && (
-                <div className="course-summary">
-                  <h4>Course Summary</h4>
-                  <div className="course-details">
-                    <p className="course-description">{courseDetails.description || 'No description provided'}</p>
-                    <div className="course-meta">
-                      <div className="meta-item">
-                        <span className="meta-label">Course Type:</span>
-                        <span className="meta-value">{courseDetails.type}</span>
-                      </div>
-                      <div className="meta-item">
-                        <span className="meta-label">Status:</span>
-                        <span className="meta-value">{courseDetails.status}</span>
-                      </div>
-                      <div className="meta-item">
-                        <span className="meta-label">Current Enrollments:</span>
-                        <span className="meta-value">{courseDetails.enrollments?.length || 0} trainees</span>
-                      </div>
+                <div style={{ backgroundColor: '#F8FAFC', borderRadius: '8px', padding: '16px', marginTop: '16px' }}>
+                  <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1E293B', marginBottom: '16px' }}>Course Summary</h4>
+                  <p style={{ fontSize: '14px', color: '#64748B', marginBottom: '16px' }}>{courseDetails.description || 'No description provided'}</p>
+                  <div style={{ display: 'flex', gap: '24px', fontSize: '14px', color: '#64748B' }}>
+                    <div>
+                      <span style={{ fontWeight: '500' }}>Course Type:</span> {courseDetails.type}
+                    </div>
+                    <div>
+                      <span style={{ fontWeight: '500' }}>Status:</span> {courseDetails.status}
+                    </div>
+                    <div>
+                      <span style={{ fontWeight: '500' }}>Current Enrollments:</span> {courseDetails.enrollments?.length || 0} trainees
                     </div>
                   </div>
                 </div>
               )}
               
-              <div className="form-group">
-                <label htmlFor="enrollment_reason">Enrollment Reason:</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="enrollment_reason" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>Enrollment Reason:</label>
                 <textarea 
                   id="enrollment_reason" 
                   value={enrollmentReason} 
                   onChange={handleReasonChange}
-                  className="form-textarea"
+                  style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease', minHeight: '100px' }}
                   placeholder="Explain why these trainees need this refresher course..."
-                  rows={3}
                 />
               </div>
             </div>
             
             {selectedCourse && (
-              <div className="form-section trainees-section">
-                <div className="section-header">
-                  <h4>Select Trainees to Enroll</h4>
-                  <div className="selection-actions">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1E293B', margin: '0' }}>Select Trainees to Enroll</h4>
+                  <div style={{ display: 'flex', gap: '8px' }}>
                     <button 
                       type="button" 
-                      className="btn-select-all"
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#E3F2FD', color: '#1E88E5', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
                       onClick={selectAllVisible}
                     >
                       <UserCheck size={14} />
@@ -432,7 +421,7 @@ const RefresherEnrollment = () => {
                     </button>
                     <button 
                       type="button" 
-                      className="btn-clear-all"
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#FEE2E2', color: '#E53E3E', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
                       onClick={clearAllSelections}
                     >
                       <Trash2 size={14} />
@@ -441,24 +430,25 @@ const RefresherEnrollment = () => {
                   </div>
                 </div>
                 
-                <div className="search-filter-bar">
-                  <div className="search-container">
-                    <Search size={18} className="search-icon" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', flex: 1, backgroundColor: '#F8FAFC', borderRadius: '8px', padding: '8px', gap: '8px' }}>
+                    <Search size={18} color="#64748B" />
                     <input 
                       type="text" 
                       placeholder="Search trainees..." 
                       value={searchQuery}
                       onChange={handleSearchChange}
-                      className="search-input"
+                      style={{ flex: 1, border: 'none', backgroundColor: 'transparent', fontSize: '14px', color: '#1E293B', outline: 'none' }}
                     />
                   </div>
                   
-                  <div className="filter-enrolled">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#64748B' }}>
                     <input 
                       type="checkbox" 
                       id="filter-enrolled" 
                       checked={filterEnrolled}
                       onChange={handleFilterEnrolledChange}
+                      style={{ marginRight: '8px' }}
                     />
                     <label htmlFor="filter-enrolled">Hide already enrolled</label>
                   </div>
@@ -466,7 +456,7 @@ const RefresherEnrollment = () => {
                   <button 
                     type="button"
                     onClick={toggleFilters} 
-                    className="btn-toggle-filters"
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#F8FAFC', color: '#64748B', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
                   >
                     <Filter size={18} />
                     <span>Filters</span>
@@ -475,14 +465,14 @@ const RefresherEnrollment = () => {
                 </div>
                 
                 {showFilters && (
-                  <div className="filters-panel">
-                    <div className="filter-group">
-                      <label htmlFor="program-filter">Program:</label>
+                  <div style={{ backgroundColor: '#F8FAFC', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <label htmlFor="program-filter" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>Program:</label>
                       <select 
                         id="program-filter" 
                         value={selectedProgramFilter}
                         onChange={handleProgramFilterChange}
-                        className="filter-select"
+                        style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                       >
                         <option value="all">All Programs</option>
                         {programs.map(program => (
@@ -495,7 +485,7 @@ const RefresherEnrollment = () => {
                   </div>
                 )}
                 
-                <div className="trainees-list">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {getFilteredTrainees().length > 0 ? (
                     getFilteredTrainees().map(trainee => {
                       const alreadyEnrolled = isEnrolled(trainee.id);
@@ -503,26 +493,37 @@ const RefresherEnrollment = () => {
                       return (
                         <div 
                           key={trainee.id} 
-                          className={`trainee-item ${alreadyEnrolled ? 'already-enrolled' : ''}`}
+                          style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '16px', 
+                            padding: '16px', 
+                            backgroundColor: 'white', 
+                            borderRadius: '8px', 
+                            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)', 
+                            cursor: alreadyEnrolled ? 'default' : 'pointer',
+                            opacity: alreadyEnrolled ? 0.7 : 1
+                          }}
                           onClick={() => !alreadyEnrolled && toggleTraineeSelection(trainee.id)}
                         >
-                          <div className="checkbox-container">
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px' }}>
                             <input 
                               type="checkbox" 
                               checked={selectedTrainees.includes(trainee.id)}
                               onChange={() => {}}
                               disabled={alreadyEnrolled}
+                              style={{ cursor: 'pointer' }}
                             />
                           </div>
-                          <div className="trainee-avatar">
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', backgroundColor: '#E3F2FD', borderRadius: '50%', color: '#1E88E5', fontWeight: '600' }}>
                             {trainee.full_name.charAt(0)}
                           </div>
-                          <div className="trainee-info">
-                            <div className="trainee-name">{trainee.full_name}</div>
-                            <div className="trainee-email">{trainee.email}</div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>{trainee.full_name}</div>
+                            <div style={{ fontSize: '12px', color: '#64748B' }}>{trainee.email}</div>
                           </div>
                           {alreadyEnrolled && (
-                            <div className="enrollment-badge">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#2ECC71' }}>
                               <CheckCircle size={14} />
                               <span>Already Enrolled</span>
                             </div>
@@ -531,32 +532,36 @@ const RefresherEnrollment = () => {
                       );
                     })
                   ) : (
-                    <div className="no-trainees-message">
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', padding: '32px', textAlign: 'center', color: '#64748B' }}>
                       <AlertTriangle size={32} />
                       <p>No trainees match your search or filter criteria</p>
                     </div>
                   )}
                 </div>
                 
-                <div className="selection-summary">
+                <div style={{ display: 'flex', justifyContent: 'flex-end', fontSize: '14px', color: '#64748B', marginTop: '16px' }}>
                   <span>{selectedTrainees.length} trainees selected for enrollment</span>
                 </div>
               </div>
             )}
             
-            <div className="form-actions">
-              <button type="button" onClick={handleCancel} className="btn-cancel">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '32px' }}>
+              <button 
+                type="button" 
+                onClick={handleCancel} 
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#F8FAFC', color: '#64748B', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
+              >
                 <XCircle size={18} />
                 Cancel
               </button>
               <button 
                 type="submit" 
-                className="btn-save" 
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#1E88E5', color: 'white', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease', opacity: submitting || !selectedCourse || selectedTrainees.length === 0 ? 0.7 : 1 }}
                 disabled={submitting || !selectedCourse || selectedTrainees.length === 0}
               >
                 {submitting ? (
                   <>
-                    <Clock size={18} className="icon-spin" />
+                    <Clock size={18} style={{ animation: 'spin 1s linear infinite' }} />
                     Enrolling...
                   </>
                 ) : (

@@ -4,7 +4,6 @@ import {
   BookOpen, Calendar, Search, Filter, Clock, 
   CheckCircle, RefreshCw, AlertTriangle, Info
 } from 'lucide-react';
-import './styles/ApplicantPrograms.css';
 import applicantService from '../../../services/applicantService';
 
 const ApplicantPrograms = () => {
@@ -15,22 +14,14 @@ const ApplicantPrograms = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   
-  // Fetch programs and existing applications
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
-        // Get programs and application data from applicant dashboard
         const dashboardData = await applicantService.getDashboardData();
-        
-        // Set applications from dashboard data
         setApplications(dashboardData.myApplications || []);
-        
-        // Get available programs from separate API endpoint
         const programsResponse = await applicantService.getPrograms();
         setPrograms(programsResponse || []);
-        
         setLoading(false);
       } catch (err) {
         console.error('Error fetching programs:', err);
@@ -42,15 +33,12 @@ const ApplicantPrograms = () => {
     fetchData();
   }, []);
   
-  // Filter programs based on search and type
   const getFilteredPrograms = () => {
     return programs.filter(program => {
-      // Filter by program type
       if (filterType !== 'all' && program.type !== filterType) {
         return false;
       }
       
-      // Filter by search query
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         return (
@@ -63,34 +51,27 @@ const ApplicantPrograms = () => {
     });
   };
   
-  // Check if user has already applied to a program
   const hasApplied = (programId) => {
     return applications.some(app => app.program_id === programId);
   };
   
-  // Get application status for a program
   const getApplicationStatus = (programId) => {
     const application = applications.find(app => app.program_id === programId);
     return application ? application.status : null;
   };
   
-  // Format date
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
   
-  // Reset filters
   const resetFilters = () => {
     setSearchQuery('');
     setFilterType('all');
   };
   
-  // Retry loading data
   const retryLoading = () => {
     setLoading(true);
     setError(null);
-    
-    // Re-fetch data on next render cycle
     setTimeout(() => {
       window.location.reload();
     }, 100);
@@ -98,22 +79,32 @@ const ApplicantPrograms = () => {
   
   if (loading) {
     return (
-      <div className="programs-loading">
-        <div className="spinner"></div>
-        <p>Loading programs...</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <RefreshCw size={32} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
+        <p style={{ marginTop: '16px', fontSize: '14px', color: 'var(--text-secondary)' }}>Loading programs...</p>
       </div>
     );
   }
   
   if (error) {
     return (
-      <div className="programs-error">
-        <AlertTriangle size={48} className="error-icon" />
-        <h2>Error</h2>
-        <p>{error}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', textAlign: 'center' }}>
+        <AlertTriangle size={48} style={{ color: 'var(--danger-color)', marginBottom: '16px' }} />
+        <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Error</h2>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>{error}</p>
         <button 
           onClick={retryLoading} 
-          className="btn-primary retry-btn"
+          style={{ 
+            padding: '8px 16px', 
+            borderRadius: '4px', 
+            backgroundColor: 'var(--primary-color)', 
+            color: 'white', 
+            border: 'none', 
+            cursor: 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px' 
+          }}
         >
           <RefreshCw size={16} />
           Retry
@@ -125,67 +116,84 @@ const ApplicantPrograms = () => {
   const filteredPrograms = getFilteredPrograms();
   
   return (
-    <div className="applicant-programs-container">
-      <div className="programs-header">
-        <div className="header-title">
-          <h1><BookOpen size={24} /> Available Programs</h1>
-          <p>Browse and apply for training programs</p>
-        </div>
+    <div style={{ padding: '32px', backgroundColor: 'var(--light-gray)', minHeight: '100vh' }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <BookOpen size={24} /> Available Programs
+        </h1>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Browse and apply for training programs</p>
       </div>
       
-      <div className="programs-filters">
-        <div className="search-filter">
-          <div className="search-input-wrapper">
-            <Search size={18} className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search programs..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
-            />
-            {searchQuery && (
-              <button 
-                className="clear-search" 
-                onClick={() => setSearchQuery('')}
-              >
-                ×
-              </button>
-            )}
-          </div>
+      <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ flex: 1, position: 'relative' }}>
+          <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+          <input
+            type="text"
+            placeholder="Search programs..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ 
+              width: '100%', 
+              padding: '8px 16px 8px 40px', 
+              borderRadius: '4px', 
+              border: '1px solid var(--medium-gray)', 
+              backgroundColor: 'white', 
+              fontSize: '14px', 
+              color: 'var(--text-primary)' 
+            }}
+          />
+          {searchQuery && (
+            <button 
+              onClick={() => setSearchQuery('')}
+              style={{ 
+                position: 'absolute', 
+                right: '12px', 
+                top: '50%', 
+                transform: 'translateY(-50%)', 
+                background: 'none', 
+                border: 'none', 
+                cursor: 'pointer', 
+                color: 'var(--text-secondary)' 
+              }}
+            >
+              ×
+            </button>
+          )}
         </div>
         
-        <div className="filter-group">
-          <div className="filter-label">
-            <Filter size={16} />
-            <span>Program Type:</span>
-          </div>
-          
-          <div className="filter-options">
-            <button 
-              className={`filter-btn ${filterType === 'all' ? 'active' : ''}`}
-              onClick={() => setFilterType('all')}
-            >
-              All
-            </button>
-            <button 
-              className={`filter-btn ${filterType === 'regular' ? 'active' : ''}`}
-              onClick={() => setFilterType('regular')}
-            >
-              Regular
-            </button>
-            <button 
-              className={`filter-btn ${filterType === 'refresher' ? 'active' : ''}`}
-              onClick={() => setFilterType('refresher')}
-            >
-              Refresher
-            </button>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Filter size={16} color="var(--text-secondary)" />
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            style={{ 
+              padding: '8px 16px', 
+              borderRadius: '4px', 
+              border: '1px solid var(--medium-gray)', 
+              backgroundColor: 'white', 
+              fontSize: '14px', 
+              color: 'var(--text-primary)' 
+            }}
+          >
+            <option value="all">All</option>
+            <option value="regular">Regular</option>
+            <option value="refresher">Refresher</option>
+          </select>
         </div>
         
         <button 
-          className="btn-secondary reset-filters" 
           onClick={resetFilters}
+          style={{ 
+            padding: '8px 16px', 
+            borderRadius: '4px', 
+            backgroundColor: 'var(--medium-gray)', 
+            color: 'var(--text-primary)', 
+            border: 'none', 
+            cursor: 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px' 
+          }}
         >
           <RefreshCw size={14} />
           Reset
@@ -193,53 +201,79 @@ const ApplicantPrograms = () => {
       </div>
       
       {filteredPrograms.length === 0 ? (
-        <div className="no-programs">
-          <AlertTriangle size={48} className="no-data-icon" />
-          <h3>No programs found</h3>
-          <p>
+        <div style={{ textAlign: 'center', padding: '32px' }}>
+          <AlertTriangle size={48} style={{ color: 'var(--text-secondary)', marginBottom: '16px' }} />
+          <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>No programs found</h3>
+          <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
             {searchQuery || filterType !== 'all'
               ? 'Try adjusting your search or filters to see more results.'
               : 'There are no programs available at the moment.'}
           </p>
           {(searchQuery || filterType !== 'all') && (
             <button 
-              className="btn-primary"
               onClick={resetFilters}
+              style={{ 
+                padding: '8px 16px', 
+                borderRadius: '4px', 
+                backgroundColor: 'var(--primary-color)', 
+                color: 'white', 
+                border: 'none', 
+                cursor: 'pointer', 
+                marginTop: '16px' 
+              }}
             >
               Clear Filters
             </button>
           )}
         </div>
       ) : (
-        <div className="programs-grid">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
           {filteredPrograms.map(program => {
             const applied = hasApplied(program.id);
             const status = getApplicationStatus(program.id);
             
             return (
-              <div key={program.id} className="program-card">
-                <div className={`program-type ${program.type}`}>
+              <div key={program.id} style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)', overflow: 'hidden' }}>
+                <div style={{ 
+                  padding: '12px', 
+                  backgroundColor: program.type === 'regular' ? 'var(--primary-ultralight)' : 'var(--info-color)', 
+                  color: program.type === 'regular' ? 'var(--primary-color)' : 'white', 
+                  fontSize: '12px', 
+                  fontWeight: '500', 
+                  textAlign: 'center' 
+                }}>
                   {program.type === 'regular' ? 'Regular Program' : 'Refresher Program'}
                 </div>
                 
-                <div className="program-content">
-                  <h3 className="program-title">{program.title}</h3>
+                <div style={{ padding: '16px' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>{program.title}</h3>
                   
                   {program.description && (
-                    <p className="program-description">{program.description}</p>
+                    <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>{program.description}</p>
                   )}
                   
-                  <div className="program-meta">
-                    <div className="meta-item created-date">
-                      <Calendar size={14} />
-                      <span>Created: {formatDate(program.created_at)}</span>
-                    </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                    <Calendar size={14} color="var(--text-secondary)" />
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Created: {formatDate(program.created_at)}</span>
                   </div>
                 </div>
                 
-                <div className="program-status">
+                <div style={{ padding: '16px', borderTop: '1px solid var(--medium-gray)' }}>
                   {applied ? (
-                    <div className={`application-status status-${status}`}>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      padding: '8px', 
+                      borderRadius: '4px', 
+                      backgroundColor: status === 'pending' ? 'var(--warning-color)' : 
+                                    status === 'shortlisted' ? 'var(--info-color)' : 
+                                    status === 'hired' ? 'var(--success-color)' : 
+                                    status === 'rejected' ? 'var(--danger-color)' : 'var(--medium-gray)', 
+                      color: 'white', 
+                      fontSize: '14px', 
+                      fontWeight: '500' 
+                    }}>
                       {status === 'pending' && <Clock size={16} />}
                       {status === 'shortlisted' && <CheckCircle size={16} />}
                       {status === 'hired' && <CheckCircle size={16} />}
@@ -249,7 +283,17 @@ const ApplicantPrograms = () => {
                   ) : (
                     <Link 
                       to={`/applicant/programs/${program.id}/apply`}
-                      className="btn-primary apply-btn"
+                      style={{ 
+                        width: '100%', 
+                        padding: '8px 16px', 
+                        borderRadius: '4px', 
+                        backgroundColor: 'var(--primary-color)', 
+                        color: 'white', 
+                        textAlign: 'center', 
+                        textDecoration: 'none', 
+                        fontSize: '14px', 
+                        fontWeight: '500' 
+                      }}
                     >
                       Apply Now
                     </Link>
@@ -257,14 +301,30 @@ const ApplicantPrograms = () => {
                 </div>
                 
                 {(status === 'shortlisted' || status === 'hired') && (
-                  <div className="application-message success">
+                  <div style={{ 
+                    padding: '12px', 
+                    backgroundColor: 'var(--success-color)', 
+                    color: 'white', 
+                    fontSize: '14px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px' 
+                  }}>
                     <Info size={16} />
                     <span>You have been {status} for this program!</span>
                   </div>
                 )}
                 
                 {status === 'rejected' && (
-                  <div className="application-message error">
+                  <div style={{ 
+                    padding: '12px', 
+                    backgroundColor: 'var(--danger-color)', 
+                    color: 'white', 
+                    fontSize: '14px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px' 
+                  }}>
                     <Info size={16} />
                     <span>Your application has been rejected.</span>
                   </div>
@@ -275,36 +335,84 @@ const ApplicantPrograms = () => {
         </div>
       )}
       
-      <div className="programs-info-section">
-        <h3>Application Process</h3>
-        <div className="process-steps">
-          <div className="process-step">
-            <div className="step-number">1</div>
-            <div className="step-content">
-              <h4>Apply</h4>
-              <p>Submit your application for your preferred program</p>
+      <div style={{ marginTop: '32px', padding: '24px', backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '16px' }}>Application Process</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ 
+              width: '40px', 
+              height: '40px', 
+              borderRadius: '50%', 
+              backgroundColor: 'var(--primary-color)', 
+              color: 'white', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              margin: '0 auto 8px', 
+              fontSize: '18px', 
+              fontWeight: '600' 
+            }}>
+              1
             </div>
+            <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Apply</h4>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Submit your application for your preferred program</p>
           </div>
-          <div className="process-step">
-            <div className="step-number">2</div>
-            <div className="step-content">
-              <h4>Review</h4>
-              <p>Your application will be reviewed by our team</p>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ 
+              width: '40px', 
+              height: '40px', 
+              borderRadius: '50%', 
+              backgroundColor: 'var(--primary-color)', 
+              color: 'white', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              margin: '0 auto 8px', 
+              fontSize: '18px', 
+              fontWeight: '600' 
+            }}>
+              2
             </div>
+            <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Review</h4>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Your application will be reviewed by our team</p>
           </div>
-          <div className="process-step">
-            <div className="step-number">3</div>
-            <div className="step-content">
-              <h4>Assessment</h4>
-              <p>Selected candidates will be invited for further assessment</p>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ 
+              width: '40px', 
+              height: '40px', 
+              borderRadius: '50%', 
+              backgroundColor: 'var(--primary-color)', 
+              color: 'white', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              margin: '0 auto 8px', 
+              fontSize: '18px', 
+              fontWeight: '600' 
+            }}>
+              3
             </div>
+            <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Assessment</h4>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Selected candidates will be invited for further assessment</p>
           </div>
-          <div className="process-step">
-            <div className="step-number">4</div>
-            <div className="step-content">
-              <h4>Enrollment</h4>
-              <p>Successful candidates will be enrolled in the program</p>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ 
+              width: '40px', 
+              height: '40px', 
+              borderRadius: '50%', 
+              backgroundColor: 'var(--primary-color)', 
+              color: 'white', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              margin: '0 auto 8px', 
+              fontSize: '18px', 
+              fontWeight: '600' 
+            }}>
+              4
             </div>
+            <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Enrollment</h4>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Successful candidates will be enrolled in the program</p>
           </div>
         </div>
       </div>

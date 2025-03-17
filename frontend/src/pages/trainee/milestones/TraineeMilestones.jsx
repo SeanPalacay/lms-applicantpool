@@ -6,7 +6,6 @@ import {
 import LoadingSpinner from '../../../components/shared/LoadingSpinner'; // Assuming you have this
 import AlertBanner from '../../../components/shared/AlertBanner'; // Assuming you have this
 import traineeService from '../../../services/traineeService';
-import './styles/TraineeMilestones.css';
 
 const TraineeMilestones = () => {
   const [milestones, setMilestones] = useState([]);
@@ -96,9 +95,9 @@ const TraineeMilestones = () => {
 
   const getMilestoneStatusClass = (status) => {
     switch (status) {
-      case 'completed': return 'status-completed';
-      case 'in_progress': return 'status-in-progress';
-      case 'not_started': default: return 'status-not-started';
+      case 'completed': return { backgroundColor: 'var(--primary-ultralight)', color: 'var(--primary-color)' };
+      case 'in_progress': return { backgroundColor: 'rgba(243, 156, 18, 0.1)', color: 'var(--warning-color)' };
+      case 'not_started': default: return { backgroundColor: 'var(--light-gray)', color: 'var(--text-secondary)' };
     }
   };
 
@@ -146,11 +145,36 @@ const TraineeMilestones = () => {
 
   if (loading) return <LoadingSpinner />;
   if (error) return (
-    <div className="milestones-error">
-      <AlertTriangle size={48} className="error-icon" />
-      <h2>Error</h2>
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      gap: 'var(--spacing-md)', 
+      padding: 'var(--spacing-xl)', 
+      textAlign: 'center', 
+      color: 'var(--text-secondary)',
+    }}>
+      <AlertTriangle size={48} style={{ color: 'var(--danger-color)' }} />
+      <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>Error</h2>
       <p>{error}</p>
-      <button onClick={() => setLoading(true)} className="btn-primary retry-btn">
+      <button 
+        onClick={() => setLoading(true)} 
+        style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 'var(--spacing-xs)', 
+          padding: 'var(--spacing-sm) var(--spacing-md)', 
+          backgroundColor: 'var(--primary-color)', 
+          color: 'white', 
+          borderRadius: 'var(--radius-md)', 
+          border: 'none', 
+          cursor: 'pointer',
+          transition: 'background-color var(--transition-fast)',
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-dark)'}
+        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-color)'}
+      >
         <RefreshCw size={16} /> Retry
       </button>
     </div>
@@ -159,88 +183,129 @@ const TraineeMilestones = () => {
   const filteredMilestones = getFilteredMilestones();
 
   return (
-    <div className="trainee-milestones-container">
-      <div className="milestones-header">
-        <div className="header-title">
-          <h1><Flag size={24} /> Milestones</h1>
-          <p>Track your progress with program milestones</p>
+    <div style={{ padding: 'var(--spacing-xl)', backgroundColor: 'var(--light-gray)', minHeight: '100vh' }}>
+      <div style={{ marginBottom: 'var(--spacing-xl)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-sm)' }}>
+          <Flag size={24} style={{ color: 'var(--primary-color)' }} />
+          <h1 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>Milestones</h1>
         </div>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Track your progress with program milestones</p>
       </div>
 
-      <div className="milestone-stats">
-        <div className="stat-card">
-          <div className="stat-value">{allStats.total}</div>
-          <div className="stat-label">Total Milestones</div>
-        </div>
-        <div className="stat-card completed">
-          <div className="stat-value">{allStats.completed}</div>
-          <div className="stat-label">Completed</div>
-        </div>
-        <div className="stat-card in-progress">
-          <div className="stat-value">{allStats.inProgress}</div>
-          <div className="stat-label">In Progress</div>
-        </div>
-        <div className="stat-card not-started">
-          <div className="stat-value">{allStats.notStarted}</div>
-          <div className="stat-label">Not Started</div>
-        </div>
-        <div className="stat-card upcoming">
-          <div className="stat-value">{allStats.dueThisWeek}</div>
-          <div className="stat-label">Due This Week</div>
-        </div>
-        <div className="stat-card overdue">
-          <div className="stat-value">{allStats.overdue}</div>
-          <div className="stat-label">Overdue</div>
-        </div>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+        gap: 'var(--spacing-md)', 
+        marginBottom: 'var(--spacing-xl)',
+      }}>
+        {Object.entries(allStats).map(([key, value]) => (
+          <div key={key} style={{ 
+            backgroundColor: 'white', 
+            padding: 'var(--spacing-md)', 
+            borderRadius: 'var(--radius-md)', 
+            boxShadow: 'var(--shadow-sm)', 
+            textAlign: 'center',
+          }}>
+            <div style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>{value}</div>
+            <div style={{ fontSize: '14px', color: 'var(--text-secondary)', textTransform: 'capitalize' }}>
+              {key.replace(/([A-Z])/g, ' $1').trim()}
+            </div>
+          </div>
+        ))}
       </div>
 
-      <div className="milestones-filters">
-        <div className="search-filter">
-          <div className="search-input-wrapper">
-            <Search size={18} className="search-icon" />
+      <div style={{ 
+        display: 'flex', 
+        flexWrap: 'wrap', 
+        gap: 'var(--spacing-md)', 
+        marginBottom: 'var(--spacing-xl)',
+      }}>
+        <div style={{ flex: 1, maxWidth: '400px' }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 'var(--spacing-sm)', 
+            backgroundColor: 'white', 
+            padding: 'var(--spacing-sm)', 
+            borderRadius: 'var(--radius-md)', 
+            boxShadow: 'var(--shadow-sm)',
+          }}>
+            <Search size={18} style={{ color: 'var(--text-secondary)' }} />
             <input
               type="text"
               placeholder="Search milestones..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
+              style={{ 
+                flex: 1, 
+                border: 'none', 
+                outline: 'none', 
+                fontSize: '14px', 
+                color: 'var(--text-primary)',
+              }}
             />
             {searchQuery && (
-              <button className="clear-search" onClick={() => setSearchQuery('')}>
+              <button 
+                onClick={() => setSearchQuery('')} 
+                style={{ 
+                  backgroundColor: 'transparent', 
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  color: 'var(--text-secondary)',
+                }}
+              >
                 ×
               </button>
             )}
           </div>
         </div>
 
-        <div className="filter-group">
-          <div className="filter-label">
-            <Filter size={16} />
-            <span>Filter by Status:</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+            <Filter size={16} style={{ color: 'var(--text-secondary)' }} />
+            <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Filter by Status:</span>
           </div>
-          <div className="filter-options">
-            <button className={`filter-btn ${filterStatus === 'all' ? 'active' : ''}`} onClick={() => setFilterStatus('all')}>
-              All
-            </button>
-            <button className={`filter-btn ${filterStatus === 'completed' ? 'active' : ''}`} onClick={() => setFilterStatus('completed')}>
-              <CheckCircle size={14} /> Completed
-            </button>
-            <button className={`filter-btn ${filterStatus === 'in_progress' ? 'active' : ''}`} onClick={() => setFilterStatus('in_progress')}>
-              <Clock size={14} /> In Progress
-            </button>
-            <button className={`filter-btn ${filterStatus === 'not_started' ? 'active' : ''}`} onClick={() => setFilterStatus('not_started')}>
-              <AlertTriangle size={14} /> Not Started
-            </button>
+          <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
+            {['all', 'completed', 'in_progress', 'not_started'].map(status => (
+              <button
+                key={status}
+                onClick={() => setFilterStatus(status)}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 'var(--spacing-xs)', 
+                  padding: 'var(--spacing-xs) var(--spacing-sm)', 
+                  backgroundColor: filterStatus === status ? 'var(--primary-color)' : 'transparent', 
+                  color: filterStatus === status ? 'white' : 'var(--text-secondary)', 
+                  border: `1px solid ${filterStatus === status ? 'var(--primary-color)' : 'var(--medium-gray)'}`, 
+                  borderRadius: 'var(--radius-md)', 
+                  cursor: 'pointer',
+                  transition: 'all var(--transition-fast)',
+                }}
+              >
+                {status === 'completed' && <CheckCircle size={14} />}
+                {status === 'in_progress' && <Clock size={14} />}
+                {status === 'not_started' && <AlertTriangle size={14} />}
+                <span>{status.replace('_', ' ')}</span>
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="program-filter">
-          <label htmlFor="program-select">Program:</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+          <label htmlFor="program-select" style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Program:</label>
           <select
             id="program-select"
             value={selectedProgram}
             onChange={(e) => setSelectedProgram(e.target.value)}
-            className="program-select"
+            style={{ 
+              padding: 'var(--spacing-xs) var(--spacing-sm)', 
+              border: '1px solid var(--medium-gray)', 
+              borderRadius: 'var(--radius-md)', 
+              outline: 'none', 
+              fontSize: '14px', 
+              color: 'var(--text-primary)',
+            }}
           >
             <option value="all">All Programs</option>
             {programs.map(program => (
@@ -249,76 +314,159 @@ const TraineeMilestones = () => {
           </select>
         </div>
 
-        <button className="btn-secondary reset-filters" onClick={resetFilters}>
+        <button 
+          onClick={resetFilters} 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 'var(--spacing-xs)', 
+            padding: 'var(--spacing-xs) var(--spacing-sm)', 
+            backgroundColor: 'transparent', 
+            color: 'var(--text-secondary)', 
+            border: '1px solid var(--medium-gray)', 
+            borderRadius: 'var(--radius-md)', 
+            cursor: 'pointer',
+            transition: 'all var(--transition-fast)',
+          }}
+        >
           <RefreshCw size={14} /> Reset Filters
         </button>
       </div>
 
       {filteredMilestones.length === 0 ? (
-        <div className="no-milestones">
-          <AlertTriangle size={48} className="no-data-icon" />
-          <h3>No milestones found</h3>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          gap: 'var(--spacing-md)', 
+          padding: 'var(--spacing-xl)', 
+          textAlign: 'center', 
+          color: 'var(--text-secondary)',
+        }}>
+          <AlertTriangle size={48} style={{ color: 'var(--danger-color)' }} />
+          <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)' }}>No milestones found</h3>
           <p>
             {searchQuery || filterStatus !== 'all' || selectedProgram !== 'all'
               ? 'Try adjusting your search or filters to see more results.'
               : 'No milestones have been assigned to you yet.'}
           </p>
           {(searchQuery || filterStatus !== 'all' || selectedProgram !== 'all') && (
-            <button className="btn-primary" onClick={resetFilters}>Clear Filters</button>
+            <button 
+              onClick={resetFilters} 
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 'var(--spacing-xs)', 
+                padding: 'var(--spacing-sm) var(--spacing-md)', 
+                backgroundColor: 'var(--primary-color)', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: 'var(--radius-md)', 
+                cursor: 'pointer',
+                transition: 'background-color var(--transition-fast)',
+              }}
+            >
+              Clear Filters
+            </button>
           )}
         </div>
       ) : (
-        <div className="milestones-list">
+        <div style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
           {filteredMilestones.map(milestone => (
             <div
               key={milestone.id}
-              className={`milestone-card ${isOverdue(milestone.due_date) && milestone.status !== 'completed' ? 'overdue' : ''}`}
+              style={{ 
+                backgroundColor: 'white', 
+                padding: 'var(--spacing-md)', 
+                borderRadius: 'var(--radius-md)', 
+                boxShadow: 'var(--shadow-sm)', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: 'var(--spacing-md)',
+                borderLeft: `4px solid ${isOverdue(milestone.due_date) && milestone.status !== 'completed' ? 'var(--danger-color)' : 'transparent'}`,
+              }}
             >
-              <div className={`milestone-status ${getMilestoneStatusClass(milestone.status)}`}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 'var(--spacing-sm)', 
+                padding: 'var(--spacing-xs) var(--spacing-sm)', 
+                borderRadius: 'var(--radius-sm)', 
+                ...getMilestoneStatusClass(milestone.status),
+              }}>
                 {getMilestoneStatusIcon(milestone.status)}
-                <span className="status-text">{milestone.status.replace('_', ' ')}</span>
+                <span style={{ fontSize: '14px', fontWeight: '500' }}>{milestone.status.replace('_', ' ')}</span>
               </div>
 
-              <div className="milestone-content">
-                <h3 className="milestone-title">{milestone.title}</h3>
-                {milestone.description && <p className="milestone-description">{milestone.description}</p>}
-                <div className="milestone-meta">
-                  <div className="meta-item program">
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: 'var(--spacing-xs)' }}>
+                  {milestone.title}
+                </h3>
+                {milestone.description && (
+                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-md)' }}>
+                    {milestone.description}
+                  </p>
+                )}
+                <div style={{ display: 'flex', gap: 'var(--spacing-md)', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
                     <BookOpen size={14} />
                     <span>{milestone.program_title}</span>
                   </div>
-                  <div className={`meta-item due-date ${isOverdue(milestone.due_date) && milestone.status !== 'completed' ? 'overdue' : ''}`}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
                     <Calendar size={14} />
                     <span>
                       Due: {new Date(milestone.due_date).toLocaleDateString()}
                       {isOverdue(milestone.due_date) && milestone.status !== 'completed' && (
-                        <span className="overdue-label"> (Overdue)</span>
+                        <span style={{ color: 'var(--danger-color)', marginLeft: 'var(--spacing-xs)' }}>(Overdue)</span>
                       )}
                     </span>
                   </div>
                 </div>
                 {milestone.completion_date && (
-                  <div className="completion-date">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', marginTop: 'var(--spacing-sm)' }}>
                     <CheckSquare size={14} />
                     <span>Completed on: {new Date(milestone.completion_date).toLocaleDateString()}</span>
                   </div>
                 )}
               </div>
 
-              <div className="milestone-actions">
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 {milestone.status === 'completed' ? (
                   <button
-                    className="btn-outline"
                     onClick={() => markAsInProgress(milestone.id)}
                     disabled={completingMilestone === milestone.id}
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 'var(--spacing-xs)', 
+                      padding: 'var(--spacing-xs) var(--spacing-sm)', 
+                      backgroundColor: 'transparent', 
+                      color: 'var(--text-secondary)', 
+                      border: '1px solid var(--medium-gray)', 
+                      borderRadius: 'var(--radius-md)', 
+                      cursor: 'pointer',
+                      transition: 'all var(--transition-fast)',
+                    }}
                   >
                     {completingMilestone === milestone.id ? 'Updating...' : 'Mark as In Progress'}
                   </button>
                 ) : (
                   <button
-                    className="btn-primary"
                     onClick={() => markAsComplete(milestone.id)}
                     disabled={completingMilestone === milestone.id}
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 'var(--spacing-xs)', 
+                      padding: 'var(--spacing-xs) var(--spacing-sm)', 
+                      backgroundColor: 'var(--primary-color)', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: 'var(--radius-md)', 
+                      cursor: 'pointer',
+                      transition: 'background-color var(--transition-fast)',
+                    }}
                   >
                     {completingMilestone === milestone.id ? 'Completing...' : 'Mark as Complete'}
                   </button>

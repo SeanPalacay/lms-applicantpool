@@ -8,7 +8,6 @@ import {
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
 import trainerService from '../../../services/trainerService';
-import './styles/RefresherCourses.css';
 
 /**
  * RefresherCourses Component
@@ -132,24 +131,34 @@ const RefresherCourses = () => {
 
   // Get status badge
   const getStatusBadge = (status) => {
+    const badgeStyle = {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 'var(--spacing-xs)',
+      padding: 'var(--spacing-xs) var(--spacing-sm)',
+      borderRadius: 'var(--radius-sm)',
+      fontSize: '12px',
+      fontWeight: '500',
+    };
+
     switch(status) {
       case 'active':
         return (
-          <div className="status-badge status-active">
+          <div style={{ ...badgeStyle, backgroundColor: 'var(--primary-ultralight)', color: 'var(--primary-color)' }}>
             <CheckCircle size={14} />
             <span>Active</span>
           </div>
         );
       case 'draft':
         return (
-          <div className="status-badge status-draft">
+          <div style={{ ...badgeStyle, backgroundColor: 'var(--light-gray)', color: 'var(--text-secondary)' }}>
             <FileText size={14} />
             <span>Draft</span>
           </div>
         );
       case 'archived':
         return (
-          <div className="status-badge status-archived">
+          <div style={{ ...badgeStyle, backgroundColor: 'rgba(231, 76, 60, 0.1)', color: 'var(--danger-color)' }}>
             <AlertTriangle size={14} />
             <span>Archived</span>
           </div>
@@ -177,21 +186,51 @@ const RefresherCourses = () => {
   }
 
   return (
-    <div className="refresher-courses-container">
+    <div style={{ padding: 'var(--spacing-xl)', backgroundColor: 'var(--light-gray)', minHeight: '100vh' }}>
       {error && <AlertBanner message={error} type="error" />}
       
       {/* Header with action buttons */}
-      <div className="refresher-header">
-        <div className="header-title">
-          <RotateCw size={24} className="header-icon" />
-          <h2>Refresher Courses</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-lg)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)' }}>
+          <RotateCw size={24} style={{ color: 'var(--primary-color)' }} />
+          <h2 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>Refresher Courses</h2>
         </div>
-        <div className="header-actions">
-          <Link to="/trainer/refresher-courses/create" className="btn-create">
+        <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+          <Link 
+            to="/trainer/refresher-courses/create" 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 'var(--spacing-xs)', 
+              padding: 'var(--spacing-sm) var(--spacing-md)', 
+              backgroundColor: 'var(--primary-color)', 
+              color: 'white', 
+              borderRadius: 'var(--radius-md)', 
+              textDecoration: 'none',
+              transition: 'background-color var(--transition-fast)',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-dark)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-color)'}
+          >
             <Plus size={18} />
             <span>Create Course</span>
           </Link>
-          <Link to="/trainer/refresher-enrollment" className="btn-enroll">
+          <Link 
+            to="/trainer/refresher-enrollment" 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 'var(--spacing-xs)', 
+              padding: 'var(--spacing-sm) var(--spacing-md)', 
+              backgroundColor: 'var(--secondary-color)', 
+              color: 'white', 
+              borderRadius: 'var(--radius-md)', 
+              textDecoration: 'none',
+              transition: 'background-color var(--transition-fast)',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#28a79c'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-color)'}
+          >
             <Users size={18} />
             <span>Enroll Trainees</span>
           </Link>
@@ -199,35 +238,73 @@ const RefresherCourses = () => {
       </div>
       
       {/* Search and filter bar */}
-      <div className="search-filter-bar">
-        <div className="search-container">
-          <Search size={18} className="search-icon" />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-md)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', flex: 1, maxWidth: '400px' }}>
+          <Search size={18} style={{ color: 'var(--text-secondary)' }} />
           <input 
             type="text" 
             placeholder="Search refresher courses..." 
             value={searchQuery}
             onChange={handleSearchChange}
-            className="search-input"
+            style={{ 
+              flex: 1, 
+              padding: 'var(--spacing-sm)', 
+              border: '1px solid var(--medium-gray)', 
+              borderRadius: 'var(--radius-md)', 
+              outline: 'none',
+              transition: 'border-color var(--transition-fast)',
+            }}
+            onFocus={(e) => e.currentTarget.style.borderColor = 'var(--primary-color)'}
+            onBlur={(e) => e.currentTarget.style.borderColor = 'var(--medium-gray)'}
           />
         </div>
         
-        <button onClick={toggleFilters} className="btn-toggle-filters">
-          <Filter size={18} />
-          <span>Filters</span>
+        <button 
+          onClick={toggleFilters} 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 'var(--spacing-xs)', 
+            padding: 'var(--spacing-sm) var(--spacing-md)', 
+            backgroundColor: 'transparent', 
+            border: '1px solid var(--medium-gray)', 
+            borderRadius: 'var(--radius-md)', 
+            cursor: 'pointer',
+            transition: 'background-color var(--transition-fast)',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--light-gray)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+        >
+          <Filter size={18} style={{ color: 'var(--text-secondary)' }} />
+          <span style={{ color: 'var(--text-secondary)' }}>Filters</span>
           {showFilters ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </button>
       </div>
       
       {/* Filters panel */}
       {showFilters && (
-        <div className="filters-panel">
-          <div className="filter-group">
-            <label htmlFor="status-filter">Status:</label>
+        <div style={{ 
+          padding: 'var(--spacing-md)', 
+          backgroundColor: 'white', 
+          borderRadius: 'var(--radius-md)', 
+          marginBottom: 'var(--spacing-md)', 
+          boxShadow: 'var(--shadow-sm)',
+        }}>
+          <div style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'center' }}>
+            <label htmlFor="status-filter" style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Status:</label>
             <select 
               id="status-filter" 
               value={filterStatus}
               onChange={handleStatusFilterChange}
-              className="filter-select"
+              style={{ 
+                padding: 'var(--spacing-sm)', 
+                border: '1px solid var(--medium-gray)', 
+                borderRadius: 'var(--radius-md)', 
+                outline: 'none',
+                transition: 'border-color var(--transition-fast)',
+              }}
+              onFocus={(e) => e.currentTarget.style.borderColor = 'var(--primary-color)'}
+              onBlur={(e) => e.currentTarget.style.borderColor = 'var(--medium-gray)'}
             >
               <option value="all">All Statuses</option>
               <option value="active">Active</option>
@@ -240,11 +317,19 @@ const RefresherCourses = () => {
       
       {/* Refresher Courses List */}
       {filteredCourses.length > 0 ? (
-        <div className="refresher-courses-list">
+        <div style={{ backgroundColor: 'white', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-sm)' }}>
           {/* Table header */}
-          <div className="refresher-table-header">
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '2fr 3fr 1fr 1fr 1fr 1fr', 
+            gap: 'var(--spacing-md)', 
+            padding: 'var(--spacing-md)', 
+            borderBottom: '1px solid var(--medium-gray)', 
+            fontWeight: '600', 
+            color: 'var(--text-secondary)',
+          }}>
             <div 
-              className={`refresher-header title-col ${sortField === 'title' ? 'sorted' : ''}`}
+              style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}
               onClick={() => handleSort('title')}
             >
               <span>Title</span>
@@ -252,11 +337,9 @@ const RefresherCourses = () => {
                 sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
               )}
             </div>
-            <div className="refresher-header description-col">
-              <span>Description</span>
-            </div>
+            <div>Description</div>
             <div 
-              className={`refresher-header date-col ${sortField === 'created_at' ? 'sorted' : ''}`}
+              style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}
               onClick={() => handleSort('created_at')}
             >
               <span>Created</span>
@@ -265,7 +348,7 @@ const RefresherCourses = () => {
               )}
             </div>
             <div 
-              className={`refresher-header enrollments-col ${sortField === 'enrollments' ? 'sorted' : ''}`}
+              style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}
               onClick={() => handleSort('enrollments')}
             >
               <span>Enrollments</span>
@@ -273,12 +356,8 @@ const RefresherCourses = () => {
                 sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
               )}
             </div>
-            <div className="refresher-header completion-col">
-              <span>Completion Rate</span>
-            </div>
-            <div className="refresher-header status-col">
-              <span>Status</span>
-            </div>
+            <div>Completion Rate</div>
+            <div>Status</div>
           </div>
           
           {/* Table rows */}
@@ -286,14 +365,25 @@ const RefresherCourses = () => {
             <Link 
               to={`/trainer/refresher-courses/${course.id}`} 
               key={course.id}
-              className="refresher-item"
+              style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '2fr 3fr 1fr 1fr 1fr 1fr', 
+                gap: 'var(--spacing-md)', 
+                padding: 'var(--spacing-md)', 
+                borderBottom: '1px solid var(--medium-gray)', 
+                textDecoration: 'none', 
+                color: 'var(--text-primary)',
+                transition: 'background-color var(--transition-fast)',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--light-gray)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
-              <div className="refresher-col title-col">
-                <RotateCw size={18} className="refresher-icon" />
-                <span className="refresher-title">{course.title}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+                <RotateCw size={18} style={{ color: 'var(--primary-color)' }} />
+                <span style={{ fontWeight: '500' }}>{course.title}</span>
               </div>
-              <div className="refresher-col description-col">
-                <p className="refresher-description">
+              <div>
+                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>
                   {course.description ? 
                     (course.description.length > 80 ? 
                       course.description.substring(0, 80) + '...' : 
@@ -301,39 +391,67 @@ const RefresherCourses = () => {
                     'No description'}
                 </p>
               </div>
-              <div className="refresher-col date-col">
-                <Calendar size={16} className="col-icon" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', color: 'var(--text-secondary)' }}>
+                <Calendar size={16} />
                 <span>{formatDate(course.created_at)}</span>
               </div>
-              <div className="refresher-col enrollments-col">
-                <Users size={16} className="col-icon" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', color: 'var(--text-secondary)' }}>
+                <Users size={16} />
                 <span>{course.enrollments?.length || 0} trainees</span>
               </div>
-              <div className="refresher-col completion-col">
-                <div className="progress-bar">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+                <div style={{ flex: 1, height: '8px', backgroundColor: 'var(--light-gray)', borderRadius: 'var(--radius-full)' }}>
                   <div 
-                    className="progress-fill" 
-                    style={{ width: `${calculateCompletionRate(course)}%` }}
+                    style={{ 
+                      width: `${calculateCompletionRate(course)}%`, 
+                      height: '100%', 
+                      backgroundColor: 'var(--primary-color)', 
+                      borderRadius: 'var(--radius-full)',
+                    }}
                   ></div>
                 </div>
-                <span className="completion-rate">{calculateCompletionRate(course)}%</span>
+                <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{calculateCompletionRate(course)}%</span>
               </div>
-              <div className="refresher-col status-col">
+              <div>
                 {getStatusBadge(course.status)}
               </div>
             </Link>
           ))}
         </div>
       ) : (
-        <div className="no-refresher-courses-message">
-          <RotateCw size={48} />
-          <h3>No refresher courses found</h3>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          gap: 'var(--spacing-md)', 
+          padding: 'var(--spacing-xl)', 
+          textAlign: 'center', 
+          color: 'var(--text-secondary)',
+        }}>
+          <RotateCw size={48} style={{ color: 'var(--primary-color)' }} />
+          <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)' }}>No refresher courses found</h3>
           <p>
             {searchQuery || filterStatus !== 'all'
               ? 'Try adjusting your search or filters'
               : 'Get started by creating your first refresher course'}
           </p>
-          <Link to="/trainer/refresher-courses/create" className="btn-create-large">
+          <Link 
+            to="/trainer/refresher-courses/create" 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 'var(--spacing-xs)', 
+              padding: 'var(--spacing-sm) var(--spacing-md)', 
+              backgroundColor: 'var(--primary-color)', 
+              color: 'white', 
+              borderRadius: 'var(--radius-md)', 
+              textDecoration: 'none',
+              transition: 'background-color var(--transition-fast)',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-dark)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-color)'}
+          >
             <Plus size={18} />
             Create Refresher Course
           </Link>

@@ -14,14 +14,12 @@ import {
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
 import applicantService from '../../../services/applicantService';
-import './styles/ApplicantDashboard.css';
 
 const ApplicantDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // This mirrors the structure from the server
   const [dashboardData, setDashboardData] = useState({
     user: {
       full_name: '',
@@ -70,33 +68,44 @@ const ApplicantDashboard = () => {
   const { user, myApplications, notifications, alerts } = dashboardData;
 
   return (
-    <div className="applicant-dashboard">
+    <div style={{ padding: '32px', backgroundColor: 'var(--light-gray)', minHeight: '100vh' }}>
       {error && <AlertBanner type="error" message={error} />}
 
-      <div className="welcome-section">
-        <h1>Welcome, {user.full_name}</h1>
-        <p>Track your applications and stay updated on your application status.</p>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>Welcome, {user.full_name}</h1>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Track your applications and stay updated on your application status.</p>
       </div>
 
       {alerts && alerts.length > 0 && (
-        <div className="alerts-section">
-          <div className="section-header">
-            <h2>Alerts & Notifications</h2>
-            <div className="header-line"></div>
+        <div style={{ marginBottom: '32px' }}>
+          <div style={{ marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)' }}>Alerts & Notifications</h2>
+            <div style={{ height: '1px', backgroundColor: 'var(--medium-gray)', marginTop: '8px' }}></div>
           </div>
-          <div className="alerts-container">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {alerts.map((alert, index) => (
-              <div key={index} className={`alert-card alert-${alert.type || 'info'}`}>
-                <div className="alert-icon">
+              <div 
+                key={index} 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '12px', 
+                  padding: '16px', 
+                  borderRadius: '8px', 
+                  backgroundColor: alert.type === 'warning' ? 'var(--warning-color)' : 'var(--info-color)', 
+                  color: 'white' 
+                }}
+              >
+                <div>
                   {alert.type === 'warning' ? (
                     <AlertTriangle size={20} />
                   ) : (
                     <Info size={20} />
                   )}
                 </div>
-                <div className="alert-content">
-                  <h4>{alert.title || 'Alert'}</h4>
-                  <p>{alert.message}</p>
+                <div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>{alert.title || 'Alert'}</h4>
+                  <p style={{ fontSize: '14px' }}>{alert.message}</p>
                 </div>
               </div>
             ))}
@@ -104,145 +113,203 @@ const ApplicantDashboard = () => {
         </div>
       )}
 
-      <div className="dashboard-grid">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginBottom: '32px' }}>
         {/* Applications Card */}
-        <div className="dashboard-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <Briefcase size={20} />
-            </div>
-            <div className="header-content">
-              <h3>My Applications</h3>
-              <Link to="/applicant/applications" className="view-all-link">
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <Briefcase size={20} color="var(--text-secondary)" />
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)' }}>My Applications</h3>
+              <Link 
+                to="/applicant/applications" 
+                style={{ marginLeft: 'auto', fontSize: '14px', color: 'var(--primary-color)', textDecoration: 'none' }}
+              >
                 View All
               </Link>
             </div>
           </div>
-          <div className="card-content">
+          <div style={{ padding: '16px' }}>
             {myApplications.length > 0 ? (
               myApplications.map((app) => (
-                <div key={app.application_id} className="application-item">
-                  <h4>{app.program_title}</h4>
-                  <div className="application-details">
-                    <div className="detail-item">
-                      <User size={14} className="icon-inline" />
-                      <span>Job Role: {app.job_role}</span>
+                <div key={app.application_id} style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+                  <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>{app.program_title}</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <User size={14} color="var(--text-secondary)" />
+                      <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Job Role: {app.job_role}</span>
                     </div>
-                    <div className="detail-item">
-                      <Building size={14} className="icon-inline" />
-                      <span>Department: {app.department}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Building size={14} color="var(--text-secondary)" />
+                      <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Department: {app.department}</span>
                     </div>
-                    <div className="detail-item">
-                      <FileText size={14} className="icon-inline" />
-                      <span>Status: <span className={`status-badge status-${app.status.toLowerCase()}`}>{app.status}</span></span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <FileText size={14} color="var(--text-secondary)" />
+                      <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+                        Status: <span style={{ 
+                          padding: '4px 8px', 
+                          borderRadius: '4px', 
+                          backgroundColor: app.status.toLowerCase() === 'pending' ? 'var(--warning-color)' : 
+                                        app.status.toLowerCase() === 'approved' ? 'var(--success-color)' : 
+                                        app.status.toLowerCase() === 'rejected' ? 'var(--danger-color)' : 'var(--info-color)', 
+                          color: 'white' 
+                        }}>
+                          {app.status}
+                        </span>
+                      </span>
                     </div>
                     {app.evaluation_score && (
-                      <div className="detail-item">
-                        <span>Evaluation Score: {app.evaluation_score}</span>
+                      <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+                        Evaluation Score: {app.evaluation_score}
                       </div>
                     )}
                     {app.fst_score && (
-                      <div className="detail-item">
-                        <span>FST Score: {app.fst_score}</span>
+                      <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+                        FST Score: {app.fst_score}
                       </div>
                     )}
                   </div>
-                  <div className="application-dates">
-                    <div className="date-item">
-                      <Calendar size={12} className="icon-inline" />
-                      <span>Applied: {new Date(app.applied_at).toLocaleDateString()}</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Calendar size={12} color="var(--text-secondary)" />
+                      <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Applied: {new Date(app.applied_at).toLocaleDateString()}</span>
                     </div>
                     {app.updated_at && (
-                      <div className="date-item">
-                        <Calendar size={12} className="icon-inline" />
-                        <span>Updated: {new Date(app.updated_at).toLocaleDateString()}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Calendar size={12} color="var(--text-secondary)" />
+                        <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Updated: {new Date(app.updated_at).toLocaleDateString()}</span>
                       </div>
                     )}
                   </div>
-                  <Link to={`/applicant/applications/${app.application_id}`} className="view-details-link">
-                    View Details <ChevronRight size={14} className="icon-inline" />
+                  <Link 
+                    to={`/applicant/applications/${app.application_id}`} 
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      fontSize: '14px', 
+                      color: 'var(--primary-color)', 
+                      textDecoration: 'none', 
+                      marginTop: '12px' 
+                    }}
+                  >
+                    View Details <ChevronRight size={14} />
                   </Link>
                 </div>
               ))
             ) : (
-              <div className="no-data-message">
-                <p>You have not submitted any applications yet.</p>
-                <div className="card-actions">
-                  <Link to="/applicant/programs" className="action-button primary">
-                    Apply for a Program
-                  </Link>
-                </div>
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>You have not submitted any applications yet.</p>
+                <Link 
+                  to="/applicant/programs" 
+                  style={{ 
+                    padding: '8px 16px', 
+                    borderRadius: '4px', 
+                    backgroundColor: 'var(--primary-color)', 
+                    color: 'white', 
+                    textDecoration: 'none', 
+                    fontSize: '14px', 
+                    fontWeight: '500' 
+                  }}
+                >
+                  Apply for a Program
+                </Link>
               </div>
             )}
           </div>
         </div>
 
         {/* Notifications Card */}
-        <div className="dashboard-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <Bell size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Recent Notifications</h3>
-              <Link to="/applicant/notifications" className="view-all-link">
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <Bell size={20} color="var(--text-secondary)" />
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)' }}>Recent Notifications</h3>
+              <Link 
+                to="/applicant/notifications" 
+                style={{ marginLeft: 'auto', fontSize: '14px', color: 'var(--primary-color)', textDecoration: 'none' }}
+              >
                 View All
               </Link>
             </div>
           </div>
-          <div className="card-content">
+          <div style={{ padding: '16px' }}>
             {notifications.length > 0 ? (
               notifications.map((notification) => (
-                <div key={notification.id} className={`notification-item notif-${notification.type}`}>
-                  <div className="notification-content">
-                    <h4>{notification.title}</h4>
-                    <p>{notification.message}</p>
-                    <div className="notification-time">
-                      <Calendar size={12} className="icon-inline" /> {new Date(notification.created_at).toLocaleString()}
-                    </div>
+                <div 
+                  key={notification.id} 
+                  style={{ 
+                    marginBottom: '16px', 
+                    paddingBottom: '16px', 
+                    borderBottom: '1px solid var(--medium-gray)' 
+                  }}
+                >
+                  <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>{notification.title}</h4>
+                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '8px' }}>{notification.message}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Calendar size={12} color="var(--text-secondary)" />
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{new Date(notification.created_at).toLocaleString()}</span>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="no-data-message">
-                <p>No recent notifications.</p>
-              </div>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', textAlign: 'center' }}>No recent notifications.</p>
             )}
           </div>
         </div>
 
-        {/* Additional Resources Card */}
-        <div className="dashboard-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <FileText size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Resources</h3>
+        {/* Resources Card */}
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <FileText size={20} color="var(--text-secondary)" />
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)' }}>Resources</h3>
             </div>
           </div>
-          <div className="card-content">
-            <div className="resource-list">
-              <Link to="/applicant/resources/faq" className="resource-item">
-                <h4>Frequently Asked Questions</h4>
-                <p>Find answers to common questions about the application process.</p>
+          <div style={{ padding: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <Link 
+                to="/applicant/resources/faq" 
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Frequently Asked Questions</h4>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Find answers to common questions about the application process.</p>
               </Link>
-              <Link to="/applicant/resources/tips" className="resource-item">
-                <h4>Application Tips</h4>
-                <p>Get tips on how to improve your application and stand out.</p>
+              <Link 
+                to="/applicant/resources/tips" 
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Application Tips</h4>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Get tips on how to improve your application and stand out.</p>
               </Link>
-              <Link to="/applicant/resources/requirements" className="resource-item">
-                <h4>Program Requirements</h4>
-                <p>Learn about the requirements for different programs.</p>
+              <Link 
+                to="/applicant/resources/requirements" 
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <h4 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Program Requirements</h4>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Learn about the requirements for different programs.</p>
               </Link>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="dashboard-actions">
-        <Link to="/applicant/programs" className="action-button primary">
-          <Briefcase size={16} className="icon-inline" /> Apply for a Program
+      <div style={{ textAlign: 'center', marginTop: '32px' }}>
+        <Link 
+          to="/applicant/programs" 
+          style={{ 
+            padding: '12px 24px', 
+            borderRadius: '4px', 
+            backgroundColor: 'var(--primary-color)', 
+            color: 'white', 
+            textDecoration: 'none', 
+            fontSize: '16px', 
+            fontWeight: '500', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '8px' 
+          }}
+        >
+          <Briefcase size={16} /> Apply for a Program
         </Link>
       </div>
     </div>

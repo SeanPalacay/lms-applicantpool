@@ -6,12 +6,7 @@ import {
 } from 'lucide-react';
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
-import '../styles/UploadRecord.css';
 
-/**
- * UploadRecord Component
- * Allows trainers to upload training records and documentation
- */
 const UploadRecord = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -219,18 +214,18 @@ const UploadRecord = () => {
     const fileType = file.type;
     
     if (fileType.includes('pdf')) {
-      return <FileText size={48} className="file-pdf" />;
+      return <FileText size={48} style={{ color: '#E53E3E' }} />;
     } else if (fileType.includes('word')) {
-      return <FileText size={48} className="file-word" />;
+      return <FileText size={48} style={{ color: '#2B6CB0' }} />;
     } else if (fileType.includes('sheet') || fileType.includes('excel')) {
-      return <FileText size={48} className="file-excel" />;
+      return <FileText size={48} style={{ color: '#2F855A' }} />;
     } else if (fileType.includes('presentation') || fileType.includes('powerpoint')) {
-      return <FileText size={48} className="file-powerpoint" />;
+      return <FileText size={48} style={{ color: '#B83280' }} />;
     } else if (fileType.includes('image')) {
       return filePreview ? (
-        <img src={filePreview} alt="Preview" className="image-preview" />
+        <img src={filePreview} alt="Preview" style={{ maxWidth: '100px', maxHeight: '100px', borderRadius: '8px' }} />
       ) : (
-        <FileIcon size={48} className="file-image" />
+        <FileIcon size={48} style={{ color: '#718096' }} />
       );
     } else {
       return <FileText size={48} />;
@@ -326,55 +321,55 @@ const UploadRecord = () => {
   }
 
   return (
-    <div className="upload-record-container">
+    <div style={{ padding: '32px', backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
       {error && <AlertBanner message={error} type="error" />}
       {successMessage && <AlertBanner message={successMessage} type="success" />}
       
-      <div className="card">
-        <div className="card-header gradient-indigo">
-          <div className="header-icon">
+      <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)', maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '24px', background: 'linear-gradient(135deg, #1E88E5, #1565C0)', color: 'white' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '16px' }}>
             <Upload size={20} />
           </div>
-          <div className="header-content">
-            <h3>Upload Training Record</h3>
+          <div>
+            <h3 style={{ fontSize: '20px', fontWeight: '600', margin: '0' }}>Upload Training Record</h3>
           </div>
         </div>
         
-        <div className="card-content">
-          <form onSubmit={handleSubmit} className="upload-form">
-            <div className="form-grid">
-              <div className="form-section">
-                <div className="section-header">
+        <div style={{ padding: '32px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                   <Info size={18} />
-                  <h4>Record Information</h4>
+                  <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1E293B', margin: '0' }}>Record Information</h4>
                 </div>
                 
-                <div className="form-group">
-                  <label htmlFor="description">
-                    <span className="required">*</span> Description:
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label htmlFor="description" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>
+                    <span style={{ color: '#E53E3E', marginRight: '4px' }}>*</span> Description:
                   </label>
                   <textarea 
                     id="description" 
                     name="description" 
                     value={formData.description} 
                     onChange={handleChange}
-                    className="form-textarea"
+                    style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                     placeholder="Enter record description"
                     rows={4}
                     required
                   />
                 </div>
                 
-                <div className="form-group">
-                  <label htmlFor="category">
-                    <span className="required">*</span> Category:
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label htmlFor="category" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>
+                    <span style={{ color: '#E53E3E', marginRight: '4px' }}>*</span> Category:
                   </label>
                   <select 
                     id="category" 
                     name="category" 
                     value={formData.category} 
                     onChange={handleChange}
-                    className="form-select"
+                    style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                     required={!showCustomCategory}
                     disabled={showCustomCategory}
                   >
@@ -389,23 +384,23 @@ const UploadRecord = () => {
                 </div>
                 
                 {showCustomCategory && (
-                  <div className="form-group">
-                    <label htmlFor="custom-category">
-                      <span className="required">*</span> New Category:
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <label htmlFor="custom-category" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>
+                      <span style={{ color: '#E53E3E', marginRight: '4px' }}>*</span> New Category:
                     </label>
-                    <div className="custom-category-container">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <input 
                         type="text" 
                         id="custom-category" 
                         value={customCategory} 
                         onChange={handleCustomCategoryChange}
-                        className="form-input"
+                        style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                         placeholder="Enter new category name"
                         required
                       />
                       <button 
                         type="button" 
-                        className="btn-reset-category"
+                        style={{ background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px', borderRadius: '9999px', transition: 'background-color 0.15s ease, color 0.15s ease' }}
                         onClick={() => {
                           setShowCustomCategory(false);
                           setCustomCategory('');
@@ -418,14 +413,14 @@ const UploadRecord = () => {
                   </div>
                 )}
                 
-                <div className="form-group">
-                  <label htmlFor="user_id">Assign to Trainee (Optional):</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label htmlFor="user_id" style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>Assign to Trainee (Optional):</label>
                   <select 
                     id="user_id" 
                     name="user_id" 
                     value={formData.user_id} 
                     onChange={handleChange}
-                    className="form-select"
+                    style={{ padding: '8px', border: '1px solid #E2E8F0', borderRadius: '4px', fontSize: '14px', color: '#1E293B', backgroundColor: 'white', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}
                   >
                     <option value="">Not assigned to specific trainee</option>
                     {trainees.map(trainee => (
@@ -434,55 +429,55 @@ const UploadRecord = () => {
                       </option>
                     ))}
                   </select>
-                  <small className="form-help-text">
+                  <small style={{ fontSize: '12px', color: '#64748B' }}>
                     If selected, this record will be associated with the specified trainee
                   </small>
                 </div>
               </div>
               
-              <div className="form-section">
-                <div className="section-header">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                   <FileText size={18} />
-                  <h4>File Upload</h4>
+                  <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1E293B', margin: '0' }}>File Upload</h4>
                 </div>
                 
-                <div className="file-upload-container">
-                  <div className="file-input-container">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ position: 'relative' }}>
                     <input 
                       type="file" 
                       id="file" 
                       onChange={handleFileChange}
-                      className="file-input"
+                      style={{ display: 'none' }}
                     />
-                    <label htmlFor="file" className="file-label">
+                    <label htmlFor="file" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#E3F2FD', color: '#1E88E5', borderRadius: '8px', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}>
                       <Upload size={20} />
                       <span>{file ? 'Change File' : 'Select File'}</span>
                     </label>
                     {fileError && (
-                      <div className="file-error">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#E53E3E', fontSize: '12px', marginTop: '4px' }}>
                         <AlertTriangle size={16} />
                         <span>{fileError}</span>
                       </div>
                     )}
                   </div>
                   
-                  <div className="file-preview">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', border: '1px dashed #E2E8F0', borderRadius: '8px', backgroundColor: '#F8FAFC' }}>
                     {file ? (
                       <>
-                        <div className="preview-icon">
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           {getFileIcon(file)}
                         </div>
-                        <div className="file-info">
-                          <div className="file-name">{file.name}</div>
-                          <div className="file-details">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          <div style={{ fontSize: '14px', fontWeight: '500', color: '#1E293B' }}>{file.name}</div>
+                          <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#64748B' }}>
                             <span>{file.type.split('/')[1].toUpperCase()}</span>
                             <span>{formatFileSize(fileSize)}</span>
                           </div>
                         </div>
                       </>
                     ) : (
-                      <div className="no-file-selected">
-                        <FileText size={48} className="empty-icon" />
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: '#64748B', textAlign: 'center' }}>
+                        <FileText size={48} style={{ color: '#E2E8F0' }} />
                         <p>No file selected</p>
                         <span>Supported formats: PDF, Word, Excel, PowerPoint, Images</span>
                         <span>Maximum size: 10MB</span>
@@ -493,15 +488,23 @@ const UploadRecord = () => {
               </div>
             </div>
             
-            <div className="form-actions">
-              <button type="button" onClick={handleCancel} className="btn-cancel">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '32px' }}>
+              <button 
+                type="button" 
+                onClick={handleCancel} 
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#F8FAFC', color: '#64748B', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
+              >
                 <XCircle size={18} />
                 Cancel
               </button>
-              <button type="submit" className="btn-save" disabled={uploading || !file || fileError}>
+              <button 
+                type="submit" 
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#1E88E5', color: 'white', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease', opacity: uploading || !file || fileError ? 0.7 : 1 }}
+                disabled={uploading || !file || fileError}
+              >
                 {uploading ? (
                   <>
-                    <Clock size={18} className="icon-spin" />
+                    <Clock size={18} style={{ animation: 'spin 1s linear infinite' }} />
                     Uploading...
                   </>
                 ) : (

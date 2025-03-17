@@ -1,4 +1,3 @@
-// src/pages/admin/records/upload/UploadRecord.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -15,7 +14,6 @@ import {
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
 import adminService from '../../../../services/adminService';
-import '../styles/UploadRecord.css';
 
 const UploadRecord = () => {
   const navigate = useNavigate();
@@ -68,7 +66,6 @@ const UploadRecord = () => {
       setError(null);
       
       try {
-        // Check if token exists
         const token = localStorage.getItem('authToken');
         if (!token) {
           setError('You are not logged in. Please log in to access this page.');
@@ -77,7 +74,6 @@ const UploadRecord = () => {
           return;
         }
         
-        // Change this line from getUsers to getUserList
         const data = await adminService.getUserList();
         setUsers(data);
       } catch (err) {
@@ -94,7 +90,6 @@ const UploadRecord = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
-    // Reset category if record type changes
     if (name === 'record_type') {
       setRecordData({
         ...recordData,
@@ -151,29 +146,24 @@ const UploadRecord = () => {
   };
 
   const validateForm = () => {
-    // Reset error and success messages
     setError(null);
     setSuccess(null);
     
-    // Validate file
     if (!recordData.file) {
       setError('Please select a file to upload.');
       return false;
     }
     
-    // Validate record type
     if (!recordData.record_type) {
       setError('Please select a record type.');
       return false;
     }
     
-    // Validate category
     if (!recordData.category) {
       setError('Please select a category.');
       return false;
     }
     
-    // Validate description
     if (!recordData.description.trim()) {
       setError('Please provide a description for the record.');
       return false;
@@ -202,7 +192,6 @@ const UploadRecord = () => {
       await adminService.uploadRecord(formData);
       setSuccess('Record uploaded successfully.');
       
-      // Redirect after short delay
       setTimeout(() => {
         navigate('/admin/records', { state: { message: 'Record uploaded successfully.' } });
       }, 2000);
@@ -224,7 +213,6 @@ const UploadRecord = () => {
       file: null
     });
     
-    // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = null;
     }
@@ -250,10 +238,10 @@ const UploadRecord = () => {
   }
 
   return (
-    <div className="upload-record-container">
-      <div className="section-header">
-        <h1>Upload Record</h1>
-        <div className="header-line"></div>
+    <div style={{ padding: '32px', backgroundColor: 'var(--light-gray)', minHeight: '100vh' }}>
+      <div style={{ marginBottom: '24px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>Upload Record</h1>
+        <div style={{ height: '1px', backgroundColor: 'var(--medium-gray)', marginTop: '8px' }}></div>
       </div>
       
       {error && (
@@ -272,178 +260,268 @@ const UploadRecord = () => {
         />
       )}
       
-      <div className="back-link" onClick={handleCancel}>
-        <ArrowLeft size={16} className="icon-inline" />
+      <div 
+        style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-color)', cursor: 'pointer', marginBottom: '24px' }}
+        onClick={handleCancel}
+      >
+        <ArrowLeft size={16} />
         <span>Back to Records</span>
       </div>
       
-      <div className="upload-content">
-        <div className="upload-card">
-          <div className="card-header gradient-indigo">
-            <div className="header-icon">
-              <Upload size={20} />
-            </div>
-            <div className="header-content">
-              <h3>Upload New Record</h3>
-            </div>
-          </div>
-          
-          <div className="card-content">
-            <form onSubmit={handleSubmit} className="upload-form">
-              <div className="file-upload-section">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  className="file-input"
-                  id="file-upload"
-                />
-                
-                {!recordData.file ? (
-                  <div 
-                    className={`drop-area ${dragActive ? 'active' : ''}`}
-                    onDragEnter={handleDrag}
-                    onDragOver={handleDrag}
-                    onDragLeave={handleDrag}
-                    onDrop={handleDrop}
+      <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)', padding: '24px' }}>
+        <div style={{ background: 'linear-gradient(135deg, var(--primary-color), var(--primary-dark))', padding: '16px', borderRadius: '8px 8px 0 0', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Upload size={20} color="white" />
+          <h3 style={{ color: 'white', fontSize: '18px', fontWeight: '600' }}>Upload New Record</h3>
+        </div>
+        
+        <div style={{ padding: '24px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+                id="file-upload"
+              />
+              
+              {!recordData.file ? (
+                <div 
+                  style={{ 
+                    border: `2px dashed ${dragActive ? 'var(--primary-color)' : 'var(--medium-gray)'}`, 
+                    borderRadius: '8px', 
+                    padding: '32px', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    backgroundColor: dragActive ? 'var(--primary-ultralight)' : 'var(--light-gray)', 
+                    cursor: 'pointer' 
+                  }}
+                  onDragEnter={handleDrag}
+                  onDragOver={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDrop={handleDrop}
+                >
+                  <Upload size={48} color={dragActive ? 'var(--primary-color)' : 'var(--text-secondary)'} />
+                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginTop: '16px' }}>Drag & Drop File Here</h3>
+                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: '8px 0' }}>or</p>
+                  <button 
+                    type="button" 
+                    style={{ 
+                      padding: '8px 16px', 
+                      borderRadius: '4px', 
+                      backgroundColor: 'var(--primary-color)', 
+                      color: 'white', 
+                      border: 'none', 
+                      cursor: 'pointer', 
+                      fontSize: '14px', 
+                      fontWeight: '500' 
+                    }}
+                    onClick={handleBrowseClick}
                   >
-                    <div className="drop-content">
-                      <Upload size={48} className="upload-icon" />
-                      <h3>Drag & Drop File Here</h3>
-                      <p>or</p>
-                      <button 
-                        type="button" 
-                        className="browse-button"
-                        onClick={handleBrowseClick}
-                      >
-                        Browse Files
-                      </button>
-                      <p className="file-hint">Supported file types: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="file-preview">
-                    <div className="file-preview-header">
-                      <h3>Selected File</h3>
-                      <button 
-                        type="button" 
-                        className="remove-file" 
-                        onClick={removeFile}
-                      >
-                        <XCircle size={18} />
-                      </button>
-                    </div>
-                    <div className="file-info">
-                      <div className="file-icon">
-                        <File size={32} />
-                      </div>
-                      <div className="file-details">
-                        <div className="file-name">{recordData.file.name}</div>
-                        <div className="file-meta">
-                          <span className="file-type">{recordData.file.type || 'Unknown type'}</span>
-                          <span className="file-size">{formatFileSize(recordData.file.size)}</span>
-                        </div>
-                      </div>
-                      <div className="file-status">
-                        <CheckCircle size={18} className="file-ready" />
-                        <span>Ready to upload</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              <div className="form-row">
-                <div className="form-group half">
-                  <label htmlFor="record_type">Record Type</label>
-                  <div className="select-with-icon">
-                    <FileText size={18} className="select-icon" />
-                    <select
-                      id="record_type"
-                      name="record_type"
-                      value={recordData.record_type}
-                      onChange={handleInputChange}
-                      required
+                    Browse Files
+                  </button>
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px' }}>Supported file types: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG</p>
+                </div>
+              ) : (
+                <div style={{ border: '1px solid var(--medium-gray)', borderRadius: '8px', padding: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <h3 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)' }}>Selected File</h3>
+                    <button 
+                      type="button" 
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger-color)' }}
+                      onClick={removeFile}
                     >
-                      {recordTypes.map((type, index) => (
-                        <option key={index} value={type.value}>{type.label}</option>
-                      ))}
-                    </select>
+                      <XCircle size={18} />
+                    </button>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--light-gray)', borderRadius: '8px' }}>
+                      <File size={32} color="var(--text-secondary)" />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-primary)' }}>{recordData.file.name}</div>
+                      <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                        <span>{recordData.file.type || 'Unknown type'}</span>
+                        <span>{formatFileSize(recordData.file.size)}</span>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--success-color)' }}>
+                      <CheckCircle size={18} />
+                      <span>Ready to upload</span>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="form-group half">
-                  <label htmlFor="category">Category</label>
-                  <div className="select-with-icon">
-                    <Tag size={18} className="select-icon" />
-                    <select
-                      id="category"
-                      name="category"
-                      value={recordData.category}
-                      onChange={handleInputChange}
-                      required
-                    >
-                      <option value="">Select Category</option>
-                      {categoryOptions[recordData.record_type]?.map((category, index) => (
-                        <option key={index} value={category.value}>{category.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="description">Description</label>
-                <div className="input-with-icon">
-                  <FileText size={18} className="input-icon" />
-                  <input
-                    type="text"
-                    id="description"
-                    name="description"
-                    value={recordData.description}
-                    onChange={handleInputChange}
-                    placeholder="Enter record description"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="user_id">Associated User (Optional)</label>
-                <div className="select-with-icon">
-                  <User size={18} className="select-icon" />
+              )}
+            </div>
+            
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <label htmlFor="record_type" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Record Type</label>
+                <div style={{ position: 'relative' }}>
+                  <FileText size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                   <select
-                    id="user_id"
-                    name="user_id"
-                    value={recordData.user_id}
+                    id="record_type"
+                    name="record_type"
+                    value={recordData.record_type}
                     onChange={handleInputChange}
+                    style={{ 
+                      width: '100%', 
+                      padding: '8px 16px 8px 40px', 
+                      borderRadius: '4px', 
+                      border: '1px solid var(--medium-gray)', 
+                      backgroundColor: 'white', 
+                      fontSize: '14px', 
+                      color: 'var(--text-primary)', 
+                      appearance: 'none' 
+                    }}
+                    required
                   >
-                    <option value="">No User (System Record)</option>
-                    {users.map((user) => (
-                      <option key={user.id} value={user.id}>{user.full_name}</option>
+                    {recordTypes.map((type, index) => (
+                      <option key={index} value={type.value}>{type.label}</option>
                     ))}
                   </select>
                 </div>
               </div>
               
-              <div className="form-actions">
-                <button type="button" className="action-button secondary" onClick={handleCancel}>
-                  <XCircle size={16} className="icon-inline" /> Cancel
-                </button>
-                <button type="submit" className="action-button primary" disabled={uploading || !recordData.file}>
-                  {uploading ? (
-                    <>
-                      <RefreshCw size={16} className="icon-inline spin" /> Uploading...
-                    </>
-                  ) : (
-                    <>
-                      <Upload size={16} className="icon-inline" /> Upload Record
-                    </>
-                  )}
-                </button>
+              <div style={{ flex: 1 }}>
+                <label htmlFor="category" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Category</label>
+                <div style={{ position: 'relative' }}>
+                  <Tag size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+                  <select
+                    id="category"
+                    name="category"
+                    value={recordData.category}
+                    onChange={handleInputChange}
+                    style={{ 
+                      width: '100%', 
+                      padding: '8px 16px 8px 40px', 
+                      borderRadius: '4px', 
+                      border: '1px solid var(--medium-gray)', 
+                      backgroundColor: 'white', 
+                      fontSize: '14px', 
+                      color: 'var(--text-primary)', 
+                      appearance: 'none' 
+                    }}
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {categoryOptions[recordData.record_type]?.map((category, index) => (
+                      <option key={index} value={category.value}>{category.label}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            </form>
-          </div>
+            </div>
+            
+            <div>
+              <label htmlFor="description" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Description</label>
+              <div style={{ position: 'relative' }}>
+                <FileText size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+                <input
+                  type="text"
+                  id="description"
+                  name="description"
+                  value={recordData.description}
+                  onChange={handleInputChange}
+                  placeholder="Enter record description"
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px 16px 8px 40px', 
+                    borderRadius: '4px', 
+                    border: '1px solid var(--medium-gray)', 
+                    backgroundColor: 'white', 
+                    fontSize: '14px', 
+                    color: 'var(--text-primary)' 
+                  }}
+                  required
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label htmlFor="user_id" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Associated User (Optional)</label>
+              <div style={{ position: 'relative' }}>
+                <User size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+                <select
+                  id="user_id"
+                  name="user_id"
+                  value={recordData.user_id}
+                  onChange={handleInputChange}
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px 16px 8px 40px', 
+                    borderRadius: '4px', 
+                    border: '1px solid var(--medium-gray)', 
+                    backgroundColor: 'white', 
+                    fontSize: '14px', 
+                    color: 'var(--text-primary)', 
+                    appearance: 'none' 
+                  }}
+                >
+                  <option value="">No User (System Record)</option>
+                  {users.map((user) => (
+                    <option key={user.id} value={user.id}>{user.full_name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end' }}>
+              <button 
+                type="button" 
+                style={{ 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  backgroundColor: 'var(--medium-gray)', 
+                  color: 'var(--text-primary)', 
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  fontSize: '14px', 
+                  fontWeight: '500', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px' 
+                }}
+                onClick={handleCancel}
+              >
+                <XCircle size={16} />
+                <span>Cancel</span>
+              </button>
+              <button 
+                type="submit" 
+                style={{ 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  backgroundColor: 'var(--primary-color)', 
+                  color: 'white', 
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  fontSize: '14px', 
+                  fontWeight: '500', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  opacity: uploading || !recordData.file ? 0.7 : 1, 
+                  pointerEvents: uploading || !recordData.file ? 'none' : 'auto' 
+                }}
+                disabled={uploading || !recordData.file}
+              >
+                {uploading ? (
+                  <>
+                    <RefreshCw size={16} style={{ animation: 'spin 1s linear infinite' }} />
+                    <span>Uploading...</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload size={16} />
+                    <span>Upload Record</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

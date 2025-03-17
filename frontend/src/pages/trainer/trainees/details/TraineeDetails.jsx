@@ -8,12 +8,7 @@ import {
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
 import trainerService from '../../../../services/trainerService';
-import '../styles/TraineeDetails.css';
 
-/**
- * TraineeDetails Component
- * Displays detailed information about a trainee including their programs, milestones, and assessments
- */
 const TraineeDetails = () => {
   const { traineeId } = useParams();
   const navigate = useNavigate();
@@ -22,14 +17,12 @@ const TraineeDetails = () => {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('programs');
 
-  // Fetch trainee data on component mount
   useEffect(() => {
     const fetchTraineeData = async () => {
       setLoading(true);
       setError('');
       
       try {
-        // Check if user is logged in and has correct role
         const token = localStorage.getItem('authToken');
         if (!token) {
           setError('You are not logged in. Please log in to access this page.');
@@ -46,7 +39,6 @@ const TraineeDetails = () => {
           return;
         }
         
-        // Fetch trainee details
         const traineeData = await trainerService.getTraineeDetails(traineeId);
         setTrainee(traineeData);
       } catch (err) {
@@ -60,33 +52,28 @@ const TraineeDetails = () => {
     fetchTraineeData();
   }, [traineeId, navigate]);
 
-  // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Calculate total progress percentage
   const calculateTotalProgress = () => {
     if (!trainee || !trainee.programs || trainee.programs.length === 0) {
       return 0;
     }
-    
     return trainee.overall_progress || 0;
   };
 
-  // Get status color class based on status
-  const getStatusClass = (status) => {
+  const getStatusStyle = (status) => {
     switch(status) {
-      case 'completed': return 'status-completed';
-      case 'in_progress': return 'status-in-progress';
-      case 'not_started': return 'status-not-started';
-      default: return '';
+      case 'completed': return { background: '#d4edda', color: '#155724' };
+      case 'in_progress': return { background: '#cce5ff', color: '#004085' };
+      case 'not_started': return { background: '#fff3cd', color: '#856404' };
+      default: return { background: '#f8f9fa', color: '#333' };
     }
   };
 
-  // Get status label
   const getStatusLabel = (status) => {
     switch(status) {
       case 'completed': return 'Completed';
@@ -96,15 +83,13 @@ const TraineeDetails = () => {
     }
   };
 
-  // Format score for display
   const formatScore = (score) => {
     if (score === null || score === undefined) return 'N/A';
-    // Make sure score is a number before calling toFixed()
     const scoreNum = Number(score);
     if (isNaN(scoreNum)) return 'N/A';
     return `${scoreNum.toFixed(1)}%`;
   };
-  // Navigate to progress tracking
+
   const navigateToProgress = () => {
     navigate(`/trainer/trainees/${traineeId}/progress`);
   };
@@ -122,60 +107,128 @@ const TraineeDetails = () => {
   }
 
   return (
-    <div className="trainee-details-container">
-      {/* Back navigation */}
-      <div className="back-navigation">
-        <Link to="/trainer/trainees" className="back-link">
+    <div style={{ 
+      padding: '20px', 
+      maxWidth: '1200px', 
+      margin: '0 auto' 
+    }}>
+      <div style={{ marginBottom: '20px' }}>
+        <Link 
+          to="/trainer/trainees"
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '5px', 
+            color: '#007bff', 
+            textDecoration: 'none',
+            fontSize: '14px'
+          }}
+        >
           <ArrowLeft size={18} />
           <span>Back to Trainees</span>
         </Link>
       </div>
       
-      {/* Profile Overview Card */}
-      <div className="card trainee-profile-card">
-        <div className="profile-header">
-          <div className="trainee-avatar large">
+      <div style={{ 
+        background: '#fff', 
+        borderRadius: '8px', 
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)', 
+        padding: '20px', 
+        marginBottom: '20px' 
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          gap: '20px', 
+          alignItems: 'center' 
+        }}>
+          <div style={{ 
+            width: '80px', 
+            height: '80px', 
+            borderRadius: '50%', 
+            background: '#007bff', 
+            color: 'white', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            fontSize: '32px',
+            flexShrink: 0
+          }}>
             {trainee.full_name.charAt(0)}
           </div>
-          <div className="trainee-info">
-            <h2 className="trainee-name">{trainee.full_name}</h2>
-            <div className="trainee-details">
-              <div className="detail-item">
+          <div style={{ flex: '1', minWidth: '200px' }}>
+            <h2 style={{ 
+              fontSize: '24px', 
+              margin: '0 0 10px 0' 
+            }}>{trainee.full_name}</h2>
+            <div style={{ 
+              display: 'flex', 
+              flexWrap: 'wrap', 
+              gap: '15px', 
+              fontSize: '14px', 
+              color: '#666' 
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <Mail size={16} />
                 <span>{trainee.email}</span>
               </div>
-              <div className="detail-item">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <Phone size={16} />
                 <span>{trainee.phone || 'No phone number'}</span>
               </div>
-              <div className="detail-item">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <Calendar size={16} />
                 <span>Joined: {formatDate(trainee.registration_date)}</span>
               </div>
             </div>
           </div>
-          <div className="progress-overview">
-            <div className="progress-circle">
-              <svg viewBox="0 0 36 36" className="circular-chart">
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '15px', 
+            flexShrink: 0 
+          }}>
+            <div style={{ width: '80px', height: '80px' }}>
+              <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%' }}>
                 <path 
-                  className="circle-bg"
-                  d="M18 2.0845
-                    a 15.9155 15.9155 0 0 1 0 31.831
-                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#eee"
+                  strokeWidth="2.8"
                 />
                 <path 
-                  className="circle"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#007bff"
+                  strokeWidth="2.8"
                   strokeDasharray={`${calculateTotalProgress()}, 100`}
-                  d="M18 2.0845
-                    a 15.9155 15.9155 0 0 1 0 31.831
-                    a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
-                <text x="18" y="20.35" className="percentage">
+                <text 
+                  x="18" 
+                  y="20.35" 
+                  textAnchor="middle" 
+                  fontSize="11px" 
+                  fill="#333"
+                >
                   {calculateTotalProgress()}%
                 </text>
               </svg>
             </div>
-            <button onClick={navigateToProgress} className="btn-view-progress">
+            <button 
+              onClick={navigateToProgress}
+              style={{ 
+                padding: '8px 15px', 
+                background: '#007bff', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '4px', 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '5px',
+                fontSize: '14px'
+              }}
+            >
               <TrendingUp size={16} />
               <span>View Progress</span>
             </button>
@@ -183,70 +236,99 @@ const TraineeDetails = () => {
         </div>
       </div>
       
-      {/* Tabs Navigation */}
-      <div className="tabs-navigation">
-        <button 
-          className={`tab-button ${activeTab === 'programs' ? 'active' : ''}`}
-          onClick={() => setActiveTab('programs')}
-        >
-          <BookOpen size={18} />
-          <span>Programs</span>
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'milestones' ? 'active' : ''}`}
-          onClick={() => setActiveTab('milestones')}
-        >
-          <Flag size={18} />
-          <span>Milestones</span>
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'assessments' ? 'active' : ''}`}
-          onClick={() => setActiveTab('assessments')}
-        >
-          <ClipboardList size={18} />
-          <span>Assessments</span>
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'performance' ? 'active' : ''}`}
-          onClick={() => setActiveTab('performance')}
-        >
-          <BarChart2 size={18} />
-          <span>Performance</span>
-        </button>
+      <div style={{ 
+        display: 'flex', 
+        gap: '10px', 
+        marginBottom: '20px', 
+        flexWrap: 'wrap' 
+      }}>
+        {[
+          { id: 'programs', icon: BookOpen, label: 'Programs' },
+          { id: 'milestones', icon: Flag, label: 'Milestones' },
+          { id: 'assessments', icon: ClipboardList, label: 'Assessments' },
+          { id: 'performance', icon: BarChart2, label: 'Performance' }
+        ].map(tab => (
+          <button 
+            key={tab.id}
+            className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab.id)}
+            style={{ 
+              padding: '10px 15px', 
+              background: activeTab === tab.id ? '#007bff' : '#f8f9fa', 
+              color: activeTab === tab.id ? 'white' : '#333', 
+              border: '1px solid #ddd', 
+              borderRadius: '4px', 
+              cursor: 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '5px',
+              fontSize: '14px'
+            }}
+          >
+            <tab.icon size={18} />
+            <span>{tab.label}</span>
+          </button>
+        ))}
       </div>
       
-      {/* Programs Tab */}
       {activeTab === 'programs' && (
-        <div className="tab-content">
-          <div className="tab-header">
-            <h3>Enrolled Programs</h3>
+        <div style={{ background: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <div style={{ padding: '15px', borderBottom: '1px solid #eee' }}>
+            <h3 style={{ fontSize: '18px', margin: 0 }}>Enrolled Programs</h3>
           </div>
-          
           {trainee.programs && trainee.programs.length > 0 ? (
-            <div className="programs-list">
+            <div style={{ padding: '15px' }}>
               {trainee.programs.map(program => (
-                <div key={program.id} className="program-card">
-                  <div className="program-icon">
-                    <BookOpen size={24} />
-                  </div>
-                  <div className="program-details">
-                    <h4 className="program-title">{program.title}</h4>
-                    <div className="program-meta">
-                      <span className="program-type">{program.type || 'Regular'}</span>
-                      <span className="program-dates">
+                <div 
+                  key={program.id} 
+                  style={{ 
+                    display: 'flex', 
+                    gap: '15px', 
+                    padding: '15px', 
+                    borderBottom: '1px solid #eee',
+                    alignItems: 'center'
+                  }}
+                >
+                  <BookOpen size={24} style={{ color: '#007bff', flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ fontSize: '16px', margin: '0 0 5px 0' }}>{program.title}</h4>
+                    <div style={{ 
+                      display: 'flex', 
+                      gap: '15px', 
+                      marginBottom: '10px', 
+                      fontSize: '14px', 
+                      color: '#666' 
+                    }}>
+                      <span>{program.type || 'Regular'}</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <Calendar size={14} />
                         {formatDate(program.enrollment_date)}
                       </span>
                     </div>
-                    <div className="program-progress-bar">
-                      <div 
-                        className="progress-fill" 
-                        style={{ width: `${program.completion_percentage || 0}%` }}
-                      ></div>
+                    <div style={{ 
+                      width: '100%', 
+                      height: '6px', 
+                      background: '#eee', 
+                      borderRadius: '3px', 
+                      overflow: 'hidden', 
+                      marginBottom: '10px' 
+                    }}>
+                      <div style={{ 
+                        width: `${program.completion_percentage || 0}%`, 
+                        height: '100%', 
+                        background: '#007bff' 
+                      }}></div>
                     </div>
-                    <div className="program-progress-details">
-                      <span className="progress-percentage">{program.completion_percentage || 0}% complete</span>
-                      <div className={`status-badge ${getStatusClass(program.completion_status)}`}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
+                      <span>{program.completion_percentage || 0}% complete</span>
+                      <div style={{ 
+                        padding: '4px 8px', 
+                        borderRadius: '12px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '5px', 
+                        ...getStatusStyle(program.completion_status) 
+                      }}>
                         {program.completion_status === 'completed' && <CheckCircle size={14} />}
                         {program.completion_status === 'in_progress' && <Clock size={14} />}
                         {program.completion_status === 'not_started' && <AlertTriangle size={14} />}
@@ -254,292 +336,410 @@ const TraineeDetails = () => {
                       </div>
                     </div>
                   </div>
-                  <Link to={`/trainer/programs/${program.id}`} className="program-link">
+                  <Link 
+                    to={`/trainer/programs/${program.id}`} 
+                    style={{ 
+                      color: '#007bff', 
+                      textDecoration: 'none', 
+                      fontSize: '14px' 
+                    }}
+                  >
                     View Program
                   </Link>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="no-data-message">
-              <BookOpen size={48} />
-              <p>This trainee is not enrolled in any programs.</p>
+            <div style={{ 
+              padding: '40px', 
+              textAlign: 'center', 
+              color: '#666' 
+            }}>
+              <BookOpen size={48} style={{ marginBottom: '15px' }} />
+              <p style={{ margin: 0, fontSize: '14px' }}>This trainee is not enrolled in any programs.</p>
             </div>
           )}
         </div>
       )}
       
-      {/* Milestones Tab */}
       {activeTab === 'milestones' && (
-        <div className="tab-content">
-          <div className="tab-header">
-            <h3>Assigned Milestones</h3>
+        <div style={{ background: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <div style={{ padding: '15px', borderBottom: '1px solid #eee' }}>
+            <h3 style={{ fontSize: '18px', margin: 0 }}>Assigned Milestones</h3>
           </div>
-          
           {trainee.milestones && trainee.milestones.length > 0 ? (
-            <div className="milestones-list">
+            <div style={{ padding: '15px' }}>
               {trainee.milestones.map(milestone => (
-                <div key={milestone.id} className="milestone-card">
-                  <div className="milestone-header">
-                    <div className="milestone-icon">
-                      <Flag size={20} />
-                    </div>
-                    <h4 className="milestone-title">{milestone.title}</h4>
-                    <div className={`status-badge ${getStatusClass(milestone.status)}`}>
+                <div 
+                  key={milestone.id} 
+                  style={{ 
+                    padding: '15px', 
+                    borderBottom: '1px solid #eee' 
+                  }}
+                >
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '10px', 
+                    marginBottom: '10px' 
+                  }}>
+                    <Flag size={20} style={{ color: '#007bff', flexShrink: 0 }} />
+                    <h4 style={{ 
+                      fontSize: '16px', 
+                      margin: 0, 
+                      flex: 1 
+                    }}>{milestone.title}</h4>
+                    <div style={{ 
+                      padding: '4px 8px', 
+                      borderRadius: '12px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '5px', 
+                      fontSize: '12px',
+                      ...getStatusStyle(milestone.status)
+                    }}>
                       {milestone.status === 'completed' && <CheckCircle size={14} />}
                       {milestone.status === 'in_progress' && <Clock size={14} />}
                       {milestone.status === 'not_started' && <AlertTriangle size={14} />}
                       <span>{getStatusLabel(milestone.status)}</span>
                     </div>
                   </div>
-                  
-                  <div className="milestone-details">
-                    <div className="milestone-meta">
-                      <span className="milestone-program">
+                  <div style={{ 
+                    marginLeft: '30px', 
+                    fontSize: '14px', 
+                    color: '#666' 
+                  }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      gap: '15px', 
+                      marginBottom: '10px' 
+                    }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <BookOpen size={14} />
                         {milestone.program_title || 'Unknown Program'}
                       </span>
-                      <span className="milestone-date">
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <Calendar size={14} />
                         Due: {formatDate(milestone.due_date)}
                       </span>
                     </div>
-                    
                     {milestone.description && (
-                      <p className="milestone-description">{milestone.description}</p>
+                      <p style={{ margin: '0 0 10px 0' }}>{milestone.description}</p>
                     )}
-                    
                     {milestone.status === 'completed' && milestone.completion_date && (
-                      <div className="completion-info">
-                        <CheckCircle size={16} className="completion-icon" />
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '5px', 
+                        color: '#28a745' 
+                      }}>
+                        <CheckCircle size={16} />
                         <span>Completed on {formatDate(milestone.completion_date)}</span>
                       </div>
                     )}
                   </div>
-                  
-                  <Link to={`/trainer/milestones/${milestone.id}`} className="milestone-link">
+                  <Link 
+                    to={`/trainer/milestones/${milestone.id}`} 
+                    style={{ 
+                      display: 'block', 
+                      textAlign: 'right', 
+                      color: '#007bff', 
+                      textDecoration: 'none', 
+                      fontSize: '14px' 
+                    }}
+                  >
                     View Milestone
                   </Link>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="no-data-message">
-              <Flag size={48} />
-              <p>No milestones have been assigned to this trainee.</p>
+            <div style={{ 
+              padding: '40px', 
+              textAlign: 'center', 
+              color: '#666' 
+            }}>
+              <Flag size={48} style={{ marginBottom: '15px' }} />
+              <p style={{ margin: 0, fontSize: '14px' }}>No milestones have been assigned to this trainee.</p>
             </div>
           )}
         </div>
       )}
       
-      {/* Assessments Tab */}
       {activeTab === 'assessments' && (
-        <div className="tab-content">
-          <div className="tab-header">
-            <h3>Quiz Attempts & Assessments</h3>
+        <div style={{ background: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <div style={{ padding: '15px', borderBottom: '1px solid #eee' }}>
+            <h3 style={{ fontSize: '18px', margin: 0 }}>Quiz Attempts & Assessments</h3>
           </div>
-          
           {trainee.quiz_attempts && trainee.quiz_attempts.length > 0 ? (
-            <div className="assessments-list">
+            <div style={{ padding: '15px' }}>
               {trainee.quiz_attempts.map(assessment => (
-                <div key={assessment.id} className="assessment-card">
-                  <div className="assessment-header">
-                    <div className="assessment-icon">
-                      <ClipboardList size={20} />
-                    </div>
-                    <h4 className="assessment-title">{assessment.title || 'Unknown Quiz'}</h4>
-                    <div className="assessment-score">
-                      <span className={`score ${assessment.score >= (assessment.passing_score || 70) ? 'pass' : 'fail'}`}>
-                        {formatScore(assessment.score)}
-                      </span>
-                    </div>
+                <div 
+                  key={assessment.id} 
+                  style={{ 
+                    padding: '15px', 
+                    borderBottom: '1px solid #eee' 
+                  }}
+                >
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '10px', 
+                    marginBottom: '10px' 
+                  }}>
+                    <ClipboardList size={20} style={{ color: '#007bff', flexShrink: 0 }} />
+                    <h4 style={{ 
+                      fontSize: '16px', 
+                      margin: 0, 
+                      flex: 1 
+                    }}>{assessment.title || 'Unknown Quiz'}</h4>
+                    <span style={{ 
+                      fontSize: '16px', 
+                      fontWeight: 'bold', 
+                      color: assessment.score >= (assessment.passing_score || 70) ? '#28a745' : '#dc3545' 
+                    }}>
+                      {formatScore(assessment.score)}
+                    </span>
                   </div>
-                  
-                  <div className="assessment-details">
-                    <div className="assessment-meta">
-                      <span className="assessment-program">
+                  <div style={{ 
+                    marginLeft: '30px', 
+                    fontSize: '14px', 
+                    color: '#666' 
+                  }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      gap: '15px', 
+                      marginBottom: '10px' 
+                    }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <BookOpen size={14} />
                         {assessment.program_title || 'Unknown Program'}
                       </span>
-                      <span className="assessment-date">
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <Calendar size={14} />
                         Attempted: {formatDate(assessment.attempt_date)}
                       </span>
                     </div>
-                    
                     {assessment.feedback && (
-                      <div className="assessment-feedback">
-                        <FileText size={16} className="feedback-icon" />
-                        <p>{assessment.feedback}</p>
+                      <div style={{ 
+                        display: 'flex', 
+                        gap: '5px', 
+                        marginBottom: '10px' 
+                      }}>
+                        <FileText size={16} style={{ flexShrink: 0 }} />
+                        <p style={{ margin: 0 }}>{assessment.feedback}</p>
                       </div>
                     )}
-                    
-                    <div className="assessment-status">
-                      {assessment.score >= (assessment.passing_score || 70) ? (
-                        <div className="status-badge status-completed">
+                    <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                      <div style={{ 
+                        padding: '4px 8px', 
+                        borderRadius: '12px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '5px', 
+                        fontSize: '12px',
+                        ...(assessment.score >= (assessment.passing_score || 70) 
+                          ? getStatusStyle('completed') 
+                          : getStatusStyle('not_started'))
+                      }}>
+                        {assessment.score >= (assessment.passing_score || 70) ? (
                           <CheckCircle size={14} />
-                          <span>Passed</span>
-                        </div>
-                      ) : (
-                        <div className="status-badge status-not-started">
+                        ) : (
                           <AlertTriangle size={14} />
-                          <span>Failed</span>
-                        </div>
-                      )}
-                      
+                        )}
+                        <span>{assessment.score >= (assessment.passing_score || 70) ? 'Passed' : 'Failed'}</span>
+                      </div>
                       {assessment.passing_score && (
-                        <span className="passing-score">
-                          Passing score: {assessment.passing_score}%
-                        </span>
+                        <span>Passing score: {assessment.passing_score}%</span>
                       )}
                     </div>
                   </div>
-                  
-                  <Link to={`/trainer/quizzes/${assessment.id}/results`} className="assessment-link">
+                  <Link 
+                    to={`/trainer/quizzes/${assessment.id}/results`} 
+                    style={{ 
+                      display: 'block', 
+                      textAlign: 'right', 
+                      color: '#007bff', 
+                      textDecoration: 'none', 
+                      fontSize: '14px' 
+                    }}
+                  >
                     View Results
                   </Link>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="no-data-message">
-              <ClipboardList size={48} />
-              <p>No quiz attempts found for this trainee.</p>
+            <div style={{ 
+              padding: '40px', 
+              textAlign: 'center', 
+              color: '#666' 
+            }}>
+              <ClipboardList size={48} style={{ marginBottom: '15px' }} />
+              <p style={{ margin: 0, fontSize: '14px' }}>No quiz attempts found for this trainee.</p>
             </div>
           )}
         </div>
       )}
-
-      {/* Performance Tab */}
+      
       {activeTab === 'performance' && (
-        <div className="tab-content">
-          <div className="tab-header">
-            <h3>Performance Overview</h3>
+        <div style={{ background: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <div style={{ padding: '15px', borderBottom: '1px solid #eee' }}>
+            <h3 style={{ fontSize: '18px', margin: 0 }}>Performance Overview</h3>
           </div>
-
-          <div className="performance-overview-grid">
-            {/* Performance Metrics Card */}
-            <div className="card performance-metrics-card">
-              <div className="card-header gradient-blue">
-                <div className="header-icon">
-                  <BarChart2 size={20} />
-                </div>
-                <div className="header-content">
-                  <h3>Performance Metrics</h3>
-                </div>
+          <div style={{ 
+            padding: '15px', 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+            gap: '20px' 
+          }}>
+            <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+              <div style={{ 
+                background: 'linear-gradient(to right, #007bff, #00b7ff)', 
+                color: 'white', 
+                padding: '10px 15px', 
+                borderRadius: '8px 8px 0 0', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '10px' 
+              }}>
+                <BarChart2 size={20} />
+                <h3 style={{ fontSize: '16px', margin: 0 }}>Performance Metrics</h3>
               </div>
-              <div className="card-content">
-                <div className="metrics-grid">
-                  <div className="metric-box">
-                    <div className="metric-value">{trainee.programs ? trainee.programs.length : 0}</div>
-                    <div className="metric-label">Programs</div>
+              <div style={{ 
+                padding: '15px', 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(2, 1fr)', 
+                gap: '15px' 
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{trainee.programs ? trainee.programs.length : 0}</div>
+                  <div style={{ fontSize: '14px', color: '#666' }}>Programs</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                    {trainee.quiz_attempts ? trainee.quiz_attempts.filter(a => a.score >= (a.passing_score || 70)).length : 0}
                   </div>
-                  <div className="metric-box">
-                    <div className="metric-value">
-                      {trainee.quiz_attempts ? 
-                        trainee.quiz_attempts.filter(a => a.score >= (a.passing_score || 70)).length : 0}
-                    </div>
-                    <div className="metric-label">Quizzes Passed</div>
+                  <div style={{ fontSize: '14px', color: '#666' }}>Quizzes Passed</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                    {trainee.milestones ? trainee.milestones.filter(m => m.status === 'completed').length : 0}
                   </div>
-                  <div className="metric-box">
-                    <div className="metric-value">
-                      {trainee.milestones ? 
-                        trainee.milestones.filter(m => m.status === 'completed').length : 0}
-                    </div>
-                    <div className="metric-label">Milestones Completed</div>
+                  <div style={{ fontSize: '14px', color: '#666' }}>Milestones Completed</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                    {trainee.average_quiz_score ? `${Number(trainee.average_quiz_score).toFixed(1)}%` : 'N/A'}
                   </div>
-                  <div className="metric-box">
-                  <div className="metric-value">
-                      {trainee.average_quiz_score ? 
-                        `${Number(trainee.average_quiz_score).toFixed(1)}%` : 'N/A'}
-                  </div>
-                    <div className="metric-label">Avg. Quiz Score</div>
-                  </div>
+                  <div style={{ fontSize: '14px', color: '#666' }}>Avg. Quiz Score</div>
                 </div>
               </div>
             </div>
 
-            {/* Recent Notifications Card */}
-            <div className="card notifications-card">
-              <div className="card-header gradient-amber">
-                <div className="header-icon">
-                  <Bell size={20} />
-                </div>
-                <div className="header-content">
-                  <h3>Recent Notifications</h3>
-                </div>
+            <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+              <div style={{ 
+                background: 'linear-gradient(to right, #ff8c00, #ffbc00)', 
+                color: 'white', 
+                padding: '10px 15px', 
+                borderRadius: '8px 8px 0 0', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '10px' 
+              }}>
+                <Bell size={20} />
+                <h3 style={{ fontSize: '16px', margin: 0 }}>Recent Notifications</h3>
               </div>
-              <div className="card-content">
+              <div style={{ padding: '15px' }}>
                 {trainee.notifications && trainee.notifications.length > 0 ? (
-                  <div className="notifications-list">
+                  <div>
                     {trainee.notifications.slice(0, 5).map((notification, index) => (
-                      <div key={index} className="notification-item">
-                        <div className={`notification-icon notification-${notification.type}`}>
+                      <div 
+                        key={index} 
+                        style={{ 
+                          display: 'flex', 
+                          gap: '10px', 
+                          padding: '10px 0', 
+                          borderBottom: index < 4 ? '1px solid #eee' : 'none' 
+                        }}
+                      >
+                        <div style={{ 
+                          color: notification.type === 'success' ? '#28a745' : 
+                                 notification.type === 'warning' ? '#ffc107' : 
+                                 notification.type === 'error' ? '#dc3545' : '#007bff',
+                          flexShrink: 0
+                        }}>
                           {notification.type === 'success' && <CheckCircle size={16} />}
                           {notification.type === 'warning' && <AlertTriangle size={16} />}
                           {notification.type === 'error' && <AlertTriangle size={16} />}
                           {notification.type === 'info' && <Bell size={16} />}
                         </div>
-                        <div className="notification-content">
-                          <strong className="notification-title">{notification.title}</strong>
-                          <p>{notification.message}</p>
-                          <span className="notification-time">{formatDate(notification.created_at)}</span>
+                        <div style={{ flex: 1 }}>
+                          <strong style={{ fontSize: '14px', display: 'block' }}>{notification.title}</strong>
+                          <p style={{ fontSize: '14px', margin: '5px 0' }}>{notification.message}</p>
+                          <span style={{ fontSize: '12px', color: '#666' }}>{formatDate(notification.created_at)}</span>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="no-data-message">
-                    <Bell size={32} />
-                    <p>No recent notifications</p>
+                  <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                    <Bell size={32} style={{ marginBottom: '10px' }} />
+                    <p style={{ margin: 0, fontSize: '14px' }}>No recent notifications</p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Performance Incidents Card */}
-            <div className="card incidents-card">
-              <div className="card-header gradient-rose">
-                <div className="header-icon">
-                  <AlertTriangle size={20} />
-                </div>
-                <div className="header-content">
-                  <h3>Performance Incidents</h3>
-                </div>
+            <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+              <div style={{ 
+                background: 'linear-gradient(to right, #ff3366, #ff6699)', 
+                color: 'white', 
+                padding: '10px 15px', 
+                borderRadius: '8px 8px 0 0', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '10px' 
+              }}>
+                <AlertTriangle size={20} />
+                <h3 style={{ fontSize: '16px', margin: 0 }}>Performance Incidents</h3>
               </div>
-              <div className="card-content">
+              <div style={{ padding: '15px' }}>
                 {trainee.performance_incidents && trainee.performance_incidents.length > 0 ? (
-                  <div className="incidents-list">
+                  <div>
                     {trainee.performance_incidents.map((incident, index) => (
-                      <div key={index} className="incident-item">
-                        <div className="incident-type">
-                          {incident.incident_type === 'low_quiz_score' && (
-                            <div className="incident-icon quiz-incident">
-                              <ClipboardList size={16} />
-                            </div>
-                          )}
-                          {incident.incident_type === 'policy_violation' && (
-                            <div className="incident-icon policy-incident">
-                              <AlertTriangle size={16} />
-                            </div>
-                          )}
-                          {incident.incident_type === 'other' && (
-                            <div className="incident-icon other-incident">
-                              <AlertTriangle size={16} />
-                            </div>
-                          )}
+                      <div 
+                        key={index} 
+                        style={{ 
+                          display: 'flex', 
+                          gap: '10px', 
+                          padding: '10px 0', 
+                          borderBottom: index < trainee.performance_incidents.length - 1 ? '1px solid #eee' : 'none' 
+                        }}
+                      >
+                        <div style={{ 
+                          color: incident.incident_type === 'low_quiz_score' ? '#007bff' : 
+                                 incident.incident_type === 'policy_violation' ? '#dc3545' : '#ffc107',
+                          flexShrink: 0
+                        }}>
+                          {incident.incident_type === 'low_quiz_score' && <ClipboardList size={16} />}
+                          {incident.incident_type === 'policy_violation' && <AlertTriangle size={16} />}
+                          {incident.incident_type === 'other' && <AlertTriangle size={16} />}
                         </div>
-                        <div className="incident-details">
-                          <div className="incident-description">
-                            {incident.description}
-                          </div>
-                          <div className="incident-meta">
-                            <span className="incident-date">
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: '14px', marginBottom: '5px' }}>{incident.description}</div>
+                          <div style={{ 
+                            display: 'flex', 
+                            gap: '15px', 
+                            fontSize: '12px', 
+                            color: '#666' 
+                          }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                               <Calendar size={14} />
                               {formatDate(incident.incident_date)}
                             </span>
                             {incident.reported_by_name && (
-                              <span className="reported-by">
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                                 <User size={14} />
                                 Reported by: {incident.reported_by_name}
                               </span>
@@ -550,40 +750,55 @@ const TraineeDetails = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="no-data-message">
-                    <CheckCircle size={32} />
-                    <p>No performance incidents reported</p>
+                  <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                    <CheckCircle size={32} style={{ marginBottom: '10px', color: '#28a745' }} />
+                    <p style={{ margin: 0, fontSize: '14px' }}>No performance incidents reported</p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Certificates Card */}
-            <div className="card certificates-card">
-              <div className="card-header gradient-teal">
-                <div className="header-icon">
-                  <Award size={20} />
-                </div>
-                <div className="header-content">
-                  <h3>Certificates & Achievements</h3>
-                </div>
+            <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+              <div style={{ 
+                background: 'linear-gradient(to right, #00b7b7, #00e0e0)', 
+                color: 'white', 
+                padding: '10px 15px', 
+                borderRadius: '8px 8px 0 0', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '10px' 
+              }}>
+                <Award size={20} />
+                <h3 style={{ fontSize: '16px', margin: 0 }}>Certificates & Achievements</h3>
               </div>
-              <div className="card-content">
+              <div style={{ padding: '15px' }}>
                 {trainee.certificates && trainee.certificates.length > 0 ? (
-                  <div className="certificates-list">
+                  <div>
                     {trainee.certificates.map((certificate, index) => (
-                      <div key={index} className="certificate-item">
-                        <div className="certificate-icon">
-                          <Award size={24} />
-                        </div>
-                        <div className="certificate-details">
-                          <h4 className="certificate-title">{certificate.title}</h4>
-                          <div className="certificate-meta">
-                            <span className="certificate-program">
+                      <div 
+                        key={index} 
+                        style={{ 
+                          display: 'flex', 
+                          gap: '15px', 
+                          padding: '10px 0', 
+                          borderBottom: index < trainee.certificates.length - 1 ? '1px solid #eee' : 'none',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <Award size={24} style={{ color: '#00b7b7', flexShrink: 0 }} />
+                        <div style={{ flex: 1 }}>
+                          <h4 style={{ fontSize: '16px', margin: '0 0 5px 0' }}>{certificate.title}</h4>
+                          <div style={{ 
+                            display: 'flex', 
+                            gap: '15px', 
+                            fontSize: '14px', 
+                            color: '#666' 
+                          }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                               <BookOpen size={14} />
                               {certificate.program_title}
                             </span>
-                            <span className="certificate-date">
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                               <Calendar size={14} />
                               {formatDate(certificate.issue_date)}
                             </span>
@@ -591,7 +806,11 @@ const TraineeDetails = () => {
                         </div>
                         <Link 
                           to={`/trainer/certificates/${certificate.id}`} 
-                          className="certificate-link"
+                          style={{ 
+                            color: '#007bff', 
+                            textDecoration: 'none', 
+                            fontSize: '14px' 
+                          }}
                         >
                           View
                         </Link>
@@ -599,9 +818,9 @@ const TraineeDetails = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="no-data-message">
-                    <Award size={32} />
-                    <p>No certificates earned yet</p>
+                  <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                    <Award size={32} style={{ marginBottom: '10px' }} />
+                    <p style={{ margin: 0, fontSize: '14px' }}>No certificates earned yet</p>
                   </div>
                 )}
               </div>

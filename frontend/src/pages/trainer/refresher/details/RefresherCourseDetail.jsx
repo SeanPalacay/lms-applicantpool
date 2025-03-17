@@ -4,7 +4,6 @@ import { RotateCw, Clock, AlertTriangle, ArrowLeft, Edit, Trash2, Users, Calenda
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
 import trainerService from '../../../../services/trainerService';
-import '../styles/RefresherCourseDetail.css';
 
 const RefresherCourseDetail = () => {
   const { courseId } = useParams();
@@ -89,44 +88,46 @@ const RefresherCourseDetail = () => {
   }
 
   return (
-    <div className="refresher-course-detail-container">
+    <div style={{ padding: '32px', backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="delete-modal-overlay">
-          <div className="delete-modal">
-            <div className="delete-modal-header">
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', padding: '24px', maxWidth: '500px', width: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
               <Trash2 size={24} />
-              <h3>Delete Refresher Course</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', margin: '0' }}>Delete Refresher Course</h3>
             </div>
-            <div className="delete-modal-content">
-              <p>Are you sure you want to delete the refresher course <strong>"{course.title}"</strong>?</p>
-              <p className="warning-text">
+            <div style={{ marginBottom: '24px' }}>
+              <p style={{ fontSize: '14px', color: '#1E293B', marginBottom: '8px' }}>
+                Are you sure you want to delete the refresher course <strong>"{course.title}"</strong>?
+              </p>
+              <p style={{ fontSize: '14px', color: '#E53E3E', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <AlertTriangle size={16} />
                 This action cannot be undone.
               </p>
               {course.enrollments && course.enrollments.length > 0 && (
-                <p className="error-text">
+                <p style={{ fontSize: '14px', color: '#E53E3E', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
                   <AlertTriangle size={16} />
                   This course has {course.enrollments.length} enrolled trainees. Deleting it will remove their access.
                 </p>
               )}
             </div>
-            <div className="delete-modal-actions">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
               <button 
-                className="btn-cancel" 
+                style={{ padding: '8px 16px', backgroundColor: '#F8FAFC', color: '#64748B', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
                 onClick={handleCancelDelete}
                 disabled={deleting}
               >
                 Cancel
               </button>
               <button 
-                className="btn-delete" 
+                style={{ padding: '8px 16px', backgroundColor: '#E53E3E', color: 'white', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease', opacity: deleting ? 0.7 : 1 }}
                 onClick={handleConfirmDelete}
                 disabled={deleting}
               >
                 {deleting ? (
                   <>
-                    <Clock size={16} className="icon-spin" />
+                    <Clock size={16} style={{ animation: 'spin 1s linear infinite' }} />
                     Deleting...
                   </>
                 ) : (
@@ -142,38 +143,47 @@ const RefresherCourseDetail = () => {
       )}
 
       {/* Back navigation */}
-      <div className="back-navigation">
-        <Link to="/trainer/refresher-courses" className="back-link">
+      <div style={{ marginBottom: '24px' }}>
+        <Link 
+          to="/trainer/refresher-courses" 
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1E88E5', textDecoration: 'none', fontSize: '14px', fontWeight: '500' }}
+        >
           <ArrowLeft size={18} />
           <span>Back to Refresher Courses</span>
         </Link>
       </div>
       
       {/* Course Header */}
-      <div className="course-header-card">
-        <div className="course-header">
-          <div className="course-icon">
-            <RotateCw size={24} />
+      <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '24px', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', backgroundColor: '#E3F2FD', borderRadius: '8px' }}>
+            <RotateCw size={24} color="#1E88E5" />
           </div>
-          <div className="course-title-container">
-            <h2>{course.title}</h2>
-            <div className="course-meta">
-              <span className="course-created">
+          <div style={{ flex: 1 }}>
+            <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#1E293B', margin: '0' }}>{course.title}</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '8px' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#64748B' }}>
                 <Calendar size={16} />
                 Created: {new Date(course.created_at).toLocaleDateString()}
               </span>
-              <span className="course-status">
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#64748B' }}>
                 <CheckCircle size={16} />
                 Status: {course.status}
               </span>
             </div>
           </div>
-          <div className="course-actions">
-            <button className="btn-edit" onClick={() => navigate(`/trainer/refresher-courses/edit/${course.id}`)}>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button 
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#E3F2FD', color: '#1E88E5', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
+              onClick={() => navigate(`/trainer/refresher-courses/edit/${course.id}`)}
+            >
               <Edit size={18} />
               <span>Edit</span>
             </button>
-            <button className="btn-delete" onClick={handleDeleteClick}>
+            <button 
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#FEE2E2', color: '#E53E3E', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease, color 0.15s ease' }}
+              onClick={handleDeleteClick}
+            >
               <Trash2 size={18} />
               <span>Delete</span>
             </button>
@@ -182,76 +192,78 @@ const RefresherCourseDetail = () => {
       </div>
       
       {/* Course description */}
-      <div className="course-description-card">
-        <h3>Description</h3>
-        <p>{course.description || 'No description provided.'}</p>
+      <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)', padding: '24px', marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1E293B', marginBottom: '16px' }}>Description</h3>
+        <p style={{ fontSize: '14px', color: '#64748B', lineHeight: '1.6' }}>{course.description || 'No description provided.'}</p>
       </div>
       
       {/* Enrollment stats */}
-      <div className="enrollment-stats-card">
-        <h3>Enrollment Statistics</h3>
-        <div className="stats-grid">
-          <div className="stat-box">
-            <div className="stat-value">{course.stats?.total_enrollments || 0}</div>
-            <div className="stat-label">Total Enrollments</div>
+      <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)', padding: '24px', marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1E293B', marginBottom: '16px' }}>Enrollment Statistics</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+          <div style={{ backgroundColor: '#F8FAFC', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: '600', color: '#1E293B' }}>{course.stats?.total_enrollments || 0}</div>
+            <div style={{ fontSize: '14px', color: '#64748B' }}>Total Enrollments</div>
           </div>
-          <div className="stat-box">
-            <div className="stat-value">{course.stats?.completed || 0}</div>
-            <div className="stat-label">Completed</div>
+          <div style={{ backgroundColor: '#F8FAFC', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: '600', color: '#1E293B' }}>{course.stats?.completed || 0}</div>
+            <div style={{ fontSize: '14px', color: '#64748B' }}>Completed</div>
           </div>
-          <div className="stat-box">
-            <div className="stat-value">{course.stats?.in_progress || 0}</div>
-            <div className="stat-label">In Progress</div>
+          <div style={{ backgroundColor: '#F8FAFC', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: '600', color: '#1E293B' }}>{course.stats?.in_progress || 0}</div>
+            <div style={{ fontSize: '14px', color: '#64748B' }}>In Progress</div>
           </div>
-          <div className="stat-box">
-            <div className="stat-value">{course.stats?.completion_rate || 0}%</div>
-            <div className="stat-label">Completion Rate</div>
+          <div style={{ backgroundColor: '#F8FAFC', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: '600', color: '#1E293B' }}>{course.stats?.completion_rate || 0}%</div>
+            <div style={{ fontSize: '14px', color: '#64748B' }}>Completion Rate</div>
           </div>
         </div>
       </div>
       
       {/* Enrolled Trainees */}
-      <div className="enrolled-trainees-card">
-        <div className="card-header">
-          <h3>Enrolled Trainees</h3>
-          <button className="btn-enroll" onClick={() => navigate(`/trainer/refresher-enrollment?courseId=${course.id}`)}>
+      <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)', padding: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1E293B' }}>Enrolled Trainees</h3>
+          <button 
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#1E88E5', color: 'white', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease' }}
+            onClick={() => navigate(`/trainer/refresher-enrollment?courseId=${course.id}`)}
+          >
             <Users size={18} />
             <span>Enroll Trainees</span>
           </button>
         </div>
         
         {course.enrollments && course.enrollments.length > 0 ? (
-          <div className="trainees-table">
-            <div className="table-header">
-              <div className="name-col">Name</div>
-              <div className="email-col">Email</div>
-              <div className="status-col">Status</div>
-              <div className="progress-col">Progress</div>
-              <div className="date-col">Enrollment Date</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px', padding: '8px 16px', backgroundColor: '#F8FAFC', borderRadius: '8px', fontWeight: '500', color: '#64748B' }}>
+              <div>Name</div>
+              <div>Email</div>
+              <div>Status</div>
+              <div>Progress</div>
+              <div>Enrollment Date</div>
             </div>
-            <div className="table-body">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {course.enrollments.map(enrollment => (
-                <div className="table-row" key={enrollment.id}>
-                  <div className="name-col">{enrollment.full_name}</div>
-                  <div className="email-col">{enrollment.email}</div>
-                  <div className="status-col">
-                    <span className={`status-badge status-${enrollment.completion_status}`}>
-                      {enrollment.completion_status === 'completed' && <CheckCircle size={14} />}
-                      {enrollment.completion_status === 'in_progress' && <Clock size={14} />}
-                      {enrollment.completion_status === 'not_started' && <AlertTriangle size={14} />}
+                <div key={enrollment.id} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px', padding: '16px', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
+                  <div style={{ fontSize: '14px', color: '#1E293B' }}>{enrollment.full_name}</div>
+                  <div style={{ fontSize: '14px', color: '#64748B' }}>{enrollment.email}</div>
+                  <div>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#1E293B' }}>
+                      {enrollment.completion_status === 'completed' && <CheckCircle size={14} color="#2ECC71" />}
+                      {enrollment.completion_status === 'in_progress' && <Clock size={14} color="#F39C12" />}
+                      {enrollment.completion_status === 'not_started' && <AlertTriangle size={14} color="#E53E3E" />}
                       <span>{enrollment.completion_status.replace('_', ' ')}</span>
                     </span>
                   </div>
-                  <div className="progress-col">
-                    <div className="progress-bar">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ flex: 1, height: '8px', backgroundColor: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
                       <div 
-                        className="progress-fill" 
-                        style={{ width: `${enrollment.completion_percentage || 0}%` }}
+                        style={{ height: '100%', backgroundColor: '#1E88E5', width: `${enrollment.completion_percentage || 0}%` }}
                       ></div>
                     </div>
-                    <span>{enrollment.completion_percentage || 0}%</span>
+                    <span style={{ fontSize: '14px', color: '#64748B' }}>{enrollment.completion_percentage || 0}%</span>
                   </div>
-                  <div className="date-col">
+                  <div style={{ fontSize: '14px', color: '#64748B' }}>
                     {new Date(enrollment.enrollment_date).toLocaleDateString()}
                   </div>
                 </div>
@@ -259,10 +271,13 @@ const RefresherCourseDetail = () => {
             </div>
           </div>
         ) : (
-          <div className="no-trainees-message">
-            <Users size={48} />
-            <p>No trainees enrolled in this course yet</p>
-            <button className="btn-enroll-large" onClick={() => navigate(`/trainer/refresher-enrollment?courseId=${course.id}`)}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', padding: '32px', textAlign: 'center' }}>
+            <Users size={48} color="#64748B" />
+            <p style={{ fontSize: '16px', color: '#64748B' }}>No trainees enrolled in this course yet</p>
+            <button 
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#1E88E5', color: 'white', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.15s ease' }}
+              onClick={() => navigate(`/trainer/refresher-enrollment?courseId=${course.id}`)}
+            >
               <Users size={18} />
               <span>Enroll Trainees</span>
             </button>

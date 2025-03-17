@@ -18,7 +18,6 @@ import {
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
 import trainerService from '../../../services/trainerService';
-import './styles/Quizzes.css';
 
 const Quizzes = () => {
   const navigate = useNavigate();
@@ -45,7 +44,6 @@ const Quizzes = () => {
       setError(null);
       
       try {
-        // Check if token exists
         const token = localStorage.getItem('authToken');
         if (!token) {
           setError('You are not logged in. Please log in to access this page.');
@@ -54,7 +52,6 @@ const Quizzes = () => {
           return;
         }
         
-        // Check if user has trainer role
         const userRole = localStorage.getItem('userRole');
         if (userRole !== 'trainer') {
           setError('You do not have permission to access this page.');
@@ -63,17 +60,13 @@ const Quizzes = () => {
           return;
         }
         
-        // Fetch programs for filter
         const programsData = await trainerService.getPrograms();
         setPrograms(programsData);
         
-        // Fetch quizzes
         const quizzesData = await trainerService.getQuizzes(programIdParam);
         setQuizzes(quizzesData);
         
-        // Apply initial filters
         let filteredResults = quizzesData;
-        
         if (filters.program_id) {
           filteredResults = filteredResults.filter(quiz => quiz.program_id.toString() === filters.program_id);
         }
@@ -89,17 +82,14 @@ const Quizzes = () => {
 
     fetchQuizzes();
     
-    // Clear location state after using it
     if (location.state?.message) {
       window.history.replaceState({}, document.title);
     }
   }, [navigate, location.state, programIdParam, filters.program_id]);
 
   useEffect(() => {
-    // Apply filters and search
     let results = quizzes;
     
-    // Apply search term
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       results = results.filter(quiz => 
@@ -108,7 +98,6 @@ const Quizzes = () => {
       );
     }
     
-    // Apply program filter
     if (filters.program_id) {
       results = results.filter(quiz => quiz.program_id.toString() === filters.program_id);
     }
@@ -123,12 +112,10 @@ const Quizzes = () => {
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     
-    // Update URL if program_id filter changes
     if (name === 'program_id' && value !== programIdParam) {
       const newUrl = value 
         ? `${location.pathname}?programId=${value}` 
         : location.pathname;
-      
       navigate(newUrl, { replace: true });
     }
     
@@ -162,7 +149,6 @@ const Quizzes = () => {
     try {
       await trainerService.deleteQuiz(quizId);
       
-      // Update local state
       const updatedQuizzes = quizzes.filter(quiz => quiz.id !== quizId);
       setQuizzes(updatedQuizzes);
       setFilteredQuizzes(updatedQuizzes.filter(quiz => {
@@ -192,10 +178,22 @@ const Quizzes = () => {
   }
 
   return (
-    <div className="quizzes-container">
-      <div className="section-header">
-        <h1>Quizzes & Assessments</h1>
-        <div className="header-line"></div>
+    <div style={{
+      padding: '20px',
+      maxWidth: '1200px',
+      margin: '0 auto'
+    }}>
+      <div style={{ 
+        marginBottom: '20px' 
+      }}>
+        <h1 style={{ 
+          fontSize: '24px', 
+          margin: '0 0 10px 0' 
+        }}>Quizzes & Assessments</h1>
+        <div style={{ 
+          height: '2px', 
+          background: '#ddd' 
+        }}></div>
       </div>
       
       {error && (
@@ -214,163 +212,416 @@ const Quizzes = () => {
         />
       )}
       
-      <div className="quizzes-actions">
-        <div className="search-container">
-          <div className="search-input-wrapper">
-            <Search size={18} className="search-icon" />
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+        flexWrap: 'wrap',
+        gap: '15px'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          gap: '10px', 
+          flex: '1', 
+          minWidth: '200px' 
+        }}>
+          <div style={{ 
+            position: 'relative', 
+            width: '100%' 
+          }}>
+            <Search size={18} style={{ 
+              position: 'absolute', 
+              left: '10px', 
+              top: '50%', 
+              transform: 'translateY(-50%)',
+              color: '#666'
+            }} />
             <input
               type="text"
               placeholder="Search quizzes..."
               value={searchTerm}
               onChange={handleSearch}
-              className="search-input"
+              style={{
+                width: '100%',
+                padding: '8px 30px 8px 35px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px'
+              }}
             />
             {searchTerm && (
               <button 
-                className="clear-search" 
                 onClick={() => setSearchTerm('')}
-                aria-label="Clear search"
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '5px'
+                }}
               >
-                <X size={16} />
+                <X size={16} style={{ color: '#666' }} />
               </button>
             )}
           </div>
           
           <button 
-            className={`filter-toggle ${filterOpen ? 'active' : ''}`} 
             onClick={toggleFilter}
+            style={{
+              padding: '8px 15px',
+              background: filterOpen ? '#007bff' : '#f8f9fa',
+              color: filterOpen ? 'white' : '#333',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              whiteSpace: 'nowrap'
+            }}
           >
             <Filter size={18} />
             <span>Filter</span>
           </button>
         </div>
         
-        <div className="button-container">
-          <Link to="/trainer/quizzes/create" className="action-button primary">
-            <Plus size={16} className="icon-inline" /> Create Quiz
+        <div>
+          <Link 
+            to="/trainer/quizzes/create"
+            style={{
+              padding: '8px 15px',
+              background: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              fontSize: '14px'
+            }}
+          >
+            <Plus size={16} /> Create Quiz
           </Link>
         </div>
       </div>
       
       {filterOpen && (
-        <div className="filter-panel">
-          <div className="filter-form">
-            <div className="filter-row">
-              <div className="filter-group">
-                <label htmlFor="program_id">Program</label>
-                <select 
-                  id="program_id" 
-                  name="program_id" 
-                  value={filters.program_id}
-                  onChange={handleFilterChange}
-                >
-                  <option value="">All Programs</option>
-                  {programs.map((program) => (
-                    <option key={program.id} value={program.id}>{program.title}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="filter-actions">
-                <button className="reset-filters" onClick={resetFilters}>
-                  <X size={14} className="icon-inline" />
-                  <span>Reset Filters</span>
-                </button>
-              </div>
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          padding: '15px',
+          marginBottom: '20px'
+        }}>
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '15px',
+            alignItems: 'flex-end'
+          }}>
+            <div style={{ minWidth: '200px' }}>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '5px',
+                fontSize: '14px',
+                fontWeight: 'bold'
+              }} htmlFor="program_id">Program</label>
+              <select 
+                id="program_id" 
+                name="program_id" 
+                value={filters.program_id}
+                onChange={handleFilterChange}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              >
+                <option value="">All Programs</option>
+                {programs.map((program) => (
+                  <option key={program.id} value={program.id}>{program.title}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <button 
+                onClick={resetFilters}
+                style={{
+                  padding: '8px 15px',
+                  background: '#dc3545',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  fontSize: '14px'
+                }}
+              >
+                <X size={14} />
+                <span>Reset Filters</span>
+              </button>
             </div>
           </div>
         </div>
       )}
       
-      <div className="quizzes-content">
+      <div>
         {filteredQuizzes.length > 0 ? (
-          <div className="quizzes-grid">
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gap: '20px'
+          }}>
             {filteredQuizzes.map((quiz) => (
-              <div key={quiz.id} className="quiz-card">
-                <div className="quiz-header">
-                  <div className="quiz-actions-dropdown">
-                    {deleteConfirm === quiz.id ? (
-                      <div className="delete-confirmation">
-                        <span>Are you sure?</span>
-                        <button onClick={() => handleDelete(quiz.id)}>Yes</button>
-                        <button onClick={cancelDelete}>No</button>
-                      </div>
-                    ) : (
-                      <div className="action-buttons">
-                        <Link to={`/trainer/quizzes/${quiz.id}`} className="action-icon" title="View Quiz">
-                          <Eye size={18} />
-                        </Link>
-                        <Link to={`/trainer/quizzes/edit/${quiz.id}`} className="action-icon" title="Edit Quiz">
-                          <Edit size={18} />
-                        </Link>
-                        <button 
-                          className="action-icon delete" 
-                          onClick={() => handleDeleteConfirm(quiz.id)}
-                          title="Delete Quiz"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
+              <div 
+                key={quiz.id}
+                style={{
+                  background: '#fff',
+                  borderRadius: '8px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  padding: '15px',
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}
+              >
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'flex-end',
+                  marginBottom: '10px'
+                }}>
+                  {deleteConfirm === quiz.id ? (
+                    <div style={{ 
+                      display: 'flex', 
+                      gap: '10px', 
+                      alignItems: 'center' 
+                    }}>
+                      <span style={{ fontSize: '14px' }}>Are you sure?</span>
+                      <button 
+                        onClick={() => handleDelete(quiz.id)}
+                        style={{
+                          padding: '5px 10px',
+                          background: '#dc3545',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '12px'
+                        }}
+                      >
+                        Yes
+                      </button>
+                      <button 
+                        onClick={cancelDelete}
+                        style={{
+                          padding: '5px 10px',
+                          background: '#6c757d',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '12px'
+                        }}
+                      >
+                        No
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', gap: '5px' }}>
+                      <Link 
+                        to={`/trainer/quizzes/${quiz.id}`}
+                        style={{ 
+                          padding: '5px',
+                          color: '#007bff',
+                          textDecoration: 'none'
+                        }}
+                        title="View Quiz"
+                      >
+                        <Eye size={18} />
+                      </Link>
+                      <Link 
+                        to={`/trainer/quizzes/edit/${quiz.id}`}
+                        style={{ 
+                          padding: '5px',
+                          color: '#007bff',
+                          textDecoration: 'none'
+                        }}
+                        title="Edit Quiz"
+                      >
+                        <Edit size={18} />
+                      </Link>
+                      <button 
+                        onClick={() => handleDeleteConfirm(quiz.id)}
+                        style={{
+                          padding: '5px',
+                          background: 'none',
+                          border: 'none',
+                          color: '#dc3545',
+                          cursor: 'pointer'
+                        }}
+                        title="Delete Quiz"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  )}
                 </div>
                 
-                <div className="quiz-title">
-                  <h3>{quiz.title}</h3>
+                <div style={{ 
+                  fontSize: '18px', 
+                  fontWeight: 'bold', 
+                  marginBottom: '10px' 
+                }}>
+                  {quiz.title}
                 </div>
                 
-                <div className="quiz-program">
-                  <BookOpen size={16} className="icon-inline" />
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '5px', 
+                  marginBottom: '10px',
+                  color: '#666',
+                  fontSize: '14px'
+                }}>
+                  <BookOpen size={16} />
                   <span>{getProgramTitle(quiz.program_id)}</span>
                 </div>
                 
-                <div className="quiz-description">
-                  <p>{quiz.description}</p>
+                <div style={{ 
+                  marginBottom: '15px', 
+                  color: '#666', 
+                  fontSize: '14px',
+                  maxHeight: '60px',
+                  overflow: 'hidden'
+                }}>
+                  <p style={{ margin: 0 }}>{quiz.description}</p>
                 </div>
                 
-                <div className="quiz-meta">
-                  <div className="meta-item">
-                    <HelpCircle size={14} className="icon-inline" />
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '15px', 
+                  marginBottom: '15px',
+                  flexWrap: 'wrap'
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '5px',
+                    fontSize: '12px',
+                    color: '#666'
+                  }}>
+                    <HelpCircle size={14} />
                     <span>{quiz.question_count || 0} Questions</span>
                   </div>
-                  <div className="meta-item">
-                    <Clock size={14} className="icon-inline" />
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '5px',
+                    fontSize: '12px',
+                    color: '#666'
+                  }}>
+                    <Clock size={14} />
                     <span>{quiz.time_limit || 0} Minutes</span>
                   </div>
-                  <div className="meta-item">
-                    <CheckSquare size={14} className="icon-inline" />
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '5px',
+                    fontSize: '12px',
+                    color: '#666'
+                  }}>
+                    <CheckSquare size={14} />
                     <span>Pass: {quiz.passing_score || 70}%</span>
                   </div>
                 </div>
                 
-                <div className="quiz-stats">
-                  <div className="stat-item">
-                    <Users size={18} className="stat-icon" />
-                    <div className="stat-content">
-                      <div className="stat-value">{quiz.attempt_count || 0}</div>
-                      <div className="stat-label">Attempts</div>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(3, 1fr)', 
+                  gap: '10px', 
+                  marginBottom: '15px' 
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '5px' 
+                  }}>
+                    <Users size={18} style={{ color: '#007bff' }} />
+                    <div>
+                      <div style={{ 
+                        fontSize: '16px', 
+                        fontWeight: 'bold' 
+                      }}>{quiz.attempt_count || 0}</div>
+                      <div style={{ 
+                        fontSize: '12px', 
+                        color: '#666' 
+                      }}>Attempts</div>
                     </div>
                   </div>
                   
-                  <div className="stat-item">
-                    <BarChart2 size={18} className="stat-icon" />
-                    <div className="stat-content">
-                      <div className="stat-value">{quiz.average_score || 'N/A'}</div>
-                      <div className="stat-label">Avg. Score</div>
-                    </div>
-                  </div>
-                  
-                  <div className="stat-item">
-                    <CheckSquare size={18} className="stat-icon" />
-                    <div className="stat-content">
-                      <div className="stat-value">{quiz.pass_rate || 0}%</div>
-                      <div className="stat-label">Pass Rate</div>
-                    </div>
-                  </div>
+                  <div style={{ 
+  display: 'flex', 
+  alignItems: 'center', 
+  gap: '5px' 
+}}>
+  <BarChart2 size={18} style={{ color: '#007bff' }} />
+  <div>
+    <div style={{ 
+      fontSize: '16px', 
+      fontWeight: 'bold' 
+    }}>
+      {/* Display average score with one decimal point */}
+      {quiz.average_score ? parseFloat(quiz.average_score).toFixed(2) : 'N/A'}
+    </div>
+    <div style={{ 
+      fontSize: '12px', 
+      color: '#666' 
+    }}>Avg. Score</div>
+  </div>
+</div>
+
+<div style={{ 
+  display: 'flex', 
+  alignItems: 'center', 
+  gap: '5px' 
+}}>
+  <CheckSquare size={18} style={{ color: '#007bff' }} />
+  <div>
+    <div style={{ 
+      fontSize: '16px', 
+      fontWeight: 'bold' 
+    }}>
+      {/* Display pass rate as a whole percentage */}
+      {quiz.pass_rate ? Math.round(quiz.pass_rate) : 0}%
+    </div>
+    <div style={{ 
+      fontSize: '12px', 
+      color: '#666' 
+    }}>Pass Rate</div>
+  </div>
+</div>
                 </div>
                 
-                <div className="quiz-footer">
-                  <Link to={`/trainer/quizzes/${quiz.id}/results`} className="view-results-link">
+                <div style={{ marginTop: 'auto' }}>
+                  <Link 
+                    to={`/trainer/quizzes/${quiz.id}/results`}
+                    style={{
+                      display: 'block',
+                      textAlign: 'right',
+                      color: '#007bff',
+                      textDecoration: 'none',
+                      fontSize: '14px'
+                    }}
+                  >
                     View Results
                   </Link>
                 </div>
@@ -378,12 +629,44 @@ const Quizzes = () => {
             ))}
           </div>
         ) : (
-          <div className="no-quizzes">
-            <HelpCircle size={48} className="no-quizzes-icon" />
-            <h3>No Quizzes Found</h3>
-            <p>No quizzes match your search criteria or no quizzes have been created yet.</p>
-            <Link to="/trainer/quizzes/create" className="action-button primary">
-              <Plus size={16} className="icon-inline" /> Create New Quiz
+          <div style={{
+            textAlign: 'center',
+            padding: '40px',
+            background: '#fff',
+            borderRadius: '8px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          }}>
+            <HelpCircle size={48} style={{ 
+              color: '#007bff', 
+              marginBottom: '15px' 
+            }} />
+            <h3 style={{ 
+              margin: '0 0 10px 0',
+              fontSize: '20px'
+            }}>No Quizzes Found</h3>
+            <p style={{ 
+              margin: '0 0 20px 0',
+              color: '#666',
+              fontSize: '14px'
+            }}>
+              No quizzes match your search criteria or no quizzes have been created yet.
+            </p>
+            <Link 
+              to="/trainer/quizzes/create"
+              style={{
+                padding: '8px 15px',
+                background: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                fontSize: '14px'
+              }}
+            >
+              <Plus size={16} /> Create New Quiz
             </Link>
           </div>
         )}

@@ -1,4 +1,3 @@
-// src/pages/admin/records/RecordManagement.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
@@ -17,7 +16,6 @@ import {
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
 import adminService from '../../../services/adminService';
-import './styles/RecordManagement.css';
 
 const RecordManagement = () => {
   const navigate = useNavigate();
@@ -271,10 +269,10 @@ const RecordManagement = () => {
     }
   
     return (
-      <div className="record-management-container">
-        <div className="section-header">
-          <h1>Records Management</h1>
-          <div className="header-line"></div>
+      <div style={{ padding: '24px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+        <div style={{ marginBottom: '24px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b', marginBottom: '8px' }}>Records Management</h1>
+          <div style={{ height: '2px', backgroundColor: '#e2e8f0', width: '100%' }}></div>
         </div>
         
         {error && (
@@ -293,20 +291,35 @@ const RecordManagement = () => {
           />
         )}
         
-        <div className="records-actions">
-          <div className="search-container">
-            <div className="search-input-wrapper">
-              <Search size={18} className="search-icon" />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <Search size={18} style={{ position: 'absolute', left: '12px', color: '#64748b' }} />
               <input
                 type="text"
                 placeholder="Search records..."
                 value={searchTerm}
                 onChange={handleSearch}
-                className="search-input"
+                style={{
+                  padding: '8px 16px 8px 40px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  width: '300px',
+                  backgroundColor: 'white',
+                  color: '#1e293b'
+                }}
               />
               {searchTerm && (
                 <button 
-                  className="clear-search" 
+                  style={{ 
+                    position: 'absolute', 
+                    right: '12px', 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer', 
+                    color: '#64748b' 
+                  }}
                   onClick={() => setSearchTerm('')}
                   aria-label="Clear search"
                 >
@@ -316,7 +329,18 @@ const RecordManagement = () => {
             </div>
             
             <button 
-              className={`filter-toggle ${filterOpen ? 'active' : ''}`} 
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                padding: '8px 16px', 
+                backgroundColor: filterOpen ? '#E3F2FD' : 'white', 
+                border: '1px solid #e2e8f0', 
+                borderRadius: '8px', 
+                color: filterOpen ? '#1E88E5' : '#64748b', 
+                cursor: 'pointer', 
+                transition: 'background-color 0.15s ease, color 0.15s ease' 
+              }}
               onClick={toggleFilter}
             >
               <Filter size={18} />
@@ -324,29 +348,94 @@ const RecordManagement = () => {
             </button>
           </div>
           
-          <div className="button-container">
-            <Link to="/admin/records/upload" className="action-button primary">
-              <Plus size={16} className="icon-inline" /> Upload Record
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Link 
+              to="/admin/records/upload" 
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                padding: '8px 16px', 
+                backgroundColor: '#1E88E5', 
+                color: 'white', 
+                borderRadius: '8px', 
+                textDecoration: 'none', 
+                fontSize: '14px', 
+                fontWeight: '500' 
+              }}
+            >
+              <Plus size={16} />
+              Upload Record
             </Link>
             
             {selectedRecords.length > 0 && (
-              <div className="bulk-actions">
+              <div style={{ position: 'relative' }}>
                 <button 
-                  className="action-button secondary"
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px', 
+                    padding: '8px 16px', 
+                    backgroundColor: '#e2e8f0', 
+                    color: '#1e293b', 
+                    border: 'none', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    fontSize: '14px', 
+                    fontWeight: '500' 
+                  }}
                   onClick={toggleBulkActions}
                 >
-                  <SlidersHorizontal size={16} className="icon-inline" />
+                  <SlidersHorizontal size={16} />
                   <span>Bulk Actions ({selectedRecords.length})</span>
                 </button>
                 
                 {bulkActionOpen && (
-                  <div className="bulk-actions-menu">
-                    <button onClick={handleBulkDownload}>
-                      <Download size={16} className="icon-inline" />
+                  <div style={{ 
+                    position: 'absolute', 
+                    top: '100%', 
+                    right: 0, 
+                    backgroundColor: 'white', 
+                    border: '1px solid #e2e8f0', 
+                    borderRadius: '8px', 
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', 
+                    marginTop: '8px', 
+                    zIndex: 1000 
+                  }}>
+                    <button 
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px', 
+                        padding: '8px 16px', 
+                        width: '100%', 
+                        border: 'none', 
+                        backgroundColor: 'transparent', 
+                        cursor: 'pointer', 
+                        fontSize: '14px', 
+                        color: '#1e293b' 
+                      }}
+                      onClick={handleBulkDownload}
+                    >
+                      <Download size={16} />
                       <span>Download Selected</span>
                     </button>
-                    <button onClick={handleBulkDelete} className="delete-action">
-                      <Trash2 size={16} className="icon-inline" />
+                    <button 
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px', 
+                        padding: '8px 16px', 
+                        width: '100%', 
+                        border: 'none', 
+                        backgroundColor: 'transparent', 
+                        cursor: 'pointer', 
+                        fontSize: '14px', 
+                        color: '#e53935' 
+                      }}
+                      onClick={handleBulkDelete}
+                    >
+                      <Trash2 size={16} />
                       <span>Delete Selected</span>
                     </button>
                   </div>
@@ -357,148 +446,235 @@ const RecordManagement = () => {
         </div>
         
         {filterOpen && (
-          <div className="filter-panel">
-            <div className="filter-form">
-              <div className="filter-row">
-                <div className="filter-group">
-                  <label htmlFor="record_type">Type</label>
-                  <select 
-                    id="record_type" 
-                    name="record_type" 
-                    value={filters.record_type}
-                    onChange={handleFilterChange}
-                  >
-                    {recordTypes.map((type, index) => (
-                      <option key={index} value={type.value}>{type.label}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div className="filter-group">
-                  <label htmlFor="category">Category</label>
-                  <select 
-                    id="category" 
-                    name="category" 
-                    value={filters.category}
-                    onChange={handleFilterChange}
-                  >
-                    {categories.map((category, index) => (
-                      <option key={index} value={category.value}>{category.label}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div className="filter-group">
-                  <label htmlFor="user_id">User</label>
-                  <select 
-                    id="user_id" 
-                    name="user_id" 
-                    value={filters.user_id}
-                    onChange={handleFilterChange}
-                  >
-                    {users.map((user, index) => (
-                      <option key={index} value={user.value}>{user.label}</option>
-                    ))}
-                  </select>
-                </div>
+          <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px', display: 'block' }}>Type</label>
+                <select 
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px', 
+                    border: '1px solid #e2e8f0', 
+                    borderRadius: '8px', 
+                    fontSize: '14px', 
+                    color: '#1e293b', 
+                    backgroundColor: 'white' 
+                  }}
+                  value={filters.record_type}
+                  onChange={handleFilterChange}
+                  name="record_type"
+                >
+                  {recordTypes.map((type, index) => (
+                    <option key={index} value={type.value}>{type.label}</option>
+                  ))}
+                </select>
               </div>
               
-              <div className="filter-row">
-                <div className="filter-group">
-                  <label htmlFor="date_from">Date From</label>
-                  <input 
-                    type="date" 
-                    id="date_from" 
-                    name="date_from" 
-                    value={filters.date_from}
-                    onChange={handleFilterChange}
-                  />
-                </div>
-                
-                <div className="filter-group">
-                  <label htmlFor="date_to">Date To</label>
-                  <input 
-                    type="date" 
-                    id="date_to" 
-                    name="date_to" 
-                    value={filters.date_to}
-                    onChange={handleFilterChange}
-                  />
-                </div>
-                
-                <div className="filter-actions">
-                  <button className="reset-filters" onClick={resetFilters}>
-                    <X size={14} className="icon-inline" />
-                    <span>Reset Filters</span>
-                  </button>
-                </div>
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px', display: 'block' }}>Category</label>
+                <select 
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px', 
+                    border: '1px solid #e2e8f0', 
+                    borderRadius: '8px', 
+                    fontSize: '14px', 
+                    color: '#1e293b', 
+                    backgroundColor: 'white' 
+                  }}
+                  value={filters.category}
+                  onChange={handleFilterChange}
+                  name="category"
+                >
+                  {categories.map((category, index) => (
+                    <option key={index} value={category.value}>{category.label}</option>
+                  ))}
+                </select>
               </div>
+              
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px', display: 'block' }}>User</label>
+                <select 
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px', 
+                    border: '1px solid #e2e8f0', 
+                    borderRadius: '8px', 
+                    fontSize: '14px', 
+                    color: '#1e293b', 
+                    backgroundColor: 'white' 
+                  }}
+                  value={filters.user_id}
+                  onChange={handleFilterChange}
+                  name="user_id"
+                >
+                  {users.map((user, index) => (
+                    <option key={index} value={user.value}>{user.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-end' }}>
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px', display: 'block' }}>Date From</label>
+                <input 
+                  type="date" 
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px', 
+                    border: '1px solid #e2e8f0', 
+                    borderRadius: '8px', 
+                    fontSize: '14px', 
+                    color: '#1e293b', 
+                    backgroundColor: 'white' 
+                  }}
+                  value={filters.date_from}
+                  onChange={handleFilterChange}
+                  name="date_from"
+                />
+              </div>
+              
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: '14px', color: '#64748b', marginBottom: '8px', display: 'block' }}>Date To</label>
+                <input 
+                  type="date" 
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px', 
+                    border: '1px solid #e2e8f0', 
+                    borderRadius: '8px', 
+                    fontSize: '14px', 
+                    color: '#1e293b', 
+                    backgroundColor: 'white' 
+                  }}
+                  value={filters.date_to}
+                  onChange={handleFilterChange}
+                  name="date_to"
+                />
+              </div>
+              
+              <button 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  padding: '8px 16px', 
+                  backgroundColor: 'white', 
+                  border: '1px solid #e2e8f0', 
+                  borderRadius: '8px', 
+                  color: '#64748b', 
+                  cursor: 'pointer', 
+                  transition: 'background-color 0.15s ease, color 0.15s ease' 
+                }}
+                onClick={resetFilters}
+              >
+                <X size={14} />
+                <span>Reset Filters</span>
+              </button>
             </div>
           </div>
         )}
         
-        <div className="records-table-container">
+        <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
           {filteredRecords.length > 0 ? (
-            <table className="records-table">
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr>
-                  <th className="checkbox-column">
+                <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                  <th style={{ padding: '12px', textAlign: 'left', width: '40px' }}>
                     <input 
                       type="checkbox" 
                       onChange={handleSelectAll}
                       checked={selectedRecords.length === filteredRecords.length && filteredRecords.length > 0}
                     />
                   </th>
-                  <th>Description</th>
-                  <th>Type</th>
-                  <th>Category</th>
-                  <th>User</th>
-                  <th>Date</th>
-                  <th className="actions-column">Actions</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>Description</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>Type</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>Category</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>User</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>Date</th>
+                  <th style={{ padding: '12px', textAlign: 'left', width: '100px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredRecords.map((record) => (
-                  <tr key={record.id}>
-                    <td className="checkbox-column">
+                  <tr key={record.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                    <td style={{ padding: '12px', textAlign: 'left' }}>
                       <input 
                         type="checkbox" 
                         onChange={() => handleSelectRecord(record.id)}
                         checked={selectedRecords.includes(record.id)}
                       />
                     </td>
-                    <td>
-                      <Link to={`/admin/records/${record.id}`} className="record-description">
-                        <FileText size={16} className="icon-inline" />
+                    <td style={{ padding: '12px', textAlign: 'left' }}>
+                      <Link 
+                        to={`/admin/records/${record.id}`} 
+                        style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '8px', 
+                          color: '#1E88E5', 
+                          textDecoration: 'none' 
+                        }}
+                      >
+                        <FileText size={16} />
                         <span>{record.description || 'No description'}</span>
                       </Link>
                     </td>
-                    <td>
-                      <span className={`record-type-badge ${getRecordTypeClass(record.record_type)}`}>
+                    <td style={{ padding: '12px', textAlign: 'left' }}>
+                      <span style={{ 
+                        padding: '4px 8px', 
+                        borderRadius: '4px', 
+                        fontSize: '12px', 
+                        fontWeight: '500', 
+                        backgroundColor: getRecordTypeClass(record.record_type) === 'type-training' ? '#E3F2FD' : 
+                                        getRecordTypeClass(record.record_type) === 'type-applicant' ? '#FFEBEE' : 
+                                        getRecordTypeClass(record.record_type) === 'type-backup' ? '#F3E5F5' : '#e2e8f0', 
+                        color: getRecordTypeClass(record.record_type) === 'type-training' ? '#1E88E5' : 
+                              getRecordTypeClass(record.record_type) === 'type-applicant' ? '#E53935' : 
+                              getRecordTypeClass(record.record_type) === 'type-backup' ? '#8E24AA' : '#1e293b'
+                      }}>
                         {getRecordTypeLabel(record.record_type)}
                       </span>
                     </td>
-                    <td>{record.category || 'N/A'}</td>
-                    <td>
+                    <td style={{ padding: '12px', textAlign: 'left' }}>{record.category || 'N/A'}</td>
+                    <td style={{ padding: '12px', textAlign: 'left' }}>
                       {record.userName ? (
-                        <div className="user-info">
-                          <span className="user-avatar">{record.userName.charAt(0)}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ 
+                            width: '24px', 
+                            height: '24px', 
+                            borderRadius: '50%', 
+                            backgroundColor: '#E3F2FD', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            fontWeight: '600', 
+                            color: '#1E88E5' 
+                          }}>
+                            {record.userName.charAt(0)}
+                          </div>
                           <span>{record.userName}</span>
                         </div>
                       ) : (
                         'System'
                       )}
                     </td>
-                    <td>
-                      <div className="date-info">
-                        <Calendar size={14} className="icon-inline" />
+                    <td style={{ padding: '12px', textAlign: 'left' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Calendar size={14} />
                         <span>{formatDate(record.created_at)}</span>
                       </div>
                     </td>
-                    <td className="actions-column">
-                      <div className="record-actions">
+                    <td style={{ padding: '12px', textAlign: 'left' }}>
+                      <div style={{ display: 'flex', gap: '8px' }}>
                         <button 
-                          className="action-icon" 
+                          style={{ 
+                            background: 'none', 
+                            border: 'none', 
+                            cursor: 'pointer', 
+                            color: '#1E88E5' 
+                          }}
                           onClick={() => handleDownloadRecord(record.id, record.description)}
                           title="Download"
                         >
@@ -506,7 +682,12 @@ const RecordManagement = () => {
                         </button>
                         <Link 
                           to={`/admin/records/${record.id}`} 
-                          className="action-icon"
+                          style={{ 
+                            background: 'none', 
+                            border: 'none', 
+                            cursor: 'pointer', 
+                            color: '#1E88E5' 
+                          }}
                           title="View details"
                         >
                           <FileText size={16} />
@@ -518,10 +699,10 @@ const RecordManagement = () => {
               </tbody>
             </table>
           ) : (
-            <div className="no-records">
-              <FolderOpen size={48} className="no-records-icon" />
-              <h3>No Records Found</h3>
-              <p>No records match your search criteria. Try adjusting your filters or upload new records.</p>
+            <div style={{ textAlign: 'center', padding: '48px' }}>
+              <FolderOpen size={48} style={{ color: '#64748b', marginBottom: '16px' }} />
+              <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b', marginBottom: '8px' }}>No Records Found</h3>
+              <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px' }}>No records match your search criteria. Try adjusting your filters or upload new records.</p>
             </div>
           )}
         </div>

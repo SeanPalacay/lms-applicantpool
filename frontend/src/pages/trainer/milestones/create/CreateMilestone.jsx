@@ -4,12 +4,7 @@ import { Flag, Save, XCircle, Calendar, Info, Users, Clock } from 'lucide-react'
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
 import trainerService from '../../../../services/trainerService';
-import '../styles/MilestoneForm.css';
 
-/**
- * CreateMilestone Component
- * Allows trainers to create new milestones for programs
- */
 const CreateMilestone = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -26,14 +21,11 @@ const CreateMilestone = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Fetch available programs and trainees on component mount
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError('');
-      
       try {
-        // Check if user is logged in and has correct role
         const token = localStorage.getItem('authToken');
         if (!token) {
           setError('You are not logged in. Please log in to access this page.');
@@ -49,12 +41,10 @@ const CreateMilestone = () => {
           setTimeout(() => navigate(`/${userRole}-dashboard`), 2000);
           return;
         }
-        
-        // Fetch programs
+
         const programsData = await trainerService.getPrograms();
         setPrograms(programsData);
-        
-        // Fetch trainees
+
         const traineesData = await trainerService.getTrainees();
         setTrainees(traineesData);
       } catch (err) {
@@ -70,12 +60,7 @@ const CreateMilestone = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-
-    // If program changes, optionally fetch trainees for that program
+    setFormData({ ...formData, [name]: value });
     if (name === 'program_id' && value) {
       fetchTraineesForProgram(value);
     }
@@ -87,7 +72,6 @@ const CreateMilestone = () => {
       setTrainees(programTrainees);
     } catch (err) {
       console.error('Error fetching program trainees:', err);
-      // Don't set error here to avoid overriding the form
     }
   };
 
@@ -101,20 +85,17 @@ const CreateMilestone = () => {
     setFormSubmitting(true);
     setError('');
     setSuccessMessage('');
-    
-    // Validate form data
+
     if (!formData.program_id) {
       setError('Please select a program');
       setFormSubmitting(false);
       return;
     }
-    
     if (!formData.title.trim()) {
       setError('Title is required');
       setFormSubmitting(false);
       return;
     }
-    
     if (!formData.due_date) {
       setError('Due date is required');
       setFormSubmitting(false);
@@ -122,27 +103,11 @@ const CreateMilestone = () => {
     }
 
     try {
-      // Create milestone using trainerService
-      await trainerService.createMilestone({
-        ...formData,
-        trainees: selectedTrainees
-      });
-      
+      await trainerService.createMilestone({ ...formData, trainees: selectedTrainees });
       setSuccessMessage('Milestone created successfully!');
-      
-      // Reset form
-      setFormData({
-        program_id: '',
-        title: '',
-        description: '',
-        due_date: ''
-      });
+      setFormData({ program_id: '', title: '', description: '', due_date: '' });
       setSelectedTrainees([]);
-      
-      // Redirect after a short delay
-      setTimeout(() => {
-        navigate('/trainer/milestones');
-      }, 2000);
+      setTimeout(() => navigate('/trainer/milestones'), 2000);
     } catch (err) {
       console.error('Error creating milestone:', err);
       setError(err.message || 'Failed to create milestone. Please try again.');
@@ -151,141 +116,255 @@ const CreateMilestone = () => {
     }
   };
 
-  const handleCancel = () => {
-    navigate('/trainer/milestones');
-  };
+  const handleCancel = () => navigate('/trainer/milestones');
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="create-milestone-container">
+    <div style={{ padding: '32px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       {error && <AlertBanner message={error} type="error" />}
       {successMessage && <AlertBanner message={successMessage} type="success" />}
       
-      <div className="card">
-        <div className="card-header gradient-purple">
-          <div className="header-icon">
+      <div style={{
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #1E88E5, #1565C0)',
+          padding: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px',
+        }}>
+          <div style={{ color: '#ffffff', display: 'flex', alignItems: 'center' }}>
             <Flag size={20} />
           </div>
-          <div className="header-content">
-            <h3>Create New Milestone</h3>
+          <div style={{ color: '#ffffff', fontFamily: 'Inter, sans-serif' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 600, margin: 0 }}>Create New Milestone</h3>
           </div>
         </div>
-        
-        <div className="card-content">
-          <form onSubmit={handleSubmit} className="milestone-form">
-            <div className="form-section">
-              <div className="section-header">
+
+        <div style={{ padding: '24px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1e293b' }}>
                 <Info size={18} />
-                <h4>Milestone Information</h4>
+                <h4 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>Milestone Information</h4>
               </div>
-              
-              <div className="form-group">
-                <label htmlFor="program_id">
-                  <span className="required">*</span> Program:
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="program_id" style={{ fontSize: '14px', color: '#1e293b', fontWeight: 500 }}>
+                  <span style={{ color: '#e74c3c' }}>*</span> Program:
                 </label>
-                <select 
-                  id="program_id" 
-                  name="program_id" 
-                  value={formData.program_id} 
+                <select
+                  id="program_id"
+                  name="program_id"
+                  value={formData.program_id}
                   onChange={handleChange}
                   required
-                  className="form-select"
+                  style={{
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #e2e8f0',
+                    fontSize: '14px',
+                    color: '#1e293b',
+                    backgroundColor: '#ffffff',
+                    transition: 'border-color 0.3s ease',
+                    outline: 'none',
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#1E88E5'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                 >
-                  <option value="">Select a Program</option>
+                  <option value="" style={{ color: '#64748b' }}>Select a Program</option>
                   {programs.map((program) => (
-                    <option key={program.id} value={program.id}>
+                    <option key={program.id} value={program.id} style={{ color: '#1e293b' }}>
                       {program.title}
                     </option>
                   ))}
                 </select>
               </div>
-              
-              <div className="form-group">
-                <label htmlFor="title">
-                  <span className="required">*</span> Title:
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="title" style={{ fontSize: '14px', color: '#1e293b', fontWeight: 500 }}>
+                  <span style={{ color: '#e74c3c' }}>*</span> Title:
                 </label>
-                <input 
-                  type="text" 
-                  id="title" 
-                  name="title" 
-                  value={formData.title} 
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
                   onChange={handleChange}
                   required
-                  className="form-input"
                   placeholder="Enter milestone title"
+                  style={{
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #e2e8f0',
+                    fontSize: '14px',
+                    color: '#1e293b',
+                    backgroundColor: '#ffffff',
+                    transition: 'border-color 0.3s ease',
+                    outline: 'none',
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#1E88E5'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                 />
               </div>
-              
-              <div className="form-group">
-                <label htmlFor="description">Description:</label>
-                <textarea 
-                  id="description" 
-                  name="description" 
-                  value={formData.description} 
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="description" style={{ fontSize: '14px', color: '#1e293b', fontWeight: 500 }}>
+                  Description:
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
                   onChange={handleChange}
-                  className="form-textarea"
                   placeholder="Enter milestone description"
                   rows={4}
+                  style={{
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #e2e8f0',
+                    fontSize: '14px',
+                    color: '#1e293b',
+                    backgroundColor: '#ffffff',
+                    resize: 'vertical',
+                    transition: 'border-color 0.3s ease',
+                    outline: 'none',
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#1E88E5'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                 />
               </div>
-              
-              <div className="form-group">
-                <label htmlFor="due_date">
-                  <span className="required">*</span> Due Date:
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="due_date" style={{ fontSize: '14px', color: '#1e293b', fontWeight: 500 }}>
+                  <span style={{ color: '#e74c3c' }}>*</span> Due Date:
                 </label>
-                <div className="date-input-container">
-                  <Calendar size={18} className="date-icon" />
-                  <input 
-                    type="date" 
-                    id="due_date" 
-                    name="due_date" 
-                    value={formData.due_date} 
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <Calendar size={18} style={{ position: 'absolute', left: '12px', color: '#64748b' }} />
+                  <input
+                    type="date"
+                    id="due_date"
+                    name="due_date"
+                    value={formData.due_date}
                     onChange={handleChange}
                     required
-                    className="form-input date-input"
+                    style={{
+                      padding: '12px 12px 12px 40px',
+                      borderRadius: '8px',
+                      border: '1px solid #e2e8f0',
+                      fontSize: '14px',
+                      color: '#1e293b',
+                      backgroundColor: '#ffffff',
+                      width: '100%',
+                      transition: 'border-color 0.3s ease',
+                      outline: 'none',
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#1E88E5'}
+                    onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                   />
                 </div>
               </div>
             </div>
-            
-            <div className="form-section">
-              <div className="section-header">
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1e293b' }}>
                 <Users size={18} />
-                <h4>Assign Trainees</h4>
+                <h4 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>Assign Trainees</h4>
               </div>
-              
-              <div className="form-group">
-                <label htmlFor="trainees">Select Trainees:</label>
-                <select 
-                  id="trainees" 
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="trainees" style={{ fontSize: '14px', color: '#1e293b', fontWeight: 500 }}>
+                  Select Trainees:
+                </label>
+                <select
+                  id="trainees"
                   multiple
                   value={selectedTrainees}
                   onChange={handleTraineeSelection}
-                  className="form-select multiple-select"
                   size={5}
+                  style={{
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #e2e8f0',
+                    fontSize: '14px',
+                    color: '#1e293b',
+                    backgroundColor: '#ffffff',
+                    transition: 'border-color 0.3s ease',
+                    outline: 'none',
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#1E88E5'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                 >
                   {trainees.map((trainee) => (
-                    <option key={trainee.id} value={trainee.id}>
+                    <option key={trainee.id} value={trainee.id} style={{ padding: '4px' }}>
                       {trainee.full_name}
                     </option>
                   ))}
                 </select>
-                <small className="select-help">Hold Ctrl/Cmd to select multiple trainees</small>
+                <small style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
+                  Hold Ctrl/Cmd to select multiple trainees
+                </small>
               </div>
             </div>
-            
-            <div className="form-actions">
-              <button type="button" onClick={handleCancel} className="btn-cancel">
+
+            <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={handleCancel}
+                style={{
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  color: '#64748b',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'background-color 0.3s ease, color 0.3s ease',
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#f8fafc';
+                  e.target.style.color = '#1e293b';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#ffffff';
+                  e.target.style.color = '#64748b';
+                }}
+              >
                 <XCircle size={18} />
                 Cancel
               </button>
-              <button type="submit" className="btn-save" disabled={formSubmitting}>
+              <button
+                type="submit"
+                disabled={formSubmitting}
+                style={{
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  backgroundColor: formSubmitting ? '#64748b' : '#1E88E5',
+                  border: 'none',
+                  color: '#ffffff',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  cursor: formSubmitting ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'background-color 0.3s ease',
+                }}
+                onMouseOver={(e) => !formSubmitting && (e.target.style.backgroundColor = '#1565C0')}
+                onMouseOut={(e) => !formSubmitting && (e.target.style.backgroundColor = '#1E88E5')}
+              >
                 {formSubmitting ? (
                   <>
-                    <Clock size={18} className="icon-spin" />
+                    <Clock size={18} style={{ animation: 'spin 1s linear infinite' }} />
                     Saving...
                   </>
                 ) : (

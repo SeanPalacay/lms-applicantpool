@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Added useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Flag, Plus, Filter, Search, Clock, Calendar, BookOpen, 
   CheckCircle, AlertTriangle, UserCheck, ChevronDown, ChevronUp, 
@@ -7,15 +7,10 @@ import {
 } from 'lucide-react';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
-import trainerService from '../../../services/trainerService'; // Import trainerService
-import './styles/Milestones.css';
+import trainerService from '../../../services/trainerService';
 
-/**
- * Milestones Component
- * Lists all milestones for trainers to manage
- */
 const Milestones = () => {
-  const navigate = useNavigate(); // Added for navigation checks
+  const navigate = useNavigate();
   const [milestones, setMilestones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -27,12 +22,10 @@ const Milestones = () => {
   const [sortDirection, setSortDirection] = useState('asc');
   const [showFilters, setShowFilters] = useState(false);
 
-  // Fetch milestones and programs on component mount
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError('');
-      
       try {
         const token = localStorage.getItem('authToken');
         if (!token) {
@@ -50,7 +43,6 @@ const Milestones = () => {
           return;
         }
 
-        // Fetch milestones and programs using trainerService
         const milestonesData = await trainerService.getMilestones();
         const programsData = await trainerService.getPrograms();
 
@@ -63,26 +55,12 @@ const Milestones = () => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [navigate]);
 
-  // Handle search query change
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  // Handle status filter change
-  const handleStatusFilterChange = (e) => {
-    setFilterStatus(e.target.value);
-  };
-
-  // Handle program filter change
-  const handleProgramFilterChange = (e) => {
-    setFilterProgram(e.target.value);
-  };
-
-  // Handle sort change
+  const handleSearchChange = (e) => setSearchQuery(e.target.value);
+  const handleStatusFilterChange = (e) => setFilterStatus(e.target.value);
+  const handleProgramFilterChange = (e) => setFilterProgram(e.target.value);
   const handleSort = (field) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -91,148 +69,140 @@ const Milestones = () => {
       setSortDirection('asc');
     }
   };
+  const toggleFilters = () => setShowFilters(!showFilters);
 
-  // Toggle filters visibility
-  const toggleFilters = () => {
-    setShowFilters(!showFilters);
-  };
-
-  // Format date for display
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Calculate status based on trainees' progress
   const calculateStatus = (milestone) => {
-    if (!milestone.trainees || milestone.trainees.length === 0) {
-      return { status: 'unassigned', label: 'Unassigned' };
-    }
-    
-    const completed = milestone.trainees.filter(t => 
-      t.progress && t.progress.status === 'completed'
-    ).length;
-    
+    if (!milestone.trainees || milestone.trainees.length === 0) return { status: 'unassigned', label: 'Unassigned' };
+    const completed = milestone.trainees.filter(t => t.progress?.status === 'completed').length;
     const total = milestone.trainees.length;
-    
-    if (completed === total) {
-      return { status: 'completed', label: 'Completed' };
-    } else if (completed > 0) {
-      return { status: 'in-progress', label: 'In Progress' };
-    } else {
-      return { status: 'not-started', label: 'Not Started' };
-    }
+    if (completed === total) return { status: 'completed', label: 'Completed' };
+    if (completed > 0) return { status: 'in-progress', label: 'In Progress' };
+    return { status: 'not-started', label: 'Not Started' };
   };
 
-  // Filter and sort milestones
   const filteredMilestones = milestones
     .filter(milestone => {
       const searchMatch = milestone.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (milestone.description && milestone.description.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      let statusMatch = true;
-      if (filterStatus !== 'all') {
-        const status = calculateStatus(milestone).status;
-        statusMatch = filterStatus === status;
-      }
-      
-      let programMatch = true;
-      if (filterProgram !== 'all') {
-        programMatch = milestone.program_id.toString() === filterProgram;
-      }
-      
+      const statusMatch = filterStatus === 'all' || calculateStatus(milestone).status === filterStatus;
+      const programMatch = filterProgram === 'all' || milestone.program_id.toString() === filterProgram;
       return searchMatch && statusMatch && programMatch;
     })
     .sort((a, b) => {
       let comparison = 0;
-      
-      if (sortField === 'title') {
-        comparison = a.title.localeCompare(b.title);
-      } else if (sortField === 'due_date') {
-        comparison = new Date(a.due_date) - new Date(b.due_date);
-      } else if (sortField === 'program') {
-        comparison = (a.program?.title || '').localeCompare(b.program?.title || '');
-      } else if (sortField === 'status') {
-        const statusA = calculateStatus(a).status;
-        const statusB = calculateStatus(b).status;
-        comparison = statusA.localeCompare(statusB);
-      }
-      
+      if (sortField === 'title') comparison = a.title.localeCompare(b.title);
+      else if (sortField === 'due_date') comparison = new Date(a.due_date) - new Date(b.due_date);
+      else if (sortField === 'program') comparison = (a.program?.title || '').localeCompare(b.program?.title || '');
+      else if (sortField === 'status') comparison = calculateStatus(a).status.localeCompare(calculateStatus(b).status);
       return sortDirection === 'asc' ? comparison : -comparison;
     });
 
-  // Check if due date is past
-  const isPastDue = (dateString) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const dueDate = new Date(dateString);
-    dueDate.setHours(0, 0, 0, 0);
-    return dueDate < today;
-  };
-
-  // Check if due date is approaching (within 7 days)
+  const isPastDue = (dateString) => new Date(dateString).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0);
   const isApproaching = (dateString) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const dueDate = new Date(dateString);
-    dueDate.setHours(0, 0, 0, 0);
-    const differenceInTime = dueDate.getTime() - today.getTime();
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-    return differenceInDays >= 0 && differenceInDays <= 7;
+    const dueDate = new Date(dateString).setHours(0, 0, 0, 0);
+    const today = new Date().setHours(0, 0, 0, 0);
+    const diffDays = (dueDate - today) / (1000 * 3600 * 24);
+    return diffDays >= 0 && diffDays <= 7;
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="milestones-container">
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', padding: '32px', fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif", color: '#1e293b' }}>
       {error && <AlertBanner message={error} type="error" />}
       
-      {/* Header with action buttons */}
-      <div className="milestones-header">
-        <div className="header-title">
-          <Flag size={24} className="header-icon" />
-          <h2>Milestones</h2>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Flag size={24} style={{ color: '#1E88E5' }} />
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 600, margin: 0 }}>Milestones</h2>
         </div>
-        <div className="header-actions">
-          <Link to="/trainer/milestones/create" className="btn-create">
-            <Plus size={18} />
-            <span>Create Milestone</span>
-          </Link>
-        </div>
+        <Link
+          to="/trainer/milestones/create"
+          style={{
+            backgroundColor: '#1E88E5',
+            color: '#ffffff',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.875rem',
+            transition: 'background-color 0.3s ease',
+            ':hover': { backgroundColor: '#1565C0' }
+          }}
+        >
+          <Plus size={18} /> Create Milestone
+        </Link>
       </div>
-      
-      {/* Search and filter bar */}
-      <div className="search-filter-bar">
-        <div className="search-container">
-          <Search size={18} className="search-icon" />
-          <input 
-            type="text" 
-            placeholder="Search milestones..." 
+
+      {/* Search and Filter Bar */}
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '16px', marginBottom: '24px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={{ position: 'relative', flex: '1 1 300px', minWidth: '200px' }}>
+          <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+          <input
+            type="text"
+            placeholder="Search milestones..."
             value={searchQuery}
             onChange={handleSearchChange}
-            className="search-input"
+            style={{
+              width: '100%',
+              padding: '8px 12px 8px 36px',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              fontSize: '0.875rem',
+              color: '#1e293b',
+              outline: 'none',
+              ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+            }}
           />
         </div>
-        
-        <button onClick={toggleFilters} className="btn-toggle-filters">
-          <Filter size={18} />
-          <span>Filters</span>
-          {showFilters ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        <button
+          onClick={toggleFilters}
+          style={{
+            backgroundColor: '#ffffff',
+            color: '#1E88E5',
+            padding: '8px 16px',
+            border: '1px solid #1E88E5',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.875rem',
+            transition: 'background-color 0.3s ease',
+            ':hover': { backgroundColor: '#E3F2FD' }
+          }}
+        >
+          <Filter size={18} /> Filters {showFilters ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </button>
       </div>
-      
-      {/* Filters panel */}
+
+      {/* Filters Panel */}
       {showFilters && (
-        <div className="filters-panel">
-          <div className="filter-group">
-            <label htmlFor="status-filter">Status:</label>
-            <select 
-              id="status-filter" 
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '16px', marginBottom: '24px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: '1 1 200px' }}>
+            <label htmlFor="status-filter" style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>Status:</label>
+            <select
+              id="status-filter"
               value={filterStatus}
               onChange={handleStatusFilterChange}
-              className="filter-select"
+              style={{
+                padding: '8px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                color: '#1e293b',
+                outline: 'none',
+                backgroundColor: '#ffffff',
+                ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+              }}
             >
               <option value="all">All Statuses</option>
               <option value="completed">Completed</option>
@@ -241,118 +211,126 @@ const Milestones = () => {
               <option value="unassigned">Unassigned</option>
             </select>
           </div>
-          
-          <div className="filter-group">
-            <label htmlFor="program-filter">Program:</label>
-            <select 
-              id="program-filter" 
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: '1 1 200px' }}>
+            <label htmlFor="program-filter" style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>Program:</label>
+            <select
+              id="program-filter"
               value={filterProgram}
               onChange={handleProgramFilterChange}
-              className="filter-select"
+              style={{
+                padding: '8px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                color: '#1e293b',
+                outline: 'none',
+                backgroundColor: '#ffffff',
+                ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+              }}
             >
               <option value="all">All Programs</option>
               {programs.map(program => (
-                <option key={program.id} value={program.id.toString()}>
-                  {program.title}
-                </option>
+                <option key={program.id} value={program.id.toString()}>{program.title}</option>
               ))}
             </select>
           </div>
         </div>
       )}
-      
-      {/* Milestones list */}
+
+      {/* Milestones List */}
       {filteredMilestones.length > 0 ? (
-        <div className="milestones-list">
-          {/* Table header */}
-          <div className="milestones-table-header">
-            <div 
-              className={`milestone-header title-col ${sortField === 'title' ? 'sorted' : ''}`}
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', overflow: 'hidden' }}>
+          {/* Table Header */}
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', padding: '16px', backgroundColor: '#f1f5f9', borderBottom: '1px solid #e2e8f0', fontSize: '0.875rem', fontWeight: 600, color: '#64748b' }}>
+            <div
               onClick={() => handleSort('title')}
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', ':hover': { color: '#1E88E5' } }}
             >
-              <span>Title</span>
-              {sortField === 'title' && (
-                sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
-              )}
+              Title {sortField === 'title' && (sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
             </div>
-            <div 
-              className={`milestone-header program-col ${sortField === 'program' ? 'sorted' : ''}`}
+            <div
               onClick={() => handleSort('program')}
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', ':hover': { color: '#1E88E5' } }}
             >
-              <span>Program</span>
-              {sortField === 'program' && (
-                sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
-              )}
+              Program {sortField === 'program' && (sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
             </div>
-            <div 
-              className={`milestone-header due-date-col ${sortField === 'due_date' ? 'sorted' : ''}`}
+            <div
               onClick={() => handleSort('due_date')}
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', ':hover': { color: '#1E88E5' } }}
             >
-              <span>Due Date</span>
-              {sortField === 'due_date' && (
-                sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
-              )}
+              Due Date {sortField === 'due_date' && (sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
             </div>
-            <div 
-              className={`milestone-header status-col ${sortField === 'status' ? 'sorted' : ''}`}
+            <div
               onClick={() => handleSort('status')}
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', ':hover': { color: '#1E88E5' } }}
             >
-              <span>Status</span>
-              {sortField === 'status' && (
-                sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
-              )}
+              Status {sortField === 'status' && (sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
             </div>
-            <div className="milestone-header trainees-col">
-              <span>Trainees</span>
-            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>Trainees</div>
           </div>
-          
-          {/* Table rows */}
+
+          {/* Table Rows */}
           {filteredMilestones.map(milestone => {
             const status = calculateStatus(milestone);
             const pastDue = isPastDue(milestone.due_date);
             const approaching = isApproaching(milestone.due_date);
-            
+
             return (
-              <Link 
-                to={`/trainer/milestones/${milestone.id}`} 
+              <Link
+                to={`/trainer/milestones/${milestone.id}`}
                 key={milestone.id}
-                className="milestone-item"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr',
+                  padding: '16px',
+                  borderBottom: '1px solid #e2e8f0',
+                  textDecoration: 'none',
+                  color: '#1e293b',
+                  transition: 'background-color 0.3s ease',
+                  ':hover': { backgroundColor: '#E3F2FD' }
+                }}
               >
-                <div className="milestone-col title-col">
-                  <Flag size={18} className={`milestone-icon status-${status.status}`} />
-                  <span className="milestone-title">{milestone.title}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Flag size={18} style={{ color: status.status === 'completed' ? '#2ecc71' : status.status === 'in-progress' ? '#f39c12' : status.status === 'not-started' ? '#e74c3c' : '#64748b' }} />
+                  <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>{milestone.title}</span>
                 </div>
-                <div className="milestone-col program-col">
-                  <BookOpenIcon size={16} className="col-icon" />
-                  <span>{milestone.program?.title || 'Unknown Program'}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem', color: '#64748b' }}>
+                  <BookOpenIcon size={16} /> {milestone.program?.title || 'Unknown Program'}
                 </div>
-                <div className="milestone-col due-date-col">
-                  <CalendarIcon size={16} className={`col-icon ${pastDue ? 'overdue' : (approaching ? 'approaching' : '')}`} />
-                  <span className={pastDue ? 'overdue' : (approaching ? 'approaching' : '')}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem' }}>
+                  <CalendarIcon size={16} style={{ color: pastDue ? '#e74c3c' : approaching ? '#f39c12' : '#64748b' }} />
+                  <span style={{ color: pastDue ? '#e74c3c' : approaching ? '#f39c12' : '#64748b' }}>
                     {formatDate(milestone.due_date)}
-                    {pastDue && <span className="overdue-label">Overdue</span>}
-                    {!pastDue && approaching && <span className="approaching-label">Soon</span>}
+                    {pastDue && <span style={{ marginLeft: '4px', fontSize: '0.75rem', backgroundColor: '#ffe6e6', padding: '2px 4px', borderRadius: '4px' }}>Overdue</span>}
+                    {!pastDue && approaching && <span style={{ marginLeft: '4px', fontSize: '0.75rem', backgroundColor: '#fef5e7', padding: '2px 4px', borderRadius: '4px' }}>Soon</span>}
                   </span>
                 </div>
-                <div className="milestone-col status-col">
-                  <div className={`status-badge status-${status.status}`}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    backgroundColor: status.status === 'completed' ? '#e6ffe6' : status.status === 'in-progress' ? '#fef5e7' : status.status === 'not-started' ? '#ffe6e6' : '#f1f5f9',
+                    color: status.status === 'completed' ? '#2ecc71' : status.status === 'in-progress' ? '#f39c12' : status.status === 'not-started' ? '#e74c3c' : '#64748b'
+                  }}>
                     {status.status === 'completed' && <CheckCircle size={14} />}
                     {status.status === 'in-progress' && <Clock size={14} />}
                     {status.status === 'not-started' && <AlertTriangle size={14} />}
                     {status.status === 'unassigned' && <Flag size={14} />}
-                    <span>{status.label}</span>
+                    {status.label}
                   </div>
                 </div>
-                <div className="milestone-col trainees-col">
-                  <UserCheck size={16} className="col-icon" />
-                  <div className="trainee-counts">
-                    <span className="total-trainees">
-                      {milestone.trainees?.length || 0} trainees
-                    </span>
-                    {milestone.trainees && milestone.trainees.length > 0 && (
-                      <span className="completed-trainees">
-                        {milestone.trainees.filter(t => t.progress && t.progress.status === 'completed').length} completed
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem', color: '#64748b' }}>
+                  <UserCheck size={16} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <span>{milestone.trainees?.length || 0} trainees</span>
+                    {milestone.trainees?.length > 0 && (
+                      <span style={{ fontSize: '0.75rem' }}>
+                        {milestone.trainees.filter(t => t.progress?.status === 'completed').length} completed
                       </span>
                     )}
                   </div>
@@ -362,17 +340,31 @@ const Milestones = () => {
           })}
         </div>
       ) : (
-        <div className="no-milestones-message">
-          <Flag size={48} />
-          <h3>No milestones found</h3>
-          <p>
+        <div style={{ textAlign: 'center', padding: '48px', backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
+          <Flag size={48} style={{ color: '#64748b', marginBottom: '16px' }} />
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 600, margin: '0 0 8px 0' }}>No milestones found</h3>
+          <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '0 0 24px 0' }}>
             {searchQuery || filterStatus !== 'all' || filterProgram !== 'all'
               ? 'Try adjusting your search or filters'
               : 'Get started by creating your first milestone'}
           </p>
-          <Link to="/trainer/milestones/create" className="btn-create-large">
-            <Plus size={18} />
-            Create Milestone
+          <Link
+            to="/trainer/milestones/create"
+            style={{
+              backgroundColor: '#1E88E5',
+              color: '#ffffff',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '0.875rem',
+              transition: 'background-color 0.3s ease',
+              ':hover': { backgroundColor: '#1565C0' }
+            }}
+          >
+            <Plus size={18} /> Create Milestone
           </Link>
         </div>
       )}

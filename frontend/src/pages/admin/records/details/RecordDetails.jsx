@@ -1,336 +1,353 @@
-// src/pages/admin/records/details/RecordDetails.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-FileText, 
-User, 
-Calendar, 
-Download, 
-Trash2, 
-Edit, 
-ArrowLeft,
-Tag,
-Info,
-ExternalLink
+  FileText, 
+  User, 
+  Calendar, 
+  Download, 
+  Trash2, 
+  Edit, 
+  ArrowLeft,
+  Tag,
+  Info,
+  ExternalLink
 } from 'lucide-react';
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
 import adminService from '../../../../services/adminService';
-import '../styles/RecordDetails.css';
 
 const RecordDetails = () => {
-const { recordId } = useParams();
-const navigate = useNavigate();
-const [loading, setLoading] = useState(true); // Fixed: removed extra comma
-const [deleteConfirm, setDeleteConfirm] = useState(false);
-const [error, setError] = useState(null);
-const [success, setSuccess] = useState(null);
-const [record, setRecord] = useState({
-  id: '',
-  user_id: null,
-  record_type: '',
-  category: '',
-  file_path: '',
-  description: '',
-  created_at: '',
-  file_size: null,
-  file_type: '',
-  userName: '',
-  userRole: ''
-});
+  const { recordId } = useParams();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [record, setRecord] = useState({
+    id: '',
+    user_id: null,
+    record_type: '',
+    category: '',
+    file_path: '',
+    description: '',
+    created_at: '',
+    file_size: null,
+    file_type: '',
+    userName: '',
+    userRole: ''
+  });
 
-useEffect(() => {
-  const fetchRecordDetails = async () => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      // Check if token exists
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        setError('You are not logged in. Please log in to access this page.');
-        setLoading(false);
-        setTimeout(() => navigate('/login'), 2000);
-        return;
-      }
+  useEffect(() => {
+    const fetchRecordDetails = async () => {
+      setLoading(true);
+      setError(null);
       
-      // Fetch record data
-      const data = await adminService.getRecordById(recordId);
-      setRecord(data);
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          setError('You are not logged in. Please log in to access this page.');
+          setLoading(false);
+          setTimeout(() => navigate('/login'), 2000);
+          return;
+        }
+        
+        const data = await adminService.getRecordById(recordId);
+        setRecord(data);
+      } catch (err) {
+        console.error('Error fetching record details:', err);
+        setError('Failed to load record details. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecordDetails();
+  }, [recordId, navigate]);
+
+  const handleDownload = async () => {
+    try {
+      await adminService.downloadRecord(recordId);
     } catch (err) {
-      console.error('Error fetching record details:', err);
-      setError('Failed to load record details. Please try again.');
-    } finally {
-      setLoading(false);
+      console.error('Error downloading record:', err);
+      setError('Failed to download record. Please try again.');
     }
   };
 
-  fetchRecordDetails();
-}, [recordId, navigate]);
+  const handleDelete = async () => {
+    if (!deleteConfirm) {
+      setDeleteConfirm(true);
+      return;
+    }
 
-const handleDownload = async () => {
-try {
-    await adminService.downloadRecord(recordId);
-    // Browser will handle the download
-} catch (err) {
-    console.error('Error downloading record:', err);
-    setError('Failed to download record. Please try again.');
-}
-};
+    try {
+      await adminService.deleteRecord(recordId);
+      setSuccess('Record deleted successfully.');
+      setTimeout(() => {
+        navigate('/admin/records', { state: { message: 'Record deleted successfully.' } });
+      }, 2000);
+    } catch (err) {
+      console.error('Error deleting record:', err);
+      setError('Failed to delete record. Please try again.');
+      setDeleteConfirm(false);
+    }
+  };
 
-const handleDelete = async () => {
-if (!deleteConfirm) {
-    setDeleteConfirm(true);
-    return;
-}
-
-try {
-    await adminService.deleteRecord(recordId);
-    setSuccess('Record deleted successfully.');
-    
-    // Redirect after short delay
-    setTimeout(() => {
-    navigate('/admin/records', { state: { message: 'Record deleted successfully.' } });
-    }, 2000);
-} catch (err) {
-    console.error('Error deleting record:', err);
-    setError('Failed to delete record. Please try again.');
+  const cancelDelete = () => {
     setDeleteConfirm(false);
-}
-};
+  };
 
-const cancelDelete = () => {
-setDeleteConfirm(false);
-};
+  const goBack = () => {
+    navigate('/admin/records');
+  };
 
-const goBack = () => {
-navigate('/admin/records');
-};
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
 
-const formatDate = (dateString) => {
-if (!dateString) return 'N/A';
-const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-return new Date(dateString).toLocaleDateString(undefined, options);
-};
+  const formatFileSize = (size) => {
+    if (!size) return 'Unknown';
 
-const formatFileSize = (size) => {
-if (!size) return 'Unknown';
+    const units = ['B', 'KB', 'MB', 'GB'];
+    let fileSize = size;
+    let unitIndex = 0;
 
-const units = ['B', 'KB', 'MB', 'GB'];
-let fileSize = size;
-let unitIndex = 0;
+    while (fileSize >= 1024 && unitIndex < units.length - 1) {
+      fileSize /= 1024;
+      unitIndex++;
+    }
 
-while (fileSize >= 1024 && unitIndex < units.length - 1) {
-    fileSize /= 1024;
-    unitIndex++;
-}
+    return `${fileSize.toFixed(2)} ${units[unitIndex]}`;
+  };
 
-return `${fileSize.toFixed(2)} ${units[unitIndex]}`;
-};
+  const getRecordTypeLabel = (type) => {
+    switch(type) {
+      case 'training': return 'Training';
+      case 'applicant': return 'Applicant';
+      case 'backup': return 'Backup';
+      default: return 'Other';
+    }
+  };
 
-const getRecordTypeLabel = (type) => {
-switch(type) {
-    case 'training': return 'Training';
-    case 'applicant': return 'Applicant';
-    case 'backup': return 'Backup';
-    default: return 'Other';
-}
-};
+  const getRecordTypeClass = (type) => {
+    switch(type) {
+      case 'training': return 'type-training';
+      case 'applicant': return 'type-applicant';
+      case 'backup': return 'type-backup';
+      default: return 'type-other';
+    }
+  };
 
-const getRecordTypeClass = (type) => {
-switch(type) {
-    case 'training': return 'type-training';
-    case 'applicant': return 'type-applicant';
-    case 'backup': return 'type-backup';
-    default: return 'type-other';
-}
-};
+  const getFileIcon = () => {
+    const fileType = record.file_type?.toLowerCase() || '';
 
-const getFileIcon = () => {
-const fileType = record.file_type?.toLowerCase() || '';
+    if (fileType.includes('pdf')) {
+      return <FileText size={48} style={{ color: '#E53E3E' }} />;
+    } else if (fileType.includes('word') || fileType.includes('doc')) {
+      return <FileText size={48} style={{ color: '#2B6CB0' }} />;
+    } else if (fileType.includes('excel') || fileType.includes('spreadsheet') || fileType.includes('xls')) {
+      return <FileText size={48} style={{ color: '#2F855A' }} />;
+    } else if (fileType.includes('image') || fileType.includes('jpg') || fileType.includes('png')) {
+      return <FileText size={48} style={{ color: '#D69E2E' }} />;
+    } else {
+      return <FileText size={48} style={{ color: '#4A5568' }} />;
+    }
+  };
 
-if (fileType.includes('pdf')) {
-    return <FileText size={48} className="file-icon pdf" />;
-} else if (fileType.includes('word') || fileType.includes('doc')) {
-    return <FileText size={48} className="file-icon doc" />;
-} else if (fileType.includes('excel') || fileType.includes('spreadsheet') || fileType.includes('xls')) {
-    return <FileText size={48} className="file-icon xls" />;
-} else if (fileType.includes('image') || fileType.includes('jpg') || fileType.includes('png')) {
-    return <FileText size={48} className="file-icon img" />;
-} else {
-    return <FileText size={48} className="file-icon" />;
-}
-};
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
-if (loading) {
-return <LoadingSpinner />;
-}
-
-return (
-<div className="record-details-container">
-    <div className="section-header">
-    <h1>Record Details</h1>
-    <div className="header-line"></div>
-    </div>
-    
-    {error && (
-    <AlertBanner 
-        message={error} 
-        type="error" 
-        onDismiss={() => setError(null)} 
-    />
-    )}
-    
-    {success && (
-    <AlertBanner 
-        message={success} 
-        type="success" 
-        onDismiss={() => setSuccess(null)} 
-    />
-    )}
-    
-    <div className="back-link" onClick={goBack}>
-    <ArrowLeft size={16} className="icon-inline" />
-    <span>Back to Records</span>
-    </div>
-    
-    <div className="record-content">
-    <div className="record-card">
-        <div className="card-header gradient-indigo">
-        <div className="header-icon">
-            <FileText size={20} />
-        </div>
-        <div className="header-content">
-            <h3>Record Information</h3>
-        </div>
+  return (
+    <div style={{ padding: '32px', backgroundColor: 'var(--light-gray)', minHeight: '100vh' }}>
+      <div style={{ marginBottom: '24px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: '600', color: 'var(--text-primary)' }}>Record Details</h1>
+        <div style={{ height: '1px', backgroundColor: 'var(--medium-gray)', marginTop: '8px' }}></div>
+      </div>
+      
+      {error && (
+        <AlertBanner 
+          message={error} 
+          type="error" 
+          onDismiss={() => setError(null)} 
+        />
+      )}
+      
+      {success && (
+        <AlertBanner 
+          message={success} 
+          type="success" 
+          onDismiss={() => setSuccess(null)} 
+        />
+      )}
+      
+      <div 
+        style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-color)', cursor: 'pointer', marginBottom: '24px' }}
+        onClick={goBack}
+      >
+        <ArrowLeft size={16} />
+        <span>Back to Records</span>
+      </div>
+      
+      <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)', padding: '24px' }}>
+        <div style={{ background: 'linear-gradient(135deg, var(--primary-color), var(--primary-dark))', padding: '16px', borderRadius: '8px 8px 0 0', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <FileText size={20} color="white" />
+          <h3 style={{ color: 'white', fontSize: '18px', fontWeight: '600' }}>Record Information</h3>
         </div>
         
-        <div className="card-content">
-        <div className="record-header">
-            <div className="record-title-section">
-            <h2>{record.description}</h2>
-            <span className={`record-type-badge ${getRecordTypeClass(record.record_type)}`}>
+        <div style={{ padding: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            <div>
+              <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)' }}>{record.description}</h2>
+              <span 
+                style={{ 
+                  display: 'inline-block', 
+                  padding: '4px 8px', 
+                  borderRadius: '4px', 
+                  backgroundColor: record.record_type === 'training' ? 'var(--primary-ultralight)' : 
+                                  record.record_type === 'applicant' ? '#E3F2FD' : 
+                                  record.record_type === 'backup' ? '#E8F5E9' : '#F5F5F5',
+                  color: record.record_type === 'training' ? 'var(--primary-color)' : 
+                         record.record_type === 'applicant' ? '#1565C0' : 
+                         record.record_type === 'backup' ? '#2E7D32' : '#4A5568',
+                  fontSize: '12px',
+                  fontWeight: '500'
+                }}
+              >
                 {getRecordTypeLabel(record.record_type)}
-            </span>
+              </span>
             </div>
             
-            <div className="record-actions">
-            {deleteConfirm ? (
-                <div className="delete-confirmation">
-                <span>Confirm deletion?</span>
-                <button className="confirm-yes" onClick={handleDelete}>Yes</button>
-                <button className="confirm-no" onClick={cancelDelete}>No</button>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              {deleteConfirm ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Confirm deletion?</span>
+                  <button 
+                    style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: 'var(--danger-color)', color: 'white', border: 'none', cursor: 'pointer' }}
+                    onClick={handleDelete}
+                  >
+                    Yes
+                  </button>
+                  <button 
+                    style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: 'var(--medium-gray)', color: 'var(--text-primary)', border: 'none', cursor: 'pointer' }}
+                    onClick={cancelDelete}
+                  >
+                    No
+                  </button>
                 </div>
-            ) : (
+              ) : (
                 <>
-                <button className="action-button primary" onClick={handleDownload}>
-                    <Download size={16} className="icon-inline" /> Download
-                </button>
-                <button className="action-button danger" onClick={handleDelete}>
-                    <Trash2 size={16} className="icon-inline" /> Delete
-                </button>
+                  <button 
+                    style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: 'var(--primary-color)', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    onClick={handleDownload}
+                  >
+                    <Download size={16} />
+                    <span>Download</span>
+                  </button>
+                  <button 
+                    style={{ padding: '8px 12px', borderRadius: '4px', backgroundColor: 'var(--danger-color)', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    onClick={handleDelete}
+                  >
+                    <Trash2 size={16} />
+                    <span>Delete</span>
+                  </button>
                 </>
-            )}
+              )}
             </div>
-        </div>
-        
-        <div className="file-preview">
-            <div className="file-icon-container">
-            {getFileIcon()}
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '80px', height: '80px', borderRadius: '8px', backgroundColor: 'var(--light-gray)' }}>
+              {getFileIcon()}
             </div>
-            <div className="file-info">
-            <div className="file-path">
-                <span className="path-label">File Path:</span>
-                <span className="path-value">{record.file_path}</span>
-            </div>
-            
-            <div className="file-meta">
-                <div className="meta-item">
-                <span className="meta-label">File Type:</span>
-                <span className="meta-value">{record.file_type || 'Unknown'}</span>
+            <div>
+              <div style={{ marginBottom: '8px' }}>
+                <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>File Path:</span>
+                <span style={{ fontSize: '14px', color: 'var(--text-primary)', marginLeft: '8px' }}>{record.file_path}</span>
+              </div>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <div>
+                  <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>File Type:</span>
+                  <span style={{ fontSize: '14px', color: 'var(--text-primary)', marginLeft: '8px' }}>{record.file_type || 'Unknown'}</span>
                 </div>
-                <div className="meta-item">
-                <span className="meta-label">File Size:</span>
-                <span className="meta-value">{formatFileSize(record.file_size)}</span>
+                <div>
+                  <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>File Size:</span>
+                  <span style={{ fontSize: '14px', color: 'var(--text-primary)', marginLeft: '8px' }}>{formatFileSize(record.file_size)}</span>
                 </div>
+              </div>
             </div>
-            </div>
-        </div>
-        
-        <div className="record-details">
-            <div className="details-group">
-            <div className="detail-item">
-                <div className="detail-icon">
-                <Tag size={16} />
+          </div>
+          
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', gap: '24px' }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                  <Tag size={16} color="var(--text-secondary)" />
+                  <div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Category</div>
+                    <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{record.category || 'Not categorized'}</div>
+                  </div>
                 </div>
-                <div className="detail-content">
-                <div className="detail-label">Category</div>
-                <div className="detail-value">{record.category || 'Not categorized'}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Calendar size={16} color="var(--text-secondary)" />
+                  <div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Date Uploaded</div>
+                    <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{formatDate(record.created_at)}</div>
+                  </div>
                 </div>
-            </div>
-            
-            <div className="detail-item">
-                <div className="detail-icon">
-                <Calendar size={16} />
-                </div>
-                <div className="detail-content">
-                <div className="detail-label">Date Uploaded</div>
-                <div className="detail-value">{formatDate(record.created_at)}</div>
-                </div>
-            </div>
-            </div>
-            
-            <div className="details-group">
-            <div className="detail-item">
-                <div className="detail-icon">
-                <User size={16} />
-                </div>
-                <div className="detail-content">
-                <div className="detail-label">Associated User</div>
-                <div className="detail-value">
-                    {record.userName ? (
-                    <div className="user-info">
-                        <span className="user-avatar">{record.userName.charAt(0)}</span>
-                        <span className="user-name">{record.userName}</span>
-                        <span className="user-role">{record.userRole}</span>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <User size={16} color="var(--text-secondary)" />
+                  <div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Associated User</div>
+                    <div style={{ fontSize: '14px', color: 'var(--text-primary)' }}>
+                      {record.userName ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--primary-color)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600' }}>
+                            {record.userName.charAt(0)}
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: '600' }}>{record.userName}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{record.userRole}</div>
+                          </div>
+                        </div>
+                      ) : (
+                        'System Record (No Associated User)'
+                      )}
                     </div>
-                    ) : (
-                    'System Record (No Associated User)'
-                    )}
+                  </div>
                 </div>
-                </div>
+              </div>
             </div>
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', backgroundColor: 'var(--light-gray)', borderRadius: '8px' }}>
+            <Info size={16} color="var(--text-secondary)" />
+            <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+              Records can be downloaded, viewed online (for supported file types), or deleted. 
+              Make sure you have appropriate permissions before deleting records.
             </div>
-        </div>
-        
-        <div className="record-note">
-            <div className="note-icon">
-            <Info size={16} />
-            </div>
-            <div className="note-text">
-            Records can be downloaded, viewed online (for supported file types), or deleted. 
-            Make sure you have appropriate permissions before deleting records.
-            </div>
-        </div>
-        
-        {record.file_type && record.file_type.includes('pdf') && (
-            <div className="view-online">
-            <a 
+          </div>
+          
+          {record.file_type && record.file_type.includes('pdf') && (
+            <div style={{ marginTop: '24px' }}>
+              <a 
                 href={`/api/records/view/${record.id}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="online-view-link"
-            >
-                {/* <ExternalLink size={16} className="icon-inline" />
-                <span>View PDF in Browser</span> */}
-            </a>
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-color)', textDecoration: 'none' }}
+              >
+                <ExternalLink size={16} />
+                <span>View PDF in Browser</span>
+              </a>
             </div>
-        )}
+          )}
         </div>
+      </div>
     </div>
-    </div>
-</div>
-);
+  );
 };
 
 export default RecordDetails;

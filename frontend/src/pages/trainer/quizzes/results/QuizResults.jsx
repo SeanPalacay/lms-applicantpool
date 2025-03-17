@@ -19,7 +19,6 @@ import {
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
 import trainerService from '../../../../services/trainerService';
-import '../styles/QuizResults.css';
 
 const QuizResults = () => {
   const { quizId } = useParams();
@@ -65,7 +64,6 @@ const QuizResults = () => {
       setError(null);
       
       try {
-        // Check if token exists
         const token = localStorage.getItem('authToken');
         if (!token) {
           setError('You are not logged in. Please log in to access this page.');
@@ -74,7 +72,6 @@ const QuizResults = () => {
           return;
         }
         
-        // Check if user has trainer role
         const userRole = localStorage.getItem('userRole');
         if (userRole !== 'trainer') {
           setError('You do not have permission to access this page.');
@@ -83,7 +80,6 @@ const QuizResults = () => {
           return;
         }
         
-        // Fetch quiz data and results
         const quizData = await trainerService.getQuizById(quizId);
         const attemptsData = await trainerService.getQuizAttempts(quizId);
         
@@ -102,10 +98,8 @@ const QuizResults = () => {
   }, [navigate, quizId]);
 
   useEffect(() => {
-    // Apply filters and search
     let results = [...attempts];
     
-    // Apply search term
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       results = results.filter(attempt => 
@@ -113,14 +107,12 @@ const QuizResults = () => {
       );
     }
     
-    // Apply status filter
     if (filters.status === 'pass') {
       results = results.filter(attempt => attempt.score >= quiz.passing_score);
     } else if (filters.status === 'fail') {
       results = results.filter(attempt => attempt.score < quiz.passing_score);
     }
     
-    // Apply date filters
     if (filters.date_from) {
       const fromDate = new Date(filters.date_from);
       results = results.filter(attempt => new Date(attempt.attempt_date) >= fromDate);
@@ -128,7 +120,7 @@ const QuizResults = () => {
     
     if (filters.date_to) {
       const toDate = new Date(filters.date_to);
-      toDate.setHours(23, 59, 59); // End of day
+      toDate.setHours(23, 59, 59);
       results = results.filter(attempt => new Date(attempt.attempt_date) <= toDate);
     }
     
@@ -175,7 +167,6 @@ const QuizResults = () => {
   };
 
   const viewAttemptDetails = (attemptId) => {
-    // Navigate to attempt details page
     navigate(`/trainer/quizzes/${quizId}/attempts/${attemptId}`);
   };
 
@@ -200,10 +191,22 @@ const QuizResults = () => {
   }
 
   return (
-    <div className="quiz-results-container">
-      <div className="section-header">
-        <h1>Quiz Results</h1>
-        <div className="header-line"></div>
+    <div style={{
+      padding: '20px',
+      maxWidth: '1200px',
+      margin: '0 auto'
+    }}>
+      <div style={{ 
+        marginBottom: '20px' 
+      }}>
+        <h1 style={{ 
+          fontSize: '24px', 
+          margin: '0 0 10px 0' 
+        }}>Quiz Results</h1>
+        <div style={{ 
+          height: '2px', 
+          background: '#ddd' 
+        }}></div>
       </div>
       
       {error && (
@@ -222,223 +225,508 @@ const QuizResults = () => {
         />
       )}
       
-      <div className="back-link" onClick={goBack}>
-        <ArrowLeft size={16} className="icon-inline" />
+      <div 
+        onClick={goBack}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          cursor: 'pointer',
+          marginBottom: '20px',
+          color: '#007bff'
+        }}
+      >
+        <ArrowLeft size={16} style={{ marginRight: '5px' }} />
         <span>Back to Quiz</span>
       </div>
       
-      <div className="quiz-title-section">
-        <h2>{quiz.title}</h2>
-        <Link to={`/trainer/programs/${quiz.program_id}`} className="program-link">
-          <span className="program-label">Program:</span> {quiz.program_title}
-        </Link>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+        flexWrap: 'wrap',
+        gap: '15px'
+      }}>
+        <div>
+          <h2 style={{ 
+            fontSize: '20px', 
+            margin: '0 0 5px 0' 
+          }}>{quiz.title}</h2>
+          <Link 
+            to={`/trainer/programs/${quiz.program_id}`} 
+            style={{ 
+              color: '#007bff', 
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+          >
+            <span style={{ fontWeight: 'bold' }}>Program:</span> 
+            {quiz.program_title}
+          </Link>
+        </div>
       </div>
       
-      <div className="stats-summary-card">
-        <div className="card-header gradient-blue">
-          <div className="header-icon">
-            <BarChart2 size={20} />
-          </div>
-          <div className="header-content">
-            <h3>Overall Performance</h3>
-          </div>
+      <div style={{
+        background: '#fff',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        marginBottom: '30px'
+      }}>
+        <div style={{
+          background: 'linear-gradient(to right, #007bff, #00b7ff)',
+          color: 'white',
+          padding: '10px 15px',
+          borderRadius: '8px 8px 0 0',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <BarChart2 size={20} />
+          <h3 style={{ margin: 0 }}>Overall Performance</h3>
         </div>
         
-        <div className="card-content">
-          <div className="stats-grid">
-            <div className="stat-item">
-              <div className="stat-value">{quiz.stats?.total_attempts || 0}</div>
-              <div className="stat-label">Total Attempts</div>
+        <div style={{ padding: '15px' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+            gap: '15px',
+            marginBottom: '15px'
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                fontSize: '18px', 
+                fontWeight: 'bold' 
+              }}>{quiz.stats?.total_attempts || 0}</div>
+              <div style={{ 
+                fontSize: '14px', 
+                color: '#666' 
+              }}>Total Attempts</div>
             </div>
             
-            <div className="stat-item">
-              <div className="stat-value">{quiz.stats?.pass_rate || 0}%</div>
-              <div className="stat-label">Pass Rate</div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                fontSize: '18px', 
+                fontWeight: 'bold' 
+              }}>{quiz.stats?.pass_rate || 0}%</div>
+              <div style={{ 
+                fontSize: '14px', 
+                color: '#666' 
+              }}>Pass Rate</div>
             </div>
             
-            <div className="stat-item">
-              <div className="stat-value">{quiz.stats?.average_score || 'N/A'}</div>
-              <div className="stat-label">Average Score</div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                fontSize: '18px', 
+                fontWeight: 'bold' 
+              }}>{quiz.stats?.average_score || 'N/A'}</div>
+              <div style={{ 
+                fontSize: '14px', 
+                color: '#666' 
+              }}>Average Score</div>
             </div>
             
-            <div className="stat-item">
-              <div className="stat-value">{quiz.stats?.highest_score || 'N/A'}</div>
-              <div className="stat-label">Highest Score</div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                fontSize: '18px', 
+                fontWeight: 'bold' 
+              }}>{quiz.stats?.highest_score || 'N/A'}</div>
+              <div style={{ 
+                fontSize: '14px', 
+                color: '#666' 
+              }}>Highest Score</div>
             </div>
             
-            <div className="stat-item">
-              <div className="stat-value">{quiz.stats?.lowest_score || 'N/A'}</div>
-              <div className="stat-label">Lowest Score</div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                fontSize: '18px', 
+                fontWeight: 'bold' 
+              }}>{quiz.stats?.lowest_score || 'N/A'}</div>
+              <div style={{ 
+                fontSize: '14px', 
+                color: '#666' 
+              }}>Lowest Score</div>
             </div>
           </div>
           
-          <div className="quiz-info">
-            <div className="info-item">
-              <HelpCircle size={16} className="icon-inline" />
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '15px',
+            paddingTop: '15px',
+            borderTop: '1px solid #eee'
+          }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '5px' 
+            }}>
+              <HelpCircle size={16} />
               <span>Passing Score: {quiz.passing_score}%</span>
             </div>
-            <div className="info-item">
-              <Clock size={16} className="icon-inline" />
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '5px' 
+            }}>
+              <Clock size={16} />
               <span>Time Limit: {quiz.time_limit} minutes</span>
             </div>
           </div>
         </div>
       </div>
       
-      <div className="results-actions">
-        <div className="search-container">
-          <div className="search-input-wrapper">
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+        flexWrap: 'wrap',
+        gap: '15px'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          gap: '10px', 
+          flex: '1', 
+          minWidth: '200px' 
+        }}>
+          <div style={{ 
+            position: 'relative', 
+            width: '100%' 
+          }}>
             <input
               type="text"
               placeholder="Search by trainee name..."
               value={searchTerm}
               onChange={handleSearch}
-              className="search-input"
+              style={{
+                width: '100%',
+                padding: '8px 30px 8px 10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px'
+              }}
             />
             {searchTerm && (
               <button 
-                className="clear-search" 
                 onClick={() => setSearchTerm('')}
-                aria-label="Clear search"
+                style={{
+                  position: 'absolute',
+                  right: '5px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '5px'
+                }}
               >
-                <X size={16} />
+                <X size={16} style={{ color: '#666' }} />
               </button>
             )}
           </div>
           
           <button 
-            className={`filter-toggle ${filterOpen ? 'active' : ''}`} 
             onClick={toggleFilter}
+            style={{
+              padding: '8px 15px',
+              background: filterOpen ? '#007bff' : '#f8f9fa',
+              color: filterOpen ? 'white' : '#333',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              whiteSpace: 'nowrap'
+            }}
           >
             <Filter size={18} />
             <span>Filter</span>
           </button>
         </div>
         
-        <button className="export-button" onClick={handleExportResults}>
-          <FileDown size={16} className="icon-inline" /> Export Results
+        <button 
+          onClick={handleExportResults}
+          style={{
+            padding: '8px 15px',
+            background: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <FileDown size={16} /> 
+          <span>Export Results</span>
         </button>
       </div>
       
       {filterOpen && (
-        <div className="filter-panel">
-          <div className="filter-form">
-            <div className="filter-row">
-              <div className="filter-group">
-                <label htmlFor="status">Result Status</label>
-                <select 
-                  id="status" 
-                  name="status" 
-                  value={filters.status}
-                  onChange={handleFilterChange}
-                >
-                  {statusOptions.map((option, index) => (
-                    <option key={index} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="filter-group">
-                <label htmlFor="date_from">Date From</label>
-                <input 
-                  type="date" 
-                  id="date_from" 
-                  name="date_from" 
-                  value={filters.date_from}
-                  onChange={handleFilterChange}
-                />
-              </div>
-              
-              <div className="filter-group">
-                <label htmlFor="date_to">Date To</label>
-                <input 
-                  type="date" 
-                  id="date_to" 
-                  name="date_to" 
-                  value={filters.date_to}
-                  onChange={handleFilterChange}
-                />
-              </div>
-              
-              <div className="filter-actions">
-                <button className="reset-filters" onClick={resetFilters}>
-                  <X size={14} className="icon-inline" />
-                  <span>Reset Filters</span>
-                </button>
-              </div>
+        <div style={{
+          background: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          padding: '15px',
+          marginBottom: '20px'
+        }}>
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '15px',
+            alignItems: 'flex-end'
+          }}>
+            <div style={{ minWidth: '200px' }}>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '5px',
+                fontSize: '14px'
+              }} htmlFor="status">Result Status</label>
+              <select 
+                id="status" 
+                name="status" 
+                value={filters.status}
+                onChange={handleFilterChange}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              >
+                {statusOptions.map((option, index) => (
+                  <option key={index} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div style={{ minWidth: '150px' }}>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '5px',
+                fontSize: '14px'
+              }} htmlFor="date_from">Date From</label>
+              <input 
+                type="date" 
+                id="date_from" 
+                name="date_from" 
+                value={filters.date_from}
+                onChange={handleFilterChange}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              />
+            </div>
+            
+            <div style={{ minWidth: '150px' }}>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '5px',
+                fontSize: '14px'
+              }} htmlFor="date_to">Date To</label>
+              <input 
+                type="date" 
+                id="date_to" 
+                name="date_to" 
+                value={filters.date_to}
+                onChange={handleFilterChange}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              />
+            </div>
+            
+            <div>
+              <button 
+                onClick={resetFilters}
+                style={{
+                  padding: '8px 15px',
+                  background: '#dc3545',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  fontSize: '14px'
+                }}
+              >
+                <X size={14} />
+                <span>Reset Filters</span>
+              </button>
             </div>
           </div>
         </div>
       )}
       
-      <div className="results-list-container">
+      <div>
         {filteredAttempts.length > 0 ? (
-          <div className="results-table">
-          <table>
+          <div style={{
+            background: '#fff',
+            borderRadius: '8px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            overflowX: 'auto'
+          }}>
+            <table style={{ 
+              width: '100%', 
+              borderCollapse: 'collapse' 
+            }}>
               <thead>
-                <tr>
-                  <th>Trainee</th>
-                  <th>Date</th>
-                  <th>Score</th>
-                  <th>Status</th>
-                  <th>Time Taken</th> {/* Ensure this matches the data */}
-                  <th>Actions</th>
+                <tr style={{ 
+                  background: '#f8f9fa' 
+                }}>
+                  <th style={{ 
+                    padding: '10px 15px', 
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    borderBottom: '1px solid #eee'
+                  }}>Trainee</th>
+                  <th style={{ 
+                    padding: '10px 15px', 
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    borderBottom: '1px solid #eee'
+                  }}>Date</th>
+                  <th style={{ 
+                    padding: '10px 15px', 
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    borderBottom: '1px solid #eee'
+                  }}>Score</th>
+                  <th style={{ 
+                    padding: '10px 15px', 
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    borderBottom: '1px solid #eee'
+                  }}>Status</th>
+                  <th style={{ 
+                    padding: '10px 15px', 
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    borderBottom: '1px solid #eee'
+                  }}>Time Taken</th>
+                  <th style={{ 
+                    padding: '10px 15px', 
+                    textAlign: 'left',
+                    fontWeight: 'bold',
+                    borderBottom: '1px solid #eee'
+                  }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredAttempts.map((attempt) => (
-                  <tr key={attempt.id}>
-                    <td>
-                      <div className="trainee-info">
-                        <div className="trainee-avatar">
+                  <tr key={attempt.id} style={{
+                    borderBottom: '1px solid #eee'
+                  }}>
+                    <td style={{ padding: '10px 15px' }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '10px' 
+                      }}>
+                        <div style={{
+                          width: '30px',
+                          height: '30px',
+                          borderRadius: '50%',
+                          background: '#007bff',
+                          color: 'white',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '14px'
+                        }}>
                           {attempt.trainee_name.charAt(0)}
                         </div>
-                        <div className="trainee-name">{attempt.trainee_name}</div>
+                        <div style={{ fontSize: '14px' }}>
+                          {attempt.trainee_name}
+                        </div>
                       </div>
                     </td>
-                    <td>
-                      <div className="attempt-date">
-                        <Calendar size={14} className="icon-inline" />
-                        <span>{formatDate(attempt.attempt_date)}</span>
-                        <span className="attempt-time">{formatTime(attempt.attempt_date)}</span>
+                    <td style={{ padding: '10px 15px' }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        gap: '2px'
+                      }}>
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '5px' 
+                        }}>
+                          <Calendar size={14} />
+                          <span>{formatDate(attempt.attempt_date)}</span>
+                        </div>
+                        <span style={{ 
+                          fontSize: '12px', 
+                          color: '#666' 
+                        }}>{formatTime(attempt.attempt_date)}</span>
                       </div>
                     </td>
-                    <td>
-                      <div className="score">
-                        <span className={`score-value ${getPassStatus(attempt.score) ? 'passing' : 'failing'}`}>
-                          {attempt.score}%
-                        </span>
-                      </div>
+                    <td style={{ padding: '10px 15px' }}>
+                      <span style={{ 
+                        color: getPassStatus(attempt.score) ? '#28a745' : '#dc3545',
+                        fontWeight: 'bold'
+                      }}>
+                        {attempt.score}%
+                      </span>
                     </td>
-                    <td>
-                      <div className="status">
+                    <td style={{ padding: '10px 15px' }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '5px' 
+                      }}>
                         {getPassStatus(attempt.score) ? (
-                          <span className="status-passed">
-                            <CheckCircle size={14} className="icon-inline" /> Passed
-                          </span>
+                          <>
+                            <CheckCircle size={14} style={{ color: '#28a745' }} />
+                            <span style={{ color: '#28a745' }}>Passed</span>
+                          </>
                         ) : (
-                          <span className="status-failed">
-                            <XCircle size={14} className="icon-inline" /> Failed
-                          </span>
+                          <>
+                            <XCircle size={14} style={{ color: '#dc3545' }} />
+                            <span style={{ color: '#dc3545' }}>Failed</span>
+                          </>
                         )}
                       </div>
                     </td>
-                    <td>
-                      <div className="time-taken">
+                    <td style={{ padding: '10px 15px' }}>
+                      <span style={{ fontSize: '14px' }}>
                         {attempt.time_taken ? `${attempt.time_taken} min` : 'N/A'}
-                      </div>
+                      </span>
                     </td>
-                    <td>
-                      <div className="result-actions">
-                        <button 
-                          className="view-details-button"
-                          onClick={() => viewAttemptDetails(attempt.id)}
-                          title="View detailed results"
-                        >
-                          <Eye size={16} />
-                          <span>View</span>
-                        </button>
-                      </div>
+                    <td style={{ padding: '10px 15px' }}>
+                      <button 
+                        onClick={() => viewAttemptDetails(attempt.id)}
+                        style={{
+                          padding: '5px 10px',
+                          background: '#007bff',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '5px'
+                        }}
+                      >
+                        <Eye size={16} />
+                        <span>View</span>
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -446,17 +734,49 @@ const QuizResults = () => {
             </table>
           </div>
         ) : (
-          <div className="no-results">
-            <AlertTriangle size={48} className="no-results-icon" />
-            <h3>No Results Found</h3>
-            <p>
+          <div style={{
+            textAlign: 'center',
+            padding: '40px',
+            background: '#fff',
+            borderRadius: '8px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            marginBottom: '20px'
+          }}>
+            <AlertTriangle size={48} style={{ 
+              color: '#ffc107', 
+              marginBottom: '15px' 
+            }} />
+            <h3 style={{ 
+              margin: '0 0 10px 0',
+              fontSize: '20px'
+            }}>No Results Found</h3>
+            <p style={{ 
+              margin: '0 0 15px 0',
+              color: '#666',
+              fontSize: '14px'
+            }}>
               {attempts.length === 0 
                 ? "No trainees have attempted this quiz yet." 
                 : "No results match your search criteria."}
             </p>
             {attempts.length > 0 && (
-              <button className="reset-button" onClick={resetFilters}>
-                <X size={16} className="icon-inline" /> Clear Filters
+              <button 
+                onClick={resetFilters}
+                style={{
+                  padding: '8px 15px',
+                  background: '#dc3545',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  margin: '0 auto'
+                }}
+              >
+                <X size={16} />
+                <span>Clear Filters</span>
               </button>
             )}
           </div>
@@ -464,11 +784,13 @@ const QuizResults = () => {
       </div>
       
       {filteredAttempts.length > 0 && (
-        <div className="pagination">
-          <div className="pagination-info">
-            Showing {filteredAttempts.length} of {attempts.length} results
-          </div>
-          {/* Pagination controls would go here if implementing pagination */}
+        <div style={{
+          textAlign: 'right',
+          padding: '10px 0',
+          fontSize: '14px',
+          color: '#666'
+        }}>
+          Showing {filteredAttempts.length} of {attempts.length} results
         </div>
       )}
     </div>

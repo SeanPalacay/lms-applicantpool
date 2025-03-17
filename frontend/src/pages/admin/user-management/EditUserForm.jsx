@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Key, Shield, AlertCircle } from 'lucide-react';
+import { ArrowLeft, User, Mail, Key, Shield, AlertCircle, Save, XCircle } from 'lucide-react';
 import adminService from '../../../services/adminService';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
-import './styles/EditUserForm.css';
 
 const EditUserForm = () => {
   const { userId } = useParams();
@@ -12,7 +11,6 @@ const EditUserForm = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -22,7 +20,6 @@ const EditUserForm = () => {
     role: 'trainee',
     status: 'active',
   });
-
   const [validationErrors, setValidationErrors] = useState({});
   const [changePassword, setChangePassword] = useState(false);
 
@@ -34,11 +31,7 @@ const EditUserForm = () => {
     try {
       setLoading(true);
       const userData = await adminService.getUserById(userId);
-      setFormData({
-        ...userData,
-        password: '',
-        confirmPassword: '',
-      });
+      setFormData({ ...userData, password: '', confirmPassword: '' });
       setError(null);
     } catch (err) {
       console.error('Error fetching user:', err);
@@ -53,41 +46,26 @@ const EditUserForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
     if (validationErrors[name]) {
-      setValidationErrors({
-        ...validationErrors,
-        [name]: null,
-      });
+      setValidationErrors({ ...validationErrors, [name]: null });
     }
   };
 
   const toggleChangePassword = () => {
     setChangePassword(!changePassword);
-    if (!changePassword) {
-      setFormData({
-        ...formData,
-        password: '',
-        confirmPassword: '',
-      });
-    }
+    if (!changePassword) setFormData({ ...formData, password: '', confirmPassword: '' });
   };
 
   const validateForm = () => {
     const errors = {};
     if (!formData.full_name.trim()) errors.full_name = 'Full name is required';
     if (!formData.email.trim()) errors.email = 'Email is required';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-      errors.email = 'Invalid email format';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) errors.email = 'Invalid email format';
     if (changePassword) {
       if (!formData.password) errors.password = 'Password is required';
-      else if (formData.password.length < 6)
-        errors.password = 'Password must be at least 6 characters';
-      if (formData.password !== formData.confirmPassword)
-        errors.confirmPassword = 'Passwords do not match';
+      else if (formData.password.length < 6) errors.password = 'Password must be at least 6 characters';
+      if (formData.password !== formData.confirmPassword) errors.confirmPassword = 'Passwords do not match';
     }
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -115,25 +93,36 @@ const EditUserForm = () => {
   if (loading && !formData.username) return <LoadingSpinner />;
 
   return (
-    <div className="user-form-container">
-      {error && <AlertBanner message={error} type="error" />}
-      {success && <AlertBanner message={success} type="success" />}
-      <div className="page-header">
-        <div className="header-left">
-          <Link to="/admin/user-management" className="back-button">
-            <ArrowLeft size={16} className="icon" />
-            <span>Back to User Management</span>
-          </Link>
-          <h1 className="page-title">Edit User: {formData.username}</h1>
-        </div>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#f8fafc',
+      padding: '32px',
+      fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif",
+      color: '#1e293b',
+      position: 'relative'
+    }}>
+      {error && <AlertBanner message={error} type="error" onDismiss={() => setError(null)} />}
+      {success && <AlertBanner message={success} type="success" onDismiss={() => setSuccess(null)} />}
+      
+      <div style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <Link to="/admin/user-management" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1E88E5', fontSize: '0.875rem', textDecoration: 'none', ':hover': { textDecoration: 'underline' } }}>
+          <ArrowLeft size={16} /> Back to User Management
+        </Link>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600, color: '#1e293b' }}>Edit User: {formData.username}</h1>
       </div>
-      <div className="user-form-card">
-        <form onSubmit={handleSubmit} className="user-form">
-          {/* Username Section */}
-          <div className="form-group">
-            <label htmlFor="username">
-              <User size={16} className="field-icon" />
-              <span>Username</span>
+
+      <div style={{
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
+        maxWidth: '600px',
+        margin: '0 auto',
+        padding: '24px'
+      }}>
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '24px' }}>
+            <label htmlFor="username" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+              <User size={16} /> Username
             </label>
             <input
               type="text"
@@ -141,16 +130,23 @@ const EditUserForm = () => {
               name="username"
               value={formData.username}
               disabled
-              className="disabled"
+              style={{
+                width: '100%',
+                padding: '8px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                color: '#64748b',
+                backgroundColor: '#f1f5f9',
+                cursor: 'not-allowed'
+              }}
             />
-            <div className="helper-text">Username cannot be changed</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>Username cannot be changed</div>
           </div>
 
-          {/* Full Name Section */}
-          <div className="form-group">
-            <label htmlFor="full_name">
-              <User size={16} className="field-icon" />
-              <span>Full Name</span>
+          <div style={{ marginBottom: '24px' }}>
+            <label htmlFor="full_name" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+              <User size={16} /> Full Name
             </label>
             <input
               type="text"
@@ -159,21 +155,27 @@ const EditUserForm = () => {
               value={formData.full_name}
               onChange={handleChange}
               placeholder="Enter full name"
-              className={validationErrors.full_name ? 'error' : ''}
+              style={{
+                width: '100%',
+                padding: '8px',
+                border: validationErrors.full_name ? '1px solid #e74c3c' : '1px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                color: '#1e293b',
+                outline: 'none',
+                ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+              }}
             />
             {validationErrors.full_name && (
-              <div className="error-message">
-                <AlertCircle size={14} />
-                {validationErrors.full_name}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e74c3c', fontSize: '0.75rem', marginTop: '4px' }}>
+                <AlertCircle size={14} /> {validationErrors.full_name}
               </div>
             )}
           </div>
 
-          {/* Email Section */}
-          <div className="form-group">
-            <label htmlFor="email">
-              <Mail size={16} className="field-icon" />
-              <span>Email</span>
+          <div style={{ marginBottom: '24px' }}>
+            <label htmlFor="email" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+              <Mail size={16} /> Email
             </label>
             <input
               type="email"
@@ -182,36 +184,42 @@ const EditUserForm = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter email address"
-              className={validationErrors.email ? 'error' : ''}
+              style={{
+                width: '100%',
+                padding: '8px',
+                border: validationErrors.email ? '1px solid #e74c3c' : '1px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                color: '#1e293b',
+                outline: 'none',
+                ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+              }}
             />
             {validationErrors.email && (
-              <div className="error-message">
-                <AlertCircle size={14} />
-                {validationErrors.email}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e74c3c', fontSize: '0.75rem', marginTop: '4px' }}>
+                <AlertCircle size={14} /> {validationErrors.email}
               </div>
             )}
           </div>
 
-          {/* Change Password Section */}
-          {/* <div className="form-group checkbox-group-container">
-            <div className="checkbox-group">
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <input
                 type="checkbox"
                 id="changePassword"
                 checked={changePassword}
                 onChange={toggleChangePassword}
+                style={{ margin: 0 }}
               />
-              <label htmlFor="changePassword">Change Password</label>
+              <label htmlFor="changePassword" style={{ fontSize: '0.875rem', color: '#1e293b', cursor: 'pointer' }}>Change Password</label>
             </div>
-          </div> */}
+          </div>
 
-          {/* Conditional Password Fields */}
           {changePassword && (
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="password">
-                  <Key size={16} className="field-icon" />
-                  <span>New Password</span>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+              <div>
+                <label htmlFor="password" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+                  <Key size={16} /> New Password
                 </label>
                 <input
                   type="password"
@@ -220,19 +228,26 @@ const EditUserForm = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter new password"
-                  className={validationErrors.password ? 'error' : ''}
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: validationErrors.password ? '1px solid #e74c3c' : '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '0.875rem',
+                    color: '#1e293b',
+                    outline: 'none',
+                    ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                  }}
                 />
                 {validationErrors.password && (
-                  <div className="error-message">
-                    <AlertCircle size={14} />
-                    {validationErrors.password}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e74c3c', fontSize: '0.75rem', marginTop: '4px' }}>
+                    <AlertCircle size={14} /> {validationErrors.password}
                   </div>
                 )}
               </div>
-              <div className="form-group">
-                <label htmlFor="confirmPassword">
-                  <Key size={16} className="field-icon" />
-                  <span>Confirm Password</span>
+              <div>
+                <label htmlFor="confirmPassword" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+                  <Key size={16} /> Confirm Password
                 </label>
                 <input
                   type="password"
@@ -241,31 +256,47 @@ const EditUserForm = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Confirm new password"
-                  className={validationErrors.confirmPassword ? 'error' : ''}
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: validationErrors.confirmPassword ? '1px solid #e74c3c' : '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '0.875rem',
+                    color: '#1e293b',
+                    outline: 'none',
+                    ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                  }}
                 />
                 {validationErrors.confirmPassword && (
-                  <div className="error-message">
-                    <AlertCircle size={14} />
-                    {validationErrors.confirmPassword}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e74c3c', fontSize: '0.75rem', marginTop: '4px' }}>
+                    <AlertCircle size={14} /> {validationErrors.confirmPassword}
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          {/* Role and Status Section */}
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="role">
-                <Shield size={16} className="field-icon" />
-                <span>Role</span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+            <div>
+              <label htmlFor="role" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+                <Shield size={16} /> Role
               </label>
               <select
                 id="role"
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="select-field"
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '0.875rem',
+                  color: '#1e293b',
+                  outline: 'none',
+                  backgroundColor: '#ffffff',
+                  ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                }}
               >
                 <option value="trainee">Trainee</option>
                 <option value="trainer">Trainer</option>
@@ -273,16 +304,26 @@ const EditUserForm = () => {
                 <option value="administrator">Administrator</option>
               </select>
             </div>
-            <div className="form-group">
-              <label htmlFor="status">
-                <span>Status</span>
+            <div>
+              <label htmlFor="status" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+                Status
               </label>
               <select
                 id="status"
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="select-field"
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '0.875rem',
+                  color: '#1e293b',
+                  outline: 'none',
+                  backgroundColor: '#ffffff',
+                  ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                }}
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
@@ -290,18 +331,67 @@ const EditUserForm = () => {
             </div>
           </div>
 
-          {/* Form Actions */}
-          <div className="form-actions">
-            <Link to="/admin/user-management" className="button cancel-button">
-              Cancel
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
+            <Link
+              to="/admin/user-management"
+              style={{
+                backgroundColor: '#ffffff',
+                color: '#1E88E5',
+                padding: '8px 16px',
+                border: '1px solid #1E88E5',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.875rem',
+                textDecoration: 'none',
+                transition: 'background-color 0.3s ease',
+                ':hover': { backgroundColor: '#E3F2FD' }
+              }}
+            >
+              <XCircle size={16} /> Cancel
             </Link>
-            <button type="submit" className="button submit-button" disabled={loading}>
-              {loading ? 'Saving...' : 'Save Changes'}
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                backgroundColor: '#1E88E5',
+                color: '#ffffff',
+                padding: '8px 16px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.875rem',
+                transition: 'background-color 0.3s ease',
+                ':hover': loading ? {} : { backgroundColor: '#1565C0' }
+              }}
+            >
+              <Save size={16} /> {loading ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </form>
       </div>
-      {loading && <LoadingSpinner overlay={true} />}
+
+      {loading && (
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <LoadingSpinner />
+        </div>
+      )}
     </div>
   );
 };

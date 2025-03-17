@@ -14,7 +14,6 @@ import {
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
 import adminService from '../../../../services/adminService';
-import '../styles/CreateIncident.css';
 
 const CreateIncident = () => {
   const navigate = useNavigate();
@@ -166,10 +165,10 @@ const CreateIncident = () => {
   }
 
   return (
-    <div className="create-incident-container">
-      <div className="section-header">
-        <h1>Record Performance Incident</h1>
-        <div className="header-line"></div>
+    <div style={{ padding: '24px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+      <div style={{ marginBottom: '24px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b', marginBottom: '8px' }}>Record Performance Incident</h1>
+        <div style={{ height: '2px', backgroundColor: '#e2e8f0', width: '100%' }}></div>
       </div>
       
       {error && (
@@ -188,126 +187,215 @@ const CreateIncident = () => {
         />
       )}
       
-      <div className="back-link" onClick={handleCancel}>
-        <ArrowLeft size={16} className="icon-inline" />
+      <div 
+        style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px', 
+          color: '#1E88E5', 
+          cursor: 'pointer', 
+          marginBottom: '24px' 
+        }}
+        onClick={handleCancel}
+      >
+        <ArrowLeft size={16} />
         <span>Back to Incidents</span>
       </div>
       
-      <div className="incident-content">
-        <div className="incident-card">
-          <div className="card-header">
-            <div className="header-icon">
-              <AlertTriangle size={20} />
+      <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+          <div style={{ 
+            width: '40px', 
+            height: '40px', 
+            borderRadius: '8px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            backgroundColor: '#E3F2FD' 
+          }}>
+            <AlertTriangle size={20} color="#1E88E5" />
+          </div>
+          <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#1e293b' }}>Incident Information</h3>
+        </div>
+        
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b' }}>Trainee</label>
+            <div style={{ position: 'relative' }}>
+              <User size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+              <select
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px 8px 40px', 
+                  border: '1px solid #e2e8f0', 
+                  borderRadius: '8px', 
+                  fontSize: '14px', 
+                  color: '#1e293b', 
+                  backgroundColor: 'white' 
+                }}
+                value={incident.user_id}
+                onChange={handleInputChange}
+                name="user_id"
+                required
+              >
+                <option value="">Select Trainee</option>
+                {trainees.map((trainee) => (
+                  <option key={trainee.id} value={trainee.id}>{trainee.full_name}</option>
+                ))}
+              </select>
             </div>
-            <div className="header-content">
-              <h3>Incident Information</h3>
+            
+            {incident.user_id && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                <div style={{ 
+                  width: '24px', 
+                  height: '24px', 
+                  borderRadius: '50%', 
+                  backgroundColor: '#E3F2FD', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  fontWeight: '600', 
+                  color: '#1E88E5' 
+                }}>
+                  {getTraineeName(incident.user_id).charAt(0)}
+                </div>
+                <span style={{ fontSize: '14px', color: '#1e293b' }}>{getTraineeName(incident.user_id)}</span>
+              </div>
+            )}
+          </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b' }}>Incident Type</label>
+            <div style={{ position: 'relative' }}>
+              <AlertTriangle size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+              <select
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px 8px 40px', 
+                  border: '1px solid #e2e8f0', 
+                  borderRadius: '8px', 
+                  fontSize: '14px', 
+                  color: '#1e293b', 
+                  backgroundColor: 'white' 
+                }}
+                value={incident.incident_type}
+                onChange={handleInputChange}
+                name="incident_type"
+                required
+              >
+                {incidentTypes.map((type, index) => (
+                  <option key={index} value={type.value}>{type.label}</option>
+                ))}
+              </select>
             </div>
           </div>
           
-          <div className="card-content">
-            <form onSubmit={handleSubmit} className="incident-form">
-              <div className="form-group">
-                <label htmlFor="user_id">Trainee</label>
-                <div className="select-with-icon">
-                  <User size={18} className="select-icon" />
-                  <select
-                    id="user_id"
-                    name="user_id"
-                    value={incident.user_id}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="">Select Trainee</option>
-                    {trainees.map((trainee) => (
-                      <option key={trainee.id} value={trainee.id}>{trainee.full_name}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                {incident.user_id && (
-                  <div className="selected-trainee">
-                    <div className="trainee-avatar">
-                      {getTraineeName(incident.user_id).charAt(0)}
-                    </div>
-                    <span>{getTraineeName(incident.user_id)}</span>
-                  </div>
-                )}
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="incident_type">Incident Type</label>
-                <div className="select-with-icon">
-                  <AlertTriangle size={18} className="select-icon" />
-                  <select
-                    id="incident_type"
-                    name="incident_type"
-                    value={incident.incident_type}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    {incidentTypes.map((type, index) => (
-                      <option key={index} value={type.value}>{type.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="incident_date">Incident Date & Time</label>
-                <div className="input-with-icon">
-                  <Calendar size={18} className="input-icon" />
-                  <input
-                    type="datetime-local"
-                    id="incident_date"
-                    name="incident_date"
-                    value={incident.incident_date}
-                    onChange={handleInputChange}
-                    max={new Date().toISOString().slice(0, 16)}
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="description">Description</label>
-                <div className="textarea-with-icon">
-                  <FileText size={18} className="textarea-icon" />
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={incident.description}
-                    onChange={handleInputChange}
-                    placeholder="Describe the performance incident..."
-                    rows="5"
-                    required
-                  ></textarea>
-                </div>
-              </div>
-              
-              <div className="reported-by-info">
-                <Clock size={16} className="icon-inline" />
-                <span>This incident will be recorded as reported by you (ID: {incident.reported_by}).</span>
-              </div>
-              
-              <div className="form-actions">
-                <button type="button" className="action-button secondary" onClick={handleCancel}>
-                  <XCircle size={16} className="icon-inline" /> Cancel
-                </button>
-                <button type="submit" className="action-button primary" disabled={saving}>
-                  {saving ? (
-                    <>
-                      <RefreshCw size={16} className="icon-inline spin" /> Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save size={16} className="icon-inline" /> Record Incident
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b' }}>Incident Date & Time</label>
+            <div style={{ position: 'relative' }}>
+              <Calendar size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+              <input
+                type="datetime-local"
+                style={{ 
+                  width: '100%', 
+                  padding: '8px 16px 8px 40px', 
+                  border: '1px solid #e2e8f0', 
+                  borderRadius: '8px', 
+                  fontSize: '14px', 
+                  color: '#1e293b', 
+                  backgroundColor: 'white' 
+                }}
+                value={incident.incident_date}
+                onChange={handleInputChange}
+                name="incident_date"
+                max={new Date().toISOString().slice(0, 16)}
+                required
+              />
+            </div>
           </div>
-        </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b' }}>Description</label>
+            <div style={{ position: 'relative' }}>
+              <FileText size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: '#64748b' }} />
+              <textarea
+                style={{ 
+                  width: '100%', 
+                  padding: '12px 16px 12px 40px', 
+                  border: '1px solid #e2e8f0', 
+                  borderRadius: '8px', 
+                  fontSize: '14px', 
+                  color: '#1e293b', 
+                  backgroundColor: 'white', 
+                  minHeight: '120px' 
+                }}
+                value={incident.description}
+                onChange={handleInputChange}
+                name="description"
+                placeholder="Describe the performance incident..."
+                required
+              ></textarea>
+            </div>
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#64748b' }}>
+            <Clock size={16} />
+            <span>This incident will be recorded as reported by you (ID: {incident.reported_by}).</span>
+          </div>
+          
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end' }}>
+            <button 
+              type="button" 
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                padding: '8px 16px', 
+                backgroundColor: '#e2e8f0', 
+                color: '#1e293b', 
+                border: 'none', 
+                borderRadius: '8px', 
+                cursor: 'pointer', 
+                fontSize: '14px', 
+                fontWeight: '500' 
+              }}
+              onClick={handleCancel}
+            >
+              <XCircle size={16} />
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                padding: '8px 16px', 
+                backgroundColor: '#1E88E5', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '8px', 
+                cursor: 'pointer', 
+                fontSize: '14px', 
+                fontWeight: '500' 
+              }}
+              disabled={saving}
+            >
+              {saving ? (
+                <>
+                  <RefreshCw size={16} style={{ animation: 'spin 1s linear infinite' }} />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save size={16} />
+                  Record Incident
+                </>
+              )}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
