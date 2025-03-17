@@ -77,8 +77,8 @@ const UploadRecord = () => {
           return;
         }
         
-        // Fetch users data
-        const data = await adminService.getUsers();
+        // Change this line from getUsers to getUserList
+        const data = await adminService.getUserList();
         setUsers(data);
       } catch (err) {
         console.error('Error fetching users:', err);

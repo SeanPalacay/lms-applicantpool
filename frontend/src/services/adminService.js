@@ -97,6 +97,44 @@ const adminService = {
             throw error;
         }
     },
+
+    getUsers: async () => {
+        try {
+            const authToken = localStorage.getItem('authToken');
+            
+            if (!authToken) {
+                console.error('No authToken found in localStorage');
+                throw new Error('Authentication required. Please login again.');
+            }
+            
+            const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/users.php`;
+            console.log('Fetching users from:', url);
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Response error details:', errorText);
+                if (response.status === 401) {
+                    localStorage.removeItem('authToken');
+                    throw new Error('Authentication failed. Please login again.');
+                }
+                throw new Error(`Failed to fetch users: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error in getUsers:', error.message, error.stack);
+            throw error;
+        }
+    },
     
     getUserList: async () => {
         try {
