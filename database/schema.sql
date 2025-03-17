@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 16, 2025 at 04:17 PM
+-- Generation Time: Mar 17, 2025 at 09:42 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -56,13 +56,6 @@ CREATE TABLE `applicant_pool_assignments` (
   `assigned_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `applicant_pool_assignments`
---
-
-INSERT INTO `applicant_pool_assignments` (`id`, `application_id`, `pool_id`, `assigned_at`) VALUES
-(1, 1, 1, '2025-03-13 14:00:00');
-
 -- --------------------------------------------------------
 
 --
@@ -87,7 +80,7 @@ CREATE TABLE `applications` (
 --
 
 INSERT INTO `applications` (`id`, `user_id`, `program_id`, `job_role`, `department`, `status`, `evaluation_score`, `fst_score`, `applied_at`, `updated_at`) VALUES
-(1, 4, 1, 'Loan Officer', 'Operations', 'shortlisted', 88.50, 92.00, '2025-03-10 09:00:00', '2025-03-13 14:00:00'),
+(1, 4, 1, 'Loan Officer', 'Operations', 'rejected', 88.50, 92.00, '2025-03-10 09:00:00', '2025-03-17 08:17:41'),
 (2, 4, 2, 'Financial Educator', 'Training', 'pending', NULL, NULL, '2025-03-11 10:00:00', NULL),
 (3, 4, 3, 'Loan Officer', 'Operations', 'rejected', 65.00, 70.00, '2025-03-12 11:00:00', '2025-03-14 08:00:00');
 
@@ -112,8 +105,7 @@ CREATE TABLE `backups` (
 
 INSERT INTO `backups` (`id`, `backup_name`, `file_path`, `backup_type`, `created_by`, `created_at`) VALUES
 (1, '2025-03-07_backup', '/backups/2025-03-07.sql', 'scheduled', 1, '2025-03-06 16:00:00'),
-(2, '2025-03-14_manual', '/backups/2025-03-14.sql', 'manual', 1, '2025-03-14 06:00:00'),
-(4, 'Manual_Backup_2025-03-16_475', 'C:\\xampp\\htdocs\\lms-forbes\\backend\\api\\admin/../../backups/backup_2025-03-16_03-07-28.sql', 'manual', 1, '2025-03-16 02:07:29');
+(2, '2025-03-14_manual', '/backups/2025-03-14.sql', 'manual', 1, '2025-03-14 06:00:00');
 
 -- --------------------------------------------------------
 
@@ -159,8 +151,8 @@ CREATE TABLE `milestone_progress` (
 --
 
 INSERT INTO `milestone_progress` (`id`, `milestone_id`, `user_id`, `status`, `completion_date`) VALUES
-(1, 1, 3, 'in_progress', NULL),
-(2, 3, 3, 'completed', '2025-03-13 08:00:00');
+(1, 1, 3, 'completed', '2025-03-16 08:42:42'),
+(2, 3, 3, 'completed', '2025-03-16 08:42:43');
 
 -- --------------------------------------------------------
 
@@ -311,7 +303,8 @@ INSERT INTO `quizzes` (`id`, `program_id`, `title`, `description`, `time_limit`,
 (1, 1, 'Loan Basics Quiz', 'Test basic loan knowledge', 30, 70.00, 2, '2025-03-01 18:00:00', 'active'),
 (2, 2, 'Policy Quiz', 'Policy comprehension test', 20, 75.00, 2, '2025-03-02 19:00:00', 'draft'),
 (3, 3, 'Advanced Loan Quiz', 'Advanced loan scenarios', 45, 80.00, 2, '2025-03-05 20:00:00', 'draft'),
-(4, 3, 'ahaha', 'haha', 29, 70.00, 2, '2025-03-16 06:03:08', 'draft');
+(4, 3, 'ahaha', 'haha', 29, 70.00, 2, '2025-03-16 06:03:08', 'draft'),
+(5, 1, 'Trainee Practice Quiz', 'A practice quiz for trainees on loan basics', 15, 70.00, 2, '2025-03-16 15:21:27', 'active');
 
 -- --------------------------------------------------------
 
@@ -336,7 +329,8 @@ CREATE TABLE `quiz_attempts` (
 INSERT INTO `quiz_attempts` (`id`, `user_id`, `quiz_id`, `score`, `time_taken`, `attempt_date`, `feedback`) VALUES
 (1, 3, 1, 85.00, 25, '2025-03-12 02:00:00', 'Good effort, review loan terms.'),
 (2, 3, 3, 92.00, 40, '2025-03-13 06:00:00', 'Excellent work!'),
-(3, 3, 1, 75.00, 28, '2025-03-16 02:00:00', 'Nice attempt, focus on credit scores.');
+(3, 3, 1, 75.00, 28, '2025-03-16 02:00:00', 'Nice attempt, focus on credit scores.'),
+(4, 3, 5, 66.67, NULL, '2025-03-16 15:22:18', 'Review the material and try again.');
 
 -- --------------------------------------------------------
 
@@ -362,7 +356,10 @@ INSERT INTO `quiz_attempt_answers` (`id`, `attempt_id`, `question_id`, `selected
 (4, 3, 8, 'c'),
 (5, 3, 9, 'b'),
 (6, 3, 11, 'c'),
-(7, 3, 12, 'a');
+(7, 3, 12, 'a'),
+(8, 4, 13, 'a'),
+(9, 4, 14, 'd'),
+(10, 4, 15, 'b');
 
 -- --------------------------------------------------------
 
@@ -392,7 +389,10 @@ INSERT INTO `quiz_questions` (`id`, `quiz_id`, `question_text`, `option_a`, `opt
 (9, 1, 'Who approves loans?', 'Manager', 'Officer', 'Client', 'System', 'b'),
 (10, 4, 'haha', 'sss', 'ss', 'ss', 'ss', 'a'),
 (11, 1, 'What is the minimum credit score required?', '600', '650', '700', '750', 'b'),
-(12, 1, 'What does APR stand for?', 'Annual Percentage Rate', 'Average Payment Rate', 'Adjusted Principal Rate', 'None', 'a');
+(12, 1, 'What does APR stand for?', 'Annual Percentage Rate', 'Average Payment Rate', 'Adjusted Principal Rate', 'None', 'a'),
+(13, 5, 'What is the primary purpose of a loan?', 'To borrow money', 'To save money', 'To invest', 'To pay taxes', 'a'),
+(14, 5, 'Which factor most affects loan approval?', 'Credit score', 'Favorite color', 'Shoe size', 'Pet’s name', 'a'),
+(15, 5, 'What is an interest rate?', 'A fee for late payment', 'The cost of borrowing', 'A bonus for repayment', 'A tax deduction', 'b');
 
 -- --------------------------------------------------------
 
@@ -465,10 +465,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `full_name`, `email`, `role`, `status`, `created_at`, `last_login`, `department`) VALUES
-(1, 'admin', '$2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO', 'Admin Admin', 'admin@gmail.com', 'administrator', 'active', '2025-03-09 13:16:01', '2025-03-16 03:11:33', NULL),
-(2, 'trainer', '$2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK', 'Trainer Trainers', 'trainer@gmail.com', 'trainer', 'active', '2025-03-09 13:39:22', '2025-03-16 13:48:28', NULL),
-(3, 'trainee', '$2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.', 'Trainee Trainee', 'trainee@gmail.com', 'trainee', 'active', '2025-03-09 13:38:54', '2025-03-16 14:00:59', NULL),
-(4, 'applicant', '$2y$10$TONg2cTG/RZkaPi/PjD1hOx0xCb6crYoJZNrO1rvH7qFxUpWVqLhi', 'Applicant Applicant', 'applicant@gmail.com', 'applicant', 'active', '2025-03-09 13:15:17', '2025-03-15 14:44:35', NULL),
+(1, 'admin', '$2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO', 'Admin Admin', 'admin@gmail.com', 'administrator', 'active', '2025-03-09 13:16:01', '2025-03-17 08:35:36', NULL),
+(2, 'trainer', '$2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK', 'Trainer Trainers', 'trainer@gmail.com', 'trainer', 'active', '2025-03-09 13:39:22', '2025-03-17 08:20:28', NULL),
+(3, 'trainee', '$2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.', 'Trainee Trainees', 'trainee@gmail.com', 'trainee', 'active', '2025-03-09 13:38:54', '2025-03-17 08:11:14', NULL),
+(4, 'applicant', '$2y$10$TONg2cTG/RZkaPi/PjD1hOx0xCb6crYoJZNrO1rvH7qFxUpWVqLhi', 'Applicant Applicant', 'applicant@gmail.com', 'applicant', 'active', '2025-03-09 13:15:17', '2025-03-17 08:05:44', NULL),
 (5, 'admin1', '$2y$10$5PuQqTMqIwxi7Ol1Nw48huWuPgmzMuCqJ7usq4ezYzBSq31W68swG', 'admin1 admin1', 'admin1@gmail.com', 'administrator', 'active', '2025-03-14 15:17:21', '2025-03-14 15:17:34', NULL);
 
 -- --------------------------------------------------------
@@ -496,7 +496,8 @@ INSERT INTO `user_activity` (`id`, `user_id`, `activity_type`, `activity_time`, 
 (4, 3, 'attendance', '2025-03-14 07:15:00', 'Attended Loan Basics session'),
 (5, 4, 'login', '2025-03-14 07:15:43', 'Applicant logged in'),
 (6, 2, '', '2025-03-16 13:49:51', 'Updated profile information'),
-(7, 2, '', '2025-03-16 14:00:40', 'Updated profile information');
+(7, 2, '', '2025-03-16 14:00:40', 'Updated profile information'),
+(8, 3, '', '2025-03-16 17:06:40', 'Updated profile information');
 
 --
 -- Indexes for dumped tables
@@ -671,7 +672,7 @@ ALTER TABLE `applications`
 -- AUTO_INCREMENT for table `backups`
 --
 ALTER TABLE `backups`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `milestones`
@@ -719,25 +720,25 @@ ALTER TABLE `program_enrollments`
 -- AUTO_INCREMENT for table `quizzes`
 --
 ALTER TABLE `quizzes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `quiz_attempts`
 --
 ALTER TABLE `quiz_attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `quiz_attempt_answers`
 --
 ALTER TABLE `quiz_attempt_answers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `quiz_questions`
 --
 ALTER TABLE `quiz_questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `records`
@@ -761,7 +762,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_activity`
 --
 ALTER TABLE `user_activity`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables
