@@ -47,9 +47,19 @@ try {
         throw new Exception('Database connection not established');
     }
 
-    // In a real system, parse the token to get user ID
-    // For this example, we'll use a hard-coded ID
-    $userId = 4; // Hard-coded for example; should be extracted from token
+     // -- PARSE BASE64 TOKEN -- //
+    // The token is assumed to be something like base64("4:1679999999"),
+    // which decodes to "4:1679999999". Split on ":" to get the user/applicant ID.
+    $decoded = base64_decode($token);
+    $parts = explode(':', $decoded);
+    $userId = isset($parts[0]) ? (int)$parts[0] : 0;
+    
+    // If still no ID, we bail
+    if (!$userId) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Invalid token or no user ID found']);
+        exit;
+    }
     
     // Check if file was uploaded
     if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {

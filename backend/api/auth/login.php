@@ -3,8 +3,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1); // Enable visible errors for debugging
 
-// Include CORS middleware first
-header("Access-Control-Allow-Origin: http://localhost:3000"); 
+// Include CORS headers directly (before any output)
+header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header("Access-Control-Allow-Credentials: true");
@@ -98,26 +98,13 @@ try {
             exit;
         }
         
-        // Check if password is already in plain text for testing (NOT for production)
-        if ($user['password'] === 'test') {
-            debug_log("Using plain text password match for testing");
-            $passwordMatch = ($password === 'test');
-        } else {
-            // Verify with password_verify
-            debug_log("Stored password hash", $user['password']);
-            $passwordMatch = password_verify($password, $user['password']);
-            debug_log("Password verification result", $passwordMatch ? "matched" : "failed");
-            
-            // If not matched, try a direct comparison (not secure, just for debugging)
-            if (!$passwordMatch) {
-                debug_log("Trying direct comparison as fallback");
-                $directMatch = ($password === $user['password']);
-                debug_log("Direct comparison result", $directMatch ? "matched" : "failed");
-            }
-        }
+        // Verify password
+        debug_log("Stored password hash", $user['password']);
+        $passwordMatch = password_verify($password, $user['password']);
+        debug_log("Password verification result", $passwordMatch ? "matched" : "failed");
         
         // If password matches
-        if (isset($passwordMatch) && $passwordMatch) {
+        if ($passwordMatch) {
             debug_log("Authentication successful");
             
             // Update last login time if column exists
@@ -126,7 +113,7 @@ try {
                 $updateStmt->execute(['id' => $user['id']]);
             }
             
-            // Generate token
+            // Generate token (simple base64 encode, not secure for production)
             $token = base64_encode($user['id'] . ':' . time());
             
             // Determine role and full name
@@ -145,7 +132,8 @@ try {
             $response = [
                 'token' => $token,
                 'role' => $role,
-                'full_name' => $fullName
+                'full_name' => $fullName,
+                'user_id' => $user['id'] // Add user_id for compatibility
             ];
             
             debug_log("Login successful, returning data", $response);

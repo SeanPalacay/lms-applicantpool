@@ -12,10 +12,6 @@ import {
     ArrowRight, 
     ArrowLeft, 
     Check, 
-    ShieldCheck, 
-    BookOpen, 
-    GraduationCap, 
-    UserPlus,
     Loader
 } from 'lucide-react';
 import './register.css';
@@ -28,8 +24,7 @@ const Register = () => {
         email: '',
         username: '',
         password: '',
-        confirmPassword: '',
-        role: 'applicant' // Default role
+        confirmPassword: ''
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -40,7 +35,6 @@ const Register = () => {
     const [passwordStrength, setPasswordStrength] = useState(0);
     const [passwordFeedback, setPasswordFeedback] = useState('');
 
-    // API endpoint
     const API_URL = 'http://localhost:8080/lms-forbes/backend/api/auth/register.php';
 
     const handleChange = (e) => {
@@ -62,20 +56,14 @@ const Register = () => {
             return;
         }
 
-        // Calculate strength (basic implementation)
         let strength = 0;
-        
-        // Length check
         if (password.length >= 8) strength += 25;
-        
-        // Character variety checks
-        if (/[A-Z]/.test(password)) strength += 25; // Uppercase
-        if (/[0-9]/.test(password)) strength += 25; // Numbers
-        if (/[^A-Za-z0-9]/.test(password)) strength += 25; // Special chars
+        if (/[A-Z]/.test(password)) strength += 25;
+        if (/[0-9]/.test(password)) strength += 25;
+        if (/[^A-Za-z0-9]/.test(password)) strength += 25;
         
         setPasswordStrength(strength);
         
-        // Set feedback message
         if (strength < 25) {
             setPasswordFeedback('Weak: Try a longer password');
         } else if (strength < 50) {
@@ -87,11 +75,9 @@ const Register = () => {
         }
     };
 
-    // Handle form navigation
     const nextStep = (e) => {
         e.preventDefault();
         
-        // Validate first step
         if (step === 1) {
             if (!formData.firstName || !formData.lastName || !formData.email) {
                 setError('Please fill out all fields');
@@ -124,7 +110,6 @@ const Register = () => {
         setSuccess('');
         setLoading(true);
 
-        // Validate form data
         if (!formData.firstName || !formData.lastName || !formData.email || !formData.username || !formData.password) {
             setError('All fields are required');
             setLoading(false);
@@ -144,14 +129,13 @@ const Register = () => {
         }
 
         try {
-            // Prepare data for submission
             const payload = {
                 first_name: formData.firstName,
                 last_name: formData.lastName,
                 email: formData.email,
                 username: formData.username,
                 password: formData.password,
-                role: formData.role,
+                role: 'applicant',
                 full_name: `${formData.firstName} ${formData.lastName}`
             };
 
@@ -166,7 +150,6 @@ const Register = () => {
             console.log('Registration successful:', response.data);
             setSuccess('Registration successful! You can now log in.');
             
-            // Redirect to login after 2 seconds
             setTimeout(() => {
                 navigate('/login');
             }, 2000);
@@ -185,7 +168,6 @@ const Register = () => {
         }
     };
 
-    // Toggle password visibility
     const toggleShowPassword = () => {
         setShowPassword(!showPassword);
     };
@@ -194,7 +176,6 @@ const Register = () => {
         setShowConfirmPassword(!showConfirmPassword);
     };
 
-    // Render progress indicator
     const renderProgress = () => {
         return (
             <div className="register-progress">
@@ -203,20 +184,14 @@ const Register = () => {
                     <span className="step-label">Personal Info</span>
                 </div>
                 <div className="progress-line"></div>
-                <div className={`progress-step ${step >= 2 ? 'active' : ''}`}>
+                <div className={`progress-step ${step === 2 ? 'active' : ''}`}>
                     <div className="step-number">2</div>
                     <span className="step-label">Account Setup</span>
-                </div>
-                <div className="progress-line"></div>
-                <div className={`progress-step ${step === 3 ? 'active' : ''}`}>
-                    <div className="step-number">3</div>
-                    <span className="step-label">Role Selection</span>
                 </div>
             </div>
         );
     };
 
-    // Render step 1 - Personal Information
     const renderStepOne = () => {
         return (
             <>
@@ -283,7 +258,6 @@ const Register = () => {
         );
     };
 
-    // Render step 2 - Account Setup
     const renderStepTwo = () => {
         return (
             <>
@@ -346,7 +320,7 @@ const Register = () => {
                     <label htmlFor="confirmPassword" className="register-label">Confirm Password</label>
                     <div className="input-wrapper">
                         <span className="register-input-icon">
-                            <i className="fas fa-lock"></i>
+                            <Lock size={18} />
                         </span>
                         <input
                             type={showConfirmPassword ? "text" : "password"}
@@ -382,125 +356,9 @@ const Register = () => {
                         Back
                     </button>
                     <button
-                        type="button"
-                        className="register-next-button"
-                        onClick={nextStep}
-                        disabled={!formData.username || !formData.password || !formData.confirmPassword || formData.password !== formData.confirmPassword}
-                    >
-                        Continue to Role Selection
-                        <ArrowRight size={18} />
-                    </button>
-                </div>
-            </>
-        );
-    };
-
-    // Render step 3 - Role Selection
-    const renderStepThree = () => {
-        return (
-            <>
-                <div className="register-role-container">
-                    <label className="register-role-label">Select your role in the system:</label>
-                    <div className="register-role-options">
-                        <div className={`role-card ${formData.role === 'administrator' ? 'selected' : ''}`} onClick={() => handleChange({ target: { name: 'role', value: 'administrator' } })}>
-                            <div className="role-icon admin-icon">
-                                <ShieldCheck size={20} />
-                            </div>
-                            <div className="role-info">
-                                <h4>Administrator</h4>
-                                <p>Manage the entire learning system</p>
-                            </div>
-                            <div className="role-select">
-                                <input
-                                    type="radio"
-                                    id="administrator"
-                                    name="role"
-                                    value="administrator"
-                                    checked={formData.role === 'administrator'}
-                                    onChange={handleChange}
-                                />
-                                <div className="checkmark"></div>
-                            </div>
-                        </div>
-
-                        <div className={`role-card ${formData.role === 'trainer' ? 'selected' : ''}`} onClick={() => handleChange({ target: { name: 'role', value: 'trainer' } })}>
-                            <div className="role-icon trainer-icon">
-                                <BookOpen size={20} />
-                            </div>
-                            <div className="role-info">
-                                <h4>Trainer</h4>
-                                <p>Create and manage courses</p>
-                            </div>
-                            <div className="role-select">
-                                <input
-                                    type="radio"
-                                    id="trainer"
-                                    name="role"
-                                    value="trainer"
-                                    checked={formData.role === 'trainer'}
-                                    onChange={handleChange}
-                                />
-                                <div className="checkmark"></div>
-                            </div>
-                        </div>
-
-                        <div className={`role-card ${formData.role === 'trainee' ? 'selected' : ''}`} onClick={() => handleChange({ target: { name: 'role', value: 'trainee' } })}>
-                            <div className="role-icon trainee-icon">
-                                <GraduationCap size={20} />
-                            </div>
-                            <div className="role-info">
-                                <h4>Trainee</h4>
-                                <p>Access and complete courses</p>
-                            </div>
-                            <div className="role-select">
-                                <input
-                                    type="radio"
-                                    id="trainee"
-                                    name="role"
-                                    value="trainee"
-                                    checked={formData.role === 'trainee'}
-                                    onChange={handleChange}
-                                />
-                                <div className="checkmark"></div>
-                            </div>
-                        </div>
-
-                        <div className={`role-card ${formData.role === 'applicant' ? 'selected' : ''}`} onClick={() => handleChange({ target: { name: 'role', value: 'applicant' } })}>
-                            <div className="role-icon applicant-icon">
-                                <UserPlus size={20} />
-                            </div>
-                            <div className="role-info">
-                                <h4>Applicant</h4>
-                                <p>Apply for available programs</p>
-                            </div>
-                            <div className="role-select">
-                                <input
-                                    type="radio"
-                                    id="applicant"
-                                    name="role"
-                                    value="applicant"
-                                    checked={formData.role === 'applicant'}
-                                    onChange={handleChange}
-                                />
-                                <div className="checkmark"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="form-navigation">
-                    <button
-                        type="button"
-                        className="register-back-button"
-                        onClick={prevStep}
-                    >
-                        <i className="fas fa-arrow-left"></i>
-                        Back
-                    </button>
-                    <button
                         type="submit"
                         className="register-submit-button"
-                        disabled={loading}
+                        disabled={loading || !formData.username || !formData.password || !formData.confirmPassword || formData.password !== formData.confirmPassword}
                     >
                         {loading ? (
                             <>
@@ -559,7 +417,6 @@ const Register = () => {
                     <form onSubmit={handleSubmit} className="register-form">
                         {step === 1 && renderStepOne()}
                         {step === 2 && renderStepTwo()}
-                        {step === 3 && renderStepThree()}
                     </form>
 
                     <p className="register-footer">

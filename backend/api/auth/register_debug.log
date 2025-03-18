@@ -30,3 +30,25 @@
 [2025-03-14 16:17:21] Database connection successful
 [2025-03-14 16:17:21] Raw request data {"first_name":"admin1","last_name":"admin1","email":"admin1@gmail.com","username":"admin1","password":"test123123","role":"administrator","full_name":"admin1 admin1"}
 [2025-03-14 16:17:21] User registered successfully {"id":"5","username":"admin1","role":"administrator"}
+[2025-03-18 03:20:43] Registration request received
+[2025-03-18 03:20:43] Database connection successful
+[2025-03-18 03:20:43] Raw request data {"first_name":"applicant2","last_name":"applicant2","email":"applicant2@gmail.com","username":"applicant2","password":"test123123","role":"applicant","full_name":"applicant2 applicant2"}
+[2025-03-18 03:20:43] Registration error SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lms_forbes.applicants' doesn't exist
+[2025-03-18 03:23:26] Registration request received
+[2025-03-18 03:23:26] Database connection successful
+[2025-03-18 03:23:26] Raw request data "{\"first_name\":\"applicant2\",\"last_name\":\"applicant2\",\"email\":\"applicant2@gmail.com\",\"username\":\"applicant2\",\"password\":\"test123123\",\"role\":\"applicant\",\"full_name\":\"applicant2 applicant2\"}"
+[2025-03-18 03:23:26] User already exists {"username":"applicant2","email":"applicant2@gmail.com"}
+[2025-03-18 03:24:08] Registration request received
+[2025-03-18 03:24:08] Database connection successful
+[2025-03-18 03:24:08] Raw request data "{\"first_name\":\"applicant2\",\"last_name\":\"applicant2\",\"email\":\"applicant2@gmail.com\",\"username\":\"applicant2\",\"password\":\"test123123\",\"role\":\"applicant\",\"full_name\":\"applicant2 applicant2\"}"
+[2025-03-18 03:24:08] User registered successfully {"id":"8","username":"applicant2","role":"applicant"}
+[2025-03-18 03:24:46] Registration request received
+[2025-03-18 03:24:46] Database connection successful
+[2025-03-18 03:24:46] Raw request data "{\"first_name\":\"applicant1\",\"last_name\":\"applicant1\",\"email\":\"applicant1@gmail.com\",\"username\":\"applicant1\",\"password\":\"test123123\",\"role\":\"applicant\",\"full_name\":\"applicant1 applicant1\"}"
+[2025-03-18 03:24:46] User registered successfully {"id":"9","username":"applicant1","role":"applicant"}
+[2025-03-18 03:45:14] Registration request received
+[2025-03-18 03:45:14] Database connection successful
+[2025-03-18 03:45:14] Invalid request method "GET"
+[2025-03-18 03:45:22] Registration request received
+[2025-03-18 03:45:22] Database connection successful
+[2025-03-18 03:45:22] Invalid request method "GET"

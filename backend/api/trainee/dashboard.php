@@ -22,10 +22,12 @@ if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
     $token = $matches[1];
 }
 
+// Allow token also via GET ?token=...
 if (empty($token) && isset($_GET['token'])) {
     $token = $_GET['token'];
 }
 
+// If still no token, reject
 if (empty($token)) {
     http_response_code(401);
     echo json_encode(['error' => 'Authentication required']);
@@ -37,9 +39,22 @@ try {
         throw new Exception('Database connection not established');
     }
 
-    // Hard-coded for example; realistically read from session or decode token
-    $traineeId = 3; 
-    // e.g. $traineeId = $_SESSION['user_id'] if the user is a 'trainee'
+    // Instead of JWT decode, parse base64 "<userId>:<timestamp>"
+    // Example of $token => "MTA6MTc0MjI2NzgyMw==" => base64_decode => "10:1742267823"
+    $decoded = base64_decode($token);
+    // Safely split on colon
+    $parts = explode(':', $decoded);
+    $traineeId = isset($parts[0]) ? (int)$parts[0] : 0;
+
+    // Fallback to session if no valid userId from token
+    if (!$traineeId && isset($_SESSION['user_id'])) {
+        $traineeId = (int) $_SESSION['user_id'];
+    }
+
+    // If still no userId, throw error
+    if (!$traineeId) {
+        throw new Exception('User ID not found in token or session');
+    }
 
     $response = [
         'user' => [
@@ -55,13 +70,16 @@ try {
     ];
 
     // 1) Fetch Trainee User Info
-    $userQuery = "SELECT full_name, email, role
-                  FROM users 
-                  WHERE id = ? AND role = 'trainee' 
-                  LIMIT 1";
+    $userQuery = "
+        SELECT full_name, email, role
+        FROM users
+        WHERE id = ? AND role = 'trainee'
+        LIMIT 1
+    ";
     $userStmt = $pdo->prepare($userQuery);
     $userStmt->execute([$traineeId]);
     $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
+
     if (!$userData) {
         http_response_code(404);
         echo json_encode(['error' => 'No trainee found for this user']);
@@ -69,7 +87,7 @@ try {
     }
     $response['user'] = $userData;
 
-    // 2) Fetch Enrollments (program_enrollments table + program details)
+    // 2) Fetch Enrollments
     $enrollQuery = "
         SELECT 
             pe.id,
@@ -152,7 +170,8 @@ try {
 
     // Example: Alert if any milestone is overdue
     $overdueMileQuery = "
-        SELECT m.id, m.title, p.title AS program_title, DATEDIFF(CURRENT_DATE, m.due_date) AS days_overdue
+        SELECT m.id, m.title, p.title AS program_title, 
+               DATEDIFF(CURRENT_DATE, m.due_date) AS days_overdue
         FROM milestone_progress mp
         JOIN milestones m ON mp.milestone_id = m.id
         JOIN programs p ON m.program_id = p.id
@@ -189,3 +208,6 @@ try {
     echo json_encode(['error' => 'General error: ' . $e->getMessage()]);
     exit;
 }
+
+
+?>
