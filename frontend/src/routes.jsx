@@ -79,7 +79,7 @@ import TraineeMilestones from './pages/trainee/milestones/TraineeMilestones';
 import Certificates from './pages/trainee/certificates/Certificates';
 import CertificateDetails from './pages/trainee/certificates/details/CertificateDetails';
 import TraineeProfilePage from './pages/trainee/profile/TraineeProfile';
-
+import TraineeMilestoneDetails from './pages/trainee/milestones/TraineeMilestoneDetails';
 // Applicant Pages
 import ApplicantPrograms from './pages/applicant/programs/ApplicantPrograms';
 import ProgramApplication from './pages/applicant/programs/apply/ProgramApplication';
@@ -931,6 +931,19 @@ const AppRoutes = () => {
                     <ProtectedRoute role="trainee">
                         <DashboardWrapper
                             component={TraineeMilestones}
+                            title="Milestones"
+                            role="trainee"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
+<Route
+                path="/trainee/milestones/:milestoneId"
+                element={
+                    <ProtectedRoute role="trainee">
+                        <DashboardWrapper
+                            component={TraineeMilestoneDetails }
                             title="Milestones"
                             role="trainee"
                         />

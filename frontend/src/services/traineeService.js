@@ -47,7 +47,44 @@ const traineeService = {
             throw error;
         }
     },
+    getMilestoneDetails: async (milestoneId) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            throw new Error('No token found. Please log in again.');
+        }
     
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Session expired. Please log in again.');
+        }
+    
+        const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/milestone_details.php?milestoneId=${milestoneId}`;
+    
+        try {
+            const response = await fetch(endpoint, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('authToken');
+                    throw new Error('Authentication failed. Please login again.');
+                }
+                const errorText = await response.text();
+                throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+            }
+    
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error in traineeService.getMilestoneDetails:', error);
+            throw error;
+        }
+    },
     // Get all programs for the trainee
     getPrograms: async () => {
         const token = localStorage.getItem('authToken');
@@ -169,19 +206,19 @@ const traineeService = {
     },
     
     // Update milestone progress
-    updateMilestoneProgress: async (milestoneId, status) => {
+    updateMilestoneProgress: async (progressId, status) => {
         const token = localStorage.getItem('authToken');
         if (!token) {
             throw new Error('No token found. Please log in again.');
         }
-
+    
         if (isTokenExpired()) {
             localStorage.removeItem('authToken');
             throw new Error('Session expired. Please log in again.');
         }
-
+    
         const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/update_milestone.php`;
-
+    
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
@@ -190,11 +227,11 @@ const traineeService = {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    milestone_id: milestoneId,
+                    milestone_id: progressId,
                     status: status
                 })
             });
-
+    
             if (!response.ok) {
                 if (response.status === 401) {
                     localStorage.removeItem('authToken');
@@ -203,7 +240,7 @@ const traineeService = {
                 const errorText = await response.text();
                 throw new Error(`HTTP error: ${response.status} - ${errorText}`);
             }
-
+    
             const data = await response.json();
             return data;
         } catch (error) {
