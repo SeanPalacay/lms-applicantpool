@@ -95,6 +95,26 @@ try {
     ':quizId' => $quizId
   ]);
 
+  // Delete existing questions and related data
+  $questionIds = [];
+  $query = "SELECT id FROM quiz_questions WHERE quiz_id = :quizId";
+  $stmt = $pdo->prepare($query);
+  $stmt->bindParam(':quizId', $quizId, PDO::PARAM_INT);
+  $stmt->execute();
+  while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $questionIds[] = $row['id'];
+  }
+  
+  // Delete related question data if exists
+  if (!empty($questionIds)) {
+    $query = "DELETE FROM quiz_question_matching_pairs WHERE question_id IN (" . implode(',', $questionIds) . ")";
+    $pdo->exec($query);
+    
+    $query = "DELETE FROM quiz_question_answer_options WHERE question_id IN (" . implode(',', $questionIds) . ")";
+    $pdo->exec($query);
+  }
+  
+  // Delete all questions
   $query = "DELETE FROM quiz_questions WHERE quiz_id = :quizId";
   $stmt = $pdo->prepare($query);
   $stmt->bindParam(':quizId', $quizId, PDO::PARAM_INT);
@@ -102,20 +122,116 @@ try {
 
   if (!empty($data['questions'])) {
     foreach ($data['questions'] as $question) {
+      $questionType = $question['question_type'] ?? 'multiple_choice';
+      
+      // Common query preparation
       $query = "
-        INSERT INTO quiz_questions (quiz_id, question_text, option_a, option_b, option_c, option_d, correct_answer)
-        VALUES (:quiz_id, :question_text, :option_a, :option_b, :option_c, :option_d, :correct_answer)
+        INSERT INTO quiz_questions (quiz_id, question_type, question_text, option_a, option_b, option_c, option_d, correct_answer)
+        VALUES (:quiz_id, :question_type, :question_text, :option_a, :option_b, :option_c, :option_d, :correct_answer)
       ";
       $stmt = $pdo->prepare($query);
-      $stmt->execute([
+      
+      // Initialize variables
+      $options = [
         ':quiz_id' => $quizId,
-        ':question_text' => $question['question_text'],
-        ':option_a' => $question['option_a'],
-        ':option_b' => $question['option_b'],
-        ':option_c' => $question['option_c'] ?? null,
-        ':option_d' => $question['option_d'] ?? null,
-        ':correct_answer' => $question['correct_answer']
-      ]);
+        ':question_type' => $questionType,
+        ':question_text' => $question['question_text']
+      ];
+      
+      // Process based on question type
+      switch ($questionType) {
+        case 'multiple_choice':
+          $options[':option_a'] = $question['option_a'];
+          $options[':option_b'] = $question['option_b'];
+          $options[':option_c'] = $question['option_c'] ?? null;
+          $options[':option_d'] = $question['option_d'] ?? null;
+          $options[':correct_answer'] = $question['correct_answer'];
+          break;
+        
+        case 'multiple_answer':
+          $options[':option_a'] = $question['option_a'];
+          $options[':option_b'] = $question['option_b'];
+          $options[':option_c'] = $question['option_c'] ?? null;
+          $options[':option_d'] = $question['option_d'] ?? null;
+          // Store comma-separated correct answers
+          $options[':correct_answer'] = implode(',', $question['correct_answers'] ?? []);
+          break;
+        
+        case 'true_false':
+          $options[':option_a'] = 'True';
+          $options[':option_b'] = 'False';
+          $options[':option_c'] = null;
+          $options[':option_d'] = null;
+          $options[':correct_answer'] = $question['is_true'] ? 'a' : 'b';
+          break;
+        
+        case 'identification':
+          $options[':option_a'] = null;
+          $options[':option_b'] = null;
+          $options[':option_c'] = null;
+          $options[':option_d'] = null;
+          $options[':correct_answer'] = $question['answer_text'];
+          break;
+        
+        case 'matching':
+          $options[':option_a'] = null;
+          $options[':option_b'] = null;
+          $options[':option_c'] = null;
+          $options[':option_d'] = null;
+          $options[':correct_answer'] = null;
+          break;
+        
+        case 'essay':
+          $options[':option_a'] = null;
+          $options[':option_b'] = null;
+          $options[':option_c'] = null;
+          $options[':option_d'] = null;
+          $options[':correct_answer'] = $question['answer_text'] ?? null; // Model answer for reference
+          break;
+      }
+      
+      $stmt->execute($options);
+      $questionId = $pdo->lastInsertId();
+      
+      // Additional processing for special question types
+      if ($questionType === 'matching' && isset($question['matching_pairs'])) {
+        $insertPairQuery = "
+          INSERT INTO quiz_question_matching_pairs (question_id, left_item, right_item, pair_key)
+          VALUES (:question_id, :left_item, :right_item, :pair_key)
+        ";
+        $pairStmt = $pdo->prepare($insertPairQuery);
+        
+        foreach ($question['matching_pairs'] as $pair) {
+          $pairStmt->execute([
+            ':question_id' => $questionId,
+            ':left_item' => $pair['left'],
+            ':right_item' => $pair['right'],
+            ':pair_key' => $pair['key']
+          ]);
+        }
+      }
+      
+      if ($questionType === 'multiple_answer') {
+        $insertOptionQuery = "
+          INSERT INTO quiz_question_answer_options (question_id, option_text, option_key, is_correct)
+          VALUES (:question_id, :option_text, :option_key, :is_correct)
+        ";
+        $optionStmt = $pdo->prepare($insertOptionQuery);
+        
+        foreach (['a', 'b', 'c', 'd'] as $key) {
+          $optionField = "option_$key";
+          if (isset($question[$optionField]) && !empty($question[$optionField])) {
+            $isCorrect = in_array($key, $question['correct_answers'] ?? []) ? 1 : 0;
+            
+            $optionStmt->execute([
+              ':question_id' => $questionId,
+              ':option_text' => $question[$optionField],
+              ':option_key' => $key,
+              ':is_correct' => $isCorrect
+            ]);
+          }
+        }
+      }
     }
   }
 

@@ -63,11 +63,17 @@ const CreateQuiz = () => {
   // Question template
   const emptyQuestion = {
     question_text: '',
+    question_type: 'multiple_choice',
     option_a: '',
     option_b: '',
     option_c: '',
     option_d: '',
-    correct_answer: 'a'
+    correct_answer: 'a',
+    // New fields for different question types
+    correct_answers: [], // For multiple_answer
+    answer_text: '',     // For identification
+    matching_pairs: [],  // For matching
+    is_true: true        // For true_false
   };
 
   useEffect(() => {
@@ -124,7 +130,78 @@ const CreateQuiz = () => {
 
   const handleQuestionChange = (index, field, value) => {
     const updatedQuestions = [...quizData.questions];
-    updatedQuestions[index][field] = value;
+    
+    if (field === 'question_type') {
+      // Reset certain fields when changing question type
+      const currentType = updatedQuestions[index].question_type;
+      const newType = value;
+      
+      // Initialize appropriate fields based on new type
+      if (newType === 'true_false') {
+        updatedQuestions[index] = {
+          ...updatedQuestions[index],
+          question_type: newType,
+          option_a: 'True',
+          option_b: 'False',
+          option_c: '',
+          option_d: '',
+          correct_answer: 'a', // Default to True
+          is_true: true
+        };
+      } else if (newType === 'multiple_answer') {
+        updatedQuestions[index] = {
+          ...updatedQuestions[index],
+          question_type: newType,
+          option_a: updatedQuestions[index].option_a || '',
+          option_b: updatedQuestions[index].option_b || '',
+          option_c: updatedQuestions[index].option_c || '',
+          option_d: updatedQuestions[index].option_d || '',
+          correct_answers: []
+        };
+      } else if (newType === 'identification') {
+        updatedQuestions[index] = {
+          ...updatedQuestions[index],
+          question_type: newType,
+          answer_text: ''
+        };
+      } else if (newType === 'matching') {
+        updatedQuestions[index] = {
+          ...updatedQuestions[index],
+          question_type: newType,
+          matching_pairs: [
+            { left: '', right: '', key: 'a' },
+            { left: '', right: '', key: 'b' }
+          ]
+        };
+      } else {
+        // Reset to multiple choice
+        updatedQuestions[index] = {
+          ...updatedQuestions[index],
+          question_type: newType
+        };
+      }
+    } else if (field === 'is_true') {
+      // For true/false questions
+      updatedQuestions[index].is_true = value;
+      updatedQuestions[index].correct_answer = value ? 'a' : 'b';
+    } else if (field === 'correct_answers') {
+      // For multiple answer questions
+      const currentAnswers = updatedQuestions[index].correct_answers || [];
+      if (currentAnswers.includes(value)) {
+        updatedQuestions[index].correct_answers = currentAnswers.filter(a => a !== value);
+      } else {
+        updatedQuestions[index].correct_answers = [...currentAnswers, value];
+      }
+    } else if (field.startsWith('matching_')) {
+      // For matching questions
+      const [_, pairIndex, side] = field.split('_');
+      const pairs = [...updatedQuestions[index].matching_pairs];
+      pairs[parseInt(pairIndex)][side] = value;
+      updatedQuestions[index].matching_pairs = pairs;
+    } else {
+      // Regular field update
+      updatedQuestions[index][field] = value;
+    }
     
     setQuizData({
       ...quizData,
@@ -206,6 +283,369 @@ const CreateQuiz = () => {
     return true;
   };
 
+  // Question Type Selector Component
+const QuestionTypeSelector = ({ questionType, onChange }) => (
+  <div style={{ marginBottom: '15px' }}>
+    <label style={{ display: 'block', marginBottom: '5px' }}>Question Type</label>
+    <select
+      value={questionType}
+      onChange={(e) => onChange(e.target.value)}
+      style={{
+        width: '100%',
+        padding: '8px',
+        border: '1px solid #ddd',
+        borderRadius: '4px'
+      }}
+    >
+      <option value="multiple_choice">Multiple Choice</option>
+      <option value="multiple_answer">Multiple Answer</option>
+      <option value="true_false">True/False</option>
+      <option value="identification">Identification</option>
+      <option value="matching">Matching</option>
+      <option value="essay">Essay/Short Answer</option>
+    </select>
+  </div>
+);
+
+// Multiple choice question (your existing UI)
+const MultipleChoiceQuestion = ({ question, index, onQuestionChange }) => (
+  <div>
+    <div style={{ marginBottom: '15px' }}>
+      <label style={{ display: 'block', marginBottom: '5px' }}>Question Text</label>
+      <textarea
+        value={question.question_text}
+        onChange={(e) => onQuestionChange(index, 'question_text', e.target.value)}
+        style={{
+          width: '100%',
+          padding: '8px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          minHeight: '60px'
+        }}
+        placeholder="Enter your question here"
+        required
+      />
+    </div>
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(2, 1fr)',
+      gap: '15px'
+    }}>
+      {['a', 'b', 'c', 'd'].map((option) => (
+        <div key={option}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
+            <input
+              type="radio"
+              name={`correct_answer_${index}`}
+              value={option}
+              checked={question.correct_answer === option}
+              onChange={() => onQuestionChange(index, 'correct_answer', option)}
+            />
+            <label>Option {option.toUpperCase()}</label>
+          </div>
+          <input
+            value={question[`option_${option}`]}
+            onChange={(e) => onQuestionChange(index, `option_${option}`, e.target.value)}
+            style={{
+              width: '100%',
+              padding: '8px',
+              border: '1px solid #ddd',
+              borderRadius: '4px'
+            }}
+            placeholder={`Enter option ${option.toUpperCase()} ${option <= 'b' ? '' : '(optional)'}`}
+            required={option <= 'b'}
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// Multiple answer question
+const MultipleAnswerQuestion = ({ question, index, onQuestionChange }) => (
+  <div>
+    <div style={{ marginBottom: '15px' }}>
+      <label style={{ display: 'block', marginBottom: '5px' }}>Question Text</label>
+      <textarea
+        value={question.question_text}
+        onChange={(e) => onQuestionChange(index, 'question_text', e.target.value)}
+        style={{
+          width: '100%',
+          padding: '8px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          minHeight: '60px'
+        }}
+        placeholder="Enter your question here"
+        required
+      />
+    </div>
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(2, 1fr)',
+      gap: '15px'
+    }}>
+      {['a', 'b', 'c', 'd'].map((option) => (
+        <div key={option}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
+            <input
+              type="checkbox"
+              checked={question.correct_answers?.includes(option) || false}
+              onChange={() => onQuestionChange(index, 'correct_answers', option)}
+            />
+            <label>Option {option.toUpperCase()}</label>
+          </div>
+          <input
+            value={question[`option_${option}`]}
+            onChange={(e) => onQuestionChange(index, `option_${option}`, e.target.value)}
+            style={{
+              width: '100%',
+              padding: '8px',
+              border: '1px solid #ddd',
+              borderRadius: '4px'
+            }}
+            placeholder={`Enter option ${option.toUpperCase()} ${option <= 'b' ? '' : '(optional)'}`}
+            required={option <= 'b'}
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// True/false question
+const TrueFalseQuestion = ({ question, index, onQuestionChange }) => (
+  <div>
+    <div style={{ marginBottom: '15px' }}>
+      <label style={{ display: 'block', marginBottom: '5px' }}>Question Text</label>
+      <textarea
+        value={question.question_text}
+        onChange={(e) => onQuestionChange(index, 'question_text', e.target.value)}
+        style={{
+          width: '100%',
+          padding: '8px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          minHeight: '60px'
+        }}
+        placeholder="Enter your true/false statement here"
+        required
+      />
+    </div>
+    <div style={{ display: 'flex', gap: '15px' }}>
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
+          <input
+            type="radio"
+            name={`is_true_${index}`}
+            checked={question.is_true === true}
+            onChange={() => onQuestionChange(index, 'is_true', true)}
+          />
+          <label>True</label>
+        </div>
+      </div>
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
+          <input
+            type="radio"
+            name={`is_true_${index}`}
+            checked={question.is_true === false}
+            onChange={() => onQuestionChange(index, 'is_true', false)}
+          />
+          <label>False</label>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Identification question
+const IdentificationQuestion = ({ question, index, onQuestionChange }) => (
+  <div>
+    <div style={{ marginBottom: '15px' }}>
+      <label style={{ display: 'block', marginBottom: '5px' }}>Question Text</label>
+      <textarea
+        value={question.question_text}
+        onChange={(e) => onQuestionChange(index, 'question_text', e.target.value)}
+        style={{
+          width: '100%',
+          padding: '8px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          minHeight: '60px'
+        }}
+        placeholder="Enter your identification question here"
+        required
+      />
+    </div>
+    <div style={{ marginBottom: '15px' }}>
+      <label style={{ display: 'block', marginBottom: '5px' }}>Correct Answer</label>
+      <input
+        value={question.answer_text || ''}
+        onChange={(e) => onQuestionChange(index, 'answer_text', e.target.value)}
+        style={{
+          width: '100%',
+          padding: '8px',
+          border: '1px solid #ddd',
+          borderRadius: '4px'
+        }}
+        placeholder="Enter the correct answer"
+        required
+      />
+    </div>
+  </div>
+);
+
+// Matching question
+const MatchingQuestion = ({ question, index, onQuestionChange }) => {
+  const addMatchingPair = () => {
+    const pairs = [...(question.matching_pairs || [])];
+    const newKey = String.fromCharCode(97 + pairs.length); // a, b, c, etc.
+    pairs.push({ left: '', right: '', key: newKey });
+    onQuestionChange(index, 'matching_pairs', pairs);
+  };
+
+  const removeMatchingPair = (pairIndex) => {
+    const pairs = [...(question.matching_pairs || [])];
+    pairs.splice(pairIndex, 1);
+    onQuestionChange(index, 'matching_pairs', pairs);
+  };
+
+  return (
+    <div>
+      <div style={{ marginBottom: '15px' }}>
+        <label style={{ display: 'block', marginBottom: '5px' }}>Question Text</label>
+        <textarea
+          value={question.question_text}
+          onChange={(e) => onQuestionChange(index, 'question_text', e.target.value)}
+          style={{
+            width: '100%',
+            padding: '8px',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            minHeight: '60px'
+          }}
+          placeholder="Enter instructions for the matching question"
+          required
+        />
+      </div>
+      
+      <div style={{ marginBottom: '15px' }}>
+        <label style={{ display: 'block', marginBottom: '10px' }}>Matching Pairs</label>
+        
+        {(question.matching_pairs || []).map((pair, pairIndex) => (
+          <div key={pairIndex} style={{ 
+            display: 'flex', 
+            gap: '10px',
+            alignItems: 'center', 
+            marginBottom: '10px' 
+          }}>
+            <div style={{ flex: 1 }}>
+              <input
+                value={pair.left}
+                onChange={(e) => onQuestionChange(index, `matching_${pairIndex}_left`, e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px'
+                }}
+                placeholder="Left item"
+                required
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <input
+                value={pair.right}
+                onChange={(e) => onQuestionChange(index, `matching_${pairIndex}_right`, e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px'
+                }}
+                placeholder="Right item"
+                required
+              />
+            </div>
+            {question.matching_pairs.length > 2 && (
+              <button
+                type="button"
+                onClick={() => removeMatchingPair(pairIndex)}
+                style={{
+                  padding: '8px',
+                  background: '#dc3545',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                &times;
+              </button>
+            )}
+          </div>
+        ))}
+        
+        <button
+          type="button"
+          onClick={addMatchingPair}
+          style={{
+            padding: '8px 15px',
+            background: '#28a745',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px'
+          }}
+        >
+          <Plus size={16} /> Add Pair
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Essay question
+const EssayQuestion = ({ question, index, onQuestionChange }) => (
+  <div>
+    <div style={{ marginBottom: '15px' }}>
+      <label style={{ display: 'block', marginBottom: '5px' }}>Question Text</label>
+      <textarea
+        value={question.question_text}
+        onChange={(e) => onQuestionChange(index, 'question_text', e.target.value)}
+        style={{
+          width: '100%',
+          padding: '8px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          minHeight: '60px'
+        }}
+        placeholder="Enter your essay/short answer question here"
+        required
+      />
+    </div>
+    <div style={{ marginBottom: '15px' }}>
+      <label style={{ display: 'block', marginBottom: '5px' }}>Model Answer (For Trainer Reference)</label>
+      <textarea
+        value={question.answer_text || ''}
+        onChange={(e) => onQuestionChange(index, 'answer_text', e.target.value)}
+        style={{
+          width: '100%',
+          padding: '8px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          minHeight: '100px'
+        }}
+        placeholder="Enter a model answer for reference (optional)"
+      />
+    </div>
+  </div>
+);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -216,13 +656,26 @@ const CreateQuiz = () => {
     setSaving(true);
     
     try {
-      // Map grading type from our component to existing fields
-      const mappedQuizData = {
-        ...quizData,
-        time_limit: parseInt(quizData.time_limit),
-        passing_score: parseFloat(quizData.passing_score),
-        grade_weighting: gradingSettings.grading_type === 'weighted' ? 'custom' : 'equal'
-      };
+    // In handleSubmit
+const mappedQuizData = {
+  ...quizData,
+  time_limit: parseInt(quizData.time_limit),
+  passing_score: parseFloat(quizData.passing_score),
+  grade_weighting: gradingSettings.grading_type === 'weighted' ? 'custom' : 'equal',
+  // Ensure questions are properly formatted
+  questions: quizData.questions.map(q => {
+    // Create a new object to avoid modifying original state
+    const formattedQuestion = {...q};
+    
+    // If it's a multiple-answer question, ensure correct_answers is properly formatted
+    if (formattedQuestion.question_type === 'multiple_answer') {
+      // Make sure it's an array, even if empty
+      formattedQuestion.correct_answers = formattedQuestion.correct_answers || [];
+    }
+    
+    return formattedQuestion;
+  })
+};
       
       // Save quiz
       const response = await trainerService.createQuiz(mappedQuizData);
@@ -501,87 +954,92 @@ const CreateQuiz = () => {
               </div>
             ) : (
               <div>
-                {quizData.questions.map((question, index) => (
-                  <div key={index} style={{
-                    background: '#fff',
-                    borderRadius: '8px',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                    marginBottom: '15px',
-                    padding: '15px'
-                  }}>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '10px'
-                    }}>
-                      <h3 style={{ margin: 0 }}>Question {index + 1}</h3>
-                      <button
-                        type="button"
-                        onClick={() => removeQuestion(index)}
-                        disabled={quizData.questions.length === 1}
-                        style={{
-                          padding: '5px',
-                          background: '#dc3545',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: quizData.questions.length === 1 ? 'not-allowed' : 'pointer'
-                        }}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                    <div style={{ marginBottom: '15px' }}>
-                      <label style={{ display: 'block', marginBottom: '5px' }}>Question Text</label>
-                      <textarea
-                        value={question.question_text}
-                        onChange={(e) => handleQuestionChange(index, 'question_text', e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '8px',
-                          border: '1px solid #ddd',
-                          borderRadius: '4px',
-                          minHeight: '60px'
-                        }}
-                        placeholder="Enter your question here"
-                        required
-                      />
-                    </div>
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(2, 1fr)',
-                      gap: '15px'
-                    }}>
-                      {['a', 'b', 'c', 'd'].map((option) => (
-                        <div key={option}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
-                            <input
-                              type="radio"
-                              name={`correct_answer_${index}`}
-                              value={option}
-                              checked={question.correct_answer === option}
-                              onChange={() => handleQuestionChange(index, 'correct_answer', option)}
-                            />
-                            <label>Option {option.toUpperCase()}</label>
-                          </div>
-                          <input
-                            value={question[`option_${option}`]}
-                            onChange={(e) => handleQuestionChange(index, `option_${option}`, e.target.value)}
-                            style={{
-                              width: '100%',
-                              padding: '8px',
-                              border: '1px solid #ddd',
-                              borderRadius: '4px'
-                            }}
-                            placeholder={`Enter option ${option.toUpperCase()} ${option <= 'b' ? '' : '(optional)'}`}
-                            required={option <= 'b'}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+{quizData.questions.map((question, index) => (
+  <div key={index} style={{
+    background: '#fff',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    marginBottom: '15px',
+    padding: '15px'
+  }}>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '10px'
+    }}>
+      <h3 style={{ margin: 0 }}>Question {index + 1}</h3>
+      <button
+        type="button"
+        onClick={() => removeQuestion(index)}
+        disabled={quizData.questions.length === 1}
+        style={{
+          padding: '5px',
+          background: '#dc3545',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: quizData.questions.length === 1 ? 'not-allowed' : 'pointer'
+        }}
+      >
+        <Trash2 size={16} />
+      </button>
+    </div>
+    
+    <QuestionTypeSelector 
+      questionType={question.question_type} 
+      onChange={(value) => handleQuestionChange(index, 'question_type', value)} 
+    />
+    
+    {question.question_type === 'multiple_choice' && (
+      <MultipleChoiceQuestion 
+        question={question} 
+        index={index} 
+        onQuestionChange={handleQuestionChange} 
+      />
+    )}
+    
+    {question.question_type === 'multiple_answer' && (
+      <MultipleAnswerQuestion 
+        question={question} 
+        index={index} 
+        onQuestionChange={handleQuestionChange} 
+      />
+    )}
+    
+    {question.question_type === 'true_false' && (
+      <TrueFalseQuestion 
+        question={question} 
+        index={index} 
+        onQuestionChange={handleQuestionChange} 
+      />
+    )}
+    
+    {question.question_type === 'identification' && (
+      <IdentificationQuestion 
+        question={question} 
+        index={index} 
+        onQuestionChange={handleQuestionChange} 
+      />
+    )}
+    
+    {question.question_type === 'matching' && (
+      <MatchingQuestion 
+        question={question} 
+        index={index} 
+        onQuestionChange={handleQuestionChange} 
+      />
+    )}
+    
+    {question.question_type === 'essay' && (
+      <EssayQuestion 
+        question={question} 
+        index={index} 
+        onQuestionChange={handleQuestionChange} 
+      />
+    )}
+  </div>
+))}
               </div>
             )}
 

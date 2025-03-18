@@ -460,8 +460,8 @@ const ProgramDetails = () => {
                     </div>
                   </div>
                   <div style={styles.actionButtons}>
-                    {quiz.attempts && quiz.attempts.length > 0 ? (
-                      quiz.attempts[0].score >= (quiz.passing_score || 70) ? (
+                  {quiz.attempts && quiz.attempts.length > 0 ? (
+  parseFloat(quiz.attempts[0].score) >= parseFloat(quiz.passing_score || 70) ? (
                         <div style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -475,7 +475,7 @@ const ProgramDetails = () => {
                         }}>
                           <CheckCircle size={18} />
                           <span>Passed ({quiz.attempts[0].score}%)</span>
-                        </div>
+                          </div>
                       ) : (
                         <div style={{
                           display: 'flex',
@@ -490,7 +490,7 @@ const ProgramDetails = () => {
                         }}>
                           <AlertTriangle size={18} />
                           <span>Failed ({quiz.attempts[0].score}%)</span>
-                        </div>
+                          </div>
                       )
                     ) : (
                       <Link 

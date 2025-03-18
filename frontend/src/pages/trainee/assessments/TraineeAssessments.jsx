@@ -21,6 +21,7 @@ const TraineeAssessments = () => {
   const [sortField, setSortField] = useState('due_date');
   const [sortDirection, setSortDirection] = useState('asc');
 
+  
   useEffect(() => {
     const fetchAssessments = async () => {
       setLoading(true);
@@ -92,7 +93,11 @@ const TraineeAssessments = () => {
   const getAssessmentStatus = (assessment) => {
     if (assessment.attempts && assessment.attempts.length > 0) {
       const latestAttempt = assessment.attempts[0];
-      return latestAttempt.score >= (assessment.passing_score || 70) ? 'passed' : 'failed';
+      // Parse the score to make sure it's a number
+      const score = parseFloat(latestAttempt.score);
+      const passingScore = parseFloat(assessment.passing_score || 70);
+      console.log('Comparing:', score, '>=', passingScore, score >= passingScore);
+      return score >= passingScore ? 'passed' : 'failed';
     }
     return 'pending';
   };
@@ -336,12 +341,12 @@ const TraineeAssessments = () => {
                       <div style={{ marginBottom: '5px' }}>
                         <span style={{ fontWeight: 'bold' }}>Your Score:</span>
                         <span style={{ 
-                          marginLeft: '5px', 
-                          color: latestAttempt.score >= (assessment.passing_score || 70) ? '#28a745' : '#dc3545',
-                          fontWeight: 'bold'
-                        }}>
-                          {latestAttempt.score}%
-                        </span>
+  marginLeft: '5px', 
+  color: parseFloat(latestAttempt.score) >= parseFloat(assessment.passing_score || 70) ? '#28a745' : '#dc3545',
+  fontWeight: 'bold'
+}}>
+  {latestAttempt.score}%
+</span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <Calendar size={14} />

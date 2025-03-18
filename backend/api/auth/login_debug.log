@@ -3486,3 +3486,128 @@
 [2025-03-18 01:17:24] Password verification result matched
 [2025-03-18 01:17:24] Authentication successful
 [2025-03-18 01:17:24] Login successful, returning data {"token":"MzoxNzQyMjU3MDQ0","role":"trainee","full_name":"Trainee Trainees"}
+[2025-03-18 01:21:58] Login request received
+[2025-03-18 01:21:58] Database connection successful
+[2025-03-18 01:21:58] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-18 01:21:58] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-18 01:21:58] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-18 01:21:58] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login","department"]
+[2025-03-18 01:21:58] User query result {"id":3,"found":true}
+[2025-03-18 01:21:58] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-18 01:21:58] Password verification result matched
+[2025-03-18 01:21:58] Authentication successful
+[2025-03-18 01:21:58] Login successful, returning data {"token":"MzoxNzQyMjU3MzE4","role":"trainee","full_name":"Trainee Trainees"}
+[2025-03-18 01:22:42] Login request received
+[2025-03-18 01:22:42] Database connection successful
+[2025-03-18 01:22:42] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-18 01:22:42] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-18 01:22:42] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-18 01:22:42] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login","department"]
+[2025-03-18 01:22:42] User query result {"id":2,"found":true}
+[2025-03-18 01:22:42] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-18 01:22:42] Password verification result matched
+[2025-03-18 01:22:42] Authentication successful
+[2025-03-18 01:22:42] Login successful, returning data {"token":"MjoxNzQyMjU3MzYy","role":"trainer","full_name":"Trainer Trainers"}
+[2025-03-18 01:27:26] Login request received
+[2025-03-18 01:27:26] Database connection successful
+[2025-03-18 01:27:26] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-18 01:27:26] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-18 01:27:26] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-18 01:27:26] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login","department"]
+[2025-03-18 01:27:26] User query result {"id":3,"found":true}
+[2025-03-18 01:27:26] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-18 01:27:26] Password verification result matched
+[2025-03-18 01:27:26] Authentication successful
+[2025-03-18 01:27:26] Login successful, returning data {"token":"MzoxNzQyMjU3NjQ2","role":"trainee","full_name":"Trainee Trainees"}
+[2025-03-18 01:37:26] Login request received
+[2025-03-18 01:37:26] Database connection successful
+[2025-03-18 01:37:26] Raw request data {"username":"trainer","password":"test123131"}
+[2025-03-18 01:37:26] Decoded data {"username":"trainer","password":"test123131"}
+[2025-03-18 01:37:26] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-18 01:37:26] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login","department"]
+[2025-03-18 01:37:26] User query result {"id":2,"found":true}
+[2025-03-18 01:37:26] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-18 01:37:26] Password verification result failed
+[2025-03-18 01:37:26] Trying direct comparison as fallback
+[2025-03-18 01:37:26] Direct comparison result failed
+[2025-03-18 01:37:26] Password verification failed
+[2025-03-18 01:37:31] Login request received
+[2025-03-18 01:37:31] Database connection successful
+[2025-03-18 01:37:31] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-18 01:37:31] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-18 01:37:31] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-18 01:37:31] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login","department"]
+[2025-03-18 01:37:31] User query result {"id":2,"found":true}
+[2025-03-18 01:37:31] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-18 01:37:31] Password verification result matched
+[2025-03-18 01:37:31] Authentication successful
+[2025-03-18 01:37:31] Login successful, returning data {"token":"MjoxNzQyMjU4MjUx","role":"trainer","full_name":"Trainer Trainers"}
+[2025-03-18 02:04:37] Login request received
+[2025-03-18 02:04:38] Database connection successful
+[2025-03-18 02:04:38] Raw request data {"username":"trainee","password":"test12123"}
+[2025-03-18 02:04:38] Decoded data {"username":"trainee","password":"test12123"}
+[2025-03-18 02:04:38] Attempting to authenticate {"username":"trainee","password_length":9}
+[2025-03-18 02:04:38] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login","department"]
+[2025-03-18 02:04:38] User query result {"id":3,"found":true}
+[2025-03-18 02:04:38] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-18 02:04:38] Password verification result failed
+[2025-03-18 02:04:38] Trying direct comparison as fallback
+[2025-03-18 02:04:38] Direct comparison result failed
+[2025-03-18 02:04:38] Password verification failed
+[2025-03-18 02:04:40] Login request received
+[2025-03-18 02:04:40] Database connection successful
+[2025-03-18 02:04:40] Raw request data {"username":"trainee","password":"test12123"}
+[2025-03-18 02:04:40] Decoded data {"username":"trainee","password":"test12123"}
+[2025-03-18 02:04:40] Attempting to authenticate {"username":"trainee","password_length":9}
+[2025-03-18 02:04:40] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login","department"]
+[2025-03-18 02:04:40] User query result {"id":3,"found":true}
+[2025-03-18 02:04:40] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-18 02:04:40] Password verification result failed
+[2025-03-18 02:04:40] Trying direct comparison as fallback
+[2025-03-18 02:04:40] Direct comparison result failed
+[2025-03-18 02:04:40] Password verification failed
+[2025-03-18 02:04:43] Login request received
+[2025-03-18 02:04:43] Database connection successful
+[2025-03-18 02:04:43] Raw request data {"username":"trainee","password":"test12123"}
+[2025-03-18 02:04:43] Decoded data {"username":"trainee","password":"test12123"}
+[2025-03-18 02:04:43] Attempting to authenticate {"username":"trainee","password_length":9}
+[2025-03-18 02:04:43] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login","department"]
+[2025-03-18 02:04:43] User query result {"id":3,"found":true}
+[2025-03-18 02:04:43] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-18 02:04:43] Password verification result failed
+[2025-03-18 02:04:43] Trying direct comparison as fallback
+[2025-03-18 02:04:43] Direct comparison result failed
+[2025-03-18 02:04:43] Password verification failed
+[2025-03-18 02:04:45] Login request received
+[2025-03-18 02:04:45] Database connection successful
+[2025-03-18 02:04:45] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-18 02:04:45] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-18 02:04:45] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-18 02:04:45] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login","department"]
+[2025-03-18 02:04:45] User query result {"id":3,"found":true}
+[2025-03-18 02:04:45] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-18 02:04:46] Password verification result matched
+[2025-03-18 02:04:46] Authentication successful
+[2025-03-18 02:04:46] Login successful, returning data {"token":"MzoxNzQyMjU5ODg2","role":"trainee","full_name":"Trainee Trainees"}
+[2025-03-18 02:19:15] Login request received
+[2025-03-18 02:19:15] Database connection successful
+[2025-03-18 02:19:15] Raw request data {"username":"trainer","password":"test123123"}
+[2025-03-18 02:19:15] Decoded data {"username":"trainer","password":"test123123"}
+[2025-03-18 02:19:15] Attempting to authenticate {"username":"trainer","password_length":10}
+[2025-03-18 02:19:15] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login","department"]
+[2025-03-18 02:19:15] User query result {"id":2,"found":true}
+[2025-03-18 02:19:15] Stored password hash $2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK
+[2025-03-18 02:19:15] Password verification result matched
+[2025-03-18 02:19:15] Authentication successful
+[2025-03-18 02:19:15] Login successful, returning data {"token":"MjoxNzQyMjYwNzU1","role":"trainer","full_name":"Trainer Trainers"}
+[2025-03-18 03:10:20] Login request received
+[2025-03-18 03:10:20] Database connection successful
+[2025-03-18 03:10:20] Raw request data {"username":"trainee","password":"test123123"}
+[2025-03-18 03:10:20] Decoded data {"username":"trainee","password":"test123123"}
+[2025-03-18 03:10:20] Attempting to authenticate {"username":"trainee","password_length":10}
+[2025-03-18 03:10:20] Table columns ["id","username","password","full_name","email","role","status","created_at","last_login","department"]
+[2025-03-18 03:10:20] User query result {"id":3,"found":true}
+[2025-03-18 03:10:20] Stored password hash $2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.
+[2025-03-18 03:10:20] Password verification result matched
+[2025-03-18 03:10:20] Authentication successful
+[2025-03-18 03:10:20] Login successful, returning data {"token":"MzoxNzQyMjYzODIw","role":"trainee","full_name":"Trainee Trainees"}

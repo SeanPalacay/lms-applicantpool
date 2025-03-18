@@ -60,7 +60,40 @@ const TakeQuiz = () => {
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   };
 
-  const handleAnswerSelect = (questionId, answer) => {
+const handleAnswerSelect = (questionId, answer, questionType) => {
+  if (questionType === 'multiple_answer') {
+    // For multiple answer questions, toggle the selected answer
+    const currentAnswers = answers[questionId] ? answers[questionId].split(',') : [];
+    let newAnswers;
+    
+    if (currentAnswers.includes(answer)) {
+      // Remove the answer if it's already selected
+      newAnswers = currentAnswers.filter(a => a !== answer);
+    } else {
+      // Add the answer if it's not selected
+      newAnswers = [...currentAnswers, answer];
+    }
+    
+    // Use empty string if no answers selected
+    const formattedAnswer = newAnswers.length > 0 ? newAnswers.join(',') : '';
+    
+    // Update state
+    setAnswers({
+      ...answers,
+      [questionId]: formattedAnswer
+    });
+    
+    console.log(`Multiple answer selection for question ${questionId}: ${formattedAnswer}`);
+  } else {
+    // For single answer questions
+    setAnswers({
+      ...answers,
+      [questionId]: answer
+    });
+  }
+};
+
+  const handleTextAnswer = (questionId, answer) => {
     setAnswers({
       ...answers,
       [questionId]: answer
@@ -86,10 +119,23 @@ const TakeQuiz = () => {
   const submitQuiz = async () => {
     try {
       setSubmitting(true);
-      const formattedAnswers = Object.keys(answers).map(questionId => ({
-        question_id: questionId,
-        answer: answers[questionId]
-      }));
+      
+      // Format answers based on question type
+      const formattedAnswers = Object.keys(answers).map(questionId => {
+        const question = questions.find(q => q.id === parseInt(questionId));
+        let formattedAnswer = answers[questionId];
+        
+        // Special handling for matching questions
+        if (question.question_type === 'matching' && answers[questionId]) {
+          formattedAnswer = answers[questionId]; // Already JSON string
+        }
+        
+        return {
+          question_id: questionId,
+          answer: formattedAnswer,
+          question_type: question.question_type
+        };
+      });
       
       const response = await traineeService.submitQuiz(quizId, formattedAnswers);
       navigate(`/trainee/assessments/quiz/${quizId}/feedback?attempt=${response.attempt_id}`);
@@ -100,9 +146,289 @@ const TakeQuiz = () => {
     }
   };
 
-  const allQuestionsAnswered = () => {
-    return questions.every(q => answers[q.id] !== undefined);
+  const isQuestionAnswered = (question) => {
+    if (!answers[question.id]) return false;
+    
+    if (question.question_type === 'multiple_answer') {
+      return answers[question.id].length > 0;
+    } else if (question.question_type === 'matching') {
+      const matchedPairs = JSON.parse(answers[question.id] || '{}');
+      return Object.keys(matchedPairs).length === question.matching_pairs?.length;
+    } else if (question.question_type === 'identification' || question.question_type === 'essay') {
+      return answers[question.id].trim().length > 0;
+    }
+    
+    return true; // For multiple choice and true/false
   };
+
+  const allQuestionsAnswered = () => {
+    return questions.every(q => isQuestionAnswered(q));
+  };
+
+  // Render the appropriate question UI based on question type
+  const renderQuestionContent = (questionData) => {
+    switch (questionData.question_type) {
+      case 'multiple_choice':
+        return renderMultipleChoiceQuestion(questionData);
+      case 'multiple_answer':
+        return renderMultipleAnswerQuestion(questionData);
+      case 'true_false':
+        return renderTrueFalseQuestion(questionData);
+      case 'identification':
+        return renderIdentificationQuestion(questionData);
+      case 'matching':
+        return renderMatchingQuestion(questionData);
+      case 'essay':
+        return renderEssayQuestion(questionData);
+      default:
+        return renderMultipleChoiceQuestion(questionData);
+    }
+  };
+
+  const renderMultipleChoiceQuestion = (questionData) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      {['a', 'b', 'c', 'd'].map(option => 
+        questionData[`option_${option}`] && (
+          <div 
+            key={option}
+            onClick={() => handleAnswerSelect(questionData.id, option, 'multiple_choice')}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px', 
+              padding: '10px', 
+              borderRadius: '4px', 
+              background: answers[questionData.id] === option ? '#e6f3ff' : '#f8f9fa',
+              cursor: 'pointer',
+              border: answers[questionData.id] === option ? '1px solid #007bff' : '1px solid #ddd'
+            }}
+          >
+            <div style={{ 
+              width: '24px', 
+              height: '24px', 
+              borderRadius: '50%', 
+              background: answers[questionData.id] === option ? '#007bff' : '#e0e0e0', 
+              color: 'white', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontSize: '12px' 
+            }}>
+              {option.toUpperCase()}
+            </div>
+            <div style={{ fontSize: '14px', flex: 1 }}>{questionData[`option_${option}`]}</div>
+          </div>
+        )
+      )}
+    </div>
+  );
+
+  const renderMultipleAnswerQuestion = (questionData) => {
+    const selectedOptions = answers[questionData.id] ? answers[questionData.id].split(',') : [];
+    
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div style={{ fontSize: '14px', color: '#666', marginBottom: '5px' }}>
+          Select all that apply:
+        </div>
+        {['a', 'b', 'c', 'd'].map(option => 
+          questionData[`option_${option}`] && (
+            <div 
+              key={option}
+              onClick={() => handleAnswerSelect(questionData.id, option, 'multiple_answer')}
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '10px', 
+                padding: '10px', 
+                borderRadius: '4px', 
+                background: selectedOptions.includes(option) ? '#e6f3ff' : '#f8f9fa',
+                cursor: 'pointer',
+                border: selectedOptions.includes(option) ? '1px solid #007bff' : '1px solid #ddd'
+              }}
+            >
+              <div style={{ 
+                width: '24px', 
+                height: '24px', 
+                borderRadius: '4px', 
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: selectedOptions.includes(option) ? '#007bff' : '#f8f9fa',
+                border: selectedOptions.includes(option) ? '1px solid #007bff' : '1px solid #ccc'
+              }}>
+                {selectedOptions.includes(option) && <CheckCircle size={16} color="#fff" />}
+              </div>
+              <div style={{ fontSize: '14px', flex: 1 }}>{questionData[`option_${option}`]}</div>
+            </div>
+          )
+        )}
+      </div>
+    );
+  };
+
+  const renderTrueFalseQuestion = (questionData) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      <div 
+        onClick={() => handleAnswerSelect(questionData.id, 'a', 'true_false')}
+        style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '10px', 
+          padding: '15px', 
+          borderRadius: '4px', 
+          background: answers[questionData.id] === 'a' ? '#e6f3ff' : '#f8f9fa',
+          cursor: 'pointer',
+          border: answers[questionData.id] === 'a' ? '1px solid #007bff' : '1px solid #ddd'
+        }}
+      >
+        <div style={{ 
+          width: '24px', 
+          height: '24px', 
+          borderRadius: '50%', 
+          border: answers[questionData.id] === 'a' ? '0' : '2px solid #ddd',
+          background: answers[questionData.id] === 'a' ? '#007bff' : 'transparent',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          {answers[questionData.id] === 'a' && <CheckCircle size={16} color="#fff" />}
+        </div>
+        <div style={{ fontSize: '16px' }}>True</div>
+      </div>
+      
+      <div 
+        onClick={() => handleAnswerSelect(questionData.id, 'b', 'true_false')}
+        style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '10px', 
+          padding: '15px', 
+          borderRadius: '4px', 
+          background: answers[questionData.id] === 'b' ? '#e6f3ff' : '#f8f9fa',
+          cursor: 'pointer',
+          border: answers[questionData.id] === 'b' ? '1px solid #007bff' : '1px solid #ddd'
+        }}
+      >
+        <div style={{ 
+          width: '24px', 
+          height: '24px', 
+          borderRadius: '50%', 
+          border: answers[questionData.id] === 'b' ? '0' : '2px solid #ddd',
+          background: answers[questionData.id] === 'b' ? '#007bff' : 'transparent',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          {answers[questionData.id] === 'b' && <CheckCircle size={16} color="#fff" />}
+        </div>
+        <div style={{ fontSize: '16px' }}>False</div>
+      </div>
+    </div>
+  );
+
+  const renderIdentificationQuestion = (questionData) => (
+    <div>
+      <input
+        type="text"
+        value={answers[questionData.id] || ''}
+        onChange={(e) => handleTextAnswer(questionData.id, e.target.value)}
+        placeholder="Type your answer here"
+        style={{
+          width: '100%',
+          padding: '12px',
+          fontSize: '16px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          marginTop: '10px'
+        }}
+      />
+    </div>
+  );
+
+  const renderMatchingQuestion = (questionData) => {
+    const currentMatches = answers[questionData.id] ? JSON.parse(answers[questionData.id]) : {};
+    
+    if (!questionData.matching_pairs || questionData.matching_pairs.length === 0) {
+      return <div>No matching pairs available</div>;
+    }
+    
+    return (
+      <div>
+        <div style={{ fontSize: '14px', color: '#666', marginBottom: '15px' }}>
+          Match items from the left column with the correct items on the right:
+        </div>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px 1fr', gap: '10px', alignItems: 'center' }}>
+          {/* Left column headers */}
+          <div style={{ fontWeight: 'bold', textAlign: 'center', marginBottom: '10px' }}>Item</div>
+          <div></div>
+          <div style={{ fontWeight: 'bold', textAlign: 'center', marginBottom: '10px' }}>Match</div>
+          
+          {/* Matching rows */}
+          {questionData.matching_pairs.map((pair, index) => (
+            <React.Fragment key={index}>
+              <div style={{ 
+                padding: '10px', 
+                backgroundColor: '#f8f9fa', 
+                borderRadius: '4px',
+                border: '1px solid #ddd'
+              }}>
+                {pair.left}
+              </div>
+              
+              <div style={{ textAlign: 'center' }}>
+                <ArrowRight />
+              </div>
+              
+              <select
+                value={currentMatches[pair.key] || ''}
+                onChange={(e) => handleAnswerSelect(
+                  questionData.id, 
+                  `${pair.key}:${e.target.value}`, 
+                  'matching'
+                )}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '4px',
+                  border: '1px solid #ddd',
+                  backgroundColor: currentMatches[pair.key] ? '#e6f3ff' : 'white'
+                }}
+              >
+                <option value="">Select a match</option>
+                {questionData.matching_pairs.map((rightItem, rightIndex) => (
+                  <option key={rightIndex} value={rightItem.key}>
+                    {rightItem.right}
+                  </option>
+                ))}
+              </select>
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderEssayQuestion = (questionData) => (
+    <div>
+      <textarea
+        value={answers[questionData.id] || ''}
+        onChange={(e) => handleTextAnswer(questionData.id, e.target.value)}
+        placeholder="Write your answer here..."
+        rows={8}
+        style={{
+          width: '100%',
+          padding: '12px',
+          fontSize: '16px',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          marginTop: '10px',
+          resize: 'vertical'
+        }}
+      />
+    </div>
+  );
 
   if (loading) {
     return (
@@ -212,6 +538,7 @@ const TakeQuiz = () => {
             <li>You can navigate between questions using the previous and next buttons.</li>
             <li>Your answers are saved as you go, but not submitted until you finish.</li>
             <li>The quiz will automatically submit when time expires.</li>
+            <li>This quiz contains different types of questions including multiple choice, true/false, and more.</li>
           </ul>
         </div>
         
@@ -296,51 +623,32 @@ const TakeQuiz = () => {
         <div style={{ 
           fontSize: '16px', 
           fontWeight: 'bold', 
-          marginBottom: '10px' 
+          marginBottom: '10px', 
+          display: 'flex', 
+          justifyContent: 'space-between' 
         }}>
-          Question {currentQuestion + 1} of {questions.length}
+          <div>Question {currentQuestion + 1} of {questions.length}</div>
+          <div style={{ 
+            fontSize: '14px', 
+            color: '#666',
+            padding: '2px 8px',
+            backgroundColor: '#f0f0f0',
+            borderRadius: '4px'
+          }}>
+            {currentQuestionData.question_type === 'multiple_choice' && 'Multiple Choice'}
+            {currentQuestionData.question_type === 'multiple_answer' && 'Multiple Answer'}
+            {currentQuestionData.question_type === 'true_false' && 'True/False'}
+            {currentQuestionData.question_type === 'identification' && 'Identification'}
+            {currentQuestionData.question_type === 'matching' && 'Matching'}
+            {currentQuestionData.question_type === 'essay' && 'Essay'}
+          </div>
         </div>
         
         <div style={{ fontSize: '16px', marginBottom: '15px' }}>
           {currentQuestionData.question_text}
         </div>
         
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {['a', 'b', 'c', 'd'].map(option => 
-            currentQuestionData[`option_${option}`] && (
-              <div 
-                key={option}
-                onClick={() => handleAnswerSelect(currentQuestionData.id, option)}
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '10px', 
-                  padding: '10px', 
-                  borderRadius: '4px', 
-                  background: answers[currentQuestionData.id] === option ? '#e6f3ff' : '#f8f9fa',
-                  cursor: 'pointer',
-                  border: answers[currentQuestionData.id] === option ? '1px solid #007bff' : '1px solid #ddd',
-                  ':hover': { background: '#f1f3f5' }
-                }}
-              >
-                <div style={{ 
-                  width: '24px', 
-                  height: '24px', 
-                  borderRadius: '50%', 
-                  background: '#007bff', 
-                  color: 'white', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  fontSize: '12px' 
-                }}>
-                  {option.toUpperCase()}
-                </div>
-                <div style={{ fontSize: '14px', flex: 1 }}>{currentQuestionData[`option_${option}`]}</div>
-              </div>
-            )
-          )}
-        </div>
+        {renderQuestionContent(currentQuestionData)}
       </div>
       
       <div style={{ 
@@ -426,11 +734,10 @@ const TakeQuiz = () => {
               height: '12px', 
               borderRadius: '50%', 
               background: index === currentQuestion ? '#007bff' : 
-                         answers[q.id] !== undefined ? '#28a745' : '#ddd',
-              cursor: 'pointer',
-              ':hover': { opacity: 0.8 }
+                         isQuestionAnswered(q) ? '#28a745' : '#ddd',
+              cursor: 'pointer'
             }}
-            title={`Question ${index + 1} ${answers[q.id] !== undefined ? '(Answered)' : '(Unanswered)'}`}
+            title={`Question ${index + 1} ${isQuestionAnswered(q) ? '(Answered)' : '(Unanswered)'}`}
           ></div>
         ))}
       </div>

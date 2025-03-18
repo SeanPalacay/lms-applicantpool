@@ -79,7 +79,7 @@ const QuizAttemptDetails = () => {
   };
 
   const getPassStatus = () => {
-    return attempt.score >= attempt.passing_score;
+    return parseFloat(attempt.score) >= parseFloat(attempt.passing_score);
   };
 
   if (loading) {

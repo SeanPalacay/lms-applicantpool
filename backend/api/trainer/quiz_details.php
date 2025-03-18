@@ -82,10 +82,11 @@ if (!$quiz) {
   exit;
 }
 
-// Fetch questions
+// Fetch questions with question type
 $query = "
   SELECT 
     id,
+    question_type,
     question_text,
     option_a,
     option_b,
@@ -101,6 +102,36 @@ $stmt = $pdo->prepare($query);
 $stmt->bindParam(':quizId', $quizId, PDO::PARAM_INT);
 $stmt->execute();
 $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Process each question to include additional data based on question type
+foreach ($questions as &$question) {
+  // For multiple-answer questions, get the correct answers
+  if ($question['question_type'] === 'multiple_answer') {
+    $query = "
+      SELECT option_key 
+      FROM quiz_question_answer_options 
+      WHERE question_id = :questionId AND is_correct = 1
+    ";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':questionId', $question['id'], PDO::PARAM_INT);
+    $stmt->execute();
+    $question['correct_answers'] = $stmt->fetchAll(PDO::FETCH_COLUMN);
+  }
+  
+  // For matching questions, get the pairs
+  if ($question['question_type'] === 'matching') {
+    $query = "
+      SELECT left_item, right_item, pair_key 
+      FROM quiz_question_matching_pairs 
+      WHERE question_id = :questionId
+    ";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':questionId', $question['id'], PDO::PARAM_INT);
+    $stmt->execute();
+    $question['matching_pairs'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+}
+unset($question); // Break the reference
 
 $quiz['questions'] = $questions;
 

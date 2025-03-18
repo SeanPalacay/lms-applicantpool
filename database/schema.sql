@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 18, 2025 at 12:19 AM
+-- Generation Time: Mar 18, 2025 at 02:13 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -306,7 +306,9 @@ INSERT INTO `quizzes` (`id`, `program_id`, `title`, `description`, `time_limit`,
 (2, 2, 'Policy Quiz', 'Policy comprehension test', 20, 75.00, 2, '2025-03-02 19:00:00', 'draft', 'standard', 0),
 (3, 3, 'Advanced Loan Quiz', 'Advanced loan scenarios', 45, 80.00, 2, '2025-03-05 20:00:00', 'draft', 'standard', 0),
 (4, 3, 'ahaha', 'haha', 29, 71.00, 2, '2025-03-16 06:03:08', 'draft', 'weighted', 0),
-(5, 1, 'Trainee Practice Quiz', 'A practice quiz for trainees on loan basics', 15, 70.00, 2, '2025-03-16 15:21:27', 'active', 'standard', 0);
+(5, 1, 'Trainee Practice Quiz', 'A practice quiz for trainees on loan basics', 15, 70.00, 2, '2025-03-16 15:21:27', 'active', 'standard', 0),
+(6, 1, 'haha', 'hahaha', 30, 70.00, 2, '2025-03-18 00:16:48', 'active', 'standard', 0),
+(7, 2, 'sdfsdsdf', 'agagdds', 30, 70.00, 2, '2025-03-18 01:03:53', 'active', 'standard', 0);
 
 -- --------------------------------------------------------
 
@@ -332,7 +334,8 @@ INSERT INTO `quiz_attempts` (`id`, `user_id`, `quiz_id`, `score`, `time_taken`, 
 (1, 3, 1, 85.00, 25, '2025-03-12 02:00:00', 'Good effort, review loan terms.'),
 (2, 3, 3, 92.00, 40, '2025-03-13 06:00:00', 'Excellent work!'),
 (3, 3, 1, 75.00, 28, '2025-03-16 02:00:00', 'Nice attempt, focus on credit scores.'),
-(4, 3, 5, 66.67, NULL, '2025-03-16 15:22:18', 'Review the material and try again.');
+(4, 3, 5, 66.67, NULL, '2025-03-16 15:22:18', 'Review the material and try again.'),
+(5, 3, 6, 100.00, NULL, '2025-03-18 00:19:06', 'Good job!');
 
 -- --------------------------------------------------------
 
@@ -344,7 +347,7 @@ CREATE TABLE `quiz_attempt_answers` (
   `id` int(11) NOT NULL,
   `attempt_id` int(11) NOT NULL,
   `question_id` int(11) NOT NULL,
-  `selected_answer` varchar(1) NOT NULL
+  `selected_answer` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -361,7 +364,8 @@ INSERT INTO `quiz_attempt_answers` (`id`, `attempt_id`, `question_id`, `selected
 (7, 3, 12, 'a'),
 (8, 4, 13, 'a'),
 (9, 4, 14, 'd'),
-(10, 4, 15, 'b');
+(10, 4, 15, 'b'),
+(11, 5, 17, 'a');
 
 -- --------------------------------------------------------
 
@@ -386,6 +390,7 @@ CREATE TABLE `quiz_feedback_templates` (
 CREATE TABLE `quiz_questions` (
   `id` int(11) NOT NULL,
   `quiz_id` int(11) NOT NULL,
+  `question_type` enum('multiple_choice','multiple_answer','true_false','identification','matching','essay') NOT NULL DEFAULT 'multiple_choice',
   `question_text` text NOT NULL,
   `option_a` varchar(255) NOT NULL,
   `option_b` varchar(255) NOT NULL,
@@ -398,17 +403,57 @@ CREATE TABLE `quiz_questions` (
 -- Dumping data for table `quiz_questions`
 --
 
-INSERT INTO `quiz_questions` (`id`, `quiz_id`, `question_text`, `option_a`, `option_b`, `option_c`, `option_d`, `correct_answer`) VALUES
-(3, 2, 'New policy effective date?', 'Jan 1', 'Mar 1', 'Jun 1', 'Dec 1', 'b'),
-(4, 3, 'What is a balloon payment?', 'Full payment', 'Partial payment', 'Interest only', 'None', 'a'),
-(8, 1, 'What is the max loan term?', '30 days', '60 days', '90 days', '120 days', 'c'),
-(9, 1, 'Who approves loans?', 'Manager', 'Officer', 'Client', 'System', 'b'),
-(11, 1, 'What is the minimum credit score required?', '600', '650', '700', '750', 'b'),
-(12, 1, 'What does APR stand for?', 'Annual Percentage Rate', 'Average Payment Rate', 'Adjusted Principal Rate', 'None', 'a'),
-(13, 5, 'What is the primary purpose of a loan?', 'To borrow money', 'To save money', 'To invest', 'To pay taxes', 'a'),
-(14, 5, 'Which factor most affects loan approval?', 'Credit score', 'Favorite color', 'Shoe size', 'Pet’s name', 'a'),
-(15, 5, 'What is an interest rate?', 'A fee for late payment', 'The cost of borrowing', 'A bonus for repayment', 'A tax deduction', 'b'),
-(16, 4, 'haha', 'sss', 'ss', 'ss', 'ss', 'a');
+INSERT INTO `quiz_questions` (`id`, `quiz_id`, `question_type`, `question_text`, `option_a`, `option_b`, `option_c`, `option_d`, `correct_answer`) VALUES
+(3, 2, 'multiple_choice', 'New policy effective date?', 'Jan 1', 'Mar 1', 'Jun 1', 'Dec 1', 'b'),
+(4, 3, 'multiple_choice', 'What is a balloon payment?', 'Full payment', 'Partial payment', 'Interest only', 'None', 'a'),
+(8, 1, 'multiple_choice', 'What is the max loan term?', '30 days', '60 days', '90 days', '120 days', 'c'),
+(9, 1, 'multiple_choice', 'Who approves loans?', 'Manager', 'Officer', 'Client', 'System', 'b'),
+(11, 1, 'multiple_choice', 'What is the minimum credit score required?', '600', '650', '700', '750', 'b'),
+(12, 1, 'multiple_choice', 'What does APR stand for?', 'Annual Percentage Rate', 'Average Payment Rate', 'Adjusted Principal Rate', 'None', 'a'),
+(13, 5, 'multiple_choice', 'What is the primary purpose of a loan?', 'To borrow money', 'To save money', 'To invest', 'To pay taxes', 'a'),
+(14, 5, 'multiple_choice', 'Which factor most affects loan approval?', 'Credit score', 'Favorite color', 'Shoe size', 'Pet’s name', 'a'),
+(15, 5, 'multiple_choice', 'What is an interest rate?', 'A fee for late payment', 'The cost of borrowing', 'A bonus for repayment', 'A tax deduction', 'b'),
+(16, 4, 'multiple_choice', 'haha', 'sss', 'ss', 'ss', 'ss', 'a'),
+(17, 6, 'multiple_choice', 'haha', 'hahah', 'asdfasd', 'asdfsaf', 'asdfsd', 'a'),
+(18, 7, 'multiple_answer', 'aa', 'ss', 'ass', 'ss', 'as', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quiz_question_answer_options`
+--
+
+CREATE TABLE `quiz_question_answer_options` (
+  `id` int(11) NOT NULL,
+  `question_id` int(11) NOT NULL,
+  `option_text` varchar(255) NOT NULL,
+  `option_key` varchar(2) NOT NULL,
+  `is_correct` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `quiz_question_answer_options`
+--
+
+INSERT INTO `quiz_question_answer_options` (`id`, `question_id`, `option_text`, `option_key`, `is_correct`) VALUES
+(1, 18, 'ss', 'a', 1),
+(2, 18, 'ass', 'b', 0),
+(3, 18, 'ss', 'c', 1),
+(4, 18, 'as', 'd', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quiz_question_matching_pairs`
+--
+
+CREATE TABLE `quiz_question_matching_pairs` (
+  `id` int(11) NOT NULL,
+  `question_id` int(11) NOT NULL,
+  `left_item` varchar(255) NOT NULL,
+  `right_item` varchar(255) NOT NULL,
+  `pair_key` varchar(2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -495,8 +540,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`, `full_name`, `email`, `role`, `status`, `created_at`, `last_login`, `department`) VALUES
 (1, 'admin', '$2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO', 'Admin Admin', 'admin@gmail.com', 'administrator', 'active', '2025-03-09 13:16:01', '2025-03-17 16:00:52', NULL),
-(2, 'trainer', '$2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK', 'Trainer Trainers', 'trainer@gmail.com', 'trainer', 'active', '2025-03-09 13:39:22', '2025-03-17 22:57:01', NULL),
-(3, 'trainee', '$2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.', 'Trainee Trainees', 'trainee@gmail.com', 'trainee', 'active', '2025-03-09 13:38:54', '2025-03-17 22:57:17', NULL),
+(2, 'trainer', '$2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK', 'Trainer Trainers', 'trainer@gmail.com', 'trainer', 'active', '2025-03-09 13:39:22', '2025-03-18 00:37:31', NULL),
+(3, 'trainee', '$2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.', 'Trainee Trainees', 'trainee@gmail.com', 'trainee', 'active', '2025-03-09 13:38:54', '2025-03-18 01:04:46', NULL),
 (4, 'applicant', '$2y$10$TONg2cTG/RZkaPi/PjD1hOx0xCb6crYoJZNrO1rvH7qFxUpWVqLhi', 'Applicant Applicant', 'applicant@gmail.com', 'applicant', 'active', '2025-03-09 13:15:17', '2025-03-17 23:19:01', NULL),
 (5, 'admin1', '$2y$10$5PuQqTMqIwxi7Ol1Nw48huWuPgmzMuCqJ7usq4ezYzBSq31W68swG', 'admin1 admin1', 'admin1@gmail.com', 'administrator', 'active', '2025-03-14 15:17:21', '2025-03-14 15:17:34', NULL);
 
@@ -654,6 +699,20 @@ ALTER TABLE `quiz_questions`
   ADD KEY `quiz_id` (`quiz_id`);
 
 --
+-- Indexes for table `quiz_question_answer_options`
+--
+ALTER TABLE `quiz_question_answer_options`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `question_id` (`question_id`);
+
+--
+-- Indexes for table `quiz_question_matching_pairs`
+--
+ALTER TABLE `quiz_question_matching_pairs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `question_id` (`question_id`);
+
+--
 -- Indexes for table `quiz_question_weights`
 --
 ALTER TABLE `quiz_question_weights`
@@ -764,19 +823,19 @@ ALTER TABLE `program_enrollments`
 -- AUTO_INCREMENT for table `quizzes`
 --
 ALTER TABLE `quizzes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `quiz_attempts`
 --
 ALTER TABLE `quiz_attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `quiz_attempt_answers`
 --
 ALTER TABLE `quiz_attempt_answers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `quiz_feedback_templates`
@@ -788,7 +847,19 @@ ALTER TABLE `quiz_feedback_templates`
 -- AUTO_INCREMENT for table `quiz_questions`
 --
 ALTER TABLE `quiz_questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `quiz_question_answer_options`
+--
+ALTER TABLE `quiz_question_answer_options`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `quiz_question_matching_pairs`
+--
+ALTER TABLE `quiz_question_matching_pairs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `quiz_question_weights`
@@ -922,6 +993,18 @@ ALTER TABLE `quiz_feedback_templates`
 --
 ALTER TABLE `quiz_questions`
   ADD CONSTRAINT `quiz_questions_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `quiz_question_answer_options`
+--
+ALTER TABLE `quiz_question_answer_options`
+  ADD CONSTRAINT `quiz_question_answer_options_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `quiz_questions` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `quiz_question_matching_pairs`
+--
+ALTER TABLE `quiz_question_matching_pairs`
+  ADD CONSTRAINT `quiz_question_matching_pairs_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `quiz_questions` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `quiz_question_weights`

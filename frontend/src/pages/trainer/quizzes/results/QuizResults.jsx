@@ -171,7 +171,7 @@ const QuizResults = () => {
   };
 
   const getPassStatus = (score) => {
-    return score >= quiz.passing_score;
+    return parseFloat(score) >= parseFloat(quiz.passing_score);
   };
 
   const formatDate = (dateString) => {
@@ -679,8 +679,8 @@ const QuizResults = () => {
                     </td>
                     <td style={{ padding: '10px 15px' }}>
                       <span style={{ 
-                        color: getPassStatus(attempt.score) ? '#28a745' : '#dc3545',
-                        fontWeight: 'bold'
+  color: getPassStatus(attempt.score) ? '#28a745' : '#dc3545',
+  fontWeight: 'bold'
                       }}>
                         {attempt.score}%
                       </span>

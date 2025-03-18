@@ -85,6 +85,94 @@ const QuizDetails = () => {
     fetchQuizDetails();
   }, [navigate, quizId]);
 
+
+// First, modify the getCorrectAnswer function to handle all question types properly
+const getCorrectAnswer = (question) => {
+  console.log("Question data:", question); // Debug to see what's available in the question object
+  
+  if (!question) return 'Not available';
+  
+  // For multiple-answer questions
+  if (question.question_type === 'multiple_answer') {
+    // Try to get from correct_answers array if present
+    if (question.correct_answers && Array.isArray(question.correct_answers) && question.correct_answers.length > 0) {
+      return question.correct_answers.map(opt => {
+        const letter = opt.toUpperCase();
+        const value = question[`option_${opt.toLowerCase()}`] || '';
+        return `${letter}: ${value}`;
+      }).join(', ');
+    }
+    
+    // Try to get from quiz_question_answer_options (if included in response)
+    if (question.answer_options && Array.isArray(question.answer_options)) {
+      const correctOptions = question.answer_options
+        .filter(opt => opt.is_correct === 1 || opt.is_correct === true)
+        .map(opt => `${opt.option_key.toUpperCase()}: ${opt.option_text}`)
+        .join(', ');
+      
+      if (correctOptions) return correctOptions;
+    }
+    
+    // Try to get from correct_answer field (comma-separated values)
+    if (question.correct_answer && question.correct_answer.includes(',')) {
+      return question.correct_answer.split(',')
+        .map(opt => {
+          const letter = opt.trim().toUpperCase();
+          const value = question[`option_${opt.trim().toLowerCase()}`] || '';
+          return `${letter}: ${value}`;
+        }).join(', ');
+    }
+  }
+  
+  // For single-answer questions
+  if (question.correct_answer) {
+    const letter = question.correct_answer.toUpperCase();
+    const value = question[`option_${question.correct_answer.toLowerCase()}`] || '';
+    return `${letter}: ${value}`;
+  }
+  
+  return 'Not specified';
+};
+
+// Helper to check if an option is correct for any question type
+const isCorrectOption = (question, option) => {
+  if (!question) return false;
+  
+  // For multiple-answer questions
+  if (question.question_type === 'multiple_answer') {
+    // Check correct_answers array if present
+    if (question.correct_answers && Array.isArray(question.correct_answers)) {
+      return question.correct_answers.includes(option);
+    }
+    
+    // Check answer_options if present
+    if (question.answer_options && Array.isArray(question.answer_options)) {
+      const correctOption = question.answer_options.find(
+        opt => opt.option_key === option && (opt.is_correct === 1 || opt.is_correct === true)
+      );
+      return !!correctOption;
+    }
+    
+    // Check comma-separated correct_answer as fallback
+    if (question.correct_answer && question.correct_answer.includes(',')) {
+      return question.correct_answer.split(',').map(o => o.trim()).includes(option);
+    }
+  }
+  
+  // For single-answer questions
+  return question.correct_answer === option;
+};
+
+// Helper function to get formatted multiple correct answers
+const getMultipleCorrectAnswers = (question) => {
+  if (question.correct_answers && Array.isArray(question.correct_answers)) {
+    return question.correct_answers.map(opt => opt.toUpperCase()).join(', ');
+  } else if (question.correct_answer && question.correct_answer.includes(',')) {
+    // If correct_answer is a comma-separated string
+    return question.correct_answer.split(',').map(opt => opt.toUpperCase()).join(', ');
+  }
+  return 'None specified';
+};
   const handleDelete = async () => {
     if (!deleteConfirm) {
       setDeleteConfirm(true);
@@ -118,15 +206,6 @@ const QuizDetails = () => {
     navigate('/trainer/quizzes');
   };
 
-  const getCorrectAnswer = (question) => {
-    switch (question.correct_answer) {
-      case 'a': return question.option_a;
-      case 'b': return question.option_b;
-      case 'c': return question.option_c;
-      case 'd': return question.option_d;
-      default: return 'Not specified';
-    }
-  };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -431,57 +510,68 @@ const QuizDetails = () => {
             </div>
           ) : (
             <div>
-              {quiz.questions.map((question, index) => (
-                <div key={index} style={{
-                  background: '#fff',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                  marginBottom: '15px'
-                }}>
-                  <div style={{
-                    padding: '10px 15px',
-                    borderBottom: '1px solid #eee',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px'
-                  }}>
-                    <div style={{ fontWeight: 'bold' }}>Q{index + 1}</div>
-                    <div>{question.question_text}</div>
-                  </div>
-                  <div style={{ padding: '15px' }}>
-                    {['a', 'b', 'c', 'd'].map(option => question[`option_${option}`] && (
-                      <div 
-                        key={option}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          padding: '8px',
-                          background: question.correct_answer === option ? '#e6ffe6' : 'transparent',
-                          marginBottom: '5px',
-                          borderRadius: '4px'
-                        }}
-                      >
-                        <div style={{ width: '20px', fontWeight: 'bold' }}>{option.toUpperCase()}</div>
-                        <div style={{ flex: 1 }}>{question[`option_${option}`]}</div>
-                        {question.correct_answer === option && (
-                          <CheckCircle size={16} style={{ color: '#28a745' }} />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{
-                    padding: '10px 15px',
-                    background: '#f8f9fa',
-                    borderRadius: '0 0 8px 8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px'
-                  }}>
-                    <CheckCircle size={14} style={{ color: '#28a745' }} />
-                    <span>Correct answer: {question.correct_answer.toUpperCase()}</span>
-                  </div>
-                </div>
-              ))}
+            {quiz.questions.map((question, index) => (
+  <div key={index} style={{
+    background: '#fff',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    marginBottom: '15px'
+  }}>
+    <div style={{
+      padding: '10px 15px',
+      borderBottom: '1px solid #eee',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px'
+    }}>
+      <div style={{ fontWeight: 'bold' }}>Q{index + 1}</div>
+      <div>{question.question_text}</div>
+      <div style={{
+        fontSize: '12px',
+        padding: '2px 6px',
+        borderRadius: '4px',
+        backgroundColor: '#f0f0f0',
+        marginLeft: 'auto'
+      }}>
+        {question.question_type || 'Single Answer'}
+      </div>
+    </div>
+    <div style={{ padding: '15px' }}>
+      {['a', 'b', 'c', 'd'].map(option => question[`option_${option}`] && (
+        <div 
+          key={option}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '8px',
+            background: isCorrectOption(question, option) ? '#e6ffe6' : 'transparent',
+            marginBottom: '5px',
+            borderRadius: '4px'
+          }}
+        >
+          <div style={{ width: '20px', fontWeight: 'bold' }}>{option.toUpperCase()}</div>
+          <div style={{ flex: 1 }}>{question[`option_${option}`]}</div>
+          {isCorrectOption(question, option) && (
+            <CheckCircle size={16} style={{ color: '#28a745' }} />
+          )}
+        </div>
+      ))}
+    </div>
+    <div style={{
+      padding: '10px 15px',
+      background: '#f8f9fa',
+      borderRadius: '0 0 8px 8px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '5px'
+    }}>
+      <CheckCircle size={14} style={{ color: '#28a745' }} />
+      <div>
+        <strong>Correct answer:</strong> {getCorrectAnswer(question)}
+      </div>
+    </div>
+  </div>
+))}
             </div>
           )}
         </div>
