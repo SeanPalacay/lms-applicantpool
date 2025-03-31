@@ -1,0 +1,657 @@
+[2025-03-30 04:24:45] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:24:45] Token from Authorization header 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7
+[2025-03-30 04:24:45] Using userId from query parameter 9
+[2025-03-30 04:24:45] Processing dashboard for applicantId 9
+[2025-03-30 04:24:45] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 04:24:45] Found applications 1
+[2025-03-30 04:24:45] Found notifications 0
+[2025-03-30 04:24:45] Generated alerts 0
+[2025-03-30 04:24:45] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 04:24:50] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:24:50] Token from Authorization header 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7
+[2025-03-30 04:24:50] Using userId from query parameter 9
+[2025-03-30 04:24:50] Processing dashboard for applicantId 9
+[2025-03-30 04:24:50] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 04:24:50] Found applications 1
+[2025-03-30 04:24:50] Found notifications 0
+[2025-03-30 04:24:50] Generated alerts 0
+[2025-03-30 04:24:50] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 04:24:50] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:24:50] Token from Authorization header 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7
+[2025-03-30 04:24:50] Using userId from query parameter 9
+[2025-03-30 04:24:50] Processing dashboard for applicantId 9
+[2025-03-30 04:24:50] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 04:24:50] Found applications 1
+[2025-03-30 04:24:50] Found notifications 0
+[2025-03-30 04:24:50] Generated alerts 0
+[2025-03-30 04:24:50] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 04:24:52] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:24:52] Token from Authorization header 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7
+[2025-03-30 04:24:52] Using userId from query parameter 9
+[2025-03-30 04:24:52] Processing dashboard for applicantId 9
+[2025-03-30 04:24:52] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 04:24:52] Found applications 1
+[2025-03-30 04:24:52] Found notifications 0
+[2025-03-30 04:24:52] Generated alerts 0
+[2025-03-30 04:24:52] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 04:24:52] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:24:52] Token from Authorization header 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7
+[2025-03-30 04:24:52] Using userId from query parameter 9
+[2025-03-30 04:24:52] Processing dashboard for applicantId 9
+[2025-03-30 04:24:52] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 04:24:52] Found applications 1
+[2025-03-30 04:24:52] Found notifications 0
+[2025-03-30 04:24:52] Generated alerts 0
+[2025-03-30 04:24:52] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 04:24:54] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:24:54] Token from Authorization header 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7
+[2025-03-30 04:24:54] Using userId from query parameter 9
+[2025-03-30 04:24:54] Processing dashboard for applicantId 9
+[2025-03-30 04:24:54] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 04:24:54] Found applications 1
+[2025-03-30 04:24:54] Found notifications 0
+[2025-03-30 04:24:54] Generated alerts 0
+[2025-03-30 04:24:54] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 04:24:54] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:24:54] Token from Authorization header 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7
+[2025-03-30 04:24:54] Using userId from query parameter 9
+[2025-03-30 04:24:55] Processing dashboard for applicantId 9
+[2025-03-30 04:24:55] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 04:24:55] Found applications 1
+[2025-03-30 04:24:55] Found notifications 0
+[2025-03-30 04:24:55] Generated alerts 0
+[2025-03-30 04:24:55] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 04:24:56] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:24:56] Token from Authorization header 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7
+[2025-03-30 04:24:56] Using userId from query parameter 9
+[2025-03-30 04:24:56] Processing dashboard for applicantId 9
+[2025-03-30 04:24:56] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 04:24:56] Found applications 1
+[2025-03-30 04:24:56] Found notifications 0
+[2025-03-30 04:24:56] Generated alerts 0
+[2025-03-30 04:24:56] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 04:24:56] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:24:56] Token from Authorization header 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7
+[2025-03-30 04:24:56] Using userId from query parameter 9
+[2025-03-30 04:24:56] Processing dashboard for applicantId 9
+[2025-03-30 04:24:56] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 04:24:56] Found applications 1
+[2025-03-30 04:24:56] Found notifications 0
+[2025-03-30 04:24:56] Generated alerts 0
+[2025-03-30 04:24:56] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 04:24:58] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:24:58] Token from Authorization header 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7
+[2025-03-30 04:24:58] Using userId from query parameter 9
+[2025-03-30 04:24:58] Processing dashboard for applicantId 9
+[2025-03-30 04:24:58] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 04:24:58] Found applications 1
+[2025-03-30 04:24:58] Found notifications 0
+[2025-03-30 04:24:58] Generated alerts 0
+[2025-03-30 04:24:58] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 04:24:58] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:24:58] Token from Authorization header 92d3d5b2f5e1969b26cc76d1228d90b4f2e3592a6d2e0e1e63e76ab5ae1de9e7
+[2025-03-30 04:24:58] Using userId from query parameter 9
+[2025-03-30 04:24:58] Processing dashboard for applicantId 9
+[2025-03-30 04:24:58] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 04:24:58] Found applications 1
+[2025-03-30 04:24:58] Found notifications 0
+[2025-03-30 04:24:58] Generated alerts 0
+[2025-03-30 04:24:58] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 04:25:15] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:25:15] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:25:15] Using userId from query parameter 12
+[2025-03-30 04:25:15] Processing dashboard for applicantId 12
+[2025-03-30 04:25:15] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:25:15] Found applications 0
+[2025-03-30 04:25:15] Found notifications 0
+[2025-03-30 04:25:15] Generated alerts 0
+[2025-03-30 04:25:15] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:25:15] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:25:15] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:25:15] Using userId from query parameter 12
+[2025-03-30 04:25:15] Processing dashboard for applicantId 12
+[2025-03-30 04:25:15] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:25:15] Found applications 0
+[2025-03-30 04:25:15] Found notifications 0
+[2025-03-30 04:25:15] Generated alerts 0
+[2025-03-30 04:25:15] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:25:17] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:25:17] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:25:17] Using userId from query parameter 12
+[2025-03-30 04:25:17] Processing dashboard for applicantId 12
+[2025-03-30 04:25:17] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:25:17] Found applications 0
+[2025-03-30 04:25:17] Found notifications 0
+[2025-03-30 04:25:17] Generated alerts 0
+[2025-03-30 04:25:17] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:25:17] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:25:17] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:25:17] Using userId from query parameter 12
+[2025-03-30 04:25:17] Processing dashboard for applicantId 12
+[2025-03-30 04:25:17] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:25:17] Found applications 0
+[2025-03-30 04:25:17] Found notifications 0
+[2025-03-30 04:25:17] Generated alerts 0
+[2025-03-30 04:25:17] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:25:49] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:25:49] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:25:49] Using userId from query parameter 12
+[2025-03-30 04:25:49] Processing dashboard for applicantId 12
+[2025-03-30 04:25:49] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:25:49] Found applications 0
+[2025-03-30 04:25:49] Found notifications 0
+[2025-03-30 04:25:49] Generated alerts 0
+[2025-03-30 04:25:49] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:25:49] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:25:49] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:25:49] Using userId from query parameter 12
+[2025-03-30 04:25:49] Processing dashboard for applicantId 12
+[2025-03-30 04:25:49] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:25:49] Found applications 0
+[2025-03-30 04:25:49] Found notifications 0
+[2025-03-30 04:25:49] Generated alerts 0
+[2025-03-30 04:25:49] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:25:50] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:25:50] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:25:50] Using userId from query parameter 12
+[2025-03-30 04:25:50] Processing dashboard for applicantId 12
+[2025-03-30 04:25:50] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:25:50] Found applications 0
+[2025-03-30 04:25:50] Found notifications 0
+[2025-03-30 04:25:50] Generated alerts 0
+[2025-03-30 04:25:50] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:25:50] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:25:50] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:25:50] Using userId from query parameter 12
+[2025-03-30 04:25:50] Processing dashboard for applicantId 12
+[2025-03-30 04:25:50] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:25:50] Found applications 0
+[2025-03-30 04:25:50] Found notifications 0
+[2025-03-30 04:25:50] Generated alerts 0
+[2025-03-30 04:25:50] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:34:07] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:34:07] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:34:07] Using userId from query parameter 12
+[2025-03-30 04:34:07] Processing dashboard for applicantId 12
+[2025-03-30 04:34:07] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:34:07] Found applications 0
+[2025-03-30 04:34:07] Found notifications 0
+[2025-03-30 04:34:07] Generated alerts 0
+[2025-03-30 04:34:07] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:34:07] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:34:07] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:34:07] Using userId from query parameter 12
+[2025-03-30 04:34:07] Processing dashboard for applicantId 12
+[2025-03-30 04:34:07] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:34:07] Found applications 0
+[2025-03-30 04:34:07] Found notifications 0
+[2025-03-30 04:34:07] Generated alerts 0
+[2025-03-30 04:34:07] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:34:10] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:34:10] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:34:10] Using userId from query parameter 12
+[2025-03-30 04:34:10] Processing dashboard for applicantId 12
+[2025-03-30 04:34:10] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:34:10] Found applications 0
+[2025-03-30 04:34:10] Found notifications 0
+[2025-03-30 04:34:10] Generated alerts 0
+[2025-03-30 04:34:10] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:34:10] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:34:10] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:34:10] Using userId from query parameter 12
+[2025-03-30 04:34:10] Processing dashboard for applicantId 12
+[2025-03-30 04:34:10] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:34:10] Found applications 0
+[2025-03-30 04:34:10] Found notifications 0
+[2025-03-30 04:34:10] Generated alerts 0
+[2025-03-30 04:34:10] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:34:15] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:34:15] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:34:15] Using userId from query parameter 12
+[2025-03-30 04:34:15] Processing dashboard for applicantId 12
+[2025-03-30 04:34:15] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:34:15] Found applications 0
+[2025-03-30 04:34:15] Found notifications 0
+[2025-03-30 04:34:15] Generated alerts 0
+[2025-03-30 04:34:15] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:34:15] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:34:15] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:34:15] Using userId from query parameter 12
+[2025-03-30 04:34:15] Processing dashboard for applicantId 12
+[2025-03-30 04:34:15] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:34:15] Found applications 0
+[2025-03-30 04:34:15] Found notifications 0
+[2025-03-30 04:34:15] Generated alerts 0
+[2025-03-30 04:34:15] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:21] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:21] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:21] Using userId from query parameter 12
+[2025-03-30 04:41:21] Processing dashboard for applicantId 12
+[2025-03-30 04:41:21] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:21] Found applications 0
+[2025-03-30 04:41:21] Found notifications 0
+[2025-03-30 04:41:21] Generated alerts 0
+[2025-03-30 04:41:21] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:21] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:21] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:21] Using userId from query parameter 12
+[2025-03-30 04:41:21] Processing dashboard for applicantId 12
+[2025-03-30 04:41:21] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:21] Found applications 0
+[2025-03-30 04:41:21] Found notifications 0
+[2025-03-30 04:41:21] Generated alerts 0
+[2025-03-30 04:41:21] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:22] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:22] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:22] Using userId from query parameter 12
+[2025-03-30 04:41:22] Processing dashboard for applicantId 12
+[2025-03-30 04:41:22] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:22] Found applications 0
+[2025-03-30 04:41:22] Found notifications 0
+[2025-03-30 04:41:22] Generated alerts 0
+[2025-03-30 04:41:22] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:22] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:22] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:22] Using userId from query parameter 12
+[2025-03-30 04:41:22] Processing dashboard for applicantId 12
+[2025-03-30 04:41:22] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:22] Found applications 0
+[2025-03-30 04:41:22] Found notifications 0
+[2025-03-30 04:41:22] Generated alerts 0
+[2025-03-30 04:41:22] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:23] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:23] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:23] Using userId from query parameter 12
+[2025-03-30 04:41:23] Processing dashboard for applicantId 12
+[2025-03-30 04:41:23] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:23] Found applications 0
+[2025-03-30 04:41:23] Found notifications 0
+[2025-03-30 04:41:23] Generated alerts 0
+[2025-03-30 04:41:23] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:23] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:23] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:23] Using userId from query parameter 12
+[2025-03-30 04:41:23] Processing dashboard for applicantId 12
+[2025-03-30 04:41:23] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:23] Found applications 0
+[2025-03-30 04:41:23] Found notifications 0
+[2025-03-30 04:41:23] Generated alerts 0
+[2025-03-30 04:41:23] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:23] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:23] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:23] Using userId from query parameter 12
+[2025-03-30 04:41:23] Processing dashboard for applicantId 12
+[2025-03-30 04:41:23] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:23] Found applications 0
+[2025-03-30 04:41:23] Found notifications 0
+[2025-03-30 04:41:23] Generated alerts 0
+[2025-03-30 04:41:23] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:23] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:23] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:23] Using userId from query parameter 12
+[2025-03-30 04:41:23] Processing dashboard for applicantId 12
+[2025-03-30 04:41:23] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:23] Found applications 0
+[2025-03-30 04:41:23] Found notifications 0
+[2025-03-30 04:41:23] Generated alerts 0
+[2025-03-30 04:41:23] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:24] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:24] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:24] Using userId from query parameter 12
+[2025-03-30 04:41:24] Processing dashboard for applicantId 12
+[2025-03-30 04:41:24] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:24] Found applications 0
+[2025-03-30 04:41:24] Found notifications 0
+[2025-03-30 04:41:24] Generated alerts 0
+[2025-03-30 04:41:24] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:24] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:24] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:24] Using userId from query parameter 12
+[2025-03-30 04:41:24] Processing dashboard for applicantId 12
+[2025-03-30 04:41:24] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:24] Found applications 0
+[2025-03-30 04:41:24] Found notifications 0
+[2025-03-30 04:41:24] Generated alerts 0
+[2025-03-30 04:41:24] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:36] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:36] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:36] Using userId from query parameter 12
+[2025-03-30 04:41:36] Processing dashboard for applicantId 12
+[2025-03-30 04:41:36] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:36] Found applications 0
+[2025-03-30 04:41:36] Found notifications 0
+[2025-03-30 04:41:36] Generated alerts 0
+[2025-03-30 04:41:36] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:36] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:36] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:36] Using userId from query parameter 12
+[2025-03-30 04:41:36] Processing dashboard for applicantId 12
+[2025-03-30 04:41:36] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:36] Found applications 0
+[2025-03-30 04:41:36] Found notifications 0
+[2025-03-30 04:41:36] Generated alerts 0
+[2025-03-30 04:41:36] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:50] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:50] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:50] Using userId from query parameter 12
+[2025-03-30 04:41:50] Processing dashboard for applicantId 12
+[2025-03-30 04:41:50] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:50] Found applications 0
+[2025-03-30 04:41:50] Found notifications 0
+[2025-03-30 04:41:50] Generated alerts 0
+[2025-03-30 04:41:50] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:50] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:50] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:50] Using userId from query parameter 12
+[2025-03-30 04:41:50] Processing dashboard for applicantId 12
+[2025-03-30 04:41:51] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:51] Found applications 0
+[2025-03-30 04:41:51] Found notifications 0
+[2025-03-30 04:41:51] Generated alerts 0
+[2025-03-30 04:41:51] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:57] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:57] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:57] Using userId from query parameter 12
+[2025-03-30 04:41:57] Processing dashboard for applicantId 12
+[2025-03-30 04:41:57] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:57] Found applications 0
+[2025-03-30 04:41:57] Found notifications 0
+[2025-03-30 04:41:57] Generated alerts 0
+[2025-03-30 04:41:57] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 04:41:57] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Android\"","Authorization":"Bearer de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19","User-Agent":"Mozilla\/5.0 (Linux; Android 6.0; Nexus 5 Build\/MRA58N) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Mobile Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?1","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 04:41:57] Token from Authorization header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:57] Using userId from query parameter 12
+[2025-03-30 04:41:57] Processing dashboard for applicantId 12
+[2025-03-30 04:41:57] Found user data {"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"}
+[2025-03-30 04:41:57] Found applications 0
+[2025-03-30 04:41:57] Found notifications 0
+[2025-03-30 04:41:57] Generated alerts 0
+[2025-03-30 04:41:57] Returning dashboard data {"user":{"full_name":"applicantcode","email":"applicantcode@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 11:44:42] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:44:42] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:44:42] Using userId from query parameter 9
+[2025-03-30 11:44:42] Processing dashboard for applicantId 9
+[2025-03-30 11:44:42] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:44:42] Found applications 1
+[2025-03-30 11:44:42] Found notifications 0
+[2025-03-30 11:44:42] Generated alerts 0
+[2025-03-30 11:44:42] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:44:42] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:44:42] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:44:42] Using userId from query parameter 9
+[2025-03-30 11:44:42] Processing dashboard for applicantId 9
+[2025-03-30 11:44:42] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:44:42] Found applications 1
+[2025-03-30 11:44:42] Found notifications 0
+[2025-03-30 11:44:42] Generated alerts 0
+[2025-03-30 11:44:42] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:09] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:09] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:09] Using userId from query parameter 9
+[2025-03-30 11:45:09] Processing dashboard for applicantId 9
+[2025-03-30 11:45:09] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:09] Found applications 1
+[2025-03-30 11:45:09] Found notifications 0
+[2025-03-30 11:45:09] Generated alerts 0
+[2025-03-30 11:45:09] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:09] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:09] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:09] Using userId from query parameter 9
+[2025-03-30 11:45:09] Processing dashboard for applicantId 9
+[2025-03-30 11:45:09] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:09] Found applications 1
+[2025-03-30 11:45:09] Found notifications 0
+[2025-03-30 11:45:09] Generated alerts 0
+[2025-03-30 11:45:09] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:10] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:10] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:10] Using userId from query parameter 9
+[2025-03-30 11:45:10] Processing dashboard for applicantId 9
+[2025-03-30 11:45:10] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:10] Found applications 1
+[2025-03-30 11:45:10] Found notifications 0
+[2025-03-30 11:45:10] Generated alerts 0
+[2025-03-30 11:45:10] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:10] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:10] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:10] Using userId from query parameter 9
+[2025-03-30 11:45:10] Processing dashboard for applicantId 9
+[2025-03-30 11:45:10] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:10] Found applications 1
+[2025-03-30 11:45:10] Found notifications 0
+[2025-03-30 11:45:10] Generated alerts 0
+[2025-03-30 11:45:10] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:11] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:11] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:11] Using userId from query parameter 9
+[2025-03-30 11:45:11] Processing dashboard for applicantId 9
+[2025-03-30 11:45:11] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:11] Found applications 1
+[2025-03-30 11:45:11] Found notifications 0
+[2025-03-30 11:45:11] Generated alerts 0
+[2025-03-30 11:45:11] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:11] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:11] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:11] Using userId from query parameter 9
+[2025-03-30 11:45:11] Processing dashboard for applicantId 9
+[2025-03-30 11:45:11] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:11] Found applications 1
+[2025-03-30 11:45:11] Found notifications 0
+[2025-03-30 11:45:11] Generated alerts 0
+[2025-03-30 11:45:11] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:12] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:12] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:12] Using userId from query parameter 9
+[2025-03-30 11:45:12] Processing dashboard for applicantId 9
+[2025-03-30 11:45:12] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:12] Found applications 1
+[2025-03-30 11:45:12] Found notifications 0
+[2025-03-30 11:45:12] Generated alerts 0
+[2025-03-30 11:45:12] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:12] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:12] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:12] Using userId from query parameter 9
+[2025-03-30 11:45:12] Processing dashboard for applicantId 9
+[2025-03-30 11:45:12] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:12] Found applications 1
+[2025-03-30 11:45:12] Found notifications 0
+[2025-03-30 11:45:12] Generated alerts 0
+[2025-03-30 11:45:12] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:13] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:13] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:13] Using userId from query parameter 9
+[2025-03-30 11:45:13] Processing dashboard for applicantId 9
+[2025-03-30 11:45:13] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:13] Found applications 1
+[2025-03-30 11:45:13] Found notifications 0
+[2025-03-30 11:45:13] Generated alerts 0
+[2025-03-30 11:45:13] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:13] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:13] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:13] Using userId from query parameter 9
+[2025-03-30 11:45:13] Processing dashboard for applicantId 9
+[2025-03-30 11:45:13] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:13] Found applications 1
+[2025-03-30 11:45:13] Found notifications 0
+[2025-03-30 11:45:13] Generated alerts 0
+[2025-03-30 11:45:13] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:14] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:14] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:14] Using userId from query parameter 9
+[2025-03-30 11:45:14] Processing dashboard for applicantId 9
+[2025-03-30 11:45:14] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:14] Found applications 1
+[2025-03-30 11:45:14] Found notifications 0
+[2025-03-30 11:45:14] Generated alerts 0
+[2025-03-30 11:45:14] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:14] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:14] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:14] Using userId from query parameter 9
+[2025-03-30 11:45:14] Processing dashboard for applicantId 9
+[2025-03-30 11:45:14] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:14] Found applications 1
+[2025-03-30 11:45:14] Found notifications 0
+[2025-03-30 11:45:14] Generated alerts 0
+[2025-03-30 11:45:14] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:18] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:18] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:18] Using userId from query parameter 9
+[2025-03-30 11:45:18] Processing dashboard for applicantId 9
+[2025-03-30 11:45:18] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:18] Found applications 1
+[2025-03-30 11:45:18] Found notifications 0
+[2025-03-30 11:45:18] Generated alerts 0
+[2025-03-30 11:45:18] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:18] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:18] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:18] Using userId from query parameter 9
+[2025-03-30 11:45:18] Processing dashboard for applicantId 9
+[2025-03-30 11:45:18] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:18] Found applications 1
+[2025-03-30 11:45:18] Found notifications 0
+[2025-03-30 11:45:18] Generated alerts 0
+[2025-03-30 11:45:18] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:20] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:20] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:20] Using userId from query parameter 9
+[2025-03-30 11:45:20] Processing dashboard for applicantId 9
+[2025-03-30 11:45:20] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:20] Found applications 1
+[2025-03-30 11:45:20] Found notifications 0
+[2025-03-30 11:45:20] Generated alerts 0
+[2025-03-30 11:45:20] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:20] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:20] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:20] Using userId from query parameter 9
+[2025-03-30 11:45:20] Processing dashboard for applicantId 9
+[2025-03-30 11:45:20] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:20] Found applications 1
+[2025-03-30 11:45:20] Found notifications 0
+[2025-03-30 11:45:20] Generated alerts 0
+[2025-03-30 11:45:20] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:25] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:25] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:25] Using userId from query parameter 9
+[2025-03-30 11:45:25] Processing dashboard for applicantId 9
+[2025-03-30 11:45:25] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:25] Found applications 1
+[2025-03-30 11:45:25] Found notifications 0
+[2025-03-30 11:45:25] Generated alerts 0
+[2025-03-30 11:45:25] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:25] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:25] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:25] Using userId from query parameter 9
+[2025-03-30 11:45:25] Processing dashboard for applicantId 9
+[2025-03-30 11:45:25] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:25] Found applications 1
+[2025-03-30 11:45:25] Found notifications 0
+[2025-03-30 11:45:25] Generated alerts 0
+[2025-03-30 11:45:25] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:27] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:27] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:27] Using userId from query parameter 9
+[2025-03-30 11:45:27] Processing dashboard for applicantId 9
+[2025-03-30 11:45:27] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:27] Found applications 1
+[2025-03-30 11:45:27] Found notifications 0
+[2025-03-30 11:45:27] Generated alerts 0
+[2025-03-30 11:45:27] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:27] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:27] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:27] Using userId from query parameter 9
+[2025-03-30 11:45:27] Processing dashboard for applicantId 9
+[2025-03-30 11:45:27] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:27] Found applications 1
+[2025-03-30 11:45:27] Found notifications 0
+[2025-03-30 11:45:27] Generated alerts 0
+[2025-03-30 11:45:27] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:29] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:29] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:29] Using userId from query parameter 9
+[2025-03-30 11:45:29] Processing dashboard for applicantId 9
+[2025-03-30 11:45:29] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:29] Found applications 1
+[2025-03-30 11:45:29] Found notifications 0
+[2025-03-30 11:45:29] Generated alerts 0
+[2025-03-30 11:45:29] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:45:29] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:45:29] Token from Authorization header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:29] Using userId from query parameter 9
+[2025-03-30 11:45:29] Processing dashboard for applicantId 9
+[2025-03-30 11:45:29] Found user data {"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"}
+[2025-03-30 11:45:29] Found applications 1
+[2025-03-30 11:45:29] Found notifications 0
+[2025-03-30 11:45:29] Generated alerts 0
+[2025-03-30 11:45:29] Returning dashboard data {"user":{"full_name":"applicant1 applicant1","email":"applicant1@gmail.com","status":"active"},"myApplications":[{"application_id":17,"pool_id":13,"pool_name":"gg","job_role":"Bookkeeper","department":"Operations","status":"pending","evaluation_score":null,"fst_score":null,"applied_at":"2025-03-26 15:17:25","updated_at":null}],"notifications":[],"alerts":[]}
+[2025-03-30 11:54:00] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer MTM6MTc0MzMyODQ0MA==","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:54:00] Token from Authorization header MTM6MTc0MzMyODQ0MA==
+[2025-03-30 11:54:00] Using userId from query parameter 13
+[2025-03-30 11:54:00] Processing dashboard for applicantId 13
+[2025-03-30 11:54:00] Found user data {"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"}
+[2025-03-30 11:54:00] Found applications 0
+[2025-03-30 11:54:00] Found notifications 0
+[2025-03-30 11:54:00] Generated alerts 0
+[2025-03-30 11:54:00] Returning dashboard data {"user":{"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 11:54:00] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer MTM6MTc0MzMyODQ0MA==","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:54:00] Token from Authorization header MTM6MTc0MzMyODQ0MA==
+[2025-03-30 11:54:00] Using userId from query parameter 13
+[2025-03-30 11:54:00] Processing dashboard for applicantId 13
+[2025-03-30 11:54:00] Found user data {"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"}
+[2025-03-30 11:54:00] Found applications 0
+[2025-03-30 11:54:00] Found notifications 0
+[2025-03-30 11:54:00] Generated alerts 0
+[2025-03-30 11:54:00] Returning dashboard data {"user":{"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 11:54:31] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 1696b4e7202d9a2bfc442464f52d444b09cf21692064a927aa41b9232bed8120","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:54:31] Token from Authorization header 1696b4e7202d9a2bfc442464f52d444b09cf21692064a927aa41b9232bed8120
+[2025-03-30 11:54:31] Using userId from query parameter 13
+[2025-03-30 11:54:31] Processing dashboard for applicantId 13
+[2025-03-30 11:54:31] Found user data {"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"}
+[2025-03-30 11:54:31] Found applications 0
+[2025-03-30 11:54:31] Found notifications 0
+[2025-03-30 11:54:31] Generated alerts 0
+[2025-03-30 11:54:31] Returning dashboard data {"user":{"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 11:54:31] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 1696b4e7202d9a2bfc442464f52d444b09cf21692064a927aa41b9232bed8120","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 11:54:31] Token from Authorization header 1696b4e7202d9a2bfc442464f52d444b09cf21692064a927aa41b9232bed8120
+[2025-03-30 11:54:31] Using userId from query parameter 13
+[2025-03-30 11:54:31] Processing dashboard for applicantId 13
+[2025-03-30 11:54:31] Found user data {"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"}
+[2025-03-30 11:54:31] Found applications 0
+[2025-03-30 11:54:31] Found notifications 0
+[2025-03-30 11:54:31] Generated alerts 0
+[2025-03-30 11:54:31] Returning dashboard data {"user":{"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 12:00:16] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 32dda217e0a747fe8057e0ff3661b22ff1f0596db16b9a42e02f282102b5a40f","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 12:00:16] Token from Authorization header 32dda217e0a747fe8057e0ff3661b22ff1f0596db16b9a42e02f282102b5a40f
+[2025-03-30 12:00:16] Using userId from query parameter 13
+[2025-03-30 12:00:16] Processing dashboard for applicantId 13
+[2025-03-30 12:00:16] Found user data {"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"}
+[2025-03-30 12:00:16] Found applications 0
+[2025-03-30 12:00:16] Found notifications 0
+[2025-03-30 12:00:16] Generated alerts 0
+[2025-03-30 12:00:16] Returning dashboard data {"user":{"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 12:00:16] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 32dda217e0a747fe8057e0ff3661b22ff1f0596db16b9a42e02f282102b5a40f","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 12:00:16] Token from Authorization header 32dda217e0a747fe8057e0ff3661b22ff1f0596db16b9a42e02f282102b5a40f
+[2025-03-30 12:00:16] Using userId from query parameter 13
+[2025-03-30 12:00:16] Processing dashboard for applicantId 13
+[2025-03-30 12:00:16] Found user data {"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"}
+[2025-03-30 12:00:16] Found applications 0
+[2025-03-30 12:00:16] Found notifications 0
+[2025-03-30 12:00:16] Generated alerts 0
+[2025-03-30 12:00:16] Returning dashboard data {"user":{"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 12:00:18] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 32dda217e0a747fe8057e0ff3661b22ff1f0596db16b9a42e02f282102b5a40f","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 12:00:18] Token from Authorization header 32dda217e0a747fe8057e0ff3661b22ff1f0596db16b9a42e02f282102b5a40f
+[2025-03-30 12:00:18] Using userId from query parameter 13
+[2025-03-30 12:00:18] Processing dashboard for applicantId 13
+[2025-03-30 12:00:18] Found user data {"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"}
+[2025-03-30 12:00:18] Found applications 0
+[2025-03-30 12:00:18] Found notifications 0
+[2025-03-30 12:00:18] Generated alerts 0
+[2025-03-30 12:00:18] Returning dashboard data {"user":{"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}
+[2025-03-30 12:00:18] Headers received {"Host":"localhost:8080","Connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","Authorization":"Bearer 32dda217e0a747fe8057e0ff3661b22ff1f0596db16b9a42e02f282102b5a40f","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/134.0.0.0 Safari\/537.36 Edg\/134.0.0.0","sec-ch-ua":"\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost:3000","Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost:3000\/","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"en-US,en;q=0.9"}
+[2025-03-30 12:00:18] Token from Authorization header 32dda217e0a747fe8057e0ff3661b22ff1f0596db16b9a42e02f282102b5a40f
+[2025-03-30 12:00:18] Using userId from query parameter 13
+[2025-03-30 12:00:18] Processing dashboard for applicantId 13
+[2025-03-30 12:00:18] Found user data {"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"}
+[2025-03-30 12:00:18] Found applications 0
+[2025-03-30 12:00:18] Found notifications 0
+[2025-03-30 12:00:18] Generated alerts 0
+[2025-03-30 12:00:18] Returning dashboard data {"user":{"full_name":"applicant3 applicant3","email":"applicant3@gmail.com","status":"active"},"myApplications":[],"notifications":[],"alerts":[]}

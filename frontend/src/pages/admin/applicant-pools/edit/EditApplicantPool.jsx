@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { UserCheck, Type, FileText, User, Clock, Save, ArrowLeft, RefreshCw, XCircle } from 'lucide-react';
+import { 
+  UserCheck, Type, FileText, User, Clock, Save, ArrowLeft, RefreshCw, XCircle,
+  Building, Briefcase
+} from 'lucide-react';
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
 import applicantService from '../../../../services/applicantService';
@@ -12,40 +15,146 @@ const EditApplicantPool = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [departments, setDepartments] = useState([]);
+  const [departmentPositions, setDepartmentPositions] = useState({});
   const [poolData, setPoolData] = useState({
-    pool_name: '', description: '', created_by: '', created_at: '', createdByName: ''
+    pool_name: '', 
+    description: '', 
+    created_by: '', 
+    created_at: '', 
+    createdByName: '',
+    department: '',
+    positions: []
   });
 
   useEffect(() => {
-    const fetchPoolData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-          setError('You are not logged in. Please log in to access this page.');
-          setTimeout(() => navigate('/login'), 2000);
-          return;
-        }
-        const data = await applicantService.getApplicantPoolById(poolId);
-        setPoolData({
-          pool_name: data.pool_name || '', description: data.description || '',
-          created_by: data.created_by || '', created_at: data.created_at || '',
-          createdByName: data.createdByName || 'Administrator'
-        });
-      } catch (err) {
-        console.error('Error fetching applicant pool data:', err);
-        setError('Failed to load applicant pool data. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchDepartments();
+    fetchPositions();
     fetchPoolData();
-  }, [poolId, navigate]);
+  }, [poolId]);
+
+  const fetchDepartments = async () => {
+    try {
+      // In a real implementation, this would be an API call
+      const data = [
+        { id: 1, name: 'Human Resources' },
+        { id: 2, name: 'Accounting and Finance' },
+        { id: 3, name: 'Compliance and Strategic Support' },
+        { id: 4, name: 'Client Development and Services' },
+        { id: 5, name: 'Internal Audit' },
+        { id: 6, name: 'General Services' },
+        { id: 7, name: 'Operations' }
+      ];
+      setDepartments(data);
+    } catch (err) {
+      console.error('Error fetching departments:', err);
+    }
+  };
+
+  const fetchPositions = async () => {
+    try {
+      // In a real implementation, this would be an API call
+      const positions = {
+        'Human Resources': [
+          'HR Department Head',
+          'Employee Relations Specialist',
+          'Employee Welfare Specialist',
+          'Talent Acquisition Specialist',
+          'Talent Development Specialist',
+          'Graphic Artist'
+        ],
+        'Accounting and Finance': [
+          'Finance Department Head',
+          'Accounting Specialist',
+          'Payroll Specialist'
+        ],
+        'Compliance and Strategic Support': [
+          'Compliance Department Head',
+          'Junior Compliance Officer',
+          'Research Analyst',
+          'Planning Officer',
+          'Customer Service Representative'
+        ],
+        'Client Development and Services': [
+          'CDS Department Head',
+          'Social Services Specialist',
+          'Enterprise Development Specialist',
+          'Member Development Specialist'
+        ],
+        'Internal Audit': [
+          'Internal Audit Department Head',
+          'Internal Audit Staff',
+          'Credit Analyst'
+        ],
+        'General Services': [
+          'General Services Staff',
+          'IT Specialist'
+        ],
+        'Operations': [
+          'Operations Head',
+          'Area Manager',
+          'Branch Manager',
+          'Bookkeeper',
+          'Account Officer',
+          'Loan Officer',
+          'Support Staff'
+        ]
+      };
+      setDepartmentPositions(positions);
+    } catch (err) {
+      console.error('Error fetching positions:', err);
+    }
+  };
+
+  const fetchPoolData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setError('You are not logged in. Please log in to access this page.');
+        setTimeout(() => navigate('/login'), 2000);
+        return;
+      }
+      const data = await applicantService.getApplicantPoolById(poolId);
+      setPoolData({
+        pool_name: data.pool_name || '',
+        description: data.description || '',
+        created_by: data.created_by || '',
+        created_at: data.created_at || '',
+        createdByName: data.createdByName || 'Administrator',
+        department: data.department || '',
+        positions: data.positions || []
+      });
+    } catch (err) {
+      console.error('Error fetching applicant pool data:', err);
+      setError('Failed to load applicant pool data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setPoolData({ ...poolData, [name]: value });
+    
+    if (name === 'department') {
+      // Reset positions when department changes
+      setPoolData({
+        ...poolData,
+        department: value,
+        positions: []
+      });
+    } else {
+      setPoolData({ ...poolData, [name]: value });
+    }
+  };
+
+  const handlePositionChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    setPoolData({
+      ...poolData,
+      positions: selectedOptions
+    });
   };
 
   const validateForm = () => {
@@ -63,7 +172,12 @@ const EditApplicantPool = () => {
     if (!validateForm()) return;
     setSaving(true);
     try {
-      const updateData = { pool_name: poolData.pool_name, description: poolData.description };
+      const updateData = {
+        pool_name: poolData.pool_name,
+        description: poolData.description,
+        department: poolData.department,
+        positions: poolData.positions
+      };
       await applicantService.updateApplicantPool(poolId, updateData);
       setSuccess('Applicant pool updated successfully.');
       setTimeout(() => navigate('/admin/applicant-pools'), 2000);
@@ -159,6 +273,75 @@ const EditApplicantPool = () => {
               />
             </div>
           </div>
+
+          <div style={{ marginBottom: '24px' }}>
+            <label htmlFor="department" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+              Department
+            </label>
+            <div style={{ position: 'relative' }}>
+              <Building size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+              <select
+                id="department"
+                name="department"
+                value={poolData.department}
+                onChange={handleInputChange}
+                style={{
+                  width: '100%',
+                  padding: '8px 8px 8px 36px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '0.875rem',
+                  color: '#1e293b',
+                  backgroundColor: '#ffffff',
+                  outline: 'none',
+                  ':focus': { borderColor: '#1E88E5' }
+                }}
+              >
+                <option value="">Select a department</option>
+                {departments.map(dept => (
+                  <option key={dept.id} value={dept.name}>{dept.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {poolData.department && (
+            <div style={{ marginBottom: '24px' }}>
+              <label htmlFor="positions" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+                Positions (hold Ctrl/Cmd to select multiple)
+              </label>
+              <div style={{ position: 'relative' }}>
+                <Briefcase size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: '#64748b' }} />
+                <select
+                  id="positions"
+                  name="positions"
+                  multiple
+                  value={poolData.positions}
+                  onChange={handlePositionChange}
+                  style={{
+                    width: '100%',
+                    padding: '8px 8px 8px 36px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '0.875rem',
+                    color: '#1e293b',
+                    backgroundColor: '#ffffff',
+                    outline: 'none',
+                    minHeight: '120px',
+                    ':focus': { borderColor: '#1E88E5' }
+                  }}
+                >
+                  {departmentPositions[poolData.department]?.map((position, idx) => (
+                    <option key={idx} value={position}>{position}</option>
+                  ))}
+                </select>
+              </div>
+              <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>
+                Hold Ctrl (or Cmd on Mac) to select multiple positions
+              </p>
+            </div>
+          )}
+          
           <div style={{ marginBottom: '24px' }}>
             <label htmlFor="description" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
               Description
@@ -186,6 +369,7 @@ const EditApplicantPool = () => {
               />
             </div>
           </div>
+          
           <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
             <div style={{ flex: 1 }}>
               <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>

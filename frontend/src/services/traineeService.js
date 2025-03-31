@@ -85,6 +85,224 @@ const traineeService = {
             throw error;
         }
     },
+
+    // Get resume file
+getResume: async (resumePath) => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        throw new Error('No token found. Please log in again.');
+    }
+
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    let endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/get_resume.php`;
+    
+    // If path is provided, add it as a query parameter
+    if (resumePath) {
+        endpoint += `?path=${encodeURIComponent(resumePath)}`;
+    }
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            if (response.status === 404) {
+                throw new Error('Resume not found.');
+            }
+            if (response.status === 403) {
+                throw new Error('You do not have permission to view this resume.');
+            }
+            const errorText = await response.text();
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+
+        // Return blob for direct handling in the browser
+        return await response.blob();
+    } catch (error) {
+        console.error('Error in traineeService.getResume:', error);
+        throw error;
+    }
+},
+// Add these methods to your traineeService.js file
+
+getPracticalExamById: async (examId) => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        throw new Error('No token found. Please log in again.');
+    }
+
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/practical_exams.php?id=${examId}`;
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            const errorText = await response.text();
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in traineeService.getPracticalExamById:', error);
+        throw error;
+    }
+},
+
+getPracticalExamAttemptById: async (attemptId) => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        throw new Error('No token found. Please log in again.');
+    }
+
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/practical_exam_attempts.php?id=${attemptId}`;
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            const errorText = await response.text();
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in traineeService.getPracticalExamAttemptById:', error);
+        throw error;
+    }
+},
+
+getPracticalExams: async (programId) => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        throw new Error('No token found. Please log in again.');
+    }
+
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    let endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/practical_exams.php`;
+    
+    // Add program ID to query string if provided
+    if (programId) {
+        endpoint += `?programId=${programId}`;
+    }
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            const errorText = await response.text();
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in traineeService.getPracticalExams:', error);
+        throw error;
+    }
+},
+
+
+getPracticalExamAttempts: async (examId = null) => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        throw new Error('No token found. Please log in again.');
+    }
+
+    if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Session expired. Please log in again.');
+    }
+
+    let endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/practical_exam_attempts.php`;
+    
+    // Add exam ID to query string if provided
+    if (examId) {
+        endpoint += `?examId=${examId}`;
+    }
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            const errorText = await response.text();
+            throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in traineeService.getPracticalExamAttempts:', error);
+        throw error;
+    }
+},
     // Get all programs for the trainee
     getPrograms: async () => {
         const token = localStorage.getItem('authToken');
@@ -591,6 +809,50 @@ exportProgressPDF: async () => {
             throw error;
         }
     },
+
+    submitPracticalExam: async (examId, submissionText) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            throw new Error('No token found. Please log in again.');
+        }
+    
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Session expired. Please log in again.');
+        }
+    
+        const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainee/submit_practical_exam.php`;
+    
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    exam_id: examId,
+                    submission_text: submissionText
+                })
+            });
+    
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('authToken');
+                    throw new Error('Authentication failed. Please login again.');
+                }
+                const errorText = await response.text();
+                throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+            }
+    
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error in traineeService.submitPracticalExam:', error);
+            throw error;
+        }
+    },
+    
 // Add this to traineeService.js
 getCertificates: async () => {
     const token = localStorage.getItem('authToken');

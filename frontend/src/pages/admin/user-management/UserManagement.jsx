@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Users, Search, Filter, Plus, Edit, Trash2, Download, ArrowLeft,
-  User, RefreshCw, Mail, Shield
+  User, RefreshCw, Mail, Shield, Key
 } from 'lucide-react';
 import adminService from '../../../services/adminService';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
@@ -218,25 +218,26 @@ const UserManagement = () => {
             }}
           />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Filter size={14} style={{ color: '#1E88E5' }} />
-          <select value={roleFilter} onChange={handleRoleFilterChange} style={{
-            padding: '8px',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px',
-            fontSize: '0.875rem',
-            color: '#1e293b',
-            backgroundColor: '#ffffff',
-            outline: 'none',
-            ':focus': { borderColor: '#1E88E5' }
-          }}>
-            <option value="all">All Roles</option>
-            <option value="administrator">Administrators</option>
-            <option value="trainer">Trainers</option>
-            <option value="trainee">Trainees</option>
-            <option value="applicant">Applicants</option>
-          </select>
-        </div>
+<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+  <Filter size={14} style={{ color: '#1E88E5' }} />
+  <select value={roleFilter} onChange={handleRoleFilterChange} style={{
+    padding: '8px',
+    border: '1px solid #e2e8f0',
+    borderRadius: '8px',
+    fontSize: '0.875rem',
+    color: '#1e293b',
+    backgroundColor: '#ffffff',
+    outline: 'none',
+    ':focus': { borderColor: '#1E88E5' }
+  }}>
+    <option value="all">All Roles</option>
+    <option value="administrator">Administrators</option>
+    <option value="trainer">Trainers</option>
+    <option value="trainee">Trainees</option>
+    <option value="employee">Employees</option>
+    <option value="applicant">Applicants</option>
+  </select>
+</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Filter size={14} style={{ color: '#1E88E5' }} />
           <select value={statusFilter} onChange={handleStatusFilterChange} style={{
@@ -340,19 +341,21 @@ const UserManagement = () => {
                     {user.email}
                   </td>
                   <td style={{ padding: '16px' }}>
-                    <span style={{
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      fontSize: '0.75rem',
-                      color: '#ffffff',
-                      backgroundColor: user.role === 'administrator' ? '#1E88E5' :
-                                      user.role === 'trainer' ? '#1565C0' :
-                                      user.role === 'trainee' ? '#64B5F6' : '#64748b'
-                    }}>
-                      {user.role === 'administrator' && <Shield size={12} style={{ verticalAlign: 'middle', marginRight: '4px' }} />}
-                      {user.role}
-                    </span>
-                  </td>
+  <span style={{
+    padding: '4px 8px',
+    borderRadius: '4px',
+    fontSize: '0.75rem',
+    color: '#ffffff',
+    backgroundColor: user.role === 'administrator' ? '#1E88E5' :
+                    user.role === 'trainer' ? '#1565C0' :
+                    user.role === 'trainee' ? '#64B5F6' :
+                    user.role === 'employee' ? '#00897B' : // Teal color for employees
+                    '#64748b'
+  }}>
+    {user.role === 'administrator' && <Shield size={12} style={{ verticalAlign: 'middle', marginRight: '4px' }} />}
+    {user.role}
+  </span>
+</td>
                   <td style={{ padding: '16px' }}>
                     <span style={{
                       padding: '4px 8px',
@@ -365,30 +368,49 @@ const UserManagement = () => {
                     </span>
                   </td>
                   <td style={{ padding: '16px', fontSize: '0.875rem', color: '#64748b' }}>{formatDate(user.last_login)}</td>
-                  <td style={{ padding: '16px' }}>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button onClick={() => handleEditUser(user.id)} style={{
-                        backgroundColor: '#1E88E5',
-                        color: '#ffffff',
-                        padding: '4px',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer'
-                      }}>
-                        <Edit size={16} />
-                      </button>
-                      <button onClick={() => handleDeleteClick(user)} style={{
-                        backgroundColor: '#e74c3c', // --danger-color
-                        color: '#ffffff',
-                        padding: '4px',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer'
-                      }}>
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
+<td style={{ padding: '16px' }}>
+  <div style={{ display: 'flex', gap: '8px' }}>
+    <button onClick={() => handleEditUser(user.id)} style={{
+      backgroundColor: '#1E88E5',
+      color: '#ffffff',
+      padding: '4px',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer'
+    }}>
+      <Edit size={16} />
+    </button>
+    
+    {/* Add this button for applicant users */}
+    {user.role === 'applicant' && (
+      <button 
+        onClick={() => navigate(`/admin/user-management/access-code/${user.id}`)} 
+        style={{
+          backgroundColor: '#00897B',
+          color: '#ffffff',
+          padding: '4px',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer'
+        }}
+        title="Manage Access Code"
+      >
+        <Key size={16} />
+      </button>
+    )}
+    
+    <button onClick={() => handleDeleteClick(user)} style={{
+      backgroundColor: '#e74c3c',
+      color: '#ffffff',
+      padding: '4px',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer'
+    }}>
+      <Trash2 size={16} />
+    </button>
+  </div>
+</td>
                 </tr>
               ))
             ) : (

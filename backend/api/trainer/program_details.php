@@ -109,6 +109,36 @@ $stmt->bindParam(':programId', $programId, PDO::PARAM_INT);
 $stmt->execute();
 $enrollments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Fetch practical exams for this program
+$query = "
+  SELECT 
+    pe.id,
+    pe.title,
+    pe.description,
+    pe.max_score,
+    pe.created_at,
+    pe.created_by,
+    u.full_name as created_by_name,
+    (SELECT COUNT(*) FROM practical_exam_attempts WHERE exam_id = pe.id) as attempt_count,
+    (SELECT AVG(score) FROM practical_exam_attempts WHERE exam_id = pe.id) as average_score
+  FROM practical_exams pe
+  LEFT JOIN users u ON pe.created_by = u.id
+  WHERE pe.program_id = :programId
+  ORDER BY pe.created_at DESC
+";
+
+$stmt = $pdo->prepare($query);
+$stmt->bindParam(':programId', $programId, PDO::PARAM_INT);
+$stmt->execute();
+$practicalExams = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Format the data for each exam
+foreach ($practicalExams as &$exam) {
+    // Format average score to 2 decimal places if not null
+    if ($exam['average_score'] !== null) {
+        $exam['average_score'] = number_format((float)$exam['average_score'], 2);
+    }
+}
 // Fetch milestones
 $query = "
   SELECT 
@@ -199,6 +229,7 @@ $response = [
   'enrollments' => $enrollments,
   'milestones' => $milestones,
   'quizzes' => $quizzes,
+  'practicalExams' => $practicalExams,  // Add this line
   'stats' => [
     'totalEnrollments' => $totalEnrollments,
     'completionRate' => round($completionRate, 2),

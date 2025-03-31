@@ -268,7 +268,7 @@ const ApplicantDetails = () => {
           </div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
+        {/* <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
           <div style={{ backgroundColor: '#E3F2FD', padding: '16px', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', gap: '16px' }}>
             <BarChart2 size={20} style={{ color: '#1E88E5' }} />
             <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>Evaluation Scores</h3>
@@ -339,7 +339,7 @@ const ApplicantDetails = () => {
               </Link>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>

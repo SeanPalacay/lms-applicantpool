@@ -128,7 +128,7 @@ const Applications = () => {
           <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Track the status of your program applications</p>
         </div>
         <Link
-          to="/applicant/programs"
+          to="/applicant/pool"
           style={{
             backgroundColor: '#1E88E5',
             color: '#ffffff',
@@ -144,7 +144,7 @@ const Applications = () => {
             ':hover': { backgroundColor: '#1565C0' }
           }}
         >
-          Apply for New Program
+          Apply for a New Position
         </Link>
       </div>
 
@@ -270,7 +270,7 @@ const Applications = () => {
           <h3 style={{ fontSize: '1.25rem', fontWeight: 600, margin: '0 0 8px 0' }}>No applications found</h3>
           <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '0 0 24px 0' }}>You haven't applied to any programs yet.</p>
           <Link
-            to="/applicant/programs"
+            to="/applicant/pool"
             style={{
               backgroundColor: '#1E88E5',
               color: '#ffffff',
@@ -286,7 +286,7 @@ const Applications = () => {
               ':hover': { backgroundColor: '#1565C0' }
             }}
           >
-            View Available Programs
+            View Available Positions
           </Link>
         </div>
       ) : filteredApplications.length === 0 ? (
@@ -398,7 +398,7 @@ const Applications = () => {
                 >
                   <Eye size={16} /> View Details
                 </Link>
-                <Link
+                {/* <Link
                   to={`/applicant/programs`}
                   style={{
                     backgroundColor: '#ffffff',
@@ -416,7 +416,7 @@ const Applications = () => {
                   }}
                 >
                   <BookOpen size={16} /> Program Info
-                </Link>
+                </Link> */}
               </div>
             </div>
           ))}

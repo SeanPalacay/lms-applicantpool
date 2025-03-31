@@ -1,0 +1,66 @@
+[2025-03-30 04:41:19] Documents API Request GET
+[2025-03-30 04:41:19] Token extracted from header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:19] User ID from query parameter 12
+[2025-03-30 04:41:19] User authenticated {"id":12,"username":"APP_welJp","role":"applicant"}
+[2025-03-30 04:41:19] Getting documents for user 12
+[2025-03-30 04:41:19] Found 0 documents
+[2025-03-30 04:41:19] Documents API Request GET
+[2025-03-30 04:41:19] Token extracted from header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:19] User ID from query parameter 12
+[2025-03-30 04:41:19] User authenticated {"id":12,"username":"APP_welJp","role":"applicant"}
+[2025-03-30 04:41:19] Getting documents for user 12
+[2025-03-30 04:41:19] Found 0 documents
+[2025-03-30 04:41:22] Documents API Request GET
+[2025-03-30 04:41:22] Token extracted from header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:22] User ID from query parameter 12
+[2025-03-30 04:41:22] User authenticated {"id":12,"username":"APP_welJp","role":"applicant"}
+[2025-03-30 04:41:22] Getting documents for user 12
+[2025-03-30 04:41:22] Found 0 documents
+[2025-03-30 04:41:22] Documents API Request GET
+[2025-03-30 04:41:22] Token extracted from header de2eff0e093c819fba81017c4250d75f6bcbc19893067f92487c642acc7dca19
+[2025-03-30 04:41:22] User ID from query parameter 12
+[2025-03-30 04:41:22] User authenticated {"id":12,"username":"APP_welJp","role":"applicant"}
+[2025-03-30 04:41:22] Getting documents for user 12
+[2025-03-30 04:41:22] Found 0 documents
+[2025-03-30 11:45:09] Documents API Request GET
+[2025-03-30 11:45:09] Token extracted from header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:09] User ID from query parameter 9
+[2025-03-30 11:45:09] User authenticated {"id":9,"username":"applicant1","role":"applicant"}
+[2025-03-30 11:45:09] Getting documents for user 9
+[2025-03-30 11:45:09] Found 1 documents
+[2025-03-30 11:45:09] Documents API Request GET
+[2025-03-30 11:45:09] Token extracted from header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:09] User ID from query parameter 9
+[2025-03-30 11:45:09] User authenticated {"id":9,"username":"applicant1","role":"applicant"}
+[2025-03-30 11:45:09] Getting documents for user 9
+[2025-03-30 11:45:09] Found 1 documents
+[2025-03-30 11:45:10] Documents API Request GET
+[2025-03-30 11:45:10] Token extracted from header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:10] User ID from query parameter 9
+[2025-03-30 11:45:10] User authenticated {"id":9,"username":"applicant1","role":"applicant"}
+[2025-03-30 11:45:10] Getting documents for user 9
+[2025-03-30 11:45:10] Found 1 documents
+[2025-03-30 11:45:10] Documents API Request GET
+[2025-03-30 11:45:10] Token extracted from header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:10] User ID from query parameter 9
+[2025-03-30 11:45:10] User authenticated {"id":9,"username":"applicant1","role":"applicant"}
+[2025-03-30 11:45:10] Getting documents for user 9
+[2025-03-30 11:45:10] Found 1 documents
+[2025-03-30 11:45:14] Documents API Request GET
+[2025-03-30 11:45:14] Token extracted from header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:14] No valid user ID found
+[2025-03-30 11:45:14] Documents API Request GET
+[2025-03-30 11:45:14] Token extracted from header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:14] No valid user ID found
+[2025-03-30 11:45:19] Documents API Request GET
+[2025-03-30 11:45:19] Token extracted from header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:19] User ID from query parameter 9
+[2025-03-30 11:45:19] User authenticated {"id":9,"username":"applicant1","role":"applicant"}
+[2025-03-30 11:45:19] Getting documents for user 9
+[2025-03-30 11:45:19] Found 1 documents
+[2025-03-30 11:45:19] Documents API Request GET
+[2025-03-30 11:45:19] Token extracted from header 96f7d74a5fc757a9b375ad7922e38679debc9019fedb8eef47a384db3d6b125e
+[2025-03-30 11:45:19] User ID from query parameter 9
+[2025-03-30 11:45:19] User authenticated {"id":9,"username":"applicant1","role":"applicant"}
+[2025-03-30 11:45:19] Getting documents for user 9
+[2025-03-30 11:45:19] Found 1 documents

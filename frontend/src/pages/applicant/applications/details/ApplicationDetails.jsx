@@ -341,25 +341,6 @@ const ApplicationDetails = () => {
         >
           <ArrowLeft size={16} /> Back to Applications
         </Link>
-        <Link
-          to="/applicant/programs"
-          style={{
-            backgroundColor: '#1E88E5',
-            color: '#ffffff',
-            padding: '8px 16px',
-            border: 'none',
-            borderRadius: '8px',
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontSize: '0.875rem',
-            transition: 'background-color 0.3s ease',
-            ':hover': { backgroundColor: '#1565C0' }
-          }}
-        >
-          <BookOpen size={16} /> View Programs
-        </Link>
       </div>
 
       <div style={{ marginTop: '48px', maxWidth: '1200px', marginLeft: 'auto', marginRight: 'auto', padding: '24px', backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>

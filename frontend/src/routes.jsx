@@ -22,7 +22,7 @@ import Programs from './pages/admin/programs/Programs';
 import CreateProgram from './pages/admin/programs/create/CreateProgram';
 import EditProgram from './pages/admin/programs/edit/EditProgram';
 import ProgramDetails from './pages/admin/programs/details/ProgramDetails';
-import ApplicantPools from './pages/admin/applicant-pools/ApplicantPool';
+import ApplicantPool from './pages/admin/applicant-pools/ApplicantPool';
 import CreateApplicantPool from './pages/admin/applicant-pools/create/CreateApplicantPool';
 import EditApplicantPool from './pages/admin/applicant-pools/edit/EditApplicantPool';
 import ApplicantDetails from './pages/admin/applicant-pools/details/ApplicantDetails';
@@ -68,6 +68,20 @@ import QuizAttemptDetails from './pages/trainer/quizzes/attempts/QuizAttemptDeta
 import RefresherCourseDetail from './pages/trainer/refresher/details/RefresherCourseDetail';
 import EditRefresherCourse from './pages/trainer/refresher/edit/EditRefresherCourse';
 import RecordDetail from './pages/trainer/records/details/RecordDetail';
+
+
+// Import employee dashboard and components (for now, we'll reuse trainee components)
+import EmployeeDashboard from './pages/employee/dashboard/EmployeeDashboard';
+import EmployeePrograms from './pages/employee/programs/EmployeePrograms';
+import EmployeeProgramDetails from './pages/employee/programs/details/ProgramDetails';
+import EmployeeAssessments from './pages/employee/assessments/EmployeeAssessments';
+import EmployeePracticalExams from './pages/employee/practical-exams/EmployeePracticalExams';
+import EmployeePracticalExamDetails from './pages/employee/practical-exams/EmployeePracticalExamDetails';
+import EmployeePendingExam from './pages/employee/practical-exams/pending/EmployeePendingExam';
+import EmployeeExamResults from './pages/employee/practical-exams/results/EmployeeExamResults';
+import EmployeeProgress from './pages/employee/progress/EmployeeProgress';
+import EmployeeProfile from './pages/employee/profile/EmployeeProfile';
+
 // Trainee Pages
 import TraineePrograms from './pages/trainee/programs/TraineePrograms';
 import TraineeProgramDetails from './pages/trainee/programs/details/ProgramDetails';
@@ -89,13 +103,29 @@ import ApplicationDetails from './pages/applicant/applications/details/Applicati
 import UploadDocuments from './pages/applicant/upload/UploadDocuments';
 import ApplicantProfile from './pages/applicant/profile/ApplicantProfile';
 import NotificationsPage from './pages/applicant/notifications/NotificationsPage';
+import ApplicantPools from './pages/applicant/pool/ApplicantPools';
 // Shared Pages
 import NotFound from './components/shared/NotFound';
 import Notifications from './components/shared/Notifications';
 import CertificatePrint from './pages/trainee/certificates/CertificatePrint';
 import CertificateShare from './pages/trainee/certificates/CertificateShare';
+import TrainerCreateProgram from './pages/trainer/programs/create/TrainerCreateProgram';
+import TrainerEditProgram from './pages/trainer/programs/edit/TrainerEditProgram';
+import TrainerPracticalExams from './pages/trainer/practical-exams/TrainerPracticalExams';
+import TrainerCreatePracticalExam from './pages/trainer/practical-exams/create/TrainerCreatePracticalExam';
+import TrainerPracticalExamDetails from './pages/trainer/practical-exams/TrainerPracticalExamDetails';
+import TrainerEditPracticalExam from './pages/trainer/practical-exams/edit/TrainerEditPracticalExam';
+import TrainerGradePracticalExam from './pages/trainer/practical-exams/grade/TrainerGradePracticalExam';
+import TraineePracticalExams from './pages/trainee/practical-exams/TraineePracticalExams';
+import TraineePracticalExamDetails from './pages/trainee/practical-exams/TraineePracticalExamDetails';
+import TraineePendingExam from './pages/trainee/practical-exams/pending/TraineePendingExam';
+import TraineeExamResults from './pages/trainee/practical-exams/results/TraineeExamResults';
+import EnrollTrainees from './pages/trainer/programs/enroll/EnrollTrainees';
+import TraineeTakeExam from './pages/trainee/practical-exams/take/TraineeTakeExam';
+import AccessCodeManager from './pages/admin/user-management/access-code/AccessCodeManager';
+import TraineeLeaderboard from './pages/trainer/leaderboard/TraineeLeaderboard';
 
-// Protected route component
+// Update ProtectedRoute component to include employee role
 const ProtectedRoute = ({ children, role }) => {
     const token = localStorage.getItem('token');
     const userRole = localStorage.getItem('role');
@@ -109,6 +139,7 @@ const ProtectedRoute = ({ children, role }) => {
         if (userRole === 'administrator') return <Navigate to="/administrator-dashboard" />;
         if (userRole === 'trainer') return <Navigate to="/trainer-dashboard" />;
         if (userRole === 'trainee') return <Navigate to="/trainee-dashboard" />;
+        if (userRole === 'employee') return <Navigate to="/employee-dashboard" />; // Add employee redirect
         if (userRole === 'applicant') return <Navigate to="/applicant-dashboard" />;
         return <Navigate to="/login" />;
     }
@@ -177,6 +208,18 @@ const AppRoutes = () => {
                     <ProtectedRoute role="administrator">
                         <DashboardWrapper
                             component={CreateUserForm}
+                            title="Create User"
+                            role="administrator"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+               <Route
+                path="/admin/user-management/access-code/:userId"
+                element={
+                    <ProtectedRoute role="administrator">
+                        <DashboardWrapper
+                            component={AccessCodeManager}
                             title="Create User"
                             role="administrator"
                         />
@@ -264,7 +307,7 @@ const AppRoutes = () => {
                 element={
                     <ProtectedRoute role="administrator">
                         <DashboardWrapper
-                            component={ApplicantPools}
+                            component={ApplicantPool}
                             title="Applicant Pools"
                             role="administrator"
                         />
@@ -530,6 +573,111 @@ const AppRoutes = () => {
                 }
             />
 
+<Route
+                path="/trainer/practical-exams"
+                element={
+                    <ProtectedRoute role="trainer">
+                        <DashboardWrapper
+                            component={TrainerPracticalExams}
+                            title="Training Programs"
+                            role="trainer"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
+<Route
+                path="/trainer/practical-exams/create"
+                element={
+                    <ProtectedRoute role="trainer">
+                        <DashboardWrapper
+                            component={TrainerCreatePracticalExam}
+                            title="Training Programs"
+                            role="trainer"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
+<Route
+                path="/trainer/practical-exams/:examId"
+                element={
+                    <ProtectedRoute role="trainer">
+                        <DashboardWrapper
+                            component={TrainerPracticalExamDetails}
+                            title="Training Programs"
+                            role="trainer"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
+<Route
+  path="/trainee/practical-exams/:examId/take"
+  element={
+    <ProtectedRoute role="trainee">
+      <DashboardWrapper
+        component={TraineeTakeExam}
+        title="Take Practical Exam"
+        role="trainee"
+      />
+    </ProtectedRoute>
+  }
+/>
+
+            
+
+<Route
+                path="/trainer/practical-exams/:examId/edit"
+                element={
+                    <ProtectedRoute role="trainer">
+                        <DashboardWrapper
+                            component={TrainerEditPracticalExam}
+                            title="Training Programs"
+                            role="trainer"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
+<Route
+                path="/trainer/practical-exams/:examId/grade"
+                element={
+                    <ProtectedRoute role="trainer">
+                        <DashboardWrapper
+                            component={TrainerGradePracticalExam}
+                            title="Training Programs"
+                            role="trainer"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+<Route
+                path="/trainer/programs/:programId/practical-exams"
+                element={
+                    <ProtectedRoute role="trainer">
+                        <DashboardWrapper
+                            component={TrainerPracticalExams }
+                            title="Training Programs"
+                            role="trainer"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+            
+            <Route
+                path="/trainer/programs/:programId/enroll-trainees"
+                element={
+                    <ProtectedRoute role="trainer">
+                        <DashboardWrapper
+                            component={EnrollTrainees }
+                            title="Training Programs"
+                            role="trainer"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
             {/* Trainer Programs */}
             <Route
                 path="/trainer/programs"
@@ -538,6 +686,31 @@ const AppRoutes = () => {
                         <DashboardWrapper
                             component={TrainerPrograms}
                             title="Training Programs"
+                            role="trainer"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
+<Route
+                path="/trainer/programs/create"
+                element={
+                    <ProtectedRoute role="trainer">
+                        <DashboardWrapper
+                            component={TrainerCreateProgram}
+                            title="Creating Programs"
+                            role="trainer"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+                 <Route
+                path="/trainer/programs/edit/:id"
+                element={
+                    <ProtectedRoute role="trainer">
+                        <DashboardWrapper
+                            component={TrainerEditProgram}
+                            title="Editing Programs"
                             role="trainer"
                         />
                     </ProtectedRoute>
@@ -693,7 +866,21 @@ const AppRoutes = () => {
                     </ProtectedRoute>
                 }
             />
-            <Route
+
+            {/* Trainer leaderboard main page */}
+<Route
+    path="/trainer/leaderboard"
+    element={
+        <ProtectedRoute role="trainer">
+            <DashboardWrapper
+                component={TraineeLeaderboard}
+                title="Trainee Leaderboard"
+                role="trainer"
+            />
+        </ProtectedRoute>
+    }
+/>
+         <Route
                 path="/trainer/trainees/:traineeId"
                 element={
                     <ProtectedRoute role="trainer">
@@ -832,6 +1019,151 @@ const AppRoutes = () => {
                 }
             />
 
+
+            {/* ========== EMPLOYEE ROUTES ========== */}
+<Route
+    path="/employee-dashboard"
+    element={
+        <ProtectedRoute role="employee">
+            <DashboardWrapper
+                component={EmployeeDashboard}
+                title="Employee Dashboard"
+                role="employee"
+            />
+        </ProtectedRoute>
+    }
+/>
+
+{/* Employee Programs */}
+<Route
+    path="/employee/programs"
+    element={
+        <ProtectedRoute role="employee">
+            <DashboardWrapper
+                component={EmployeePrograms}
+                title="My Programs"
+                role="employee"
+            />
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/employee/programs/:programId"
+    element={
+        <ProtectedRoute role="employee">
+            <DashboardWrapper
+                component={EmployeeProgramDetails}
+                title="Program Details"
+                role="employee"
+            />
+        </ProtectedRoute>
+    }
+/>
+
+{/* Employee Practical Exams */}
+<Route
+    path="/employee/practical-exams"
+    element={
+        <ProtectedRoute role="employee">
+            <DashboardWrapper
+                component={EmployeePracticalExams}
+                title="Practical Exams"
+                role="employee"
+            />
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/employee/practical-exams/:examId"
+    element={
+        <ProtectedRoute role="employee">
+            <DashboardWrapper
+                component={EmployeePracticalExamDetails}
+                title="Exam Details"
+                role="employee"
+            />
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/employee/practical-exams/:examId/pending"
+    element={
+        <ProtectedRoute role="employee">
+            <DashboardWrapper
+                component={EmployeePendingExam}
+                title="Pending Exam"
+                role="employee"
+            />
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/employee/practical-exams/:examId/results/:attemptId"
+    element={
+        <ProtectedRoute role="employee">
+            <DashboardWrapper
+                component={EmployeeExamResults}
+                title="Exam Results"
+                role="employee"
+            />
+        </ProtectedRoute>
+    }
+/>
+<Route
+    path="/employee/programs/:programId/practical-exams"
+    element={
+        <ProtectedRoute role="employee">
+            <DashboardWrapper
+                component={EmployeePracticalExams}
+                title="Program Exams"
+                role="employee"
+            />
+        </ProtectedRoute>
+    }
+/>
+
+{/* Employee Assessments */}
+<Route
+    path="/employee/assessments"
+    element={
+        <ProtectedRoute role="employee">
+            <DashboardWrapper
+                component={EmployeeAssessments}
+                title="Assessments"
+                role="employee"
+            />
+        </ProtectedRoute>
+    }
+/>
+
+{/* Employee Progress */}
+<Route
+    path="/employee/progress"
+    element={
+        <ProtectedRoute role="employee">
+            <DashboardWrapper
+                component={EmployeeProgress}
+                title="Progress Tracking"
+                role="employee"
+            />
+        </ProtectedRoute>
+    }
+/>
+
+{/* Employee Profile */}
+<Route
+    path="/employee/profile"
+    element={
+        <ProtectedRoute role="employee">
+            <DashboardWrapper
+                component={EmployeeProfile}
+                title="Profile"
+                role="employee"
+            />
+        </ProtectedRoute>
+    }
+/>
+
             {/* ========== TRAINEE ROUTES ========== */}
             <Route
                 path="/trainee-dashboard"
@@ -846,6 +1178,73 @@ const AppRoutes = () => {
                 }
             />
 
+<Route
+                path="/trainee/practical-exams"
+                element={
+                    <ProtectedRoute role="trainee">
+                        <DashboardWrapper
+                            component={TraineePracticalExams}
+                            title="My Programs"
+                            role="trainee"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
+<Route
+                path="/trainee/practical-exams/:examId"
+                element={
+                    <ProtectedRoute role="trainee">
+                        <DashboardWrapper
+                            component={TraineePracticalExamDetails}
+                            title="My Programs"
+                            role="trainee"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
+<Route
+                path="/trainee/practical-exams/:examId/pending"
+                element={
+                    <ProtectedRoute role="trainee">
+                        <DashboardWrapper
+                            component={TraineePendingExam}
+                            title="My Programs"
+                            role="trainee"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
+<Route
+                path="/trainee/practical-exams/:examId/results/:attemptId"
+                element={
+                    <ProtectedRoute role="trainee">
+                        <DashboardWrapper
+                            component={TraineeExamResults}
+                            title="My Programs"
+                            role="trainee"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
+<Route
+                path="/trainee/programs/:programId/practical-exams"
+                element={
+                    <ProtectedRoute role="trainee">
+                        <DashboardWrapper
+                            component={TraineePracticalExams }
+                            title="My Programs"
+                            role="trainee"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
+            
+            
             {/* Trainee Programs */}
             <Route
                 path="/trainee/programs"
@@ -1038,6 +1437,19 @@ const AppRoutes = () => {
                         <DashboardWrapper
                             component={ApplicantPrograms}
                             title="Available Programs"
+                            role="applicant"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+
+<Route
+                path="/applicant/pool"
+                element={
+                    <ProtectedRoute role="applicant">
+                        <DashboardWrapper
+                            component={ApplicantPools}
+                            title="Pool"
                             role="applicant"
                         />
                     </ProtectedRoute>

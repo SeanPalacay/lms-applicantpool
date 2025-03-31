@@ -1,0 +1,25 @@
+[2025-03-30 03:58:17] Access code validation request received
+[2025-03-30 03:58:17] Database connection successful
+[2025-03-30 03:58:17] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-30 03:58:17] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-30 03:58:17] Missing access code
+[2025-03-30 03:58:21] Access code validation request received
+[2025-03-30 03:58:21] Database connection successful
+[2025-03-30 03:58:21] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-30 03:58:21] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-30 03:58:21] Missing access code
+[2025-03-30 03:58:25] Access code validation request received
+[2025-03-30 03:58:25] Database connection successful
+[2025-03-30 03:58:25] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-30 03:58:25] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-30 03:58:25] Missing access code
+[2025-03-30 03:58:38] Access code validation request received
+[2025-03-30 03:58:38] Database connection successful
+[2025-03-30 03:58:38] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-30 03:58:38] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-30 03:58:38] Missing access code
+[2025-03-30 04:01:30] Access code validation request received
+[2025-03-30 04:01:30] Database connection successful
+[2025-03-30 04:01:30] Raw request data {"username":"admin","password":"test123123"}
+[2025-03-30 04:01:30] Decoded data {"username":"admin","password":"test123123"}
+[2025-03-30 04:01:30] Missing access code

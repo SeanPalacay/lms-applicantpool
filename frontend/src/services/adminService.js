@@ -868,20 +868,204 @@ deleteBackup: async (backupId) => {
         try {
             const authToken = localStorage.getItem('authToken');
             if (!authToken) throw new Error('Authentication required. Please login again.');
+            
             const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/users.php`;
             console.log('Creating user from:', url);
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-                body: JSON.stringify(userData)
-            });
-            if (!response.ok) throw new Error(`Failed to create user: ${await response.text()}`);
-            return await response.json();
+            
+            // If creating an applicant, ensure access code is set
+            if (userData.role === 'applicant' && userData.access_code) {
+                // Create a copy of userData to avoid modifying the original
+                const userDataCopy = { ...userData };
+                
+                // Remove access_code from userDataCopy as it's handled separately
+                delete userDataCopy.access_code;
+                
+                // First create the user
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+                    body: JSON.stringify(userDataCopy)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Failed to create user: ${errorText}`);
+                }
+                
+                const userResponse = await response.json();
+                
+                // Then create the access code
+                const accessCodeData = {
+                    user_id: userResponse.id,
+                    code: userData.access_code,
+                    expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days from now
+                };
+                
+                await adminService.createAccessCode(accessCodeData);
+                
+                return userResponse;
+            } else {
+                // For non-applicant users, proceed as before
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+                    body: JSON.stringify(userData)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Failed to create user: ${errorText}`);
+                }
+                
+                return await response.json();
+            }
         } catch (error) {
             console.error('Error in createUser:', error.message, error.stack);
             throw error;
         }
     },
+
+    // Add these functions to your adminService object
+
+// Add these functions to your adminService object
+
+getAccessCodes: async () => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) throw new Error('Authentication required. Please login again.');
+        
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/access-codes.php`;
+        console.log('Fetching access codes from:', url);
+        
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to fetch access codes: ${errorText}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error in getAccessCodes:', error.message, error.stack);
+        throw error;
+    }
+},
+
+getAccessCodesByUser: async (userId) => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) throw new Error('Authentication required. Please login again.');
+        
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/access-codes.php?user_id=${userId}`;
+        console.log('Fetching user access codes from:', url);
+        
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to fetch user access codes: ${errorText}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error in getAccessCodesByUser:', error.message, error.stack);
+        throw error;
+    }
+},
+
+createAccessCode: async (codeData) => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) throw new Error('Authentication required. Please login again.');
+        
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/access-codes.php`;
+        console.log('Creating access code at:', url);
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify(codeData)
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to create access code: ${errorText}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error in createAccessCode:', error.message, error.stack);
+        throw error;
+    }
+},
+
+revokeAccessCode: async (codeId) => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) throw new Error('Authentication required. Please login again.');
+        
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/access-codes.php?id=${codeId}`;
+        console.log('Revoking access code from:', url);
+        
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to revoke access code: ${errorText}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error in revokeAccessCode:', error.message, error.stack);
+        throw error;
+    }
+},
+
+validateAccessCode: async (code) => {
+    try {
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/auth/validate-code.php`;
+        console.log('Validating access code at:', url);
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ code })
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Invalid access code: ${errorText}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error in validateAccessCode:', error.message, error.stack);
+        throw error;
+    }
+},
     
     updateUser: async (userId, userData) => {
         try {
@@ -1383,6 +1567,36 @@ addIncidentNote: async (noteData) => {
         return data;
     } catch (error) {
         console.error('Error in addIncidentNote:', error.message, error.stack);
+        throw error;
+    }
+},
+
+sendAccessCodeEmail: async (emailData) => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) throw new Error('Authentication required. Please login again.');
+        
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/access-codes.php?action=send-email`;
+        console.log('Sending access code email from:', url);
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify(emailData)
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Server error response:', errorText);
+            throw new Error(`Failed to send access code email: ${errorText}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error in sendAccessCodeEmail:', error.message, error.stack);
         throw error;
     }
 },

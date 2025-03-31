@@ -1,20 +1,10 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Set JSON headers early
+// File: backend/api/applicant/job-roles.php
 header('Content-Type: application/json');
-
-// Optionally disable display_errors in production
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-ini_set('error_log', 'C:/xampp/php/logs/php_error_log'); // Adjust path or remove
-
-require_once __DIR__ . '/../../shared/cors_middleware.php';
+require_once '../../shared/cors_middleware.php';
 require_once __DIR__ . '/../../config/db_config.php';
 
-// Read Authorization header for Bearer token
+// Check authorization header
 $headers = getallheaders();
 $authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
 $token = '';
@@ -23,12 +13,12 @@ if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
     $token = $matches[1];
 }
 
-// Fallback: accept token in the query string (for testing only)
+// If no token in header, check if it's in the query string (for testing)
 if (empty($token) && isset($_GET['token'])) {
     $token = $_GET['token'];
 }
 
-// If token is still empty, return 401
+// Simple token check
 if (empty($token)) {
     http_response_code(401);
     echo json_encode(['error' => 'Authentication required']);
@@ -36,119 +26,186 @@ if (empty($token)) {
 }
 
 try {
-    if (!isset($pdo)) {
-        throw new Exception('Database connection not established');
+    // Get job roles from the job_positions table with department filtering if provided
+    $query = "
+        SELECT 
+            jp.id,
+            jp.department,
+            jp.position_name as title,
+            jp.description,
+            jp.is_active
+        FROM 
+            job_positions jp
+        WHERE 
+            jp.is_active = 1
+    ";
+    
+    // Add department filter if provided
+    if (isset($_GET['department']) && !empty($_GET['department'])) {
+        $query .= " AND jp.department = :department";
     }
     
-    // In a production environment, this data would come from a database table
-    // For this example, we'll return structured sample data
-    $jobRoles = [
-        [
-            'id' => 1,
-            'title' => 'Loan Officer',
-            'department' => 'Operations',
-            'description' => 'Evaluate loan applications, ensure compliance with lending policies, and provide excellent customer service.',
-            'requirements' => [
-                'Bachelor\'s degree in Finance, Business, or related field',
-                'Strong analytical and decision-making skills',
-                'Excellent communication and interpersonal abilities',
-                'Knowledge of lending regulations and compliance requirements'
-            ],
-            'responsibilities' => [
-                'Process and evaluate loan applications',
-                'Conduct financial analysis and risk assessment',
-                'Ensure compliance with lending policies and regulations',
-                'Build and maintain client relationships',
-                'Document and maintain accurate records'
-            ],
-            'programs' => ['Loan Officer Basics', 'Advanced Loan Training']
-        ],
-        [
-            'id' => 2,
-            'title' => 'Financial Educator',
-            'department' => 'Training',
-            'description' => 'Develop and deliver financial literacy training programs to clients and community members.',
-            'requirements' => [
-                'Bachelor\'s degree in Education, Finance, or related field',
-                'Teaching or training experience',
-                'Strong presentation and public speaking skills',
-                'Knowledge of personal finance and financial literacy concepts'
-            ],
-            'responsibilities' => [
-                'Develop financial literacy curriculum and training materials',
-                'Conduct workshops and training sessions',
-                'Assess learning outcomes and program effectiveness',
-                'Stay updated on financial education best practices',
-                'Collaborate with community organizations'
-            ],
-            'programs' => ['Policy Refresher 2025']
-        ],
-        [
-            'id' => 3,
-            'title' => 'Credit Analyst',
-            'department' => 'Risk Management',
-            'description' => 'Analyze financial data to assess credit risk and make recommendations on loan approvals.',
-            'requirements' => [
-                'Bachelor\'s degree in Finance, Accounting, or related field',
-                'Strong analytical and quantitative skills',
-                'Proficiency in financial analysis software',
-                'Knowledge of credit risk assessment methodologies'
-            ],
-            'responsibilities' => [
-                'Evaluate creditworthiness of loan applicants',
-                'Analyze financial statements and credit reports',
-                'Assess collateral values and loan security',
-                'Prepare credit risk reports and recommendations',
-                'Monitor and review existing loan portfolios'
-            ],
-            'programs' => ['Advanced Loan Training']
-        ]
-    ];
+    // Add ordering
+    $query .= " ORDER BY jp.department, jp.position_name";
     
-    // In a real implementation, you would fetch data from a database table
-    // For example:
-    /*
-    $query = "SELECT id, title, department, description FROM job_roles";
     $stmt = $pdo->prepare($query);
-    $stmt->execute();
-    $jobRoles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Then fetch requirements, responsibilities, and related programs for each role
-    foreach ($jobRoles as &$role) {
-        // Fetch requirements
-        $reqQuery = "SELECT requirement FROM job_requirements WHERE job_role_id = ?";
-        $reqStmt = $pdo->prepare($reqQuery);
-        $reqStmt->execute([$role['id']]);
-        $role['requirements'] = $reqStmt->fetchAll(PDO::FETCH_COLUMN);
-        
-        // Fetch responsibilities
-        $respQuery = "SELECT responsibility FROM job_responsibilities WHERE job_role_id = ?";
-        $respStmt = $pdo->prepare($respQuery);
-        $respStmt->execute([$role['id']]);
-        $role['responsibilities'] = $respStmt->fetchAll(PDO::FETCH_COLUMN);
-        
-        // Fetch related programs
-        $progQuery = "SELECT p.title FROM programs p 
-                      JOIN job_programs jp ON p.id = jp.program_id 
-                      WHERE jp.job_role_id = ?";
-        $progStmt = $pdo->prepare($progQuery);
-        $progStmt->execute([$role['id']]);
-        $role['programs'] = $progStmt->fetchAll(PDO::FETCH_COLUMN);
+    // Bind department parameter if provided
+    if (isset($_GET['department']) && !empty($_GET['department'])) {
+        $stmt->bindParam(':department', $_GET['department'], PDO::PARAM_STR);
     }
-    */
     
-    // Return the job roles
-    echo json_encode($jobRoles);
-
+    $stmt->execute();
+    $positions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Enhanced positions array
+    $enhancedPositions = [];
+    
+    foreach ($positions as $position) {
+        // Get requirements from job_requirements table
+        $requirementsQuery = "
+            SELECT requirement 
+            FROM job_requirements 
+            WHERE position_id = :position_id
+        ";
+        
+        $requirementsStmt = $pdo->prepare($requirementsQuery);
+        $requirementsStmt->bindParam(':position_id', $position['id'], PDO::PARAM_INT);
+        $requirementsStmt->execute();
+        
+        $requirements = $requirementsStmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        // If no requirements found, provide default ones based on the position category
+        if (empty($requirements)) {
+            $requirements = [
+                "Experience in {$position['title']} role",
+                "Knowledge of {$position['department']} processes",
+                "Communication and teamwork skills",
+                "Problem-solving abilities"
+            ];
+        }
+        
+        // Get responsibilities from job_responsibilities table
+        $responsibilitiesQuery = "
+            SELECT responsibility 
+            FROM job_responsibilities 
+            WHERE position_id = :position_id
+        ";
+        
+        $responsibilitiesStmt = $pdo->prepare($responsibilitiesQuery);
+        $responsibilitiesStmt->bindParam(':position_id', $position['id'], PDO::PARAM_INT);
+        $responsibilitiesStmt->execute();
+        
+        $responsibilities = $responsibilitiesStmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        // If no responsibilities found, provide default ones based on the position
+        if (empty($responsibilities)) {
+            $responsibilities = [
+                "Perform {$position['title']} duties",
+                "Collaborate with team members in {$position['department']}",
+                "Maintain accurate records",
+                "Report to department supervisor"
+            ];
+        }
+        
+        // Get related programs from position_program_relation and programs tables
+        $programsQuery = "
+            SELECT p.title, p.id
+            FROM programs p
+            JOIN position_program_relation ppr ON p.id = ppr.program_id
+            WHERE ppr.position_id = :position_id
+            ORDER BY p.title
+        ";
+        
+        $programsStmt = $pdo->prepare($programsQuery);
+        $programsStmt->bindParam(':position_id', $position['id'], PDO::PARAM_INT);
+        $programsStmt->execute();
+        
+        $programs = $programsStmt->fetchAll(PDO::FETCH_COLUMN, 0);
+        
+        // If no programs found, find any that might be related by keyword in the title
+        if (empty($programs)) {
+            $keywordProgramsQuery = "
+                SELECT title 
+                FROM programs 
+                WHERE title LIKE :keyword1 OR title LIKE :keyword2 OR description LIKE :keyword3
+                LIMIT 2
+            ";
+            
+            $keywordProgramsStmt = $pdo->prepare($keywordProgramsQuery);
+            $keyword1 = "%{$position['title']}%";
+            $keyword2 = "%{$position['department']}%";
+            $keyword3 = "%{$position['title']}%";
+            
+            $keywordProgramsStmt->bindParam(':keyword1', $keyword1, PDO::PARAM_STR);
+            $keywordProgramsStmt->bindParam(':keyword2', $keyword2, PDO::PARAM_STR);
+            $keywordProgramsStmt->bindParam(':keyword3', $keyword3, PDO::PARAM_STR);
+            $keywordProgramsStmt->execute();
+            
+            $programs = $keywordProgramsStmt->fetchAll(PDO::FETCH_COLUMN);
+        }
+        
+        // If still no programs found, get the latest 2 company-wide programs
+        if (empty($programs)) {
+            $generalProgramsQuery = "
+                SELECT title 
+                FROM programs 
+                WHERE type = 'regular'
+                ORDER BY created_at DESC
+                LIMIT 2
+            ";
+            
+            $generalProgramsStmt = $pdo->prepare($generalProgramsQuery);
+            $generalProgramsStmt->execute();
+            
+            $programs = $generalProgramsStmt->fetchAll(PDO::FETCH_COLUMN);
+        }
+        
+        // Create enhanced position object
+        $enhancedPosition = [
+            'id' => $position['id'],
+            'title' => $position['title'],
+            'department' => $position['department'],
+            'description' => $position['description'] ?: "This position plays a key role in the {$position['department']} department.",
+            'requirements' => $requirements,
+            'responsibilities' => $responsibilities,
+            'programs' => $programs
+        ];
+        
+        $enhancedPositions[] = $enhancedPosition;
+    }
+    
+    // Add pagination metadata if requested
+    if (isset($_GET['page']) && isset($_GET['limit'])) {
+        $page = (int)$_GET['page'];
+        $limit = (int)$_GET['limit'];
+        $offset = ($page - 1) * $limit;
+        
+        $totalPositions = count($enhancedPositions);
+        $totalPages = ceil($totalPositions / $limit);
+        
+        $paginatedPositions = array_slice($enhancedPositions, $offset, $limit);
+        
+        $response = [
+            'data' => $paginatedPositions,
+            'pagination' => [
+                'total' => $totalPositions,
+                'per_page' => $limit,
+                'current_page' => $page,
+                'last_page' => $totalPages
+            ]
+        ];
+        
+        echo json_encode($response);
+    } else {
+        // Return all positions without pagination
+        echo json_encode($enhancedPositions);
+    }
+    
 } catch (PDOException $e) {
-    error_log("Job Roles API PDO Error: " . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => 'Database error', 'message' => $e->getMessage()]);
-    exit;
+    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
 } catch (Exception $e) {
-    error_log("Job Roles API General Error: " . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => 'Server error', 'message' => $e->getMessage()]);
-    exit;
+    echo json_encode(['error' => 'Error: ' . $e->getMessage()]);
 }
-?>

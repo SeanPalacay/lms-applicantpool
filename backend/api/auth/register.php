@@ -1,11 +1,10 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost:3000"); // Adjust to your frontend origin
+header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
-// Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit(0);
@@ -15,16 +14,13 @@ function debug_log($message, $data = null) {
     $log_file = "register_debug.log";
     $timestamp = date('Y-m-d H:i:s');
     $log_entry = "[$timestamp] $message";
-    if ($data !== null) {
-        $log_entry .= " " . json_encode($data);
-    }
+    if ($data !== null) $log_entry .= " " . json_encode($data);
     file_put_contents($log_file, $log_entry . PHP_EOL, FILE_APPEND);
 }
 
 debug_log("Registration request received");
 
 try {
-    // Database connection
     require_once "../../config/db_config.php";
     if (!isset($pdo) || !$pdo) {
         debug_log("Database connection failed: PDO not initialized");
@@ -50,8 +46,7 @@ try {
         exit;
     }
 
-    // Validate required fields
-    $required_fields = ['username', 'password', 'full_name', 'role'];
+    $required_fields = ['first_name', 'last_name', 'email', 'password', 'role'];
     foreach ($required_fields as $field) {
         if (!isset($data[$field]) || empty($data[$field])) {
             debug_log("Missing required field", $field);
@@ -61,44 +56,40 @@ try {
         }
     }
 
-    // Sanitize inputs
-    $username = htmlspecialchars(trim($data['username']));
+    $first_name = htmlspecialchars(trim($data['first_name']));
+    $last_name = htmlspecialchars(trim($data['last_name']));
+    $email = filter_var(trim($data['email']), FILTER_SANITIZE_EMAIL);
     $password = $data['password'];
-    $email = isset($data['email']) && !empty($data['email']) ? filter_var(trim($data['email']), FILTER_SANITIZE_EMAIL) : null;
-    $full_name = htmlspecialchars(trim($data['full_name']));
     $role = htmlspecialchars(trim($data['role']));
+    $full_name = "$first_name $last_name";
 
-    // Validate email if provided
-    if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         debug_log("Invalid email format", $email);
         http_response_code(400);
         echo json_encode(['error' => 'Invalid email format']);
         exit;
     }
 
-    // Validate role
-    $allowedRoles = ['administrator', 'trainer', 'trainee', 'applicant'];
-    if (!in_array($role, $allowedRoles)) {
-        debug_log("Invalid role", $role);
+    if ($role !== 'applicant') {
+        debug_log("Invalid role for this endpoint", $role);
         http_response_code(400);
-        echo json_encode(['error' => 'Invalid role']);
+        echo json_encode(['error' => 'This registration endpoint is for applicants only']);
         exit;
     }
 
-    // Check for existing user
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR (email = ? AND email IS NOT NULL)");
-    $stmt->execute([$username, $email]);
-    if ($stmt->fetch()) {
-        debug_log("User already exists", ['username' => $username, 'email' => $email]);
-        http_response_code(409);
-        echo json_encode(['error' => 'A user with this username or email already exists']);
-        exit;
+    // Generate unique username
+    $base_username = strtolower($first_name[0] . $last_name);
+    $username = $base_username;
+    $suffix = 1;
+    while (true) {
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+        $stmt->execute([$username]);
+        if (!$stmt->fetch()) break;
+        $username = $base_username . $suffix++;
     }
 
-    // Hash password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // Insert user
     $stmt = $pdo->prepare("
         INSERT INTO users (username, password, full_name, email, role, status, created_at)
         VALUES (?, ?, ?, ?, ?, 'active', NOW())
@@ -111,9 +102,9 @@ try {
     echo json_encode([
         'success' => true,
         'message' => 'Registration successful',
-        'user_id' => $userId
+        'user_id' => $userId,
+        'username' => $username
     ]);
-
 } catch (Exception $e) {
     debug_log("Registration error", $e->getMessage());
     http_response_code(500);

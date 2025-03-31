@@ -51,12 +51,21 @@ const DashboardLayout = ({ title, role, children }) => {
     savedNotifications ? JSON.parse(savedNotifications) : defaultNotifications
   );
 
-  const roleToPathMap = {
-    'administrator': 'admin',
-    'trainer': 'trainer',
-    'trainee': 'trainee',
-    'applicant': 'applicant'
-  };
+// Update the roleToPathMap object in DashboardLayout.js
+
+const roleToPathMap = {
+
+  'administrator': 'admin',
+
+  'trainer': 'trainer',
+
+  'trainee': 'trainee',
+
+  'employee': 'employee', // Add employee route path
+
+  'applicant': 'applicant'
+
+};
 
   const navRole = roleToPathMap[role] || role; // Use mapped role for paths
 
@@ -206,8 +215,9 @@ const DashboardLayout = ({ title, role, children }) => {
     trainer: [
       { path: '/trainer-dashboard', label: 'Dashboard', iconName: 'dashboard' },
       { path: '/trainer/programs', label: 'Programs', iconName: 'programs' },
+      { path: '/trainer/practical-exams', label: 'Exam', iconName: 'certificates' },
       { path: '/trainer/quizzes', label: 'Quizzes & Assessments', iconName: 'quizzes' },
-      { path: '/trainer/milestones', label: 'Milestones', iconName: 'milestones' },
+      // { path: '/trainer/milestones', label: 'Milestones', iconName: 'milestones' },
       { path: '/trainer/trainees', label: 'Trainees', iconName: 'trainees' },
       { path: '/trainer/refresher-courses', label: 'Refresher Courses', iconName: 'refresher' },
       { path: '/trainer/records', label: 'Training Records', iconName: 'trainer-records' },
@@ -216,15 +226,31 @@ const DashboardLayout = ({ title, role, children }) => {
     trainee: [
       { path: '/trainee-dashboard', label: 'Dashboard', iconName: 'dashboard' },
       { path: '/trainee/programs', label: 'My Programs', iconName: 'my-programs' },
+      { path: '/trainee/practical-exams', label: 'Exam', iconName: 'certificates' },
       { path: '/trainee/assessments', label: 'Assessments', iconName: 'assessments' },
       { path: '/trainee/progress', label: 'Progress Tracking', iconName: 'progress' },
-      { path: '/trainee/milestones', label: 'Milestones', iconName: 'milestones' },
-      { path: '/trainee/certificates', label: 'Certificates', iconName: 'certificates' },
+      // { path: '/trainee/certificates', label: 'Certificates', iconName: 'certificates' },
       { path: '/trainee/profile', label: 'Profile', iconName: 'trainee-profile' },
+    ],
+    employee: [
+
+      { path: '/employee-dashboard', label: 'Dashboard', iconName: 'dashboard' },
+  
+      { path: '/employee/programs', label: 'My Programs', iconName: 'my-programs' },
+  
+      { path: '/employee/practical-exams', label: 'Exam', iconName: 'certificates' },
+  
+      { path: '/employee/assessments', label: 'Assessments', iconName: 'assessments' },
+  
+      { path: '/employee/progress', label: 'Progress Tracking', iconName: 'progress' },
+  
+      { path: '/employee/profile', label: 'Profile', iconName: 'trainee-profile' },
+  
     ],
     applicant: [
       { path: '/applicant-dashboard', label: 'Dashboard', iconName: 'dashboard' },
-      { path: '/applicant/programs', label: 'Available Programs', iconName: 'available-programs' },
+      // { path: '/applicant/programs', label: 'Available Programs', iconName: 'available-programs' },
+      { path: '/applicant/pool', label: 'Application Pool', iconName: 'available-programs' },
       { path: '/applicant/job-roles', label: 'Job Roles', iconName: 'job-roles' },
       { path: '/applicant/applications', label: 'My Applications', iconName: 'applications' },
       { path: '/applicant/upload', label: 'Upload Documents', iconName: 'upload' },
@@ -264,7 +290,7 @@ const DashboardLayout = ({ title, role, children }) => {
         <div className="sidebar-header">
           <div className="sidebar-logo">
             <img src="/assets/images/logocolor.png" alt="Logo" className="logo" />
-            <span className="logo-text">Forbes LMS</span>
+            {/* <span className="logo-text">Forbes LMS</span> */}
           </div>
         </div>
         
@@ -298,14 +324,14 @@ const DashboardLayout = ({ title, role, children }) => {
           ))}
         </nav>
         
-        <div className="sidebar-footer">
+        {/* <div className="sidebar-footer">
           <button onClick={handleLogout} className="logout-button">
             <span className="sidebar-icon">
               <LogOut size={18} />
             </span>
             <span>Logout</span>
           </button>
-        </div>
+        </div> */}
       </aside>
 
       {/* Main Content */}
@@ -427,10 +453,15 @@ const DashboardLayout = ({ title, role, children }) => {
   );
 };
 
+
 DashboardLayout.propTypes = {
+
   title: PropTypes.string.isRequired,
-  role: PropTypes.oneOf(['administrator', 'trainer', 'trainee', 'applicant']).isRequired,
+
+  role: PropTypes.oneOf(['administrator', 'trainer', 'trainee', 'employee', 'applicant']).isRequired,
+
   children: PropTypes.node.isRequired
+
 };
 
 export default DashboardLayout;

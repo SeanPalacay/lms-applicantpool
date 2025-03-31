@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Plus, Search, Filter, RefreshCw, 
-  Edit, Trash2, Users, CheckCircle, XCircle, Clock
+  Edit, Trash2, Users, CheckCircle, XCircle, Clock,
+  Briefcase, Building
 } from 'lucide-react';
 import applicantService from '../../../services/applicantService';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
@@ -12,14 +13,17 @@ const ApplicantPool = ({ onBack }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [pools, setPools] = useState([]);
-  const [applications, setApplications] = useState([]);
   const [selectedPool, setSelectedPool] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [departmentFilter, setDepartmentFilter] = useState('all');
+  const [departments, setDepartments] = useState([]);
+  const [positions, setPositions] = useState([]);
 
   useEffect(() => {
     fetchPools();
-    fetchApplications();
+    fetchDepartments();
+    fetchPositions();
   }, []);
 
   const fetchPools = async () => {
@@ -36,12 +40,47 @@ const ApplicantPool = ({ onBack }) => {
     }
   };
 
-  const fetchApplications = async (filters = {}) => {
+  const fetchDepartments = async () => {
     try {
-      const data = await applicantService.getApplications(filters);
-      setApplications(data);
+      // This would be replaced with an actual API call in a real implementation
+      const data = [
+        { id: 1, name: 'Human Resources' },
+        { id: 2, name: 'Accounting and Finance' },
+        { id: 3, name: 'Compliance and Strategic Support' },
+        { id: 4, name: 'Client Development and Services' },
+        { id: 5, name: 'Internal Audit' },
+        { id: 6, name: 'General Services' },
+        { id: 7, name: 'Operations' }
+      ];
+      setDepartments(data);
     } catch (err) {
-      console.error('Error fetching applications:', err);
+      console.error('Error fetching departments:', err);
+    }
+  };
+
+  const fetchPositions = async () => {
+    try {
+      // This would be replaced with an actual API call in a real implementation
+      const data = [
+        { id: 1, department: 'Human Resources', name: 'HR Department Head' },
+        { id: 2, department: 'Human Resources', name: 'Employee Relations Specialist' },
+        { id: 3, department: 'Human Resources', name: 'Employee Welfare Specialist' },
+        { id: 4, department: 'Human Resources', name: 'Talent Acquisition Specialist' },
+        { id: 5, department: 'Human Resources', name: 'Graphic Artist' },
+        { id: 6, department: 'Accounting and Finance', name: 'Finance Department Head' },
+        { id: 7, department: 'Accounting and Finance', name: 'Accounting Specialist' },
+        { id: 8, department: 'Accounting and Finance', name: 'Payroll Specialist' },
+        { id: 9, department: 'Operations', name: 'Operations Head' },
+        { id: 10, department: 'Operations', name: 'Area Manager' },
+        { id: 11, department: 'Operations', name: 'Branch Manager' },
+        { id: 12, department: 'Operations', name: 'Loan Officer' },
+        { id: 13, department: 'Operations', name: 'Account Officer' },
+        { id: 14, department: 'Operations', name: 'Bookkeeper' },
+        { id: 15, department: 'Operations', name: 'Support Staff' }
+      ];
+      setPositions(data);
+    } catch (err) {
+      console.error('Error fetching positions:', err);
     }
   };
 
@@ -76,9 +115,8 @@ const ApplicantPool = ({ onBack }) => {
   const handleUpdateStatus = async (applicationId, newStatus) => {
     try {
       await applicantService.updateApplicationStatus(applicationId, newStatus);
-      setApplications(applications.map(app => 
-        app.id === applicationId ? { ...app, status: newStatus } : app
-      ));
+      
+      // Update local state
       if (selectedPool && selectedPool.applicants) {
         setSelectedPool({
           ...selectedPool,
@@ -93,45 +131,88 @@ const ApplicantPool = ({ onBack }) => {
     }
   };
 
-  const handleAssignToPool = async (applicationId) => {
-    if (!selectedPool) return;
-    try {
-      await applicantService.assignApplicantToPool(applicationId, selectedPool.id);
-      const pool = await applicantService.getApplicantPoolById(selectedPool.id);
-      const applicants = await applicantService.getApplicantsByPool(selectedPool.id);
-      setSelectedPool({ ...pool, applicants });
-    } catch (err) {
-      console.error('Error assigning applicant to pool:', err);
-      alert('Failed to assign applicant to pool. Please try again.');
-    }
-  };
-
   const handleRemoveFromPool = async (assignmentId) => {
-    if (window.confirm('Are you sure you want to remove this applicant from the pool?')) {
+    if (window.confirm('Are you sure you want to delete this applicant from the pool? This action will permanently delete the applicant and their application from the system.')) {
       try {
+        // Call the service to remove the applicant from the database
         await applicantService.removeApplicantFromPool(assignmentId);
+        
+        // Update the local state to remove the applicant
         if (selectedPool) {
-          const pool = await applicantService.getApplicantPoolById(selectedPool.id);
-          const applicants = await applicantService.getApplicantsByPool(selectedPool.id);
-          setSelectedPool({ ...pool, applicants });
+          setSelectedPool({
+            ...selectedPool,
+            applicants: selectedPool.applicants.filter(app => app.id !== assignmentId)
+          });
         }
+        
+        // Show success message
+        alert('Applicant successfully deleted from the system.');
       } catch (err) {
-        console.error('Error removing applicant from pool:', err);
-        alert('Failed to remove applicant from pool. Please try again.');
+        console.error('Error deleting applicant from pool:', err);
+        alert('Failed to delete applicant from pool. Please try again.');
       }
     }
   };
 
   const handleRefresh = () => {
     fetchPools();
-    fetchApplications();
     if (selectedPool) handleSelectPool(selectedPool);
   };
 
   const handleSearch = (e) => setSearchTerm(e.target.value);
+
   const handleFilterChange = (e) => {
     setStatusFilter(e.target.value);
-    fetchApplications({ status: e.target.value === 'all' ? '' : e.target.value });
+    
+    if (selectedPool && selectedPool.applicants) {
+      let filteredApplicants = [...selectedPool.applicants];
+      
+      // Apply status filter
+      if (e.target.value !== 'all') {
+        filteredApplicants = filteredApplicants.filter(app => 
+          app.status === e.target.value
+        );
+      }
+      
+      // Apply department filter if active
+      if (departmentFilter !== 'all') {
+        filteredApplicants = filteredApplicants.filter(app => 
+          app.department === departmentFilter
+        );
+      }
+      
+      setSelectedPool({
+        ...selectedPool,
+        filteredApplicants: filteredApplicants
+      });
+    }
+  };
+
+  const handleDepartmentFilterChange = (e) => {
+    setDepartmentFilter(e.target.value);
+    
+    if (selectedPool && selectedPool.applicants) {
+      let filteredApplicants = [...selectedPool.applicants];
+      
+      // Apply department filter
+      if (e.target.value !== 'all') {
+        filteredApplicants = filteredApplicants.filter(app => 
+          app.department === e.target.value
+        );
+      }
+      
+      // Apply status filter if active
+      if (statusFilter !== 'all') {
+        filteredApplicants = filteredApplicants.filter(app => 
+          app.status === statusFilter
+        );
+      }
+      
+      setSelectedPool({
+        ...selectedPool,
+        filteredApplicants: filteredApplicants
+      });
+    }
   };
 
   const filteredPools = searchTerm
@@ -140,6 +221,25 @@ const ApplicantPool = ({ onBack }) => {
         (pool.description && pool.description.toLowerCase().includes(searchTerm.toLowerCase()))
       )
     : pools;
+
+  // Get applicants to display based on filters
+  const getFilteredApplicants = () => {
+    if (!selectedPool || !selectedPool.applicants) return [];
+    
+    let applicants = selectedPool.applicants;
+    
+    // Apply status filter
+    if (statusFilter !== 'all') {
+      applicants = applicants.filter(app => app.status === statusFilter);
+    }
+    
+    // Apply department filter
+    if (departmentFilter !== 'all') {
+      applicants = applicants.filter(app => app.department === departmentFilter);
+    }
+    
+    return applicants;
+  };
 
   if (loading && pools.length === 0) return <LoadingSpinner />;
 
@@ -390,6 +490,27 @@ const ApplicantPool = ({ onBack }) => {
                     Applicants in this Pool
                   </h3>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Building size={14} style={{ color: '#1E88E5' }} />
+                    <select
+                      value={departmentFilter}
+                      onChange={handleDepartmentFilterChange}
+                      style={{
+                        padding: '8px',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        fontSize: '0.875rem',
+                        color: '#1e293b',
+                        backgroundColor: '#ffffff',
+                        outline: 'none',
+                        ':focus': { borderColor: '#1E88E5' }
+                      }}
+                    >
+                      <option value="all">All Departments</option>
+                      {departments.map(dept => (
+                        <option key={dept.id} value={dept.name}>{dept.name}</option>
+                      ))}
+                    </select>
+                    
                     <Filter size={14} style={{ color: '#1E88E5' }} />
                     <select
                       value={statusFilter}
@@ -413,12 +534,12 @@ const ApplicantPool = ({ onBack }) => {
                     </select>
                   </div>
                 </div>
-                {selectedPool.applicants && selectedPool.applicants.length > 0 ? (
+                {selectedPool.applicants && getFilteredApplicants().length > 0 ? (
                   <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                       <thead>
                         <tr style={{ backgroundColor: '#E3F2FD', borderBottom: '1px solid #e2e8f0' }}>
-                          {['Applicant', 'Role', 'Status', 'Actions'].map((header, index) => (
+                          {['Applicant', 'Department', 'Position', 'Status', 'Actions'].map((header, index) => (
                             <th key={index} style={{
                               padding: '16px',
                               textAlign: 'left',
@@ -432,7 +553,7 @@ const ApplicantPool = ({ onBack }) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {selectedPool.applicants.map(applicant => (
+                        {getFilteredApplicants().map(applicant => (
                           <tr key={applicant.id} style={{
                             borderBottom: '1px solid #e2e8f0',
                             transition: 'background-color 0.3s ease',
@@ -466,7 +587,16 @@ const ApplicantPool = ({ onBack }) => {
                               </div>
                             </td>
                             <td style={{ padding: '16px', fontSize: '0.875rem', color: '#64748b' }}>
-                              {applicant.job_role || 'N/A'} - {applicant.department || 'N/A'}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <Building size={14} />
+                                {applicant.department || 'N/A'}
+                              </div>
+                            </td>
+                            <td style={{ padding: '16px', fontSize: '0.875rem', color: '#64748b' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <Briefcase size={14} />
+                                {applicant.job_role || 'N/A'}
+                              </div>
                             </td>
                             <td style={{ padding: '16px' }}>
                               <div style={{
@@ -480,8 +610,8 @@ const ApplicantPool = ({ onBack }) => {
                                         applicant.status === 'shortlisted' ? '#1E88E5' :
                                         applicant.status === 'hired' ? '#2ecc71' : '#e74c3c',
                                 backgroundColor: applicant.status === 'pending' ? '#fff8e6' :
-                                               applicant.status === 'shortlisted' ? '#E3F2FD' :
-                                               applicant.status === 'hired' ? '#e6ffe6' : '#ffe6e6'
+                                                applicant.status === 'shortlisted' ? '#E3F2FD' :
+                                                applicant.status === 'hired' ? '#e6ffe6' : '#ffe6e6'
                               }}>
                                 {applicant.status === 'pending' && <Clock size={14} />}
                                 {applicant.status === 'shortlisted' && <CheckCircle size={14} />}
@@ -512,7 +642,7 @@ const ApplicantPool = ({ onBack }) => {
                                   <option value="rejected">Reject</option>
                                 </select>
                                 <button
-                                  onClick={() => handleRemoveFromPool(applicant.id)}
+                                  onClick={() => handleRemoveFromPool(applicant.id, applicant.application_id)}
                                   style={{
                                     backgroundColor: '#e74c3c',
                                     color: '#ffffff',
@@ -521,6 +651,7 @@ const ApplicantPool = ({ onBack }) => {
                                     borderRadius: '4px',
                                     cursor: 'pointer'
                                   }}
+                                  title="Delete applicant from pool"
                                 >
                                   <Trash2 size={14} />
                                 </button>
@@ -533,119 +664,9 @@ const ApplicantPool = ({ onBack }) => {
                   </div>
                 ) : (
                   <div style={{ textAlign: 'center', padding: '32px', color: '#64748b', fontSize: '0.875rem' }}>
-                    No applicants in this pool.
-                  </div>
-                )}
-              </div>
-
-              {/* Add Applicants Section */}
-              <div>
-                <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>
-                  Add Applicants to Pool
-                </h3>
-                {applications.length > 0 ? (
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                      <thead>
-                        <tr style={{ backgroundColor: '#E3F2FD', borderBottom: '1px solid #e2e8f0' }}>
-                          {['Applicant', 'Role', 'Status', 'Actions'].map((header, index) => (
-                            <th key={index} style={{
-                              padding: '16px',
-                              textAlign: 'left',
-                              fontSize: '0.875rem',
-                              fontWeight: 600,
-                              color: '#1e293b'
-                            }}>
-                              {header}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {applications
-                          .filter(app => !selectedPool.applicants || !selectedPool.applicants.some(a => a.application_id === app.id))
-                          .map(app => (
-                            <tr key={app.id} style={{
-                              borderBottom: '1px solid #e2e8f0',
-                              transition: 'background-color 0.3s ease',
-                              ':hover': { backgroundColor: '#f8fafc' }
-                            }}>
-                              <td style={{ padding: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                  <div style={{
-                                    width: '32px',
-                                    height: '32px',
-                                    backgroundColor: '#1E88E5',
-                                    borderRadius: '9999px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    color: '#ffffff',
-                                    fontSize: '14px',
-                                    fontWeight: 600
-                                  }}>
-                                    {app.full_name ? app.full_name.charAt(0) : 'A'}
-                                  </div>
-                                  <div>
-                                    <div style={{ fontSize: '0.875rem', color: '#1e293b' }}>{app.full_name}</div>
-                                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                                      Applied: {formatDate(app.applied_at)}
-                                    </div>
-                                  </div>
-                                </div>
-                              </td>
-                              <td style={{ padding: '16px', fontSize: '0.875rem', color: '#64748b' }}>
-                                {app.job_role || 'N/A'} - {app.department || 'N/A'}
-                              </td>
-                              <td style={{ padding: '16px' }}>
-                                <div style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '4px',
-                                  padding: '4px 8px',
-                                  borderRadius: '4px',
-                                  fontSize: '0.75rem',
-                                  color: app.status === 'pending' ? '#f39c12' :
-                                          app.status === 'shortlisted' ? '#1E88E5' :
-                                          app.status === 'hired' ? '#2ecc71' : '#e74c3c',
-                                  backgroundColor: app.status === 'pending' ? '#fff8e6' :
-                                                 app.status === 'shortlisted' ? '#E3F2FD' :
-                                                 app.status === 'hired' ? '#e6ffe6' : '#ffe6e6'
-                                }}>
-                                  {app.status === 'pending' && <Clock size={14} />}
-                                  {app.status === 'shortlisted' && <CheckCircle size={14} />}
-                                  {app.status === 'hired' && <CheckCircle size={14} />}
-                                  {app.status === 'rejected' && <XCircle size={14} />}
-                                  <span>{app.status}</span>
-                                </div>
-                              </td>
-                              <td style={{ padding: '16px' }}>
-                                <button
-                                  onClick={() => handleAssignToPool(app.id)}
-                                  style={{
-                                    backgroundColor: '#1E88E5',
-                                    color: '#ffffff',
-                                    padding: '4px 8px',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '4px',
-                                    fontSize: '0.75rem'
-                                  }}
-                                >
-                                  <Plus size={14} /> Add to Pool
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div style={{ textAlign: 'center', padding: '32px', color: '#64748b', fontSize: '0.875rem' }}>
-                    No available applicants to add.
+                    {selectedPool.applicants && selectedPool.applicants.length > 0 ? 
+                      'No applicants match the current filters.' : 
+                      'No applicants in this pool.'}
                   </div>
                 )}
               </div>

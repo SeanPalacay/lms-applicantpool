@@ -282,27 +282,28 @@ const EditUserForm = () => {
                 <Shield size={16} /> Role
               </label>
               <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  fontSize: '0.875rem',
-                  color: '#1e293b',
-                  outline: 'none',
-                  backgroundColor: '#ffffff',
-                  ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
-                }}
-              >
-                <option value="trainee">Trainee</option>
-                <option value="trainer">Trainer</option>
-                <option value="applicant">Applicant</option>
-                <option value="administrator">Administrator</option>
-              </select>
+  id="role"
+  name="role"
+  value={formData.role}
+  onChange={handleChange}
+  style={{
+    width: '100%',
+    padding: '8px',
+    border: '1px solid #e2e8f0',
+    borderRadius: '8px',
+    fontSize: '0.875rem',
+    color: '#1e293b',
+    outline: 'none',
+    backgroundColor: '#ffffff',
+    ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+  }}
+>
+  <option value="trainee">Trainee</option>
+  <option value="trainer">Trainer</option>
+  <option value="employee">Employee</option>
+  <option value="applicant">Applicant</option>
+  <option value="administrator">Administrator</option>
+</select> 
             </div>
             <div>
               <label htmlFor="status" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>

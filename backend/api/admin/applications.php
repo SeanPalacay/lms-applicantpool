@@ -1,8 +1,14 @@
 <?php
+// admin/applications.php
+
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Error logging for debugging
+error_log('Applications Request received: ' . $_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_URI']);
+error_log('GET params: ' . json_encode($_GET));
 
 // Include CORS middleware
 require_once '../../shared/cors_middleware.php';
@@ -33,129 +39,159 @@ if (empty($token)) {
     exit;
 }
 
+// Get the request method
 $method = $_SERVER['REQUEST_METHOD'];
 
 try {
+    // Handle different HTTP methods
     switch ($method) {
         case 'GET':
-            if (isset($_GET['action']) && $_GET['action'] === 'export') {
-                // Handle export
-                handleExport($pdo);
-            } else if (isset($_GET['id'])) {
-                // Get single application
-                getSingleApplication($pdo, $_GET['id']);
+            if (isset($_GET['id'])) {
+                getApplicationById($pdo, $_GET['id']);
             } else {
-                // Get all applications with optional filters
-                getAllApplications($pdo);
+                getApplications($pdo);
             }
-            break;
-            
-        case 'POST':
-            // Create application
-            createApplication($pdo);
             break;
             
         case 'PUT':
-            if (!isset($_GET['id'])) {
+            if (isset($_GET['id'])) {
+                updateApplication($pdo, $_GET['id']);
+            } else {
+                header('Content-Type: application/json');
                 http_response_code(400);
-                echo json_encode(['error' => 'Application ID is required']);
-                exit;
+                echo json_encode(['error' => 'Missing application ID']);
             }
-            // Update application (e.g., status)
-            updateApplication($pdo, $_GET['id']);
             break;
             
         case 'DELETE':
-            if (!isset($_GET['id'])) {
+            if (isset($_GET['id'])) {
+                deleteApplication($pdo, $_GET['id']);
+            } else {
+                header('Content-Type: application/json');
                 http_response_code(400);
-                echo json_encode(['error' => 'Application ID is required']);
-                exit;
+                echo json_encode(['error' => 'Missing application ID']);
             }
-            // Delete application
-            deleteApplication($pdo, $_GET['id']);
             break;
             
         default:
+            // Method not allowed
+            header('Content-Type: application/json');
             http_response_code(405);
             echo json_encode(['error' => 'Method not allowed']);
             break;
     }
 } catch (PDOException $e) {
-    error_log("Applications API Error: " . $e->getMessage());
+    // Database error
+    error_log('PDO Error: ' . $e->getMessage());
     header('Content-Type: application/json');
     http_response_code(500);
     echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
 } catch (Exception $e) {
-    error_log("Applications API Error: " . $e->getMessage());
+    // Other errors
+    error_log('General Error: ' . $e->getMessage());
     header('Content-Type: application/json');
     http_response_code(500);
     echo json_encode(['error' => 'Error: ' . $e->getMessage()]);
 }
 
 /**
- * Get all applications with optional filters
+ * Get applications with optional filters
  */
-function getAllApplications($pdo) {
-    // Build query with optional filters
-    $query = "
+function getApplications($pdo) {
+    error_log('Getting applications with filters: ' . json_encode($_GET));
+    
+    // Base query
+    $baseQuery = "
         SELECT 
-            a.id, a.user_id, a.program_id, a.job_role, a.department, 
-            a.status, a.evaluation_score, a.fst_score, a.applied_at, a.updated_at,
-            u.full_name, u.email, 
-            p.title as program_title, p.type as program_type
-        FROM applications a
-        INNER JOIN users u ON a.user_id = u.id
-        INNER JOIN programs p ON a.program_id = p.id
+            a.*, 
+            u.full_name, 
+            u.email, 
+            jp.department as position_department
+        FROM 
+            applications a
+        JOIN 
+            users u ON a.user_id = u.id
+        LEFT JOIN 
+            job_positions jp ON a.job_role = jp.position_name
         WHERE 1=1
     ";
     
     $params = [];
     
-    // Add filters if provided
-    if (isset($_GET['status']) && !empty($_GET['status'])) {
-        $query .= " AND a.status = :status";
+    // Add status filter
+    if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] !== 'all') {
+        $baseQuery .= " AND a.status = :status";
         $params[':status'] = $_GET['status'];
     }
     
-    if (isset($_GET['program_id']) && !empty($_GET['program_id'])) {
-        $query .= " AND a.program_id = :program_id";
-        $params[':program_id'] = $_GET['program_id'];
-    }
-    
-    if (isset($_GET['department']) && !empty($_GET['department'])) {
-        $query .= " AND a.department = :department";
+    // Add department filter
+    if (isset($_GET['department']) && !empty($_GET['department']) && $_GET['department'] !== 'all') {
+        $baseQuery .= " AND (a.department = :department OR jp.department = :department)";
         $params[':department'] = $_GET['department'];
     }
     
-    // Order by application date (newest first)
-    $query .= " ORDER BY a.applied_at DESC";
+    // Add search filter
+    if (isset($_GET['search']) && !empty($_GET['search'])) {
+        $search = '%' . $_GET['search'] . '%';
+        $baseQuery .= " AND (u.full_name LIKE :search OR u.email LIKE :search OR a.job_role LIKE :search)";
+        $params[':search'] = $search;
+    }
     
-    // For debugging
-    error_log("Applications query: " . $query);
-    error_log("Application params: " . print_r($params, true));
+    // Add order by
+    $baseQuery .= " ORDER BY a.applied_at DESC";
     
-    $stmt = $pdo->prepare($query);
-    $stmt->execute($params);
+    // Log the query for debugging
+    error_log('SQL Query: ' . $baseQuery);
+    error_log('Params: ' . json_encode($params));
+    
+    // Prepare and execute
+    $stmt = $pdo->prepare($baseQuery);
+    
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
+    
+    $stmt->execute();
     $applications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Log the results for debugging
+    error_log('Found ' . count($applications) . ' applications');
     
     header('Content-Type: application/json');
     echo json_encode($applications);
 }
 
 /**
- * Get a single application by ID
+ * Get a specific application by ID
  */
-function getSingleApplication($pdo, $id) {
+function getApplicationById($pdo, $id) {
+    error_log('Getting application with ID: ' . $id);
+    
+    // Verify the ID is numeric
+    if (!is_numeric($id)) {
+        header('Content-Type: application/json');
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid application ID']);
+        return;
+    }
+    
+    // Query to get application details
     $query = "
         SELECT 
-            a.id, a.user_id, a.program_id, a.job_role, a.department, 
-            a.status, a.evaluation_score, a.fst_score, a.applied_at, a.updated_at,
-            u.full_name, u.email, 
-            p.title as program_title, p.type as program_type
-        FROM applications a
-        INNER JOIN users u ON a.user_id = u.id
-        INNER JOIN programs p ON a.program_id = p.id
-        WHERE a.id = :id
+            a.*, 
+            u.full_name, 
+            u.email, 
+            u.phone, 
+            u.address,
+            jp.department as position_department
+        FROM 
+            applications a
+        JOIN 
+            users u ON a.user_id = u.id
+        LEFT JOIN 
+            job_positions jp ON a.job_role = jp.position_name
+        WHERE 
+            a.id = :id
     ";
     
     $stmt = $pdo->prepare($query);
@@ -166,195 +202,54 @@ function getSingleApplication($pdo, $id) {
         header('Content-Type: application/json');
         http_response_code(404);
         echo json_encode(['error' => 'Application not found']);
-        exit;
+        return;
     }
     
     $application = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    // Get any documents for this application
-    $docQuery = "
-        SELECT r.id, r.file_path, r.description, r.created_at
-        FROM records r
-        WHERE r.user_id = :user_id 
-        AND r.record_type = 'applicant'
-        AND r.category = 'evaluations'
+    // Get pools the application is assigned to
+    $poolsQuery = "
+        SELECT 
+            ap.* 
+        FROM 
+            applicant_pool_assignments apa
+        JOIN 
+            applicant_pools ap ON apa.pool_id = ap.id
+        WHERE 
+            apa.application_id = :application_id
     ";
     
-    $docStmt = $pdo->prepare($docQuery);
-    $docStmt->bindParam(':user_id', $application['user_id'], PDO::PARAM_INT);
-    $docStmt->execute();
-    $documents = $docStmt->fetchAll(PDO::FETCH_ASSOC);
+    $poolsStmt = $pdo->prepare($poolsQuery);
+    $poolsStmt->bindParam(':application_id', $id, PDO::PARAM_INT);
+    $poolsStmt->execute();
     
-    // Add documents to application data
-    $application['documents'] = $documents;
+    $pools = $poolsStmt->fetchAll(PDO::FETCH_ASSOC);
+    $application['pools'] = $pools;
     
     header('Content-Type: application/json');
     echo json_encode($application);
 }
 
 /**
- * Handle exporting applications data
- */
-function handleExport($pdo) {
-    $format = isset($_GET['format']) ? $_GET['format'] : 'csv';
-    $query = "
-        SELECT a.id, u.full_name, a.job_role, a.department, a.status, a.applied_at
-        FROM applications a
-        INNER JOIN users u ON a.user_id = u.id
-        WHERE u.role = 'applicant'
-        ORDER BY a.applied_at DESC
-    ";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
-    $applicants = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    if ($format === 'json') {
-        header('Content-Type: application/json');
-        header('Content-Disposition: attachment; filename="applicants_export_' . date('Y-m-d') . '.json"');
-        echo json_encode($applicants);
-    } else {
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="applicants_export_' . date('Y-m-d') . '.csv"');
-        $output = fopen('php://output', 'w');
-        fputcsv($output, ['ID', 'Full Name', 'Job Role', 'Department', 'Status', 'Applied At']);
-        foreach ($applicants as $applicant) {
-            fputcsv($output, $applicant);
-        }
-        fclose($output);
-    }
-    exit;
-}
-
-/**
- * Create a new application
- */
-function createApplication($pdo) {
-    // Get JSON data from request body
-    $data = json_decode(file_get_contents('php://input'), true);
-    
-    // Validate required fields
-    if (!isset($data['user_id']) || !isset($data['program_id'])) {
-        header('Content-Type: application/json');
-        http_response_code(400);
-        echo json_encode(['error' => 'User ID and Program ID are required']);
-        exit;
-    }
-    
-    // Check if application already exists for this user and program
-    $checkQuery = "SELECT id FROM applications WHERE user_id = :user_id AND program_id = :program_id";
-    $checkStmt = $pdo->prepare($checkQuery);
-    $checkStmt->bindParam(':user_id', $data['user_id'], PDO::PARAM_INT);
-    $checkStmt->bindParam(':program_id', $data['program_id'], PDO::PARAM_INT);
-    $checkStmt->execute();
-    
-    if ($checkStmt->rowCount() > 0) {
-        header('Content-Type: application/json');
-        http_response_code(409); // Conflict
-        echo json_encode(['error' => 'Application already exists for this user and program']);
-        exit;
-    }
-    
-    // Insert the new application
-    $query = "
-        INSERT INTO applications (
-            user_id, program_id, job_role, department, status
-        ) VALUES (
-            :user_id, :program_id, :job_role, :department, :status
-        )
-    ";
-    
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':user_id', $data['user_id'], PDO::PARAM_INT);
-    $stmt->bindParam(':program_id', $data['program_id'], PDO::PARAM_INT);
-    $stmt->bindParam(':job_role', $data['job_role'] ?? null, PDO::PARAM_STR);
-    $stmt->bindParam(':department', $data['department'] ?? null, PDO::PARAM_STR);
-    $stmt->bindParam(':status', $data['status'] ?? 'pending', PDO::PARAM_STR);
-    $stmt->execute();
-    
-    $applicationId = $pdo->lastInsertId();
-    
-    // Return the newly created application
-    header('Content-Type: application/json');
-    http_response_code(201); // Created
-    echo json_encode([
-        'id' => $applicationId,
-        'user_id' => $data['user_id'],
-        'program_id' => $data['program_id'],
-        'job_role' => $data['job_role'] ?? null,
-        'department' => $data['department'] ?? null,
-        'status' => $data['status'] ?? 'pending',
-        'applied_at' => date('Y-m-d H:i:s')
-    ]);
-}
-
-/**
- * Update an application (e.g., change status)
+ * Update an application (typically status)
  */
 function updateApplication($pdo, $id) {
-    // Get JSON data from request body
-    $data = json_decode(file_get_contents('php://input'), true);
+    error_log('Updating application with ID: ' . $id);
     
-    // Build update query based on provided fields
-    $updateFields = [];
-    $params = [':id' => $id];
-    
-    if (isset($data['job_role'])) {
-        $updateFields[] = "job_role = :job_role";
-        $params[':job_role'] = $data['job_role'];
-    }
-    
-    if (isset($data['department'])) {
-        $updateFields[] = "department = :department";
-        $params[':department'] = $data['department'];
-    }
-    
-    if (isset($data['status'])) {
-        $updateFields[] = "status = :status";
-        $params[':status'] = $data['status'];
-    }
-    
-    if (isset($data['evaluation_score'])) {
-        $updateFields[] = "evaluation_score = :evaluation_score";
-        $params[':evaluation_score'] = $data['evaluation_score'];
-    }
-    
-    if (isset($data['fst_score'])) {
-        $updateFields[] = "fst_score = :fst_score";
-        $params[':fst_score'] = $data['fst_score'];
-    }
-    
-    // If no fields to update, return error
-    if (empty($updateFields)) {
+    // Verify the ID is numeric
+    if (!is_numeric($id)) {
         header('Content-Type: application/json');
         http_response_code(400);
-        echo json_encode(['error' => 'No fields to update']);
-        exit;
+        echo json_encode(['error' => 'Invalid application ID']);
+        return;
     }
     
-    // Update the application
-    $query = "UPDATE applications SET " . implode(", ", $updateFields) . ", updated_at = NOW() WHERE id = :id";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute($params);
+    // Get JSON data from request body
+    $data = json_decode(file_get_contents('php://input'), true);
+    error_log('Update data: ' . json_encode($data));
     
-    // If no rows were affected, application doesn't exist
-    if ($stmt->rowCount() === 0) {
-        header('Content-Type: application/json');
-        http_response_code(404);
-        echo json_encode(['error' => 'Application not found']);
-        exit;
-    }
-    
-    // Return success response
-    header('Content-Type: application/json');
-    echo json_encode(['success' => true, 'message' => 'Application updated successfully']);
-}
-
-/**
- * Delete an application
- */
-function deleteApplication($pdo, $id) {
-    // Check if application exists
-    $checkQuery = "SELECT id FROM applications WHERE id = :id";
+    // Check if application exists and get user ID
+    $checkQuery = "SELECT user_id FROM applications WHERE id = :id";
     $checkStmt = $pdo->prepare($checkQuery);
     $checkStmt->bindParam(':id', $id, PDO::PARAM_INT);
     $checkStmt->execute();
@@ -363,24 +258,151 @@ function deleteApplication($pdo, $id) {
         header('Content-Type: application/json');
         http_response_code(404);
         echo json_encode(['error' => 'Application not found']);
-        exit;
+        return;
     }
     
-    // Begin transaction to ensure data integrity
+    $applicationData = $checkStmt->fetch(PDO::FETCH_ASSOC);
+    $applicantUserId = $applicationData['user_id'];
+    
+    // Begin transaction
     $pdo->beginTransaction();
     
     try {
-        // First delete from applicant_pool_assignments (foreign key constraint)
+        // Build update fields
+        $updateFields = [];
+        $params = [':id' => $id]; // Start with ID parameter
+        
+        // Check for fields to update
+        if (isset($data['status'])) {
+            $updateFields[] = "status = :status";
+            $params[':status'] = $data['status'];
+            
+            // Set notification variables based on status
+            $notificationTitle = "Application Status Updated";
+            $notificationMessage = "Your application status has been updated to " . ucfirst($data['status']) . ".";
+            $notificationType = ($data['status'] === 'rejected') ? 'error' : 
+                              (($data['status'] === 'hired') ? 'success' : 
+                              (($data['status'] === 'shortlisted') ? 'success' : 'info'));
+        }
+        
+        if (isset($data['evaluation_score'])) {
+            $updateFields[] = "evaluation_score = :evaluation_score";
+            $params[':evaluation_score'] = $data['evaluation_score'];
+        }
+        
+        if (isset($data['fst_score'])) {
+            $updateFields[] = "fst_score = :fst_score";
+            $params[':fst_score'] = $data['fst_score'];
+        }
+        
+        if (isset($data['job_role'])) {
+            $updateFields[] = "job_role = :job_role";
+            $params[':job_role'] = $data['job_role'];
+        }
+        
+        if (isset($data['department'])) {
+            $updateFields[] = "department = :department";
+            $params[':department'] = $data['department'];
+        }
+        
+        // If no fields to update
+        if (empty($updateFields)) {
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode(['error' => 'No fields to update']);
+            return;
+        }
+        
+        // Build and execute update query
+        $updateQuery = "UPDATE applications SET " . implode(", ", $updateFields) . ", updated_at = NOW() WHERE id = :id";
+        $updateStmt = $pdo->prepare($updateQuery);
+        
+        foreach ($params as $key => $value) {
+            $updateStmt->bindValue($key, $value);
+        }
+        
+        $updateStmt->execute();
+        
+        // Create notification if status was updated
+        if (isset($data['status'])) {
+            $notifQuery = "
+                INSERT INTO notifications (user_id, type, title, message) 
+                VALUES (:user_id, :type, :title, :message)
+            ";
+            $notifStmt = $pdo->prepare($notifQuery);
+            $notifStmt->bindParam(':user_id', $applicantUserId, PDO::PARAM_INT);
+            $notifStmt->bindParam(':type', $notificationType, PDO::PARAM_STR);
+            $notifStmt->bindParam(':title', $notificationTitle, PDO::PARAM_STR);
+            $notifStmt->bindParam(':message', $notificationMessage, PDO::PARAM_STR);
+            $notifStmt->execute();
+        }
+        
+        // Commit the transaction
+        $pdo->commit();
+        
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'Application updated successfully']);
+    } catch (Exception $e) {
+        // Rollback the transaction on error
+        $pdo->rollBack();
+        throw $e;
+    }
+}
+
+/**
+ * Delete an application
+ */
+function deleteApplication($pdo, $id) {
+    error_log('Deleting application with ID: ' . $id);
+    
+    // Verify the ID is numeric
+    if (!is_numeric($id)) {
+        header('Content-Type: application/json');
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid application ID']);
+        return;
+    }
+    
+    // Check if application exists and get user ID
+    $checkQuery = "SELECT user_id FROM applications WHERE id = :id";
+    $checkStmt = $pdo->prepare($checkQuery);
+    $checkStmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $checkStmt->execute();
+    
+    if ($checkStmt->rowCount() === 0) {
+        header('Content-Type: application/json');
+        http_response_code(404);
+        echo json_encode(['error' => 'Application not found']);
+        return;
+    }
+    
+    $applicationData = $checkStmt->fetch(PDO::FETCH_ASSOC);
+    $applicantUserId = $applicationData['user_id'];
+    
+    // Begin transaction
+    $pdo->beginTransaction();
+    
+    try {
+        // Delete associated pool assignments first (foreign key constraint)
         $deleteAssignmentsQuery = "DELETE FROM applicant_pool_assignments WHERE application_id = :id";
         $deleteAssignmentsStmt = $pdo->prepare($deleteAssignmentsQuery);
         $deleteAssignmentsStmt->bindParam(':id', $id, PDO::PARAM_INT);
         $deleteAssignmentsStmt->execute();
         
-        // Then delete the application
+        // Delete the application
         $deleteQuery = "DELETE FROM applications WHERE id = :id";
         $deleteStmt = $pdo->prepare($deleteQuery);
         $deleteStmt->bindParam(':id', $id, PDO::PARAM_INT);
         $deleteStmt->execute();
+        
+        // Create notification
+        $notifQuery = "
+            INSERT INTO notifications (user_id, type, title, message) 
+            VALUES (:user_id, 'warning', 'Application Removed', 'Your application has been removed.')
+        ";
+        $notifStmt = $pdo->prepare($notifQuery);
+        $notifStmt->bindParam(':user_id', $applicantUserId, PDO::PARAM_INT);
+        $notifStmt->execute();
         
         // Commit the transaction
         $pdo->commit();
@@ -388,7 +410,7 @@ function deleteApplication($pdo, $id) {
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'message' => 'Application deleted successfully']);
     } catch (Exception $e) {
-        // Rollback on error
+        // Rollback the transaction on error
         $pdo->rollBack();
         throw $e;
     }

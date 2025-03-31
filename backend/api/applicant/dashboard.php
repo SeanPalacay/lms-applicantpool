@@ -6,6 +6,23 @@ if (session_status() === PHP_SESSION_NONE) {
 // Set JSON headers early
 header('Content-Type: application/json');
 
+// Add debugging
+function debug_log($message, $data = null) {
+    $log_file = "dashboard_debug.log";
+    $timestamp = date('Y-m-d H:i:s');
+    $log_entry = "[$timestamp] $message";
+    
+    if ($data !== null) {
+        if (is_array($data) || is_object($data)) {
+            $log_entry .= " " . json_encode($data);
+        } else {
+            $log_entry .= " $data";
+        }
+    }
+    
+    file_put_contents($log_file, $log_entry . PHP_EOL, FILE_APPEND);
+}
+
 // Optionally disable display_errors in production
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
@@ -19,17 +36,29 @@ $headers = getallheaders();
 $authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
 $token = '';
 
+debug_log("Headers received", $headers);
+
 if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
     $token = $matches[1];
+    debug_log("Token from Authorization header", $token);
 }
 
 // Fallback: accept token in the query string (for testing only)
 if (empty($token) && isset($_GET['token'])) {
     $token = $_GET['token'];
+    debug_log("Token from query parameter", $token);
 }
 
-// If token is still empty, return 401
-if (empty($token)) {
+// Check if userId is provided directly
+$applicantId = 0;
+if (isset($_GET['userId'])) {
+    $applicantId = (int)$_GET['userId'];
+    debug_log("Using userId from query parameter", $applicantId);
+}
+
+// If token is still empty and no userId, return 401
+if (empty($token) && $applicantId === 0) {
+    debug_log("No token or userId found");
     http_response_code(401);
     echo json_encode(['error' => 'Authentication required']);
     exit;
@@ -40,19 +69,42 @@ try {
         throw new Exception('Database connection not established');
     }
 
- // -- PARSE BASE64 TOKEN -- //
-    // The token is assumed to be something like base64("4:1679999999"),
-    // which decodes to "4:1679999999". Split on ":" to get the user/applicant ID.
-    $decoded = base64_decode($token);
-    $parts = explode(':', $decoded);
-    $applicantId = isset($parts[0]) ? (int)$parts[0] : 0;
+    // Only try to parse the token if we don't already have an applicantId
+    if ($applicantId === 0 && !empty($token)) {
+        // Try to decode as base64 first (userId:timestamp format)
+        $tokenData = base64_decode($token, true);
+        debug_log("Attempting to decode token", $tokenData);
+        
+        if ($tokenData !== false && strpos($tokenData, ':') !== false) {
+            // It's a base64 token with expected format
+            $parts = explode(':', $tokenData);
+            $applicantId = (int)$parts[0];
+            debug_log("Parsed applicantId from base64 token", $applicantId);
+        } else {
+            // Fallback: Try to get userId from localStorage
+            if (isset($_GET['userId'])) {
+                $applicantId = (int)$_GET['userId'];
+                debug_log("Using userId from query parameter", $applicantId);
+            } else {
+                // Last resort: check session
+                if (isset($_SESSION['user_id'])) {
+                    $applicantId = (int)$_SESSION['user_id'];
+                    debug_log("Using userId from session", $applicantId);
+                }
+            }
+        }
+    }
     
     // If still no ID, we bail
     if (!$applicantId) {
+        debug_log("Failed to determine applicantId");
         http_response_code(401);
         echo json_encode(['error' => 'Invalid token or no user ID found']);
         exit;
     }
+    
+    debug_log("Processing dashboard for applicantId", $applicantId);
+    
     // Basic structure for the applicant dashboard response
     $response = [
         'user' => [
@@ -77,23 +129,26 @@ try {
     $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$userData) {
-        // If no matching applicant found, possibly return error or empty data
+        debug_log("No applicant found for user ID", $applicantId);
         http_response_code(404);
         echo json_encode(['error' => 'No applicant found for this user']);
         exit;
     }
 
     $response['user'] = $userData;
+    debug_log("Found user data", $userData);
 
+    // Rest of your code remains the same...
+    
     /*
      * 2. Fetch All Applications for This Applicant
-     *    We join the `applications` table with `programs` or any relevant data
+     *    We join the `applications` table with `applicant_pools` for relevant data
      */
     $appsQuery = "
         SELECT 
             a.id AS application_id,
-            a.program_id,
-            p.title AS program_title,
+            a.pool_id,
+            ap.pool_name,
             a.job_role,
             a.department,
             a.status,
@@ -102,7 +157,7 @@ try {
             a.applied_at,
             a.updated_at
         FROM applications a
-        JOIN programs p ON a.program_id = p.id
+        JOIN applicant_pools ap ON a.pool_id = ap.id
         WHERE a.user_id = ? 
         ORDER BY a.applied_at DESC
     ";
@@ -111,6 +166,7 @@ try {
     $applications = $appsStmt->fetchAll(PDO::FETCH_ASSOC);
 
     $response['myApplications'] = $applications;
+    debug_log("Found applications", count($applications));
 
     /*
      * 3. Fetch Notifications for This Applicant
@@ -133,6 +189,7 @@ try {
     $notifStmt->execute([$applicantId]);
     $notifications = $notifStmt->fetchAll(PDO::FETCH_ASSOC);
     $response['notifications'] = $notifications;
+    debug_log("Found notifications", count($notifications));
 
     /*
      * 4. Generate Any Custom Alerts
@@ -182,19 +239,25 @@ try {
     }
 
     $response['alerts'] = $alerts;
+    debug_log("Generated alerts", count($alerts));
 
     /*
      * 5. Return JSON
      */
+    debug_log("Returning dashboard data", $response);
     echo json_encode($response);
 
 } catch (PDOException $e) {
-    error_log("Applicant Dashboard PDO Error: " . $e->getMessage());
+    $errorMsg = "Applicant Dashboard PDO Error: " . $e->getMessage();
+    debug_log($errorMsg);
+    error_log($errorMsg);
     http_response_code(500);
     echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
     exit;
 } catch (Exception $e) {
-    error_log("Applicant Dashboard General Error: " . $e->getMessage());
+    $errorMsg = "Applicant Dashboard General Error: " . $e->getMessage();
+    debug_log($errorMsg);
+    error_log($errorMsg);
     http_response_code(500);
     echo json_encode(['error' => 'General error: ' . $e->getMessage()]);
     exit;

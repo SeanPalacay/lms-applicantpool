@@ -138,6 +138,9 @@ function getUserById($pdo, $id) {
 /**
  * Create a new user
  */
+/**
+ * Create a new user
+ */
 function createUser($pdo) {
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
@@ -198,40 +201,76 @@ function createUser($pdo) {
     $role = isset($data['role']) ? $data['role'] : 'trainee';
     $status = isset($data['status']) ? $data['status'] : 'active';
     
-    $query = "
-        INSERT INTO users (username, password, full_name, email, role, status)
-        VALUES (:username, :password, :full_name, :email, :role, :status)
-    ";
+    // Start transaction
+    $pdo->beginTransaction();
     
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':username', $data['username'], PDO::PARAM_STR);
-    $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
-    $stmt->bindParam(':full_name', $data['full_name'], PDO::PARAM_STR);
-    $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
-    $stmt->bindParam(':role', $role, PDO::PARAM_STR);
-    $stmt->bindParam(':status', $status, PDO::PARAM_STR);
-    
-    $stmt->execute();
-    $userId = $pdo->lastInsertId();
-    
-    $query = "
-        SELECT 
-            id, username, full_name, email, role, status, created_at, last_login
-        FROM 
-            users
-        WHERE 
-            id = :id
-    ";
-    
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
-    $stmt->execute();
-    
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    header('Content-Type: application/json');
-    http_response_code(201);
-    echo json_encode($user);
+    try {
+        $query = "
+            INSERT INTO users (username, password, full_name, email, role, status)
+            VALUES (:username, :password, :full_name, :email, :role, :status)
+        ";
+        
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':username', $data['username'], PDO::PARAM_STR);
+        $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
+        $stmt->bindParam(':full_name', $data['full_name'], PDO::PARAM_STR);
+        $stmt->bindParam(':email', $data['email'], PDO::PARAM_STR);
+        $stmt->bindParam(':role', $role, PDO::PARAM_STR);
+        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        
+        $stmt->execute();
+        $userId = $pdo->lastInsertId();
+        
+        // If this is an applicant user and access_code is provided, create an access code
+        if ($role === 'applicant' && isset($data['access_code']) && !empty($data['access_code'])) {
+            $createdBy = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+            $expiresAt = date('Y-m-d H:i:s', strtotime('+30 days'));
+            
+            $accessCodeQuery = "
+                INSERT INTO access_codes (user_id, code, created_by, expires_at)
+                VALUES (:user_id, :code, :created_by, :expires_at)
+            ";
+            
+            $accessCodeStmt = $pdo->prepare($accessCodeQuery);
+            $accessCodeStmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+            $accessCodeStmt->bindParam(':code', $data['access_code'], PDO::PARAM_STR);
+            $accessCodeStmt->bindParam(':created_by', $createdBy, PDO::PARAM_INT);
+            $accessCodeStmt->bindParam(':expires_at', $expiresAt, PDO::PARAM_STR);
+            
+            $accessCodeStmt->execute();
+        }
+        
+        $pdo->commit();
+        
+        $query = "
+            SELECT 
+                id, username, full_name, email, role, status, created_at, last_login
+            FROM 
+                users
+            WHERE 
+                id = :id
+        ";
+        
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Add access code to response if applicable
+        if ($role === 'applicant' && isset($data['access_code']) && !empty($data['access_code'])) {
+            $user['access_code'] = $data['access_code'];
+        }
+        
+        header('Content-Type: application/json');
+        http_response_code(201);
+        echo json_encode($user);
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        header('Content-Type: application/json');
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to create user: ' . $e->getMessage()]);
+    }
 }
 
 /**

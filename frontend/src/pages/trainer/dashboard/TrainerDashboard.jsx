@@ -246,7 +246,7 @@ const TrainerDashboard = () => {
         </div>
 
         {/* 2. Created Milestones */}
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+        {/* <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
             <div style={{ color: '#1E88E5' }}><Calendar size={20} /></div>
             <h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0 }}>Recent Milestones</h3>
@@ -288,7 +288,7 @@ const TrainerDashboard = () => {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
 
         {/* 3. Created Quizzes */}
         <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>

@@ -1,4 +1,7 @@
 <?php
+// File: backend/api/admin/applicant-pool-assignments.php
+// API endpoint for admin to manage applicant pool assignments
+
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -33,6 +36,10 @@ if (empty($token)) {
     exit;
 }
 
+// Get the logged-in user ID (you would normally extract this from the token)
+// For demonstration, we'll use a simple mock user. In production, validate the token properly.
+$userId = 1; // Assuming this is the admin user ID
+
 // Get the request method
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -40,18 +47,30 @@ try {
     // Handle different HTTP methods
     switch ($method) {
         case 'GET':
-            // Get pool assignments
-            getPoolAssignments($pdo);
+            // Get applicants for a specific pool
+            if (isset($_GET['pool_id'])) {
+                getApplicantsByPool($pdo, $_GET['pool_id']);
+            } else {
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Pool ID is required']);
+            }
             break;
             
         case 'POST':
-            // Create a new assignment
-            createPoolAssignment($pdo);
+            // Assign an applicant to a pool
+            assignApplicantToPool($pdo);
             break;
             
         case 'DELETE':
-            // Delete an assignment
-            deletePoolAssignment($pdo);
+            // Remove an applicant from a pool
+            if (isset($_GET['id'])) {
+                removeApplicantFromPool($pdo, $_GET['id']);
+            } else {
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Assignment ID is required']);
+            }
             break;
             
         default:
@@ -74,28 +93,31 @@ try {
 }
 
 /**
- * Get applicants assigned to a pool
+ * Get applicants for a specific pool
  */
-function getPoolAssignments($pdo) {
-    // Check if pool_id is provided
-    if (!isset($_GET['pool_id']) || !is_numeric($_GET['pool_id'])) {
+function getApplicantsByPool($pdo, $poolId) {
+    // Check if the pool exists
+    $checkPoolQuery = "SELECT id FROM applicant_pools WHERE id = :id";
+    $checkPoolStmt = $pdo->prepare($checkPoolQuery);
+    $checkPoolStmt->bindParam(':id', $poolId, PDO::PARAM_INT);
+    $checkPoolStmt->execute();
+
+    if ($checkPoolStmt->rowCount() === 0) {
         header('Content-Type: application/json');
-        http_response_code(400);
-        echo json_encode(['error' => 'Valid pool ID is required']);
+        http_response_code(404);
+        echo json_encode(['error' => 'Applicant pool not found']);
         return;
     }
-    
-    $poolId = $_GET['pool_id'];
-    
-    // Query to get all applicants in the pool with their details
+
+    // Get applicants for this pool
     $query = "
         SELECT 
             apa.id,
             apa.application_id,
             apa.pool_id,
             apa.assigned_at,
+            a.id as application_id,
             a.user_id,
-            a.program_id,
             a.job_role,
             a.department,
             a.status,
@@ -103,82 +125,78 @@ function getPoolAssignments($pdo) {
             a.fst_score,
             a.applied_at,
             a.updated_at,
-            u.full_name,
-            u.email,
-            p.title as program_title
+            u.full_name
         FROM 
             applicant_pool_assignments apa
         INNER JOIN 
             applications a ON apa.application_id = a.id
         INNER JOIN 
             users u ON a.user_id = u.id
-        INNER JOIN 
-            programs p ON a.program_id = p.id
         WHERE 
             apa.pool_id = :pool_id
         ORDER BY 
             apa.assigned_at DESC
     ";
-    
+
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':pool_id', $poolId, PDO::PARAM_INT);
     $stmt->execute();
-    
-    $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
+    $applicants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     header('Content-Type: application/json');
-    echo json_encode($assignments);
+    echo json_encode($applicants);
 }
 
 /**
- * Create a new pool assignment
+ * Assign an applicant to a pool
  */
-function createPoolAssignment($pdo) {
+function assignApplicantToPool($pdo) {
     // Get JSON data from request body
     $data = json_decode(file_get_contents('php://input'), true);
-    
+
     // Validate required fields
     if (!isset($data['application_id']) || !is_numeric($data['application_id'])) {
         header('Content-Type: application/json');
         http_response_code(400);
-        echo json_encode(['error' => 'Valid application ID is required']);
+        echo json_encode(['error' => 'Application ID is required']);
         return;
     }
-    
+
     if (!isset($data['pool_id']) || !is_numeric($data['pool_id'])) {
         header('Content-Type: application/json');
         http_response_code(400);
-        echo json_encode(['error' => 'Valid pool ID is required']);
+        echo json_encode(['error' => 'Pool ID is required']);
         return;
     }
-    
+
     // Check if the application exists
-    $checkAppQuery = "SELECT id FROM applications WHERE id = :id";
-    $checkAppStmt = $pdo->prepare($checkAppQuery);
-    $checkAppStmt->bindParam(':id', $data['application_id'], PDO::PARAM_INT);
-    $checkAppStmt->execute();
-    
-    if ($checkAppStmt->rowCount() === 0) {
+    $checkApplicationQuery = "SELECT id FROM applications WHERE id = :id";
+    $checkApplicationStmt = $pdo->prepare($checkApplicationQuery);
+    $checkApplicationStmt->bindParam(':id', $data['application_id'], PDO::PARAM_INT);
+    $checkApplicationStmt->execute();
+
+    if ($checkApplicationStmt->rowCount() === 0) {
         header('Content-Type: application/json');
         http_response_code(404);
         echo json_encode(['error' => 'Application not found']);
         return;
     }
-    
+
     // Check if the pool exists
     $checkPoolQuery = "SELECT id FROM applicant_pools WHERE id = :id";
     $checkPoolStmt = $pdo->prepare($checkPoolQuery);
     $checkPoolStmt->bindParam(':id', $data['pool_id'], PDO::PARAM_INT);
     $checkPoolStmt->execute();
-    
+
     if ($checkPoolStmt->rowCount() === 0) {
         header('Content-Type: application/json');
         http_response_code(404);
         echo json_encode(['error' => 'Applicant pool not found']);
         return;
     }
-    
-    // Check if this assignment already exists
+
+    // Check if the application is already assigned to this pool
     $checkAssignmentQuery = "
         SELECT id FROM applicant_pool_assignments 
         WHERE application_id = :application_id AND pool_id = :pool_id
@@ -187,59 +205,116 @@ function createPoolAssignment($pdo) {
     $checkAssignmentStmt->bindParam(':application_id', $data['application_id'], PDO::PARAM_INT);
     $checkAssignmentStmt->bindParam(':pool_id', $data['pool_id'], PDO::PARAM_INT);
     $checkAssignmentStmt->execute();
-    
+
     if ($checkAssignmentStmt->rowCount() > 0) {
         header('Content-Type: application/json');
         http_response_code(409); // Conflict
-        echo json_encode(['error' => 'This application is already assigned to this pool']);
+        echo json_encode(['error' => 'Application is already assigned to this pool']);
         return;
     }
-    
-    // Insert the new assignment
-    $query = "
+
+    // Create the assignment
+    $insertAssignmentQuery = "
         INSERT INTO applicant_pool_assignments (application_id, pool_id)
         VALUES (:application_id, :pool_id)
     ";
     
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':application_id', $data['application_id'], PDO::PARAM_INT);
-    $stmt->bindParam(':pool_id', $data['pool_id'], PDO::PARAM_INT);
+    $insertAssignmentStmt = $pdo->prepare($insertAssignmentQuery);
+    $insertAssignmentStmt->bindParam(':application_id', $data['application_id'], PDO::PARAM_INT);
+    $insertAssignmentStmt->bindParam(':pool_id', $data['pool_id'], PDO::PARAM_INT);
+    $insertAssignmentStmt->execute();
     
+    $assignmentId = $pdo->lastInsertId();
+    
+    // Get the created assignment details
+    $query = "
+        SELECT 
+            apa.id,
+            apa.application_id,
+            apa.pool_id,
+            apa.assigned_at,
+            a.job_role,
+            a.department,
+            a.status,
+            a.applied_at,
+            u.full_name
+        FROM 
+            applicant_pool_assignments apa
+        INNER JOIN 
+            applications a ON apa.application_id = a.id
+        INNER JOIN 
+            users u ON a.user_id = u.id
+        WHERE 
+            apa.id = :id
+    ";
+    
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':id', $assignmentId, PDO::PARAM_INT);
     $stmt->execute();
+    
+    $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
     
     header('Content-Type: application/json');
     http_response_code(201); // Created
-    echo json_encode(['success' => true, 'message' => 'Applicant assigned to pool']);
+    echo json_encode(['success' => true, 'data' => $assignment]);
 }
 
 /**
- * Delete a pool assignment
+ * Remove an applicant from a pool and delete the application
  */
-function deletePoolAssignment($pdo) {
-    // Check if ID is provided
-    if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+function removeApplicantFromPool($pdo, $assignmentId) {
+    // Begin transaction
+    $pdo->beginTransaction();
+    
+    try {
+        // Check if the assignment exists and get the application_id
+        $checkAssignmentQuery = "SELECT application_id FROM applicant_pool_assignments WHERE id = :id";
+        $checkAssignmentStmt = $pdo->prepare($checkAssignmentQuery);
+        $checkAssignmentStmt->bindParam(':id', $assignmentId, PDO::PARAM_INT);
+        $checkAssignmentStmt->execute();
+
+        $assignment = $checkAssignmentStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$assignment) {
+            header('Content-Type: application/json');
+            http_response_code(404);
+            echo json_encode(['error' => 'Assignment not found']);
+            return;
+        }
+        
+        $applicationId = $assignment['application_id'];
+        
+        // 1. Delete the assignment from applicant_pool_assignments
+        $deleteAssignmentQuery = "DELETE FROM applicant_pool_assignments WHERE id = :id";
+        $deleteAssignmentStmt = $pdo->prepare($deleteAssignmentQuery);
+        $deleteAssignmentStmt->bindParam(':id', $assignmentId, PDO::PARAM_INT);
+        $deleteAssignmentStmt->execute();
+        
+        // 2. Delete the application from applications table
+        $deleteApplicationQuery = "DELETE FROM applications WHERE id = :id";
+        $deleteApplicationStmt = $pdo->prepare($deleteApplicationQuery);
+        $deleteApplicationStmt->bindParam(':id', $applicationId, PDO::PARAM_INT);
+        $deleteApplicationStmt->execute();
+        
+        // Commit transaction
+        $pdo->commit();
+        
         header('Content-Type: application/json');
-        http_response_code(400);
-        echo json_encode(['error' => 'Valid assignment ID is required']);
-        return;
-    }
-    
-    $id = $_GET['id'];
-    
-    // Delete the assignment
-    $query = "DELETE FROM applicant_pool_assignments WHERE id = :id";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt->execute();
-    
-    // If no rows were affected, assignment doesn't exist
-    if ($stmt->rowCount() === 0) {
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Applicant completely deleted from the system',
+            'data' => [
+                'assignment_id' => $assignmentId,
+                'application_id' => $applicationId
+            ]
+        ]);
+    } catch (Exception $e) {
+        // Rollback in case of error
+        $pdo->rollBack();
+        
         header('Content-Type: application/json');
-        http_response_code(404);
-        echo json_encode(['error' => 'Assignment not found']);
-        return;
+        http_response_code(500);
+        echo json_encode(['error' => 'Error deleting applicant: ' . $e->getMessage()]);
     }
-    
-    header('Content-Type: application/json');
-    echo json_encode(['success' => true, 'message' => 'Assignment deleted successfully']);
 }
+?>

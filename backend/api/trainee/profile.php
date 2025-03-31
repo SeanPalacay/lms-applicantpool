@@ -3,19 +3,16 @@
 require_once '../../shared/cors_middleware.php';
 require_once __DIR__ . '/../../config/db_config.php';
 
-// Disable error output to prevent HTML in JSON
 ini_set('display_errors', 0);
 error_reporting(E_ERROR);
-
 header('Content-Type: application/json');
 
-// Handle preflight request
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+// Preflight
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// Check authorization header
 $headers = getallheaders();
 $authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
 $token = '';
@@ -23,34 +20,46 @@ $token = '';
 if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
     $token = $matches[1];
 }
-
 if (empty($token)) {
     http_response_code(401);
     echo json_encode(['error' => 'Authentication required']);
     exit;
 }
 
-// Decode token (base64-encoded "userId:timestamp")
+// Decode base64 "userId:timestamp"
 $decodedToken = base64_decode($token);
 if ($decodedToken === false || strpos($decodedToken, ':') === false) {
     http_response_code(401);
     echo json_encode(['error' => 'Invalid token format']);
     exit;
 }
-
 list($userId, $timestamp) = explode(':', $decodedToken);
 
-// Basic token validation (24-hour expiration)
+// Expiration
 if (!$userId || !$timestamp || (time() - $timestamp > 24 * 60 * 60)) {
     http_response_code(401);
     echo json_encode(['error' => 'Invalid or expired token']);
     exit;
 }
 
-// Verify user role
 try {
-    $query = "SELECT id, username, full_name, email, role, status, created_at, last_login, department FROM users WHERE id = :id";
-    $stmt = $pdo->prepare($query);
+    // 1) Fetch user record
+    $userQuery = "
+        SELECT
+            id,
+            username,
+            full_name,
+            email,
+            role,
+            status,
+            created_at,
+            last_login,
+            department
+            -- If you had final_grade or resume_path in 'users', you'd list them here
+        FROM users
+        WHERE id = :id
+    ";
+    $stmt = $pdo->prepare($userQuery);
     $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -61,15 +70,61 @@ try {
         exit;
     }
 
-    if ($user['role'] !== 'trainee' && $user['role'] !== 'administrator') {
+    // Let 'trainee', 'administrator', 'employee', 'applicant' see it
+    $allowedRoles = ['trainee','administrator','employee','applicant'];
+    if (!in_array($user['role'], $allowedRoles)) {
         http_response_code(403);
         echo json_encode(['error' => 'Permission denied']);
         exit;
     }
 
-    // Return user profile data
-    http_response_code(200);
-    echo json_encode($user);
+    // 2) (Optional) Log profile view
+    $activityStmt = $pdo->prepare("
+        INSERT INTO user_activity (user_id, activity_type, details)
+        VALUES (:uid, :atype, :details)
+    ");
+    $activityType    = 'profile_view';
+    $activityDetails = 'Viewed own profile';
+    $activityStmt->bindParam(':uid', $userId, PDO::PARAM_INT);
+    $activityStmt->bindParam(':atype', $activityType, PDO::PARAM_STR);
+    $activityStmt->bindParam(':details', $activityDetails, PDO::PARAM_STR);
+    $activityStmt->execute();
+
+    // 3) Fetch all résumés from `user_resumes` for this user
+    $resumeQuery = "
+        SELECT
+            id,
+            file_path,
+            original_name,
+            uploaded_at
+        FROM user_resumes
+        WHERE user_id = :uid
+        ORDER BY uploaded_at DESC
+    ";
+    $resStmt = $pdo->prepare($resumeQuery);
+    $resStmt->bindParam(':uid', $userId, PDO::PARAM_INT);
+    $resStmt->execute();
+    $resumes = $resStmt->fetchAll(PDO::FETCH_ASSOC);
+
+   // 4) Return combined data
+http_response_code(200);
+
+// Get the most recent resume path, if any
+$resumePath = !empty($resumes) ? $resumes[0]['file_path'] : null;
+
+echo json_encode([
+    'id'         => $user['id'],
+    'username'   => $user['username'],
+    'full_name'  => $user['full_name'],
+    'email'      => $user['email'],
+    'role'       => $user['role'],
+    'status'     => $user['status'],
+    'created_at' => $user['created_at'],
+    'last_login' => $user['last_login'],
+    'department' => $user['department'],
+    'resume_path' => $resumePath,  // This line is correctly getting resume_path from the first resume
+    'resumes'    => $resumes       // Optionally keep this for future use
+]);
 
 } catch (PDOException $e) {
     error_log('Error in profile.php: ' . $e->getMessage());
@@ -80,4 +135,3 @@ try {
     http_response_code(500);
     echo json_encode(['error' => 'An error occurred while fetching profile']);
 }
-?>

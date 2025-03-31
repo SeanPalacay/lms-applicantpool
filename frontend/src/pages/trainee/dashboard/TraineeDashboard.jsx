@@ -269,7 +269,7 @@ const TraineeDashboard = () => {
           </div>
         </div>
 
-        <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+        {/* <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
           <div style={{ 
             background: 'linear-gradient(to right, #ff8c00, #ffbc00)', 
             color: 'white', 
@@ -349,7 +349,7 @@ const TraineeDashboard = () => {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
 
         <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
           <div style={{ 

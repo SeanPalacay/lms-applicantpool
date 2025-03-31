@@ -199,7 +199,7 @@ const ApplicantDashboard = () => {
             ) : (
               <div style={{ textAlign: 'center' }}>
                 <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>You have not submitted any applications yet.</p>
-                <Link 
+                {/* <Link 
                   to="/applicant/programs" 
                   style={{ 
                     padding: '8px 16px', 
@@ -212,7 +212,7 @@ const ApplicantDashboard = () => {
                   }}
                 >
                   Apply for a Program
-                </Link>
+                </Link> */}
               </div>
             )}
           </div>
@@ -295,7 +295,7 @@ const ApplicantDashboard = () => {
 
       <div style={{ textAlign: 'center', marginTop: '32px' }}>
         <Link 
-          to="/applicant/programs" 
+          to="/applicant/pool" 
           style={{ 
             padding: '12px 24px', 
             borderRadius: '4px', 
@@ -309,7 +309,7 @@ const ApplicantDashboard = () => {
             gap: '8px' 
           }}
         >
-          <Briefcase size={16} /> Apply for a Program
+          <Briefcase size={16} /> Apply for a Position
         </Link>
       </div>
     </div>

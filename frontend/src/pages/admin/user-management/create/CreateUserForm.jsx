@@ -1,15 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Key, Shield, AlertCircle, Save, XCircle } from 'lucide-react';
+import { ArrowLeft, User, Mail, Key, Shield, AlertCircle, Save, XCircle, Copy, RefreshCw } from 'lucide-react';
 import adminService from '../../../../services/adminService';
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
+
+// Function to generate a random code
+const generateRandomCode = (length = 8) => {
+  // Define characters to use (alphanumeric + some special characters)
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*';
+  let result = '';
+  
+  // Create a random string
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  
+  return result;
+};
 
 const CreateUserForm = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [codeCopied, setCodeCopied] = useState(false);
   
   const [formData, setFormData] = useState({
     username: '',
@@ -18,29 +34,97 @@ const CreateUserForm = () => {
     full_name: '',
     email: '',
     role: 'trainee',
-    status: 'active'
+    status: 'active',
+    access_code: generateRandomCode(10)
   });
   
   const [validationErrors, setValidationErrors] = useState({});
   
+  useEffect(() => {
+    // When role changes to applicant, adjust username and password
+    if (formData.role === 'applicant') {
+      setFormData(prev => ({
+        ...prev,
+        username: `APP_${prev.access_code.substring(0, 5)}`,
+        password: prev.access_code,
+        confirmPassword: prev.access_code
+      }));
+    }
+  }, [formData.role, formData.access_code]);
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    
+    // If changing role to applicant, setup access code
+    if (name === 'role' && value === 'applicant') {
+      const accessCode = formData.access_code || generateRandomCode(10);
+      setFormData({ 
+        ...formData, 
+        [name]: value,
+        username: `APP_${accessCode.substring(0, 5)}`,
+        password: accessCode,
+        confirmPassword: accessCode
+      });
+    } else if (name === 'role' && formData.role === 'applicant') {
+      // If changing away from applicant role, clear automatic settings
+      setFormData({ 
+        ...formData, 
+        [name]: value,
+        username: '',
+        password: '',
+        confirmPassword: ''
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+    
     if (validationErrors[name]) {
       setValidationErrors({ ...validationErrors, [name]: null });
     }
   };
   
+  const regenerateCode = () => {
+    const newCode = generateRandomCode(10);
+    setFormData(prev => ({
+      ...prev,
+      access_code: newCode,
+      username: prev.role === 'applicant' ? `APP_${newCode.substring(0, 5)}` : prev.username,
+      password: prev.role === 'applicant' ? newCode : prev.password,
+      confirmPassword: prev.role === 'applicant' ? newCode : prev.confirmPassword
+    }));
+    setCodeCopied(false);
+  };
+  
+  const copyCodeToClipboard = () => {
+    navigator.clipboard.writeText(formData.access_code)
+      .then(() => {
+        setCodeCopied(true);
+        setTimeout(() => setCodeCopied(false), 2000);
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+  };
+  
   const validateForm = () => {
     const errors = {};
-    if (!formData.username.trim()) errors.username = 'Username is required';
-    else if (formData.username.length < 3) errors.username = 'Username must be at least 3 characters';
-    if (!formData.password) errors.password = 'Password is required';
-    else if (formData.password.length < 6) errors.password = 'Password must be at least 6 characters';
-    if (formData.password !== formData.confirmPassword) errors.confirmPassword = 'Passwords do not match';
+    
+    if (formData.role !== 'applicant') {
+      // Normal validation for non-applicant users
+      if (!formData.username.trim()) errors.username = 'Username is required';
+      else if (formData.username.length < 3) errors.username = 'Username must be at least 3 characters';
+      if (!formData.password) errors.password = 'Password is required';
+      else if (formData.password.length < 6) errors.password = 'Password must be at least 6 characters';
+      if (formData.password !== formData.confirmPassword) errors.confirmPassword = 'Passwords do not match';
+    } else {
+      // Applicant validation
+      if (!formData.access_code) errors.access_code = 'Access code is required';
+    }
+    
     if (!formData.full_name.trim()) errors.full_name = 'Full name is required';
     if (!formData.email.trim()) errors.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) errors.email = 'Invalid email format';
+    
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -51,9 +135,33 @@ const CreateUserForm = () => {
     try {
       setLoading(true);
       setError(null);
-      const { confirmPassword, ...userData } = formData;
+      
+      // Create a copy of form data
+      const userData = { ...formData };
+      delete userData.confirmPassword;
+      
+      // Handle the role-specific logic
+      if (userData.role === 'applicant') {
+        // Ensure access_code is set
+        if (!userData.access_code) {
+          userData.access_code = generateRandomCode(10);
+          userData.username = `APP_${userData.access_code.substring(0, 5)}`;
+          userData.password = userData.access_code;
+        }
+      } else {
+        // Remove access_code for non-applicant users
+        delete userData.access_code;
+      }
+      
       await adminService.createUser(userData);
       setSuccess('User created successfully!');
+      
+      if (userData.role === 'applicant') {
+        setSuccess(`Applicant created successfully! Access code: ${userData.access_code}`);
+      } else {
+        setSuccess('User created successfully!');
+      }
+      
       setTimeout(() => navigate('/admin/user-management'), 1500);
     } catch (err) {
       console.error('Error creating user:', err);
@@ -91,93 +199,206 @@ const CreateUserForm = () => {
         padding: '24px'
       }}>
         <form onSubmit={handleSubmit}>
+          {/* Role select field - moved to top so it affects other fields */}
           <div style={{ marginBottom: '24px' }}>
-            <label htmlFor="username" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
-              <User size={16} /> Username
+            <label htmlFor="role" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+              <Shield size={16} /> Role
             </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
+            <select
+              id="role"
+              name="role"
+              value={formData.role}
               onChange={handleChange}
-              placeholder="Enter username"
               style={{
                 width: '100%',
                 padding: '8px',
-                border: validationErrors.username ? '1px solid #e74c3c' : '1px solid #e2e8f0',
+                border: '1px solid #e2e8f0',
                 borderRadius: '8px',
                 fontSize: '0.875rem',
                 color: '#1e293b',
                 outline: 'none',
-                ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                backgroundColor: '#ffffff'
               }}
-            />
-            {validationErrors.username && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e74c3c', fontSize: '0.75rem', marginTop: '4px' }}>
-                <AlertCircle size={14} /> {validationErrors.username}
-              </div>
-            )}
+            >
+              <option value="trainee">Trainee</option>
+              <option value="trainer">Trainer</option>
+              <option value="employee">Employee</option>
+              <option value="applicant">Applicant</option>
+              <option value="administrator">Administrator</option>
+            </select>
           </div>
+          
+{formData.role === 'applicant' && (
+  <div style={{ marginBottom: '24px', padding: '16px', backgroundColor: '#e3f2fd', borderRadius: '8px', border: '1px solid #90caf9' }}>
+    <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', color: '#0d47a1', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <Key size={16} /> Applicant Access Code
+    </h3>
+    <p style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#1565c0' }}>
+      This code will be used by the applicant to log in to the system. Make sure to share it securely with them.
+    </p>
+    
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+      <input
+        type="text"
+        value={formData.access_code}
+        onChange={(e) => setFormData(prev => ({
+          ...prev,
+          access_code: e.target.value,
+          username: `APP_${e.target.value.substring(0, 5)}`,
+          password: e.target.value,
+          confirmPassword: e.target.value
+        }))}
+        style={{
+          flex: '1',
+          padding: '12px',
+          border: '1px solid #64b5f6',
+          borderRadius: '8px 0 0 0',
+          fontSize: '16px',
+          fontFamily: 'monospace',
+          backgroundColor: '#fff',
+          color: '#0d47a1',
+          fontWeight: '600'
+        }}
+      />
+      <button
+        type="button"
+        onClick={regenerateCode}
+        title="Generate new code"
+        style={{
+          padding: '12px',
+          backgroundColor: '#1e88e5',
+          color: 'white',
+          border: 'none',
+          borderRadius: '0 8px 0 0',
+          display: 'flex',
+          alignItems: 'center',
+          cursor: 'pointer'
+        }}
+      >
+        <RefreshCw size={16} />
+      </button>
+    </div>
+    
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+      <button
+        type="button"
+        onClick={copyCodeToClipboard}
+        style={{
+          width: '100%',
+          padding: '8px',
+          backgroundColor: codeCopied ? '#2e7d32' : '#1565c0',
+          color: 'white',
+          border: 'none',
+          borderRadius: '0 0 8px 8px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          cursor: 'pointer',
+          fontSize: '14px',
+          transition: 'background-color 0.3s ease'
+        }}
+      >
+        <Copy size={16} /> {codeCopied ? 'Copied!' : 'Copy Access Code to Clipboard'}
+      </button>
+    </div>
+    
+    <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#1565c0' }}>
+      Generated Username: <strong>{formData.username}</strong>
+    </p>
+  </div>
+)}
+          
+          {/* Username field - only for non-applicant users */}
+          {formData.role !== 'applicant' && (
+            <div style={{ marginBottom: '24px' }}>
+              <label htmlFor="username" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+                <User size={16} /> Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Enter username"
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: validationErrors.username ? '1px solid #e74c3c' : '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '0.875rem',
+                  color: '#1e293b',
+                  outline: 'none'
+                }}
+              />
+              {validationErrors.username && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e74c3c', fontSize: '0.75rem', marginTop: '4px' }}>
+                  <AlertCircle size={14} /> {validationErrors.username}
+                </div>
+              )}
+            </div>
+          )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
-            <div>
-              <label htmlFor="password" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
-                <Key size={16} /> Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter password"
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  border: validationErrors.password ? '1px solid #e74c3c' : '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  fontSize: '0.875rem',
-                  color: '#1e293b',
-                  outline: 'none',
-                  ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
-                }}
-              />
-              {validationErrors.password && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e74c3c', fontSize: '0.75rem', marginTop: '4px' }}>
-                  <AlertCircle size={14} /> {validationErrors.password}
-                </div>
-              )}
+          {/* Password fields - only for non-applicant users */}
+          {formData.role !== 'applicant' && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+              <div>
+                <label htmlFor="password" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+                  <Key size={16} /> Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter password"
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: validationErrors.password ? '1px solid #e74c3c' : '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '0.875rem',
+                    color: '#1e293b',
+                    outline: 'none'
+                  }}
+                />
+                {validationErrors.password && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e74c3c', fontSize: '0.75rem', marginTop: '4px' }}>
+                    <AlertCircle size={14} /> {validationErrors.password}
+                  </div>
+                )}
+              </div>
+              <div>
+                <label htmlFor="confirmPassword" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+                  <Key size={16} /> Confirm Password
+                </label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm password"
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: validationErrors.confirmPassword ? '1px solid #e74c3c' : '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '0.875rem',
+                    color: '#1e293b',
+                    outline: 'none'
+                  }}
+                />
+                {validationErrors.confirmPassword && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e74c3c', fontSize: '0.75rem', marginTop: '4px' }}>
+                    <AlertCircle size={14} /> {validationErrors.confirmPassword}
+                  </div>
+                )}
+              </div>
             </div>
-            <div>
-              <label htmlFor="confirmPassword" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
-                <Key size={16} /> Confirm Password
-              </label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirm password"
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  border: validationErrors.confirmPassword ? '1px solid #e74c3c' : '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  fontSize: '0.875rem',
-                  color: '#1e293b',
-                  outline: 'none',
-                  ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
-                }}
-              />
-              {validationErrors.confirmPassword && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e74c3c', fontSize: '0.75rem', marginTop: '4px' }}>
-                  <AlertCircle size={14} /> {validationErrors.confirmPassword}
-                </div>
-              )}
-            </div>
-          </div>
+          )}
 
           <div style={{ marginBottom: '24px' }}>
             <label htmlFor="full_name" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
@@ -197,8 +418,7 @@ const CreateUserForm = () => {
                 borderRadius: '8px',
                 fontSize: '0.875rem',
                 color: '#1e293b',
-                outline: 'none',
-                ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                outline: 'none'
               }}
             />
             {validationErrors.full_name && (
@@ -226,8 +446,7 @@ const CreateUserForm = () => {
                 borderRadius: '8px',
                 fontSize: '0.875rem',
                 color: '#1e293b',
-                outline: 'none',
-                ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                outline: 'none'
               }}
             />
             {validationErrors.email && (
@@ -237,59 +456,29 @@ const CreateUserForm = () => {
             )}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
-            <div>
-              <label htmlFor="role" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
-                <Shield size={16} /> Role
-              </label>
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  fontSize: '0.875rem',
-                  color: '#1e293b',
-                  outline: 'none',
-                  backgroundColor: '#ffffff',
-                  ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
-                }}
-              >
-                <option value="trainee">Trainee</option>
-                <option value="trainer">Trainer</option>
-                <option value="applicant">Applicant</option>
-                <option value="administrator">Administrator</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="status" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
-                Status
-              </label>
-              <select
-                id="status"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  fontSize: '0.875rem',
-                  color: '#1e293b',
-                  outline: 'none',
-                  backgroundColor: '#ffffff',
-                  ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
-                }}
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
+          <div style={{ marginBottom: '24px' }}>
+            <label htmlFor="status" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+              Status
+            </label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '8px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                color: '#1e293b',
+                outline: 'none',
+                backgroundColor: '#ffffff'
+              }}
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
@@ -306,9 +495,7 @@ const CreateUserForm = () => {
                 alignItems: 'center',
                 gap: '8px',
                 fontSize: '0.875rem',
-                textDecoration: 'none',
-                transition: 'background-color 0.3s ease',
-                ':hover': { backgroundColor: '#E3F2FD' }
+                textDecoration: 'none'
               }}
             >
               <XCircle size={16} /> Cancel
@@ -326,9 +513,7 @@ const CreateUserForm = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                fontSize: '0.875rem',
-                transition: 'background-color 0.3s ease',
-                ':hover': loading ? {} : { backgroundColor: '#1565C0' }
+                fontSize: '0.875rem'
               }}
             >
               <Save size={16} /> {loading ? 'Creating...' : 'Create User'}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
-  Users, Search, Filter, ChevronDown, ChevronUp, User, Mail, 
+  Users, Search, Filter, ChevronDown, ChevronUp, User, Mail, Trophy,
   Phone, Calendar, CheckCircle, Clock, AlertTriangle, Plus
 } from 'lucide-react';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
@@ -198,21 +198,37 @@ const Trainees = () => {
           }}>Trainees</h2>
         </div>
         <div>
-          <Link 
-            to="/trainer/trainees/export"
-            style={{
-              padding: '8px 15px',
-              background: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              textDecoration: 'none',
-              fontSize: '14px'
-            }}
-          >
-            Export List
-          </Link>
-        </div>
+  <Link 
+    to="/trainer/leaderboard"
+    style={{
+      padding: '8px 15px',
+      background: '#ffc107', // Gold color for leaderboard
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      textDecoration: 'none',
+      fontSize: '14px',
+      marginRight: '10px' // Add margin between buttons
+    }}
+  >
+    <Trophy size={16} style={{ marginRight: '5px' }} />
+    View Leaderboard
+  </Link>
+  <Link 
+    to="/trainer/trainees/export"
+    style={{
+      padding: '8px 15px',
+      background: '#007bff',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      textDecoration: 'none',
+      fontSize: '14px'
+    }}
+  >
+    Export List
+  </Link>
+</div>
       </div>
       
       <div style={{

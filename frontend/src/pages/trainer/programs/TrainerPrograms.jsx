@@ -7,11 +7,14 @@ import {
   Calendar, 
   Clock,
   Users,
+  Edit,
   X,
   Plus,
   Eye,
   BarChart2,
-  GraduationCap
+  GraduationCap,
+  Grid,  // Added this icon
+  List    // Added this icon
 } from 'lucide-react';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
@@ -27,6 +30,7 @@ const TrainerPrograms = () => {
   const [filteredPrograms, setFilteredPrograms] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
+  const [viewMode, setViewMode] = useState('grid'); // Added view mode state
   const [filters, setFilters] = useState({
     type: '',
     status: 'active'
@@ -43,6 +47,11 @@ const TrainerPrograms = () => {
     { value: 'inactive', label: 'Inactive' },
     { value: '', label: 'All Status' }
   ];
+
+  // Toggle view mode function
+  const toggleViewMode = () => {
+    setViewMode(viewMode === 'grid' ? 'table' : 'grid');
+  };
 
   useEffect(() => {
     const fetchPrograms = async () => {
@@ -231,9 +240,44 @@ const TrainerPrograms = () => {
             <Filter size={18} />
             <span>Filter</span>
           </button>
+          
+          {/* Add view mode toggle button */}
+          <button 
+            onClick={toggleViewMode}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--spacing-xs)',
+              background: 'none',
+              border: '1px solid var(--medium-gray)',
+              borderRadius: 'var(--radius-sm)',
+              padding: 'var(--spacing-sm) var(--spacing-md)',
+              cursor: 'pointer',
+              color: 'var(--text-primary)'
+            }}
+            title={viewMode === 'grid' ? 'Switch to Table View' : 'Switch to Grid View'}
+          >
+            {viewMode === 'grid' ? <List size={18} /> : <Grid size={18} />}
+          </button>
         </div>
         
         <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+          <Link 
+            to="/trainer/programs/create" 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 'var(--spacing-xs)', 
+              background: 'var(--primary-color)', 
+              color: 'white', 
+              padding: 'var(--spacing-sm) var(--spacing-md)', 
+              borderRadius: 'var(--radius-sm)', 
+              textDecoration: 'none' 
+            }}
+          >
+            <Plus size={16} />
+            <span>Create Program</span>
+          </Link>
           <Link 
             to="/trainer/quizzes/create" 
             style={{ 
@@ -249,22 +293,6 @@ const TrainerPrograms = () => {
           >
             <Plus size={16} />
             <span>Add Quiz</span>
-          </Link>
-          <Link 
-            to="/trainer/milestones/create" 
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: 'var(--spacing-xs)', 
-              background: 'var(--secondary-color)', 
-              color: 'white', 
-              padding: 'var(--spacing-sm) var(--spacing-md)', 
-              borderRadius: 'var(--radius-sm)', 
-              textDecoration: 'none' 
-            }}
-          >
-            <Plus size={16} />
-            <span>Add Milestone</span>
           </Link>
         </div>
       </div>
@@ -349,138 +377,246 @@ const TrainerPrograms = () => {
       
       <div style={{ backgroundColor: 'white', borderRadius: 'var(--radius-md)', padding: 'var(--spacing-md)', boxShadow: 'var(--shadow-sm)' }}>
         {filteredPrograms.length > 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 'var(--spacing-md)' }}>
-            {filteredPrograms.map((program) => (
-              <div key={program.id} style={{ 
-                backgroundColor: 'white', 
-                borderRadius: 'var(--radius-md)', 
-                padding: 'var(--spacing-md)', 
-                boxShadow: 'var(--shadow-sm)', 
-                border: '1px solid var(--medium-gray)' 
+          viewMode === 'grid' ? (
+            // Grid View
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 'var(--spacing-md)' }}>
+              {filteredPrograms.map((program) => (
+                <div key={program.id} style={{ 
+                  backgroundColor: 'white', 
+                  borderRadius: 'var(--radius-md)', 
+                  padding: 'var(--spacing-md)', 
+                  boxShadow: 'var(--shadow-sm)', 
+                  border: '1px solid var(--medium-gray)' 
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-md)' }}>
+                    <div style={{ display: 'flex', gap: 'var(--spacing-xs)' }}>
+                      <span style={{ 
+                        padding: 'var(--spacing-xs) var(--spacing-sm)', 
+                        borderRadius: 'var(--radius-sm)', 
+                        fontSize: '12px', 
+                        fontWeight: '500', 
+                        backgroundColor: program.type === 'regular' ? 'var(--primary-ultralight)' : 'var(--secondary-color)', 
+                        color: program.type === 'regular' ? 'var(--primary-color)' : 'white' 
+                      }}>
+                        {program.type === 'regular' ? 'Regular' : 'Refresher'}
+                      </span>
+                      <span style={{ 
+                        padding: 'var(--spacing-xs) var(--spacing-sm)', 
+                        borderRadius: 'var(--radius-sm)', 
+                        fontSize: '12px', 
+                        fontWeight: '500', 
+                        backgroundColor: program.status === 'active' ? 'var(--success-color)' : 'var(--danger-color)', 
+                        color: 'white' 
+                      }}>
+                        {program.status === 'active' ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+                      <Link 
+                        to={`/trainer/programs/${program.id}`}
+                        style={{ color: 'var(--text-primary)', textDecoration: 'none' }}
+                        title="View details"
+                      >
+                        <Eye size={20} />
+                      </Link>
+                      <Link 
+                        to={`/trainer/programs/edit/${program.id}`}
+                        style={{ color: 'var(--primary-color)', textDecoration: 'none' }}
+                        title="Edit program"
+                      >
+                        <Edit size={20} />
+                      </Link>
+                    </div>
+                  </div>
+                  
+                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: 'var(--spacing-sm)' }}>
+                    {program.title}
+                  </h3>
+                  
+                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-md)' }}>
+                    {program.description}
+                  </p>
+                  
+                  <div style={{ display: 'flex', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-md)' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
+                        <Users size={18} color="var(--text-secondary)" />
+                        <div>
+                          <div style={{ fontSize: '16px', fontWeight: '500', color: 'var(--text-primary)' }}>
+                            {program.enrollmentCount || 0}
+                          </div>
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Trainees</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
+                        <GraduationCap size={18} color="var(--text-secondary)" />
+                        <div>
+                          <div style={{ fontSize: '16px', fontWeight: '500', color: 'var(--text-primary)' }}>
+                            {parseFloat(program.completionRate || 0).toFixed(1)}%
+                          </div>
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Completion</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
+                        <BarChart2 size={18} color="var(--text-secondary)" />
+                        <div>
+                          <div style={{ fontSize: '16px', fontWeight: '500', color: 'var(--text-primary)' }}>
+                            {program.averageScore ? parseFloat(program.averageScore).toFixed(1) : 'N/A'}
+                          </div>
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Avg. Score</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-md)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', color: 'var(--text-secondary)' }}>
+                      <Calendar size={14} />
+                      <span>Created: {formatDate(program.created_at)}</span>
+                    </div>
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', color: 'var(--text-secondary)' }}>
+                      <Clock size={14} />
+                      <span>{program.quizCount || 0} Quizzes</span>
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+                    <Link 
+                      to={`/trainer/quizzes?programId=${program.id}`} 
+                      style={{ 
+                        flex: 1, 
+                        textAlign: 'center', 
+                        padding: 'var(--spacing-sm)', 
+                        borderRadius: 'var(--radius-sm)', 
+                        backgroundColor: 'var(--primary-ultralight)', 
+                        color: 'var(--primary-color)', 
+                        textDecoration: 'none' 
+                      }}
+                    >
+                      Manage Quizzes
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            // Table View
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ 
+                width: '100%', 
+                borderCollapse: 'collapse', 
+                background: '#fff',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                borderRadius: '8px',
+                overflow: 'hidden'
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-md)' }}>
-                  <div style={{ display: 'flex', gap: 'var(--spacing-xs)' }}>
-                    <span style={{ 
-                      padding: 'var(--spacing-xs) var(--spacing-sm)', 
-                      borderRadius: 'var(--radius-sm)', 
-                      fontSize: '12px', 
-                      fontWeight: '500', 
-                      backgroundColor: program.type === 'regular' ? 'var(--primary-ultralight)' : 'var(--secondary-color)', 
-                      color: program.type === 'regular' ? 'var(--primary-color)' : 'white' 
-                    }}>
-                      {program.type === 'regular' ? 'Regular' : 'Refresher'}
-                    </span>
-                    <span style={{ 
-                      padding: 'var(--spacing-xs) var(--spacing-sm)', 
-                      borderRadius: 'var(--radius-sm)', 
-                      fontSize: '12px', 
-                      fontWeight: '500', 
-                      backgroundColor: program.status === 'active' ? 'var(--success-color)' : 'var(--danger-color)', 
-                      color: 'white' 
-                    }}>
-                      {program.status === 'active' ? 'Active' : 'Inactive'}
-                    </span>
-                  </div>
-                  <Link 
-                    to={`/trainer/programs/${program.id}`}
-                    style={{ color: 'var(--text-primary)', textDecoration: 'none' }}
-                    title="View details"
-                  >
-                    <Eye size={20} />
-                  </Link>
-                </div>
-                
-                <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: 'var(--spacing-sm)' }}>
-                  {program.title}
-                </h3>
-                
-                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-md)' }}>
-                  {program.description}
-                </p>
-                
-                <div style={{ display: 'flex', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-md)' }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
-                      <Users size={18} color="var(--text-secondary)" />
-                      <div>
-                        <div style={{ fontSize: '16px', fontWeight: '500', color: 'var(--text-primary)' }}>
-                          {program.enrollmentCount || 0}
+                <thead>
+                  <tr style={{ background: '#f8f9fa' }}>
+                    <th style={{ padding: '12px 15px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Title</th>
+                    <th style={{ padding: '12px 15px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Type</th>
+                    <th style={{ padding: '12px 15px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Status</th>
+                    <th style={{ padding: '12px 15px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Trainees</th>
+                    <th style={{ padding: '12px 15px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Completion</th>
+                    <th style={{ padding: '12px 15px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Avg. Score</th>
+                    <th style={{ padding: '12px 15px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Created</th>
+                    <th style={{ padding: '12px 15px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPrograms.map((program) => (
+                    <tr key={program.id} style={{ borderBottom: '1px solid #ddd' }}>
+                      <td style={{ padding: '12px 15px' }}>
+                        <div style={{ fontWeight: 'bold' }}>{program.title}</div>
+                        <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                          {program.description && program.description.length > 60 
+                            ? `${program.description.substring(0, 60)}...` 
+                            : program.description}
                         </div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Trainees</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
-                      <GraduationCap size={18} color="var(--text-secondary)" />
-                      <div>
-                        <div style={{ fontSize: '16px', fontWeight: '500', color: 'var(--text-primary)' }}>
-                          {program.completionRate || 0}%
+                      </td>
+                      <td style={{ padding: '12px 15px', textAlign: 'center' }}>
+                        <span style={{ 
+                          display: 'inline-block',
+                          padding: '4px 8px', 
+                          borderRadius: '4px', 
+                          fontSize: '12px', 
+                          fontWeight: '500', 
+                          backgroundColor: program.type === 'regular' ? 'var(--primary-ultralight)' : 'var(--secondary-color)', 
+                          color: program.type === 'regular' ? 'var(--primary-color)' : 'white' 
+                        }}>
+                          {program.type === 'regular' ? 'Regular' : 'Refresher'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '12px 15px', textAlign: 'center' }}>
+                        <span style={{ 
+                          display: 'inline-block',
+                          padding: '4px 8px', 
+                          borderRadius: '4px', 
+                          fontSize: '12px', 
+                          fontWeight: '500', 
+                          backgroundColor: program.status === 'active' ? 'var(--success-color)' : 'var(--danger-color)', 
+                          color: 'white' 
+                        }}>
+                          {program.status === 'active' ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '12px 15px', textAlign: 'center' }}>{program.enrollmentCount || 0}</td>
+                      <td style={{ padding: '12px 15px', textAlign: 'center' }}>
+                        {parseFloat(program.completionRate || 0).toFixed(1)}%
+                      </td>
+                      <td style={{ padding: '12px 15px', textAlign: 'center' }}>
+                        {program.averageScore ? parseFloat(program.averageScore).toFixed(1) : 'N/A'}
+                      </td>
+                      <td style={{ padding: '12px 15px', textAlign: 'center' }}>{formatDate(program.created_at)}</td>
+                      <td style={{ padding: '12px 15px', textAlign: 'center' }}>
+                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                          <Link 
+                            to={`/trainer/programs/${program.id}`}
+                            style={{ 
+                              padding: '5px',
+                              color: 'var(--text-primary)',
+                              textDecoration: 'none'
+                            }}
+                            title="View details"
+                          >
+                            <Eye size={18} />
+                          </Link>
+                          <Link 
+                            to={`/trainer/programs/edit/${program.id}`}
+                            style={{ 
+                              padding: '5px',
+                              color: 'var(--primary-color)',
+                              textDecoration: 'none'
+                            }}
+                            title="Edit program"
+                          >
+                            <Edit size={18} />
+                          </Link>
+                          <Link 
+                            to={`/trainer/quizzes?programId=${program.id}`}
+                            style={{ 
+                              padding: '5px',
+                              color: 'var(--primary-color)',
+                              textDecoration: 'none'
+                            }}
+                            title="Manage Quizzes"
+                          >
+                            <BookOpen size={18} />
+                          </Link>
                         </div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Completion</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)' }}>
-                      <BarChart2 size={18} color="var(--text-secondary)" />
-                      <div>
-                        <div style={{ fontSize: '16px', fontWeight: '500', color: 'var(--text-primary)' }}>
-                          {program.averageScore || 'N/A'}
-                        </div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Avg. Score</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div style={{ display: 'flex', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-md)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', color: 'var(--text-secondary)' }}>
-                    <Calendar size={14} />
-                    <span>Created: {formatDate(program.created_at)}</span>
-                  </div>
-                  
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', color: 'var(--text-secondary)' }}>
-                    <Clock size={14} />
-                    <span>{program.quizCount || 0} Quizzes</span>
-                  </div>
-                </div>
-                
-                <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
-                  <Link 
-                    to={`/trainer/quizzes?programId=${program.id}`} 
-                    style={{ 
-                      flex: 1, 
-                      textAlign: 'center', 
-                      padding: 'var(--spacing-sm)', 
-                      borderRadius: 'var(--radius-sm)', 
-                      backgroundColor: 'var(--primary-ultralight)', 
-                      color: 'var(--primary-color)', 
-                      textDecoration: 'none' 
-                    }}
-                  >
-                    Manage Quizzes
-                  </Link>
-                  <Link 
-                    to={`/trainer/milestones?programId=${program.id}`} 
-                    style={{ 
-                      flex: 1, 
-                      textAlign: 'center', 
-                      padding: 'var(--spacing-sm)', 
-                      borderRadius: 'var(--radius-sm)', 
-                      backgroundColor: 'var(--primary-ultralight)', 
-                      color: 'var(--primary-color)', 
-                      textDecoration: 'none' 
-                    }}
-                  >
-                    Manage Milestones
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
         ) : (
           <div style={{ textAlign: 'center', padding: 'var(--spacing-xl)', color: 'var(--text-muted)' }}>
             <BookOpen size={48} style={{ marginBottom: 'var(--spacing-md)' }} />

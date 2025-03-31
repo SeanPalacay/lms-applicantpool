@@ -1,0 +1,8 @@
+2025-03-29 15:13:31 - Request received
+2025-03-29 15:15:36 - Request received
+Received data: Array
+(
+    [exam_id] => 1
+    [submission_text] => gege
+)
+

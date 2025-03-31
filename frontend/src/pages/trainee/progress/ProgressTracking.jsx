@@ -464,7 +464,7 @@ const ProgressTracking = () => {
         )}
       </div>
 
-      <div style={{ marginBottom: 'var(--spacing-xl)' }}>
+      {/* <div style={{ marginBottom: 'var(--spacing-xl)' }}>
         <h2 style={{ 
           display: 'flex', 
           alignItems: 'center', 
@@ -530,7 +530,7 @@ const ProgressTracking = () => {
             ))}
           </div>
         )}
-      </div>
+      </div> */}
 
       <div>
         <h2 style={{ 

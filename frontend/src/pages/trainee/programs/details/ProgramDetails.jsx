@@ -389,7 +389,7 @@ const ProgramDetails = () => {
       )}
       
       <div style={styles.contentGrid}>
-        <div style={styles.card}>
+        {/* <div style={styles.card}>
           <div style={styles.sectionIcon}>
             <Flag size={20} style={styles.iconPrimary} />
             <h3 style={styles.sectionTitle}>Milestones</h3>
@@ -429,7 +429,7 @@ const ProgramDetails = () => {
               <p>No milestones have been set for this program</p>
             </div>
           )}
-        </div>
+        </div> */}
         
         <div style={styles.card}>
           <div style={styles.sectionIcon}>

@@ -67,16 +67,20 @@ try {
         exit;
     }
 
-    // Fetch all active assessments for the trainee
+    // Fetch only assessments for programs the trainee is enrolled in
     $query = "
     SELECT q.id, q.title, q.description, q.time_limit, q.passing_score,
        qa.id AS attempt_id, qa.score, qa.feedback, qa.attempt_date,
        p.id AS program_id, p.title AS program_title
-FROM quizzes q
-LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.user_id = :userId
-JOIN programs p ON q.program_id = p.id
-WHERE q.status = 'active'
-";
+    FROM quizzes q
+    LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.user_id = :userId
+    JOIN programs p ON q.program_id = p.id
+    JOIN program_enrollments pe ON p.id = pe.program_id
+    WHERE q.status = 'active'
+    AND pe.user_id = :userId
+    ORDER BY q.created_at DESC
+    ";
+    
     $stmt = $pdo->prepare($query);
     if (!$stmt) {
         throw new PDOException("Prepare failed: " . implode(", ", $pdo->errorInfo()));
@@ -90,33 +94,33 @@ WHERE q.status = 'active'
     $assessments = [];
     $quizMap = [];
 
-   // Inside the foreach loop where attempts are processed
-foreach ($results as $row) {
-    $quizId = $row['id'];
-    if (!isset($quizMap[$quizId])) {
-        $quizMap[$quizId] = [
-            'id' => $row['id'],
-            'title' => $row['title'],
-            'description' => $row['description'],
-            'time_limit' => $row['time_limit'],
-            'passing_score' => $row['passing_score'],
-            'attempts' => [],
-            'program' => [
-                'id' => $row['program_id'],
-                'title' => $row['program_title']
-            ]
-        ];
-    }
+    // Inside the foreach loop where attempts are processed
+    foreach ($results as $row) {
+        $quizId = $row['id'];
+        if (!isset($quizMap[$quizId])) {
+            $quizMap[$quizId] = [
+                'id' => $row['id'],
+                'title' => $row['title'],
+                'description' => $row['description'],
+                'time_limit' => $row['time_limit'],
+                'passing_score' => $row['passing_score'],
+                'attempts' => [],
+                'program' => [
+                    'id' => $row['program_id'],
+                    'title' => $row['program_title']
+                ]
+            ];
+        }
 
-    if ($row['score'] !== null) {
-        $quizMap[$quizId]['attempts'][] = [
-            'id' => $row['attempt_id'], // Add this field
-            'score' => $row['score'],
-            'feedback' => $row['feedback'],
-            'attempt_date' => $row['attempt_date']
-        ];
+        if ($row['score'] !== null) {
+            $quizMap[$quizId]['attempts'][] = [
+                'id' => $row['attempt_id'], // Add this field
+                'score' => $row['score'],
+                'feedback' => $row['feedback'],
+                'attempt_date' => $row['attempt_date']
+            ];
+        }
     }
-}
 
     $assessments = array_values($quizMap);
     
