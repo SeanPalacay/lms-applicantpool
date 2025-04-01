@@ -425,10 +425,10 @@ const roleToPathMap = {
                   </div>
                   
                   <div className="dropdown-divider"></div>
-                  
+{/*                   
                   <Link to={`/${navRole}/profile`} className="dropdown-item">                    <Settings size={18} />
                     <span>Profile Settings</span>
-                  </Link>
+                  </Link> */}
                   
                   <button onClick={handleLogout} className="dropdown-item">
                     <LogOut size={18} />
