@@ -209,7 +209,7 @@ const roleToPathMap = {
       { path: '/admin/reports', label: 'Assessment Reports', iconName: 'reports' },
       { path: '/admin/records', label: 'Records Management', iconName: 'records' },
       { path: '/admin/backups', label: 'System Backups', iconName: 'backups' },
-      { path: '/admin/incidents', label: 'Performance Incidents', iconName: 'incidents' },
+      // { path: '/admin/incidents', label: 'Performance Incidents', iconName: 'incidents' },
       { path: '/admin/profile', label: 'Profile', iconName: 'admin-profile' },
     ],
     trainer: [

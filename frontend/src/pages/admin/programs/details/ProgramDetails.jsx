@@ -221,7 +221,7 @@ const ProgramDetails = () => {
             </div>
           </div>
 
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
+          {/* <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
             <div style={{ backgroundColor: '#e6fffa', padding: '16px', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <Flag size={20} style={{ color: '#2ecc71' }} />
@@ -253,7 +253,7 @@ const ProgramDetails = () => {
                 </div>
               )}
             </div>
-          </div>
+          </div> */}
 
           <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
             <div style={{ backgroundColor: '#ffe6e6', padding: '16px', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

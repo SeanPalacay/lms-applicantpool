@@ -143,7 +143,7 @@ const TrainerDashboard = () => {
             <h2 style={{ fontSize: '1.5rem', fontWeight: 600, margin: 0 }}>Alerts & Notifications</h2>
             <div style={{ flex: 1, height: '2px', backgroundColor: '#e2e8f0' }}></div>
           </div>
-          <div style={{ display: 'grid', gap: '16px' }}>
+          {/* <div style={{ display: 'grid', gap: '16px' }}>
             {dashboardData.alerts.map((alert, index) => (
               <div key={index} style={{
                 backgroundColor: alert.type === 'warning' ? '#fff8e6' : '#e6f7ff',
@@ -182,7 +182,7 @@ const TrainerDashboard = () => {
                 )}
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
       )}
 

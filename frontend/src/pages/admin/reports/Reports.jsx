@@ -666,7 +666,7 @@ const Reports = () => {
                     <Users size={16} />
                     User Activity
                 </button>
-                <button 
+                {/* <button 
                     style={{ 
                         display: 'flex', 
                         alignItems: 'center', 
@@ -683,7 +683,7 @@ const Reports = () => {
                 >
                     <Calendar size={16} />
                     Applicant Data
-                </button>
+                </button> */}
             </div>
             
             <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
