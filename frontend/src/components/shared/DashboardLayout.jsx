@@ -205,6 +205,7 @@ const roleToPathMap = {
       { path: '/administrator-dashboard', label: 'Dashboard', iconName: 'dashboard' },
       { path: '/admin/user-management', label: 'User Management', iconName: 'users' },
       { path: '/admin/programs', label: 'Programs', iconName: 'programs' },
+      { path: '/admin/applications', label: 'Applications', iconName: 'applicants' },
       { path: '/admin/applicant-pools', label: 'Applicant Pools', iconName: 'applicants' },
       { path: '/admin/reports', label: 'Assessment Reports', iconName: 'reports' },
       { path: '/admin/records', label: 'Records Management', iconName: 'records' },
@@ -250,10 +251,10 @@ const roleToPathMap = {
     applicant: [
       { path: '/applicant-dashboard', label: 'Dashboard', iconName: 'dashboard' },
       // { path: '/applicant/programs', label: 'Available Programs', iconName: 'available-programs' },
-      { path: '/applicant/pool', label: 'Application Pool', iconName: 'available-programs' },
+      // { path: '/applicant/pool', label: 'Application Pool', iconName: 'available-programs' },
       { path: '/applicant/job-roles', label: 'Job Roles', iconName: 'job-roles' },
       { path: '/applicant/applications', label: 'My Applications', iconName: 'applications' },
-      { path: '/applicant/upload', label: 'Upload Documents', iconName: 'upload' },
+      // { path: '/applicant/upload', label: 'Upload Documents', iconName: 'upload' },
       { path: '/applicant/profile', label: 'Profile', iconName: 'applicant-profile' },
     ],
   };

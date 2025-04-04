@@ -18,6 +18,59 @@ if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
     exit;
 }
 
+// Ensure all required supporting tables exist
+function ensureSupportingTablesExist($pdo) {
+    // Weights table
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS `quiz_question_weights` (
+            `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            `quiz_id` INT(11) NOT NULL,
+            `question_id` INT(11) NOT NULL,
+            `weight` DECIMAL(5,2) DEFAULT 1.00,
+            UNIQUE KEY quiz_question (quiz_id, question_id),
+            FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+            FOREIGN KEY (question_id) REFERENCES quiz_questions(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    ");
+    
+    // Feedback templates table
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS `quiz_feedback_templates` (
+            `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            `quiz_id` INT(11) NOT NULL,
+            `score_range_min` DECIMAL(5,2) DEFAULT 0.00,
+            `score_range_max` DECIMAL(5,2) DEFAULT 100.00,
+            `feedback_template` TEXT NOT NULL,
+            FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    ");
+    
+    // Update quizzes table if needed
+    try {
+        $pdo->exec("
+            ALTER TABLE `quizzes` 
+            ADD COLUMN IF NOT EXISTS `grading_type` ENUM('standard','weighted','custom') DEFAULT 'standard',
+            ADD COLUMN IF NOT EXISTS `auto_feedback` TINYINT(1) DEFAULT 0
+        ");
+    } catch (PDOException $e) {
+        // If IF NOT EXISTS is not supported (older MySQL), handle it differently
+        try {
+            // Check if columns exist
+            $stmt = $pdo->query("SHOW COLUMNS FROM `quizzes` LIKE 'grading_type'");
+            if ($stmt->rowCount() === 0) {
+                $pdo->exec("ALTER TABLE `quizzes` ADD COLUMN `grading_type` ENUM('standard','weighted','custom') DEFAULT 'standard'");
+            }
+            
+            $stmt = $pdo->query("SHOW COLUMNS FROM `quizzes` LIKE 'auto_feedback'");
+            if ($stmt->rowCount() === 0) {
+                $pdo->exec("ALTER TABLE `quizzes` ADD COLUMN `auto_feedback` TINYINT(1) DEFAULT 0");
+            }
+        } catch (PDOException $innerEx) {
+            error_log("Error adjusting quizzes table: " . $innerEx->getMessage());
+        }
+    }
+}
+
 try {
     // Validate authentication token
     $headers = getallheaders();
@@ -92,6 +145,9 @@ try {
         exit;
     }
 
+    // Ensure supporting tables exist
+    ensureSupportingTablesExist($pdo);
+
     // Start transaction
     $pdo->beginTransaction();
 
@@ -104,21 +160,6 @@ try {
     $allowedGradingTypes = ['standard', 'weighted', 'custom'];
     if (!in_array($grading_type, $allowedGradingTypes)) {
         $grading_type = 'standard';
-    }
-
-    // Update quiz table, adding grading_type and auto_feedback columns if they don't exist
-    $checkColumnsQuery = "SHOW COLUMNS FROM quizzes LIKE 'grading_type'";
-    $stmt = $pdo->prepare($checkColumnsQuery);
-    $stmt->execute();
-    
-    if ($stmt->rowCount() === 0) {
-        // Add grading columns if they don't exist
-        $alterTableQuery = "
-            ALTER TABLE quizzes 
-            ADD COLUMN grading_type ENUM('standard', 'weighted', 'custom') DEFAULT 'standard',
-            ADD COLUMN auto_feedback TINYINT(1) DEFAULT 0
-        ";
-        $pdo->exec($alterTableQuery);
     }
 
     // Update quiz settings
@@ -138,33 +179,6 @@ try {
 
     // 2. Handle question weights if provided and grading type is 'weighted'
     if ($grading_type === 'weighted' && isset($data['question_weights']) && is_array($data['question_weights'])) {
-        // Check if quiz_question_weights table exists, create if not
-        $checkTableQuery = "
-            SELECT 1 
-            FROM information_schema.tables 
-            WHERE table_schema = DATABASE() 
-            AND table_name = 'quiz_question_weights'
-        ";
-        $stmt = $pdo->prepare($checkTableQuery);
-        $stmt->execute();
-        
-        if ($stmt->rowCount() === 0) {
-            // Create table if it doesn't exist
-            $createTableQuery = "
-                CREATE TABLE quiz_question_weights (
-                    id int(11) NOT NULL AUTO_INCREMENT,
-                    quiz_id int(11) NOT NULL,
-                    question_id int(11) NOT NULL,
-                    weight decimal(5,2) DEFAULT 1.00,
-                    PRIMARY KEY (id),
-                    UNIQUE KEY quiz_question (quiz_id,question_id),
-                    FOREIGN KEY (quiz_id) REFERENCES quizzes (id) ON DELETE CASCADE,
-                    FOREIGN KEY (question_id) REFERENCES quiz_questions (id) ON DELETE CASCADE
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
-            ";
-            $pdo->exec($createTableQuery);
-        }
-
         // Delete existing weights for this quiz
         $deleteQuery = "DELETE FROM quiz_question_weights WHERE quiz_id = :quizId";
         $stmt = $pdo->prepare($deleteQuery);
@@ -202,33 +216,6 @@ try {
 
     // 3. Handle feedback templates if provided and auto_feedback is enabled
     if ($auto_feedback && isset($data['feedback_templates']) && is_array($data['feedback_templates'])) {
-        // Check if quiz_feedback_templates table exists, create if not
-        $checkTableQuery = "
-            SELECT 1 
-            FROM information_schema.tables 
-            WHERE table_schema = DATABASE() 
-            AND table_name = 'quiz_feedback_templates'
-        ";
-        $stmt = $pdo->prepare($checkTableQuery);
-        $stmt->execute();
-        
-        if ($stmt->rowCount() === 0) {
-            // Create table if it doesn't exist
-            $createTableQuery = "
-                CREATE TABLE quiz_feedback_templates (
-                    id int(11) NOT NULL AUTO_INCREMENT,
-                    quiz_id int(11) NOT NULL,
-                    score_range_min decimal(5,2) DEFAULT 0.00,
-                    score_range_max decimal(5,2) DEFAULT 100.00,
-                    feedback_template text NOT NULL,
-                    PRIMARY KEY (id),
-                    KEY quiz_id (quiz_id),
-                    FOREIGN KEY (quiz_id) REFERENCES quizzes (id) ON DELETE CASCADE
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
-            ";
-            $pdo->exec($createTableQuery);
-        }
-
         // Delete existing templates for this quiz
         $deleteQuery = "DELETE FROM quiz_feedback_templates WHERE quiz_id = :quizId";
         $stmt = $pdo->prepare($deleteQuery);
@@ -272,7 +259,7 @@ try {
 
 } catch (Exception $e) {
     // Roll back transaction on error
-    if ($pdo->inTransaction()) {
+    if (isset($pdo) && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
     

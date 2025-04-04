@@ -143,46 +143,6 @@ const TrainerDashboard = () => {
             <h2 style={{ fontSize: '1.5rem', fontWeight: 600, margin: 0 }}>Alerts & Notifications</h2>
             <div style={{ flex: 1, height: '2px', backgroundColor: '#e2e8f0' }}></div>
           </div>
-          {/* <div style={{ display: 'grid', gap: '16px' }}>
-            {dashboardData.alerts.map((alert, index) => (
-              <div key={index} style={{
-                backgroundColor: alert.type === 'warning' ? '#fff8e6' : '#e6f7ff',
-                borderRadius: '12px',
-                padding: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '16px',
-                boxShadow: '0 4px 6px rgba(0,0,0,0.07)'
-              }}>
-                <div style={{ color: alert.type === 'warning' ? '#f39c12' : '#1E88E5' }}>
-                  {alert.type === 'warning' ? <AlertTriangle size={20} /> : <Info size={20} />}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <h4 style={{ fontSize: '1rem', fontWeight: 600, margin: '0 0 4px 0' }}>{alert.title || 'Notification'}</h4>
-                  <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
-                    {alert.message}{alert.dueDate && ` - ${formatDueDate(alert.dueDate)}`}
-                  </p>
-                </div>
-                {alert.actionLink && (
-                  <Link
-                    to={alert.actionLink}
-                    style={{
-                      backgroundColor: alert.type === 'warning' ? '#f39c12' : '#1E88E5',
-                      color: '#ffffff',
-                      padding: '6px 12px',
-                      borderRadius: '8px',
-                      textDecoration: 'none',
-                      fontSize: '0.75rem',
-                      transition: 'background-color 0.3s ease',
-                      ':hover': { backgroundColor: alert.type === 'warning' ? '#e67e22' : '#1565C0' }
-                    }}
-                  >
-                    {alert.actionText || 'View Details'}
-                  </Link>
-                )}
-              </div>
-            ))}
-          </div> */}
         </div>
       )}
 

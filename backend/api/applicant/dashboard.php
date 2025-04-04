@@ -138,35 +138,36 @@ try {
     $response['user'] = $userData;
     debug_log("Found user data", $userData);
 
-    // Rest of your code remains the same...
-    
     /*
      * 2. Fetch All Applications for This Applicant
-     *    We join the `applications` table with `applicant_pools` for relevant data
+     *    We join the `job_applications` table with `job_positions` to include the department
      */
     $appsQuery = "
         SELECT 
-            a.id AS application_id,
-            a.pool_id,
-            ap.pool_name,
-            a.job_role,
-            a.department,
-            a.status,
-            a.evaluation_score,
-            a.fst_score,
-            a.applied_at,
-            a.updated_at
-        FROM applications a
-        JOIN applicant_pools ap ON a.pool_id = ap.id
-        WHERE a.user_id = ? 
-        ORDER BY a.applied_at DESC
+            ja.id AS application_id,
+            ja.position_id,
+            jp.position_name,
+            jp.department, -- Added department field
+            ja.reasons,
+            ja.experience,
+            ja.skills,
+            ja.education,
+            ja.availability,
+            ja.references,
+            ja.status,
+            ja.applied_at,
+            ja.updated_at
+        FROM job_applications ja
+        JOIN job_positions jp ON ja.position_id = jp.id
+        WHERE ja.user_id = ? 
+        ORDER BY ja.applied_at DESC
     ";
     $appsStmt = $pdo->prepare($appsQuery);
     $appsStmt->execute([$applicantId]);
     $applications = $appsStmt->fetchAll(PDO::FETCH_ASSOC);
 
     $response['myApplications'] = $applications;
-    debug_log("Found applications", count($applications));
+    debug_log("Found applications", $applications);
 
     /*
      * 3. Fetch Notifications for This Applicant

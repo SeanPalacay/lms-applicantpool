@@ -93,6 +93,30 @@ try {
         echo json_encode(['error' => 'You are not enrolled in this program']);
         exit;
     }
+
+    // After calculating completed_quizzes and total_quizzes
+$completionPercentage = $quizCount['total_quizzes'] > 0 
+? ($completedCount['completed_quizzes'] / $quizCount['total_quizzes']) * 100 
+: 0.00;
+
+$newStatus = $completionPercentage >= 100 ? 'completed' : ($completionPercentage > 0 ? 'in_progress' : 'not_started');
+
+// Update the program_enrollments table
+$updateQuery = "
+UPDATE program_enrollments
+SET completion_percentage = :completionPercentage, completion_status = :completionStatus
+WHERE user_id = :userId AND program_id = :programId
+";
+$updateStmt = $pdo->prepare($updateQuery);
+$updateStmt->bindParam(':completionPercentage', $completionPercentage, PDO::PARAM_STR);
+$updateStmt->bindParam(':completionStatus', $newStatus, PDO::PARAM_STR);
+$updateStmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+$updateStmt->bindParam(':programId', $programId, PDO::PARAM_INT);
+$updateStmt->execute();
+
+// Update the enrollment data in the response
+$programData['completion_percentage'] = $completionPercentage;
+$programData['completion_status'] = $newStatus;
     
     // Get program details
     $query = "

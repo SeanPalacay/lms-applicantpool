@@ -100,19 +100,20 @@ try {
 function getApplications($pdo) {
     error_log('Getting applications with filters: ' . json_encode($_GET));
     
-    // Base query
+    // Base query - UPDATED for job_applications table
     $baseQuery = "
         SELECT 
-            a.*, 
+            ja.*, 
             u.full_name, 
             u.email, 
-            jp.department as position_department
+            jp.position_name,
+            jp.department
         FROM 
-            applications a
+            job_applications ja
         JOIN 
-            users u ON a.user_id = u.id
+            users u ON ja.user_id = u.id
         LEFT JOIN 
-            job_positions jp ON a.job_role = jp.position_name
+            job_positions jp ON ja.position_id = jp.id
         WHERE 1=1
     ";
     
@@ -120,25 +121,25 @@ function getApplications($pdo) {
     
     // Add status filter
     if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] !== 'all') {
-        $baseQuery .= " AND a.status = :status";
+        $baseQuery .= " AND ja.status = :status";
         $params[':status'] = $_GET['status'];
     }
     
     // Add department filter
     if (isset($_GET['department']) && !empty($_GET['department']) && $_GET['department'] !== 'all') {
-        $baseQuery .= " AND (a.department = :department OR jp.department = :department)";
+        $baseQuery .= " AND jp.department = :department";
         $params[':department'] = $_GET['department'];
     }
     
     // Add search filter
     if (isset($_GET['search']) && !empty($_GET['search'])) {
         $search = '%' . $_GET['search'] . '%';
-        $baseQuery .= " AND (u.full_name LIKE :search OR u.email LIKE :search OR a.job_role LIKE :search)";
+        $baseQuery .= " AND (u.full_name LIKE :search OR u.email LIKE :search OR jp.position_name LIKE :search)";
         $params[':search'] = $search;
     }
     
     // Add order by
-    $baseQuery .= " ORDER BY a.applied_at DESC";
+    $baseQuery .= " ORDER BY ja.applied_at DESC";
     
     // Log the query for debugging
     error_log('SQL Query: ' . $baseQuery);
@@ -175,23 +176,24 @@ function getApplicationById($pdo, $id) {
         return;
     }
     
-    // Query to get application details
+    // Query to get application details - UPDATED for job_applications table
     $query = "
         SELECT 
-            a.*, 
+            ja.*, 
             u.full_name, 
             u.email, 
             u.phone, 
             u.address,
-            jp.department as position_department
+            jp.position_name,
+            jp.department
         FROM 
-            applications a
+            job_applications ja
         JOIN 
-            users u ON a.user_id = u.id
+            users u ON ja.user_id = u.id
         LEFT JOIN 
-            job_positions jp ON a.job_role = jp.position_name
+            job_positions jp ON ja.position_id = jp.id
         WHERE 
-            a.id = :id
+            ja.id = :id
     ";
     
     $stmt = $pdo->prepare($query);
@@ -207,24 +209,27 @@ function getApplicationById($pdo, $id) {
     
     $application = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    // Get pools the application is assigned to
-    $poolsQuery = "
+    // Get user documents
+    $documentsQuery = "
         SELECT 
-            ap.* 
+            r.id,
+            r.file_path,
+            r.description,
+            r.created_at
         FROM 
-            applicant_pool_assignments apa
-        JOIN 
-            applicant_pools ap ON apa.pool_id = ap.id
+            records r
         WHERE 
-            apa.application_id = :application_id
+            r.user_id = :user_id
+        ORDER BY 
+            r.created_at DESC
     ";
     
-    $poolsStmt = $pdo->prepare($poolsQuery);
-    $poolsStmt->bindParam(':application_id', $id, PDO::PARAM_INT);
-    $poolsStmt->execute();
+    $documentsStmt = $pdo->prepare($documentsQuery);
+    $documentsStmt->bindParam(':user_id', $application['user_id'], PDO::PARAM_INT);
+    $documentsStmt->execute();
     
-    $pools = $poolsStmt->fetchAll(PDO::FETCH_ASSOC);
-    $application['pools'] = $pools;
+    $documents = $documentsStmt->fetchAll(PDO::FETCH_ASSOC);
+    $application['documents'] = $documents;
     
     header('Content-Type: application/json');
     echo json_encode($application);
@@ -248,8 +253,8 @@ function updateApplication($pdo, $id) {
     $data = json_decode(file_get_contents('php://input'), true);
     error_log('Update data: ' . json_encode($data));
     
-    // Check if application exists and get user ID
-    $checkQuery = "SELECT user_id FROM applications WHERE id = :id";
+    // Check if application exists and get user ID - UPDATED for job_applications table
+    $checkQuery = "SELECT user_id FROM job_applications WHERE id = :id";
     $checkStmt = $pdo->prepare($checkQuery);
     $checkStmt->bindParam(':id', $id, PDO::PARAM_INT);
     $checkStmt->execute();
@@ -285,26 +290,6 @@ function updateApplication($pdo, $id) {
                               (($data['status'] === 'shortlisted') ? 'success' : 'info'));
         }
         
-        if (isset($data['evaluation_score'])) {
-            $updateFields[] = "evaluation_score = :evaluation_score";
-            $params[':evaluation_score'] = $data['evaluation_score'];
-        }
-        
-        if (isset($data['fst_score'])) {
-            $updateFields[] = "fst_score = :fst_score";
-            $params[':fst_score'] = $data['fst_score'];
-        }
-        
-        if (isset($data['job_role'])) {
-            $updateFields[] = "job_role = :job_role";
-            $params[':job_role'] = $data['job_role'];
-        }
-        
-        if (isset($data['department'])) {
-            $updateFields[] = "department = :department";
-            $params[':department'] = $data['department'];
-        }
-        
         // If no fields to update
         if (empty($updateFields)) {
             header('Content-Type: application/json');
@@ -313,8 +298,8 @@ function updateApplication($pdo, $id) {
             return;
         }
         
-        // Build and execute update query
-        $updateQuery = "UPDATE applications SET " . implode(", ", $updateFields) . ", updated_at = NOW() WHERE id = :id";
+        // Build and execute update query - UPDATED for job_applications table
+        $updateQuery = "UPDATE job_applications SET " . implode(", ", $updateFields) . ", updated_at = NOW() WHERE id = :id";
         $updateStmt = $pdo->prepare($updateQuery);
         
         foreach ($params as $key => $value) {
@@ -326,8 +311,8 @@ function updateApplication($pdo, $id) {
         // Create notification if status was updated
         if (isset($data['status'])) {
             $notifQuery = "
-                INSERT INTO notifications (user_id, type, title, message) 
-                VALUES (:user_id, :type, :title, :message)
+                INSERT INTO notifications (user_id, type, title, message, created_at) 
+                VALUES (:user_id, :type, :title, :message, NOW())
             ";
             $notifStmt = $pdo->prepare($notifQuery);
             $notifStmt->bindParam(':user_id', $applicantUserId, PDO::PARAM_INT);
@@ -363,8 +348,8 @@ function deleteApplication($pdo, $id) {
         return;
     }
     
-    // Check if application exists and get user ID
-    $checkQuery = "SELECT user_id FROM applications WHERE id = :id";
+    // Check if application exists and get user ID - UPDATED for job_applications table
+    $checkQuery = "SELECT user_id FROM job_applications WHERE id = :id";
     $checkStmt = $pdo->prepare($checkQuery);
     $checkStmt->bindParam(':id', $id, PDO::PARAM_INT);
     $checkStmt->execute();
@@ -383,22 +368,16 @@ function deleteApplication($pdo, $id) {
     $pdo->beginTransaction();
     
     try {
-        // Delete associated pool assignments first (foreign key constraint)
-        $deleteAssignmentsQuery = "DELETE FROM applicant_pool_assignments WHERE application_id = :id";
-        $deleteAssignmentsStmt = $pdo->prepare($deleteAssignmentsQuery);
-        $deleteAssignmentsStmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $deleteAssignmentsStmt->execute();
-        
-        // Delete the application
-        $deleteQuery = "DELETE FROM applications WHERE id = :id";
+        // Delete the application - UPDATED for job_applications table
+        $deleteQuery = "DELETE FROM job_applications WHERE id = :id";
         $deleteStmt = $pdo->prepare($deleteQuery);
         $deleteStmt->bindParam(':id', $id, PDO::PARAM_INT);
         $deleteStmt->execute();
         
         // Create notification
         $notifQuery = "
-            INSERT INTO notifications (user_id, type, title, message) 
-            VALUES (:user_id, 'warning', 'Application Removed', 'Your application has been removed.')
+            INSERT INTO notifications (user_id, type, title, message, created_at) 
+            VALUES (:user_id, 'warning', 'Application Removed', 'Your application has been removed.', NOW())
         ";
         $notifStmt = $pdo->prepare($notifQuery);
         $notifStmt->bindParam(':user_id', $applicantUserId, PDO::PARAM_INT);

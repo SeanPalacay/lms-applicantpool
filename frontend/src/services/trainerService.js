@@ -832,15 +832,20 @@ enrollTrainees: async (programId, traineeIds) => {
     return response.json();
   },
 
-  createQuiz: async (quizData) => {
-    const token = localStorage.getItem('authToken');
-    if (!token) throw new Error('No token found. Please log in again.');
-    if (isTokenExpired()) {
-      localStorage.removeItem('authToken');
-      throw new Error('Session expired. Please log in again.');
-    }
+// Update this method in your trainerService.js file
+createQuiz: async (quizData) => {
+  const token = localStorage.getItem('authToken');
+  if (!token) throw new Error('No token found. Please log in again.');
+  if (isTokenExpired()) {
+    localStorage.removeItem('authToken');
+    throw new Error('Session expired. Please log in again.');
+  }
 
-    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainer/create_quiz.php`;
+  const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainer/create_quiz.php`;
+  
+  try {
+    console.log("Sending request to:", endpoint);
+    
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -850,17 +855,38 @@ enrollTrainees: async (programId, traineeIds) => {
       body: JSON.stringify(quizData)
     });
 
+    // First try to get the text response
+    const responseText = await response.text();
+    
+    // Check if it's valid JSON
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+    } catch (e) {
+      console.error("Server returned non-JSON response:", responseText);
+      throw new Error(`Server error: Invalid response format. Please check server logs.`);
+    }
+
+    // Check for error in the JSON response
+    if (responseData.error) {
+      throw new Error(responseData.error);
+    }
+
+    // Check HTTP status
     if (!response.ok) {
       if (response.status === 401) {
         localStorage.removeItem('authToken');
         throw new Error('Authentication failed. Please login again.');
       }
-      const errorText = await response.text();
-      throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+      throw new Error(`HTTP error: ${response.status}`);
     }
 
-    return response.json();
-  },
+    return responseData;
+  } catch (err) {
+    console.error("Error in createQuiz:", err);
+    throw err;
+  }
+},
 
   getQuizById: async (quizId) => {
     const token = localStorage.getItem('authToken');

@@ -74,18 +74,32 @@ try {
     
     // If no user ID in parameters, try to extract from token
     if (!$userId && !empty($token)) {
-        // Try to decode as base64 token (userId:timestamp format)
         try {
             $decodedToken = base64_decode($token, true);
-            if ($decodedToken !== false) {
-                $parts = explode(':', $decodedToken);
-                if (!empty($parts[0]) && is_numeric($parts[0])) {
-                    $userId = (int)$parts[0];
-                    debug_log("User ID extracted from token", $userId);
-                }
+            if ($decodedToken === false || strpos($decodedToken, ':') === false) {
+                debug_log("Token is not valid base64 or missing colon", $token);
+                throw new Exception('Invalid token format');
             }
+            $parts = explode(':', $decodedToken);
+            if (!isset($parts[0]) || !is_numeric($parts[0]) || !isset($parts[1]) || !is_numeric($parts[1])) {
+                debug_log("Token parts invalid", $parts);
+                throw new Exception('Invalid token structure');
+            }
+            $userId = (int)$parts[0];
+            $timestamp = (int)$parts[1];
+            $expirationTime = $timestamp + (24 * 60 * 60); // 24-hour expiration
+            if (time() > $expirationTime) {
+                debug_log("Token expired", ['userId' => $userId, 'timestamp' => $timestamp]);
+                http_response_code(401);
+                echo json_encode(['error' => 'Token expired']);
+                exit;
+            }
+            debug_log("User ID extracted from token", $userId);
         } catch (Exception $e) {
             debug_log("Error decoding token", $e->getMessage());
+            http_response_code(401);
+            echo json_encode(['error' => 'Invalid authentication token']);
+            exit;
         }
     }
     
@@ -136,7 +150,7 @@ try {
                     getDocumentById($pdo, $documentId, $userId);
                 }
             } else {
-                // Get all documents for this user
+                // Get all documents for this user and optionally filter by application_id
                 getUserDocuments($pdo, $userId);
             }
             break;
@@ -174,20 +188,29 @@ try {
 }
 
 /**
- * Get all documents for the specified user
+ * Get all documents for the specified user, optionally filtered by application_id
  */
 function getUserDocuments($pdo, $userId) {
     debug_log("Getting documents for user", $userId);
     
+    $applicationId = isset($_GET['application_id']) && is_numeric($_GET['application_id']) ? (int)$_GET['application_id'] : null;
+    
     $query = "
-        SELECT id, description, file_path, record_type, category, created_at
+        SELECT id, description, file_path, record_type, category, application_id, created_at
         FROM records
         WHERE user_id = ? AND record_type = 'applicant'
-        ORDER BY created_at DESC
     ";
+    $params = [$userId];
+    
+    if ($applicationId) {
+        $query .= " AND application_id = ?";
+        $params[] = $applicationId;
+    }
+    
+    $query .= " ORDER BY created_at DESC";
     
     $stmt = $pdo->prepare($query);
-    $stmt->execute([$userId]);
+    $stmt->execute($params);
     $documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     debug_log("Found " . count($documents) . " documents");
@@ -202,7 +225,7 @@ function getDocumentById($pdo, $documentId, $userId) {
     debug_log("Getting document $documentId for user $userId");
     
     $query = "
-        SELECT id, description, file_path, record_type, category, created_at
+        SELECT id, description, file_path, record_type, category, application_id, created_at
         FROM records
         WHERE id = ? AND user_id = ?
     ";
@@ -241,7 +264,11 @@ function uploadDocument($pdo, $userId) {
     $fileType = $file['type'];
     
     // Validate file type
-    $allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    $allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
     if (!in_array($fileType, $allowedTypes)) {
         debug_log("Invalid file type", $fileType);
         http_response_code(400);
@@ -262,6 +289,7 @@ function uploadDocument($pdo, $userId) {
     $description = isset($_POST['description']) ? $_POST['description'] : $fileName;
     $recordType = isset($_POST['record_type']) ? $_POST['record_type'] : 'applicant';
     $category = isset($_POST['category']) ? $_POST['category'] : 'evaluations';
+    $applicationId = isset($_POST['application_id']) && is_numeric($_POST['application_id']) ? (int)$_POST['application_id'] : null;
     
     // Create uploads directory if it doesn't exist
     $uploadsDir = __DIR__ . '/../../../uploads/documents';
@@ -286,12 +314,12 @@ function uploadDocument($pdo, $userId) {
     
     // Insert record into database
     $query = "
-        INSERT INTO records (user_id, record_type, category, file_path, description, created_at)
-        VALUES (?, ?, ?, ?, ?, NOW())
+        INSERT INTO records (user_id, record_type, category, file_path, description, application_id, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, NOW())
     ";
     
     $stmt = $pdo->prepare($query);
-    $stmt->execute([$userId, $recordType, $category, $databasePath, $description]);
+    $stmt->execute([$userId, $recordType, $category, $databasePath, $description, $applicationId]);
     $recordId = $pdo->lastInsertId();
     
     debug_log("Document uploaded successfully with ID", $recordId);
@@ -304,6 +332,7 @@ function uploadDocument($pdo, $userId) {
         'category' => $category,
         'file_path' => $databasePath,
         'description' => $description,
+        'application_id' => $applicationId,
         'created_at' => date('Y-m-d H:i:s')
     ];
     

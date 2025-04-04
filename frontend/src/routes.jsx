@@ -124,6 +124,13 @@ import EnrollTrainees from './pages/trainer/programs/enroll/EnrollTrainees';
 import TraineeTakeExam from './pages/trainee/practical-exams/take/TraineeTakeExam';
 import AccessCodeManager from './pages/admin/user-management/access-code/AccessCodeManager';
 import TraineeLeaderboard from './pages/trainer/leaderboard/TraineeLeaderboard';
+import ForgotPassword from './pages/auth/forgot/ForgotPassword';
+import ResetPassword from './pages/auth/reset/ResetPassword';
+import ApplicationForm from './pages/applicant/apply/ApplicationForm';
+import ApplicationManagement from './pages/admin/applications/ApplicationManagement';
+import TraineePool from './pages/admin/applicant-pools/TraineePool';
+import CreateTraineePool from './pages/admin/applicant-pools/create/CreateTraineePool';
+import EditTraineePool from './pages/admin/applicant-pools/edit/EditTraineePool';
 
 // Update ProtectedRoute component to include employee role
 const ProtectedRoute = ({ children, role }) => {
@@ -161,6 +168,8 @@ const AppRoutes = () => {
             {/* Auth routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot" element={<ForgotPassword />} />
+            <Route path="/reset" element={<ResetPassword />} />
             
             {/* Shared routes */}
             <Route 
@@ -307,8 +316,20 @@ const AppRoutes = () => {
                 element={
                     <ProtectedRoute role="administrator">
                         <DashboardWrapper
-                            component={ApplicantPool}
+                            component={TraineePool}
                             title="Applicant Pools"
+                            role="administrator"
+                        />
+                    </ProtectedRoute>
+                }
+            />
+                        <Route
+                path="/admin/applications"
+                element={
+                    <ProtectedRoute role="administrator">
+                        <DashboardWrapper
+                            component={ApplicationManagement}
+                            title="Applications Management"
                             role="administrator"
                         />
                     </ProtectedRoute>
@@ -319,7 +340,7 @@ const AppRoutes = () => {
                 element={
                     <ProtectedRoute role="administrator">
                         <DashboardWrapper
-                            component={CreateApplicantPool}
+                            component={CreateTraineePool}
                             title="Create Applicant Pool"
                             role="administrator"
                         />
@@ -331,7 +352,7 @@ const AppRoutes = () => {
                 element={
                     <ProtectedRoute role="administrator">
                         <DashboardWrapper
-                            component={EditApplicantPool}
+                            component={EditTraineePool}
                             title="Edit Applicant Pool"
                             role="administrator"
                         />
@@ -1508,17 +1529,30 @@ const AppRoutes = () => {
                 }
             />
             <Route
-                path="/applicant/applications/:applicationId"
+                path="/applicant/apply/:roleId"
                 element={
                     <ProtectedRoute role="applicant">
                         <DashboardWrapper
-                            component={ApplicationDetails}
-                            title="Application Details"
+                            component={ApplicationForm}
+                            title="My Applications"
                             role="applicant"
                         />
                     </ProtectedRoute>
                 }
             />
+  <Route
+    path="/applicant/applications/:applicationId"
+    element={
+        <ProtectedRoute role="applicant">
+            <DashboardWrapper
+                component={ApplicationDetails}
+                title="Application Details"
+                role="applicant"
+            />
+        </ProtectedRoute>
+    }
+/>
+
 
             {/* Upload Documents */}
             <Route

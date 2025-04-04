@@ -364,6 +364,27 @@ const Login = () => {
                                 </div>
                             )}
 
+<div className="forgot-password-link" style={{ 
+    textAlign: 'right', 
+    marginTop: '8px', 
+    marginBottom: '16px' 
+}}>
+    <button 
+        type="button" 
+        onClick={() => navigate('/forgot')} 
+        style={{ 
+            background: 'none', 
+            border: 'none', 
+            color: '#3b82f6', 
+            cursor: 'pointer', 
+            padding: 0, 
+            fontSize: '14px' 
+        }}
+    >
+        Forgot Password?
+    </button>
+</div>
+
                             <button
                                 type="submit"
                                 className="login-button"

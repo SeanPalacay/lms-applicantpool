@@ -119,93 +119,80 @@ const TraineeDashboard = () => {
         gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
         gap: '20px' 
       }}>
-        <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <div style={{ 
-            background: 'linear-gradient(to right, #007bff, #00b7ff)', 
-            color: 'white', 
-            padding: '10px 15px', 
-            borderRadius: '8px 8px 0 0', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '10px' 
-          }}>
-            <GraduationCap size={20} />
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '16px', margin: 0 }}>My Programs</h3>
-              <Link to="/trainee/enrollments" style={{ color: 'white', textDecoration: 'none', fontSize: '14px' }}>
-                View All
-              </Link>
+<div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+  <div style={{ 
+    background: 'linear-gradient(to right, #007bff, #00b7ff)', 
+    color: 'white', 
+    padding: '10px 15px', 
+    borderRadius: '8px 8px 0 0', 
+    display: 'flex', 
+    alignItems: 'center', 
+    gap: '10px' 
+  }}>
+    <GraduationCap size={20} />
+    <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <h3 style={{ fontSize: '16px', margin: 0 }}>My Programs</h3>
+      <Link to="/trainee/enrollments" style={{ color: 'white', textDecoration: 'none', fontSize: '14px' }}>
+        View All
+      </Link>
+    </div>
+  </div>
+  <div style={{ padding: '15px' }}>
+    {enrollments.length > 0 ? (
+      enrollments.map((enrollment) => (
+        <div 
+          key={enrollment.id} 
+          style={{ 
+            paddingBottom: '15px', 
+            marginBottom: '15px', 
+            borderBottom: enrollments.length > 1 ? '1px solid #eee' : 'none',
+            ':last-child': { borderBottom: 'none', marginBottom: 0 }
+          }}
+        >
+          <h4 style={{ fontSize: '16px', margin: '0 0 5px 0' }}>{enrollment.program_title}</h4>
+          <div style={{ marginBottom: '10px' }}>
+            <div style={{ 
+              width: '100%', 
+              height: '6px', 
+              background: '#eee', 
+              borderRadius: '3px', 
+              overflow: 'hidden' 
+            }}>
+              <div style={{ 
+                width: `${enrollment.completion_percentage}%`, 
+                height: '100%', 
+                background: '#007bff' 
+              }}></div>
             </div>
+            <span style={{ fontSize: '12px', color: '#666' }}>{enrollment.completion_percentage}% Complete</span>
           </div>
-          <div style={{ padding: '15px' }}>
-            {enrollments.length > 0 ? (
-              enrollments.map((enrollment) => (
-                <div 
-                  key={enrollment.id} 
-                  style={{ 
-                    paddingBottom: '15px', 
-                    marginBottom: '15px', 
-                    borderBottom: enrollments.length > 1 ? '1px solid #eee' : 'none',
-                    ':last-child': { borderBottom: 'none', marginBottom: 0 }
-                  }}
-                >
-                  <h4 style={{ fontSize: '16px', margin: '0 0 5px 0' }}>{enrollment.program_title}</h4>
-                  <div style={{ marginBottom: '10px' }}>
-                    <div style={{ 
-                      width: '100%', 
-                      height: '6px', 
-                      background: '#eee', 
-                      borderRadius: '3px', 
-                      overflow: 'hidden' 
-                    }}>
-                      <div style={{ 
-                        width: `${enrollment.completion_percentage}%`, 
-                        height: '100%', 
-                        background: '#007bff' 
-                      }}></div>
-                    </div>
-                    <span style={{ fontSize: '12px', color: '#666' }}>{enrollment.completion_percentage}% Complete</span>
-                  </div>
-                  <p style={{ fontSize: '14px', color: '#666', margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <Clock size={14} /> Enrolled on: {new Date(enrollment.enrollment_date).toLocaleDateString()}
-                  </p>
-                  <Link 
-                    to={`/trainee/programs/${enrollment.id}`} 
-                    style={{ 
-                      color: '#007bff', 
-                      textDecoration: 'none', 
-                      fontSize: '14px', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '5px' 
-                    }}
-                  >
-                    Continue Learning <ChevronRight size={14} />
-                  </Link>
-                </div>
-              ))
-            ) : (
-              <div style={{ textAlign: 'center', padding: '20px' }}>
-                <p style={{ fontSize: '14px', color: '#666', margin: '0 0 15px 0' }}>
-                  You have not enrolled in any programs yet.
-                </p>
-                {/* <Link 
-                  to="/trainee/browse-programs" 
-                  style={{ 
-                    padding: '8px 15px', 
-                    background: '#007bff', 
-                    color: 'white', 
-                    borderRadius: '4px', 
-                    textDecoration: 'none', 
-                    fontSize: '14px' 
-                  }}
-                >
-                  Browse Programs
-                </Link> */}
-              </div>
-            )}
-          </div>
+          <p style={{ fontSize: '14px', color: '#666', margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Clock size={14} /> Enrolled on: {new Date(enrollment.enrollment_date).toLocaleDateString()}
+          </p>
+          <Link 
+            to={`/trainee/programs/${enrollment.program_id}`} // Changed from enrollment.id to enrollment.program_id
+            style={{ 
+              color: '#007bff', 
+              textDecoration: 'none', 
+              fontSize: '14px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '5px' 
+            }}
+          >
+            Continue Learning <ChevronRight size={14} />
+          </Link>
         </div>
+      ))
+    ) : (
+      <div style={{ textAlign: 'center', padding: '20px' }}>
+        <p style={{ fontSize: '14px', color: '#666', margin: '0 0 15px 0' }}>
+          You have not enrolled in any programs yet.
+        </p>
+      </div>
+    )}
+  </div>
+</div>
 
         <div style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
           <div style={{ 

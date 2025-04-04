@@ -925,9 +925,769 @@ deleteBackup: async (backupId) => {
         }
     },
 
-    // Add these functions to your adminService object
+    // Get department list for filtering
+getDepartments: async () => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      
+      if (!authToken) {
+        console.error('No authToken found in localStorage');
+        throw new Error('Authentication required. Please login again.');
+      }
+      
+      const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/departments.php`;
+      console.log('Fetching departments from:', url);
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+      
+      if (!response.ok) {
+        // If the endpoint doesn't exist or returns an error, fall back to a default list
+        console.warn('Failed to fetch departments from API, using default list');
+        return [
+          'Human Resources',
+          'Accounting and Finance',
+          'Operations',
+          'Client Development and Services',
+          'Compliance and Strategic Support',
+          'Internal Audit',
+          'General Services'
+        ];
+      }
+      
+      const data = await response.json();
+      return data;
+      
+    } catch (error) {
+      console.error('Error in getDepartments:', error.message, error.stack);
+      // Return default list in case of error
+      return [
+        'Human Resources',
+        'Accounting and Finance',
+        'Operations',
+        'Client Development and Services',
+        'Compliance and Strategic Support',
+        'Internal Audit',
+        'General Services'
+      ];
+    }
+  },
+  
+// Update application status
+updateApplicationStatus: async (applicationId, status) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      
+      if (!authToken) {
+        console.error('No authToken found in localStorage');
+        throw new Error('Authentication required. Please login again.');
+      }
+      
+      const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/applications.php?id=${applicationId}`;
+      console.log('Updating application status at:', url);
+      console.log('New status:', status);
+      
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ status })
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response error details:', errorText);
+        throw new Error(`Failed to update application status: ${errorText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error(`Error in updateApplicationStatus(${applicationId}, ${status}):`, error.message, error.stack);
+      throw error;
+    }
+  },
+  
+  // Convert an applicant to a trainee
+  convertApplicantToTrainee: async (userId, data = {}) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      
+      if (!authToken) {
+        console.error('No authToken found in localStorage');
+        throw new Error('Authentication required. Please login again.');
+      }
+      
+      const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/convert-applicant.php`;
+      console.log('Converting applicant to trainee at:', url);
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          ...data
+        })
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response error details:', errorText);
+        throw new Error(`Failed to convert applicant to trainee: ${errorText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error(`Error in convertApplicantToTrainee(${userId}):`, error.message, error.stack);
+      throw error;
+    }
+  },
+  
+  // Export applicants to CSV
+  exportApplicants: async (format = 'csv', filters = {}) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      
+      if (!authToken) {
+        console.error('No authToken found in localStorage');
+        throw new Error('Authentication required. Please login again.');
+      }
+      
+      // Build query parameters
+      const queryParams = new URLSearchParams();
+      queryParams.append('action', 'export');
+      queryParams.append('format', format);
+      queryParams.append('token', authToken);
+      
+      // Add filters
+      for (const key in filters) {
+        if (filters[key]) {
+          queryParams.append(key, filters[key]);
+        }
+      }
+      
+      const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/applications.php?${queryParams.toString()}`;
+      console.log('Exporting applicants from:', url);
+      
+      // Create a download link and trigger it
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `applicants-export-${new Date().toISOString().slice(0, 10)}.${format}`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error in exportApplicants:', error.message, error.stack);
+      throw error;
+    }
+  },  
+// Updated getApplications method to specifically fetch from job_applications table
+getApplications: async (filters = {}) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      
+      if (!authToken) {
+        console.error('No authToken found in localStorage');
+        throw new Error('Authentication required. Please login again.');
+      }
+      
+      // Build query string from filters
+      const queryParams = new URLSearchParams();
+      
+      // Add specific parameter to indicate we want job_applications
+      queryParams.append('table', 'job_applications');
+      
+      // Add filters
+      for (const key in filters) {
+        if (filters[key]) {
+          queryParams.append(key, filters[key]);
+        }
+      }
+      
+      const queryString = queryParams.toString();
+      const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/applications.php?${queryString}`;
+      console.log('Fetching job applications from:', url);
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response error details:', errorText);
+        throw new Error(`Failed to fetch job applications: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+      
+      const data = await response.json();
+      return data;
+      
+    } catch (error) {
+      console.error('Error in getApplications:', error.message, error.stack);
+      throw error;
+    }
+  },
 
-// Add these functions to your adminService object
+
+  // Add this to the adminService object
+getTraineePoolById: async (poolId) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      
+      if (!authToken) {
+        console.error('No authToken found in localStorage');
+        throw new Error('Authentication required. Please login again.');
+      }
+  
+      if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Your session has expired. Please login again.');
+      }
+  
+      const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/trainee-pools.php?id=${poolId}`;
+      console.log('Fetching trainee pool from:', url);
+  
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API error response:', errorText);
+        if (response.status === 401) {
+          localStorage.removeItem('authToken');
+          throw new Error('Authentication failed. Please login again.');
+        }
+        throw new Error(`Failed to fetch trainee pool: ${response.status} - ${errorText}`);
+      }
+  
+      const data = await response.json();
+      console.log('Trainee pool received:', data);
+      return data;
+    } catch (error) {
+      console.error('Error in getTraineePoolById:', error.message, error.stack);
+      throw error;
+    }
+  },  
+
+
+  updateTraineePool: async (poolId, formData) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+
+      if (!authToken) {
+        console.error('No authToken found in localStorage');
+        throw new Error('Authentication required. Please login again.');
+      }
+
+      const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/trainee-pools.php?id=${poolId}`;
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      // Log the raw response text to check for unexpected characters
+      const textResponse = await response.text();
+      console.log('Raw response:', textResponse);
+
+      // If the response contains multiple JSON objects, we can try to parse them separately
+      // (Note: this approach assumes that the server might send concatenated JSON objects)
+      let responseData;
+      try {
+        responseData = JSON.parse(textResponse); // Try parsing it once
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+        // If the response is invalid, you may need to handle it differently
+        throw new Error('Invalid response from server');
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to update trainee pool: ${response.status} - ${responseData.error || 'Unknown error'}`);
+      }
+
+      console.log('Trainee pool updated:', responseData);
+      return responseData;
+    } catch (error) {
+      console.error('Error in updateTraineePool:', error.message, error.stack);
+      throw error;
+    }
+  },
+  // Fetch all trainee pools
+  getTraineePools: async () => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.error('No authToken found in localStorage');
+            throw new Error('Authentication required. Please login again.');
+        }
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Your session has expired. Please login again.');
+        }
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/trainee-pools.php`;
+        console.log('Fetching trainee pools from:', url);
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API error response:', errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`Failed to fetch trainee pools: ${response.status} - ${errorText}`);
+        }
+        const data = await response.json();
+        console.log('Trainee pools received:', data);
+        return data;
+    } catch (error) {
+        console.error('Error in getTraineePools:', error.message, error.stack);
+        throw error;
+    }
+},
+
+// Delete a trainee pool
+deleteTraineePool: async (poolId) => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.error('No authToken found in localStorage');
+            throw new Error('Authentication required. Please login again.');
+        }
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Your session has expired. Please login again.');
+        }
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/trainee-pools.php?id=${poolId}`;
+        console.log('Deleting trainee pool from:', url);
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API error response:', errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`Failed to delete trainee pool: ${response.status} - ${errorText}`);
+        }
+        const data = await response.json();
+        console.log('Delete response:', data);
+        return data;
+    } catch (error) {
+        console.error('Error in deleteTraineePool:', error.message, error.stack);
+        throw error;
+    }
+},
+
+// Fetch trainees by pool ID
+getTraineesByPool: async (poolId) => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.error('No authToken found in localStorage');
+            throw new Error('Authentication required. Please login again.');
+        }
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Your session has expired. Please login again.');
+        }
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/trainee-pools-trainees.php?pool_id=${poolId}`;
+        console.log('Fetching trainees from:', url);
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API error response:', errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`Failed to fetch trainees: ${response.status} - ${errorText}`);
+        }
+        const data = await response.json();
+        console.log('Trainees received:', data);
+        return data;
+    } catch (error) {
+        console.error('Error in getTraineesByPool:', error.message, error.stack);
+        throw error;
+    }
+},
+
+// Update trainee status
+updateTraineeStatus: async (traineeId, status) => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.error('No authToken found in localStorage');
+            throw new Error('Authentication required. Please login again.');
+        }
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Your session has expired. Please login again.');
+        }
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/trainees-status.php?id=${traineeId}`;
+        console.log('Updating trainee status at:', url);
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ status })
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API error response:', errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`Failed to update trainee status: ${response.status} - ${errorText}`);
+        }
+        const data = await response.json();
+        console.log('Status update response:', data);
+        return data;
+    } catch (error) {
+        console.error('Error in updateTraineeStatus:', error.message, error.stack);
+        throw error;
+    }
+},
+
+// Remove a trainee from a pool
+removeTraineeFromPool: async (traineeId) => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.error('No authToken found in localStorage');
+            throw new Error('Authentication required. Please login again.');
+        }
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Your session has expired. Please login again.');
+        }
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/trainee-pools-trainees.php?trainee_id=${traineeId}`;
+        console.log('Removing trainee from pool at:', url);
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API error response:', errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`Failed to remove trainee: ${response.status} - ${errorText}`);
+        }
+        const data = await response.json();
+        console.log('Remove response:', data);
+        return data;
+    } catch (error) {
+        console.error('Error in removeTraineeFromPool:', error.message, error.stack);
+        throw error;
+    }
+},
+
+
+getTraineesByProgram: async (programId) => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        
+        if (!authToken) {
+            console.error('No authToken found in localStorage');
+            throw new Error('Authentication required. Please login again.');
+        }
+        
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Your session has expired. Please login again.');
+        }
+        
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/trainee-pool-assignments.php?program_id=${programId}`;
+        console.log('Fetching trainees by program from:', url);
+        
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API error response:', errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`Failed to fetch trainees for program: ${response.status} - ${errorText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Trainees by program received:', data);
+        return data;
+    } catch (error) {
+        console.error(`Error in getTraineesByProgram(${programId}):`, error.message, error.stack);
+        throw error;
+    }
+},
+
+// Add a trainee to a pool
+addTraineeToPool: async (poolId, traineeId) => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        
+        if (!authToken) {
+            console.error('No authToken found in localStorage');
+            throw new Error('Authentication required. Please login again.');
+        }
+        
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Your session has expired. Please login again.');
+        }
+        
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/trainee-pool-assignments.php`;
+        console.log('Adding trainee to pool at:', url);
+        console.log('Request data:', { pool_id: poolId, trainee_id: traineeId });
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ pool_id: poolId, trainee_id: traineeId })
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API error response:', errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`Failed to add trainee to pool: ${response.status} - ${errorText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Add trainee to pool response:', data);
+        return data;
+    } catch (error) {
+        console.error(`Error in addTraineeToPool(poolId: ${poolId}, traineeId: ${traineeId}):`, error.message, error.stack);
+        throw error;
+    }
+},
+// Fetch all programs
+getPrograms: async () => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.error('No authToken found in localStorage');
+            throw new Error('Authentication required. Please login again.');
+        }
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Your session has expired. Please login again.');
+        }
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/programs.php`;
+        console.log('Fetching programs from:', url);
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API error response:', errorText);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`Failed to fetch programs: ${response.status} - ${errorText}`);
+        }
+        const data = await response.json();
+        console.log('Programs received:', data);
+        return data;
+    } catch (error) {
+        console.error('Error in getPrograms:', error.message, error.stack);
+        throw error;
+    }
+},
+
+// Create a new trainee pool
+createTraineePool: async (data) => {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.error('No authToken found in localStorage');
+            throw new Error('Authentication required. Please login again.');
+        }
+        if (isTokenExpired()) {
+            localStorage.removeItem('authToken');
+            throw new Error('Your session has expired. Please login again.');
+        }
+        const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/trainee-pools.php`;
+        console.log('Creating trainee pool at:', url);
+        console.log('Request data:', data);
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('API error response:', errorData);
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                throw new Error('Authentication failed. Please login again.');
+            }
+            throw new Error(`Failed to create trainee pool: ${response.status} - ${errorData.error || 'Unknown error'}`);
+        }
+        const responseData = await response.json();
+        console.log('Trainee pool created:', responseData);
+        return responseData;
+    } catch (error) {
+        console.error('Error in createTraineePool:', error.message, error.stack);
+        throw error;
+    }
+},
+  // In adminService.js, add or replace these methods:
+
+getUserDocuments: async (applicantId) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+  
+      if (!authToken) {
+        console.error('No authToken found in localStorage');
+        throw new Error('Authentication required. Please login again.');
+      }
+  
+      if (isTokenExpired()) {
+        localStorage.removeItem('authToken');
+        throw new Error('Your session has expired. Please login again.');
+      }
+  
+      const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/documents.php?applicant_id=${applicantId}`;
+      console.log('Fetching user documents from:', url);
+  
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`, // Matches your documents.php expectation
+        },
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API error response:', errorText);
+        if (response.status === 401) {
+          localStorage.removeItem('authToken');
+          throw new Error('Authentication failed. Please login again.');
+        }
+        throw new Error(`Failed to fetch user documents: ${response.status} - ${errorText}`);
+      }
+  
+      const data = await response.json();
+      console.log('User documents received:', data);
+      return Array.isArray(data) ? data : []; // Ensure we return an array
+    } catch (error) {
+      console.error('Error in getUserDocuments:', error.message, error.stack);
+      throw error;
+    }
+  },
+  
+  downloadUserDocument: async (documentId) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+  
+      if (!authToken) {
+        console.error('No authToken found in localStorage');
+        throw new Error('Authentication required. Please login again.');
+      }
+  
+      const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/documents.php?id=${documentId}&action=download&token=${authToken}`;
+      console.log('Downloading document from:', url);
+  
+      const link = document.createElement('a');
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+  
+      return { success: true };
+    } catch (error) {
+      console.error('Error in downloadUserDocument:', error.message, error.stack);
+      throw error;
+    }
+  },
+  
+  viewUserDocument: async (documentId) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      const userId = localStorage.getItem('userId'); // Add this
+      if (!authToken) throw new Error('Authentication required. Please login again.');
+      
+      // Include user_id in the URL for consistency with applicant/documents.php
+      const url = `${API_BASE_URL}/lms-forbes/backend/api/admin/documents.php?id=${documentId}&action=view&token=${authToken}${userId ? `&user_id=${userId}` : ''}`;
+      console.log('Viewing document at:', url);
+      window.open(url, '_blank');
+      return { success: true };
+    } catch (error) {
+      console.error('Error in viewUserDocument:', error.message, error.stack);
+      throw error;
+    }
+  },
+      
 
 getAccessCodes: async () => {
     try {

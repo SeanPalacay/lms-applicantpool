@@ -6,14 +6,15 @@ import {
   FileUp, Download
 } from 'lucide-react';
 import applicantService from '../../../../services/applicantService';
-import LoadingSpinner from '../../../../components/shared/LoadingSpinner'; // Assuming this exists
-import AlertBanner from '../../../../components/shared/AlertBanner'; // Assuming this exists
+import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
+import AlertBanner from '../../../../components/shared/AlertBanner';
 
 const ApplicationDetails = () => {
   const { applicationId } = useParams();
   const navigate = useNavigate();
   const [application, setApplication] = useState(null);
   const [documents, setDocuments] = useState([]);
+  const [userDocuments, setUserDocuments] = useState([]); // Added for user documents
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -26,14 +27,35 @@ const ApplicationDetails = () => {
           app => app.application_id === parseInt(applicationId) || app.id === parseInt(applicationId)
         );
         if (!applicationData) throw new Error('Application not found');
+        
+        // Log the application data to inspect its structure
+        console.log('Application Data:', applicationData);
+
+        // Fetch application-specific documents
         let documentsData = [];
         try {
           documentsData = await applicantService.getApplicationDocuments(applicationId);
         } catch (docError) {
-          console.warn('Could not fetch documents:', docError);
+          console.error('Could not fetch application documents:', docError);
+          if (docError.message.includes('Authentication') || docError.message.includes('expired')) {
+            setError('Authentication failed. Redirecting to login...');
+            setTimeout(() => navigate('/login'), 2000);
+            return;
+          }
         }
+        
+        // Fetch all user documents
+        let userDocumentsData = [];
+        try {
+          userDocumentsData = await applicantService.getUserDocuments();
+          console.log('User Documents:', userDocumentsData);
+        } catch (docError) {
+          console.error('Could not fetch user documents:', docError);
+        }
+        
         setApplication(applicationData);
         setDocuments(documentsData || []);
+        setUserDocuments(userDocumentsData || []);
       } catch (err) {
         console.error('Error fetching application details:', err);
         setError('Failed to load application details. Please try again later.');
@@ -42,16 +64,16 @@ const ApplicationDetails = () => {
       }
     };
     fetchApplicationDetails();
-  }, [applicationId]);
+  }, [applicationId, navigate]);
 
   const formatDate = (dateString) => dateString ? new Date(dateString).toLocaleString() : 'N/A';
 
   const getStatusInfo = (status) => {
     switch (status) {
       case 'pending': return { icon: <Clock size={18} />, color: '#f39c12', bg: '#fef5e7', message: 'Your application is currently under review by our team.' };
-      case 'shortlisted': return { icon: <CheckCircle size={18} />, color: '#2ecc71', bg: '#e6ffe6', message: 'Congratulations! You’ve been shortlisted for this program. Our team may contact you soon for further assessment.' };
-      case 'hired': return { icon: <CheckCircle size={18} />, color: '#2ecc71', bg: '#e6ffe6', message: 'Congratulations! You’ve been selected for this program. Please check your email for enrollment details.' };
-      case 'rejected': return { icon: <XCircle size={18} />, color: '#e74c3c', bg: '#ffe6e6', message: 'We’re sorry, your application was not successful at this time. We encourage you to apply for other programs.' };
+      case 'shortlisted': return { icon: <CheckCircle size={18} />, color: '#2ecc71', bg: '#e6ffe6', message: 'Congratulations! You\'ve been shortlisted for this program. Our team may contact you soon for further assessment.' };
+      case 'hired': return { icon: <CheckCircle size={18} />, color: '#2ecc71', bg: '#e6ffe6', message: 'Congratulations! You\'ve been selected for this program. Please check your email for enrollment details.' };
+      case 'rejected': return { icon: <XCircle size={18} />, color: '#e74c3c', bg: '#ffe6e6', message: 'We are sorry, your application was not successful at this time. We encourage you to apply for other programs.' };
       default: return { icon: null, color: '#64748b', bg: '#f1f5f9', message: '' };
     }
   };
@@ -71,6 +93,29 @@ const ApplicationDetails = () => {
     window.location.reload();
   };
 
+  // Get file icon based on file name
+  const getFileIcon = (filename) => {
+    if (!filename) return <FileText size={18} />;
+    
+    return <FileText size={18} />;
+  };
+  
+  // Combine application documents and user documents, removing duplicates
+  const getAllDocuments = () => {
+    const combinedDocs = [...documents];
+    
+    // Add user documents that aren't already in the application documents
+    // Assuming documents have unique IDs
+    userDocuments.forEach(userDoc => {
+      const isDuplicate = combinedDocs.some(doc => doc.id === userDoc.id);
+      if (!isDuplicate) {
+        combinedDocs.push(userDoc);
+      }
+    });
+    
+    return combinedDocs;
+  };
+
   if (loading) return <LoadingSpinner />;
   if (error || !application) return (
     <div style={{
@@ -85,7 +130,7 @@ const ApplicationDetails = () => {
     }}>
       <AlertTriangle size={48} style={{ color: '#e74c3c', marginBottom: '16px' }} />
       <h2 style={{ fontSize: '1.5rem', fontWeight: 600, margin: '0 0 8px 0' }}>{error ? 'Error' : 'Application Not Found'}</h2>
-      <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '0 0 24px 0' }}>{error || 'The application you’re looking for could not be found.'}</p>
+      <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '0 0 24px 0' }}>{error || 'The application you are looking for could not be found.'}</p>
       <div style={{ display: 'flex', gap: '16px' }}>
         {error && (
           <button
@@ -132,6 +177,7 @@ const ApplicationDetails = () => {
   );
 
   const statusInfo = getStatusInfo(application.status);
+  const allDocuments = getAllDocuments();
 
   return (
     <div style={{
@@ -174,7 +220,7 @@ const ApplicationDetails = () => {
             <BookOpen size={32} />
           </div>
           <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, margin: '0 0 8px 0' }}>{application.program_title}</h2>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, margin: '0 0 8px 0' }}>{application.program_title || application.position_name}</h2>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '0.875rem', color: '#64748b' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Calendar size={14} /> Applied: {formatDate(application.applied_at)}
@@ -214,7 +260,7 @@ const ApplicationDetails = () => {
           <div style={{ fontSize: '0.875rem', color: '#64748b' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #e2e8f0' }}>
               <span style={{ fontWeight: 600 }}>Job Role</span>
-              <span>{application.job_role || 'Not specified'}</span>
+              <span>{application.position_name || 'Not specified'}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
               <span style={{ fontWeight: 600 }}>Department</span>
@@ -223,21 +269,57 @@ const ApplicationDetails = () => {
           </div>
         </div>
 
-        {application.cover_letter && (
+        {application.reasons && (
           <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
             <h3 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0' }}>
-              <FileText size={18} /> Cover Letter
+              <FileText size={18} /> Reasons for Applying
             </h3>
-            <p style={{ fontSize: '0.875rem', color: '#1e293b', lineHeight: '1.5', margin: 0 }}>{application.cover_letter}</p>
+            <p style={{ fontSize: '0.875rem', color: '#1e293b', lineHeight: '1.5', margin: 0 }}>{application.reasons}</p>
           </div>
         )}
 
-        {application.additional_info && (
+        {application.experience && (
           <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
             <h3 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0' }}>
-              <FileText size={18} /> Additional Information
+              <FileText size={18} /> Experience
             </h3>
-            <p style={{ fontSize: '0.875rem', color: '#1e293b', lineHeight: '1.5', margin: 0 }}>{application.additional_info}</p>
+            <p style={{ fontSize: '0.875rem', color: '#1e293b', lineHeight: '1.5', margin: 0 }}>{application.experience}</p>
+          </div>
+        )}
+
+        {application.skills && (
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0' }}>
+              <FileText size={18} /> Skills
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#1e293b', lineHeight: '1.5', margin: 0 }}>{application.skills}</p>
+          </div>
+        )}
+
+        {application.education && (
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0' }}>
+              <FileText size={18} /> Education
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#1e293b', lineHeight: '1.5', margin: 0 }}>{application.education}</p>
+          </div>
+        )}
+
+        {application.availability && (
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0' }}>
+              <FileText size={18} /> Availability
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#1e293b', lineHeight: '1.5', margin: 0 }}>{application.availability}</p>
+          </div>
+        )}
+
+        {application.references && (
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0' }}>
+              <FileText size={18} /> References
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#1e293b', lineHeight: '1.5', margin: 0 }}>{application.references}</p>
           </div>
         )}
 
@@ -245,13 +327,16 @@ const ApplicationDetails = () => {
           <h3 style={{ fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 16px 0' }}>
             <FileUp size={18} /> Supporting Documents
           </h3>
-          {documents.length > 0 ? (
+          {allDocuments.length > 0 ? (
             <div style={{ display: 'grid', gap: '12px' }}>
-              {documents.map(doc => (
+              {allDocuments.map(doc => (
                 <div key={doc.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #e2e8f0' }}>
-                  <div>
-                    <span style={{ fontSize: '0.875rem', color: '#1e293b', fontWeight: 500 }}>{doc.description}</span>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>Uploaded: {formatDate(doc.created_at)}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {getFileIcon(doc.file_path)}
+                    <div>
+                      <span style={{ fontSize: '0.875rem', color: '#1e293b', fontWeight: 500 }}>{doc.description}</span>
+                      <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>Uploaded: {formatDate(doc.created_at)}</span>
+                    </div>
                   </div>
                   <button
                     onClick={() => downloadDocument(doc.id, doc.description)}
@@ -274,7 +359,7 @@ const ApplicationDetails = () => {
           )}
           <div style={{ textAlign: 'right' }}>
             <Link
-              to="/applicant/upload"
+              to="/applicant/profile"
               style={{
                 backgroundColor: '#1E88E5',
                 color: '#ffffff',

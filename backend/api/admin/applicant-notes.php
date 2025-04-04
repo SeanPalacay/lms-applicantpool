@@ -7,6 +7,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+header('Content-Type: application/json');
+
 // Include CORS middleware
 require_once '../../shared/cors_middleware.php';
 
@@ -23,37 +25,60 @@ if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
     $token = $matches[1];
 }
 
-// If no token in header, check if it's in the query string (for testing)
+// If no token in header, check if it's in the query string
 if (empty($token) && isset($_GET['token'])) {
     $token = $_GET['token'];
 }
 
-// Simple token check (for demonstration)
+// Validate token
 if (empty($token)) {
-    header('Content-Type: application/json');
     http_response_code(401);
     echo json_encode(['error' => 'Authentication required']);
     exit;
 }
 
-// Get the logged-in user ID (you would normally extract this from the token)
-// For demonstration, we'll use a simple mock user. In production, validate the token properly.
-$userId = 1; // Assuming this is the admin user ID
-
-// Get the request method
-$method = $_SERVER['REQUEST_METHOD'];
-
 try {
+    // Decode token to get user ID
+    $decoded = base64_decode($token);
+    $parts = explode(':', $decoded);
+    $userId = isset($parts[0]) ? (int)$parts[0] : 0;
+
+    // Fallback to session if no valid userId from token
+    if (!$userId && isset($_SESSION['user_id'])) {
+        $userId = (int) $_SESSION['user_id'];
+    }
+
+    // If still no userId, throw error
+    if (!$userId) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Invalid token format or missing user ID']);
+        exit;
+    }
+
+    // Check if user is an administrator
+    $userQuery = "SELECT role FROM users WHERE id = ? LIMIT 1";
+    $userStmt = $pdo->prepare($userQuery);
+    $userStmt->execute([$userId]);
+    $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$userData || $userData['role'] !== 'administrator') {
+        http_response_code(403);
+        echo json_encode(['error' => 'Access denied. Administrator privileges required.']);
+        exit;
+    }
+
+    // Get the request method
+    $method = $_SERVER['REQUEST_METHOD'];
+
     // Handle different HTTP methods
     switch ($method) {
         case 'GET':
             // Get notes for a specific applicant
-            if (isset($_GET['applicant_id'])) {
-                getApplicantNotes($pdo, $_GET['applicant_id']);
+            if (isset($_GET['application_id'])) {
+                getApplicantNotes($pdo, $_GET['application_id']);
             } else {
-                header('Content-Type: application/json');
                 http_response_code(400);
-                echo json_encode(['error' => 'Applicant ID is required']);
+                echo json_encode(['error' => 'Application ID is required']);
             }
             break;
             
@@ -67,7 +92,6 @@ try {
             if (isset($_GET['id'])) {
                 deleteApplicantNote($pdo, $_GET['id'], $userId);
             } else {
-                header('Content-Type: application/json');
                 http_response_code(400);
                 echo json_encode(['error' => 'Note ID is required']);
             }
@@ -75,19 +99,18 @@ try {
             
         default:
             // Method not allowed
-            header('Content-Type: application/json');
             http_response_code(405);
             echo json_encode(['error' => 'Method not allowed']);
             break;
     }
 } catch (PDOException $e) {
     // Database error
-    header('Content-Type: application/json');
+    error_log("Applicant Notes API PDO Error: " . $e->getMessage());
     http_response_code(500);
     echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
 } catch (Exception $e) {
     // Other errors
-    header('Content-Type: application/json');
+    error_log("Applicant Notes API General Error: " . $e->getMessage());
     http_response_code(500);
     echo json_encode(['error' => 'Error: ' . $e->getMessage()]);
 }
@@ -95,24 +118,23 @@ try {
 /**
  * Get notes for a specific applicant
  */
-function getApplicantNotes($pdo, $applicantId) {
-    // Check if the applicant exists
-    $checkApplicantQuery = "
-        SELECT id FROM applicant_pool_assignments 
+function getApplicantNotes($pdo, $applicationId) {
+    // Check if the application exists
+    $checkApplicationQuery = "
+        SELECT id FROM applications 
         WHERE id = :id
     ";
-    $checkApplicantStmt = $pdo->prepare($checkApplicantQuery);
-    $checkApplicantStmt->bindParam(':id', $applicantId, PDO::PARAM_INT);
-    $checkApplicantStmt->execute();
+    $checkApplicationStmt = $pdo->prepare($checkApplicationQuery);
+    $checkApplicationStmt->bindParam(':id', $applicationId, PDO::PARAM_INT);
+    $checkApplicationStmt->execute();
 
-    if ($checkApplicantStmt->rowCount() === 0) {
-        header('Content-Type: application/json');
+    if ($checkApplicationStmt->rowCount() === 0) {
         http_response_code(404);
-        echo json_encode(['error' => 'Applicant not found']);
+        echo json_encode(['error' => 'Application not found']);
         return;
     }
 
-    // Get notes for this applicant
+    // Get notes for this applicant based on application ID
     $query = "
         SELECT 
             n.id,
@@ -124,18 +146,17 @@ function getApplicantNotes($pdo, $applicantId) {
         LEFT JOIN
             users u ON n.created_by = u.id
         WHERE 
-            n.applicant_id = :applicant_id
+            n.applicant_id = :application_id
         ORDER BY 
             n.created_at DESC
     ";
 
     $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':applicant_id', $applicantId, PDO::PARAM_INT);
+    $stmt->bindParam(':application_id', $applicationId, PDO::PARAM_INT);
     $stmt->execute();
 
     $notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    header('Content-Type: application/json');
     echo json_encode($notes);
 }
 
@@ -147,62 +168,31 @@ function addApplicantNote($pdo, $userId) {
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Validate required fields
-    if (!isset($data['applicant_id']) || !is_numeric($data['applicant_id'])) {
-        header('Content-Type: application/json');
+    if (!isset($data['application_id']) || !is_numeric($data['application_id'])) {
         http_response_code(400);
-        echo json_encode(['error' => 'Applicant ID is required']);
+        echo json_encode(['error' => 'Application ID is required']);
         return;
     }
 
     if (!isset($data['content']) || empty(trim($data['content']))) {
-        header('Content-Type: application/json');
         http_response_code(400);
         echo json_encode(['error' => 'Note content is required']);
         return;
     }
 
-    // Check if the applicant exists
-    $checkApplicantQuery = "
-        SELECT id FROM applicant_pool_assignments 
+    // Check if the application exists
+    $checkApplicationQuery = "
+        SELECT id FROM applications 
         WHERE id = :id
     ";
-    $checkApplicantStmt = $pdo->prepare($checkApplicantQuery);
-    $checkApplicantStmt->bindParam(':id', $data['applicant_id'], PDO::PARAM_INT);
-    $checkApplicantStmt->execute();
+    $checkApplicationStmt = $pdo->prepare($checkApplicationQuery);
+    $checkApplicationStmt->bindParam(':id', $data['application_id'], PDO::PARAM_INT);
+    $checkApplicationStmt->execute();
 
-    if ($checkApplicantStmt->rowCount() === 0) {
-        header('Content-Type: application/json');
+    if ($checkApplicationStmt->rowCount() === 0) {
         http_response_code(404);
-        echo json_encode(['error' => 'Applicant not found']);
+        echo json_encode(['error' => 'Application not found']);
         return;
-    }
-
-    // Create the new note
-    // First check if the table exists
-    try {
-        $checkTableQuery = "SHOW TABLES LIKE 'applicant_notes'";
-        $checkTableStmt = $pdo->prepare($checkTableQuery);
-        $checkTableStmt->execute();
-        
-        if ($checkTableStmt->rowCount() === 0) {
-            // Create the table if it doesn't exist
-            $createTableQuery = "
-                CREATE TABLE applicant_notes (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    applicant_id INT NOT NULL,
-                    content TEXT NOT NULL,
-                    created_by INT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (applicant_id) REFERENCES applicant_pool_assignments(id) ON DELETE CASCADE,
-                    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-                )
-            ";
-            $createTableStmt = $pdo->prepare($createTableQuery);
-            $createTableStmt->execute();
-        }
-    } catch (PDOException $e) {
-        // Table might already exist or there's another issue
-        error_log('Error checking/creating applicant_notes table: ' . $e->getMessage());
     }
 
     // Insert the note
@@ -212,7 +202,7 @@ function addApplicantNote($pdo, $userId) {
     ";
     
     $insertNoteStmt = $pdo->prepare($insertNoteQuery);
-    $insertNoteStmt->bindParam(':applicant_id', $data['applicant_id'], PDO::PARAM_INT);
+    $insertNoteStmt->bindParam(':applicant_id', $data['application_id'], PDO::PARAM_INT);
     $insertNoteStmt->bindParam(':content', $data['content'], PDO::PARAM_STR);
     $insertNoteStmt->bindParam(':created_by', $userId, PDO::PARAM_INT);
     $insertNoteStmt->execute();
@@ -240,7 +230,6 @@ function addApplicantNote($pdo, $userId) {
     
     $note = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    header('Content-Type: application/json');
     http_response_code(201); // Created
     echo json_encode(['success' => true, 'data' => $note]);
 }
@@ -249,7 +238,7 @@ function addApplicantNote($pdo, $userId) {
  * Delete a note
  */
 function deleteApplicantNote($pdo, $noteId, $userId) {
-    // Check if the note exists and belongs to the user (or admin)
+    // Check if the note exists
     $checkNoteQuery = "
         SELECT id, created_by FROM applicant_notes 
         WHERE id = :id
@@ -259,7 +248,6 @@ function deleteApplicantNote($pdo, $noteId, $userId) {
     $checkNoteStmt->execute();
 
     if ($checkNoteStmt->rowCount() === 0) {
-        header('Content-Type: application/json');
         http_response_code(404);
         echo json_encode(['error' => 'Note not found']);
         return;
@@ -267,20 +255,33 @@ function deleteApplicantNote($pdo, $noteId, $userId) {
 
     $note = $checkNoteStmt->fetch(PDO::FETCH_ASSOC);
     
-    // Check if the user is the creator of the note or an admin
-    // In a real app, you'd check user roles
-    if ($note['created_by'] != $userId) {
-        // For simplicity, we'll allow it anyway since we're assuming an admin role
-        // In a real app, you'd check admin privileges here
-    }
-
     // Delete the note
     $deleteNoteQuery = "DELETE FROM applicant_notes WHERE id = :id";
     $deleteNoteStmt = $pdo->prepare($deleteNoteQuery);
     $deleteNoteStmt->bindParam(':id', $noteId, PDO::PARAM_INT);
     $deleteNoteStmt->execute();
     
-    header('Content-Type: application/json');
+    // Log the deletion
+    $logQuery = "
+        INSERT INTO user_activity (
+            user_id, 
+            activity_type, 
+            details, 
+            activity_time
+        ) VALUES (
+            :user_id, 
+            'note_deleted', 
+            :details, 
+            NOW()
+        )
+    ";
+    
+    $details = "Deleted applicant note (ID: $noteId)";
+    $logStmt = $pdo->prepare($logQuery);
+    $logStmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+    $logStmt->bindParam(':details', $details, PDO::PARAM_STR);
+    $logStmt->execute();
+    
     echo json_encode(['success' => true, 'message' => 'Note deleted successfully']);
 }
 ?>

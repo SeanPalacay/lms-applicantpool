@@ -22,10 +22,12 @@ if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
     $token = $matches[1];
 }
 
+// Allow token also via GET ?token=...
 if (empty($token) && isset($_GET['token'])) {
     $token = $_GET['token'];
 }
 
+// If still no token, reject
 if (empty($token)) {
     http_response_code(401);
     echo json_encode(['error' => 'Authentication required']);
@@ -37,106 +39,196 @@ try {
         throw new Exception('Database connection not established');
     }
 
-    // Debugging: Check if token is received
-    error_log("Token received: " . $token);
+    // Instead of JWT decode, parse base64 "<userId>:<timestamp>"
+    // Example of $token => "MTA6MTc0MjI2NzgyMw==" => base64_decode => "10:1742267823"
+    $decoded = base64_decode($token);
+    // Safely split on colon
+    $parts = explode(':', $decoded);
+    $trainerId = isset($parts[0]) ? (int)$parts[0] : 0;
 
-    // Replace hardcoded traineeId with actual user ID from token or session
-    $traineeId = 3; // Replace with actual user ID
+    // Fallback to session if no valid userId from token
+    if (!$trainerId && isset($_SESSION['user_id'])) {
+        $trainerId = (int) $_SESSION['user_id'];
+    }
 
-    // Debugging: Check traineeId
-    error_log("Trainee ID: " . $traineeId);
+    // If still no userId, throw error
+    if (!$trainerId) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Invalid token format or missing user ID']);
+        exit;
+    }
+
+    // Log trainer ID for debugging
+    error_log("Trainer Dashboard API - Trainer ID: " . $trainerId);
 
     $response = [
         'user' => [
             'full_name' => '',
             'email'     => '',
-            'role'      => 'trainee'
+            'role'      => 'trainer'
         ],
-        'enrollments'    => [],
-        'quizAttempts'   => [],
-        'milestoneStatus'=> [],
-        'notifications'  => [],
-        'alerts'         => []
+        'createdPrograms'   => [],     // Changed from assignedPrograms to match expected format
+        'upcomingSessions'   => [],
+        'traineesProgress'   => [],
+        'pendingAssessments' => [],
+        'notifications'      => [],
+        'alerts'             => []
     ];
 
-    // 1) Fetch Trainee User Info
-    $userQuery = "SELECT full_name, email, role
-                  FROM users 
-                  WHERE id = ? AND role = 'trainee' 
-                  LIMIT 1";
+    // 1) Fetch Trainer User Info
+    $userQuery = "
+        SELECT full_name, email, role
+        FROM users
+        WHERE id = ? AND role = 'trainer'
+        LIMIT 1
+    ";
     $userStmt = $pdo->prepare($userQuery);
-    $userStmt->execute([$traineeId]);
+    $userStmt->execute([$trainerId]);
     $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
+
     if (!$userData) {
         http_response_code(404);
-        echo json_encode(['error' => 'No trainee found for this user']);
+        echo json_encode(['error' => 'No trainer found for this user']);
         exit;
     }
     $response['user'] = $userData;
 
-    // Debugging: Check user data
-    error_log("User Data: " . print_r($userData, true));
-
-    // 2) Fetch Enrollments (program_enrollments table + program details)
-    $enrollQuery = "
+    // 2) Fetch Programs created by this trainer
+    $programsQuery = "
         SELECT 
-            pe.id,
-            pe.program_id,
-            p.title AS program_title,
-            pe.enrollment_date,
-            pe.completion_status,
-            pe.completion_percentage
-        FROM program_enrollments pe
-        JOIN programs p ON p.id = pe.program_id
-        WHERE pe.user_id = ?
-        ORDER BY pe.enrollment_date DESC
+            p.id,
+            p.title,
+            p.description,
+            p.type,
+            p.created_at,
+            'active' AS status,
+            (SELECT COUNT(DISTINCT pe.user_id) FROM program_enrollments pe WHERE pe.program_id = p.id) AS enrolled_trainees
+        FROM programs p
+        WHERE p.created_by = ?
+        ORDER BY p.created_at DESC
     ";
-    $enrollStmt = $pdo->prepare($enrollQuery);
-    $enrollStmt->execute([$traineeId]);
-    $enrollments = $enrollStmt->fetchAll(PDO::FETCH_ASSOC);
-    $response['enrollments'] = $enrollments;
+    $programsStmt = $pdo->prepare($programsQuery);
+    $programsStmt->execute([$trainerId]);
+    $programs = $programsStmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Log count of programs found
+    error_log("Trainer Dashboard API - Programs found: " . count($programs));
+    
+    $response['createdPrograms'] = $programs;
+    $response['totalPrograms'] = count($programs);
 
-    // 3) Fetch Quiz Attempts
-    $quizQuery = "
+    // 3) No direct sessions table exists, so let's create dummy data
+    // In a real implementation, you would create and query a sessions table
+    $response['upcomingSessions'] = [
+        [
+            'id' => 1,
+            'title' => 'Program Orientation',
+            'description' => 'Introduction to the training program',
+            'session_date' => date('Y-m-d', strtotime('+2 days')),
+            'start_time' => '09:00:00',
+            'end_time' => '10:30:00',
+            'program_title' => isset($programs[0]['title']) ? $programs[0]['title'] : 'N/A',
+            'program_id' => isset($programs[0]['id']) ? $programs[0]['id'] : 0,
+            'confirmed_attendees' => 5
+        ]
+    ];
+
+    // 4) Trainees Progress Overview - Based on program_enrollments
+    $progressQuery = "
         SELECT 
-            qa.id,
-            q.title AS quiz_title,
-            qa.score,
-            qa.attempt_date,
-            qa.feedback
-        FROM quiz_attempts qa
-        JOIN quizzes q ON qa.quiz_id = q.id
-        WHERE qa.user_id = ?
-        ORDER BY qa.attempt_date DESC
+            u.id AS trainee_id,
+            u.full_name AS trainee_name,
+            p.id AS program_id,
+            p.title AS program_title,
+            pe.completion_percentage,
+            pe.completion_status,
+            (SELECT COUNT(*) FROM milestone_progress mp 
+             JOIN milestones m ON mp.milestone_id = m.id
+             WHERE mp.user_id = u.id 
+             AND m.program_id = p.id 
+             AND mp.status = 'completed') AS completed_milestones,
+            (SELECT COUNT(*) FROM milestones 
+             WHERE program_id = p.id) AS total_milestones
+        FROM program_enrollments pe
+        JOIN users u ON pe.user_id = u.id
+        JOIN programs p ON pe.program_id = p.id
+        WHERE p.created_by = ?
+        ORDER BY p.title, pe.completion_percentage DESC
+        LIMIT 20
+    ";
+    $progressStmt = $pdo->prepare($progressQuery);
+    $progressStmt->execute([$trainerId]);
+    $traineesProgress = $progressStmt->fetchAll(PDO::FETCH_ASSOC);
+    $response['traineesProgress'] = $traineesProgress;
+
+    // 5) Created Quizzes
+    $quizzesQuery = "
+        SELECT 
+            q.id,
+            q.title,
+            q.description,
+            q.time_limit,
+            q.passing_score,
+            q.created_at,
+            p.title AS program_title,
+            p.id AS program_id
+        FROM quizzes q
+        JOIN programs p ON q.program_id = p.id
+        WHERE p.created_by = ?
+        ORDER BY q.created_at DESC
         LIMIT 5
     ";
-    $quizStmt = $pdo->prepare($quizQuery);
-    $quizStmt->execute([$traineeId]);
-    $quizAttempts = $quizStmt->fetchAll(PDO::FETCH_ASSOC);
-    $response['quizAttempts'] = $quizAttempts;
+    $quizzesStmt = $pdo->prepare($quizzesQuery);
+    $quizzesStmt->execute([$trainerId]);
+    $quizzes = $quizzesStmt->fetchAll(PDO::FETCH_ASSOC);
+    $response['createdQuizzes'] = $quizzes;
 
-    // 4) Milestone Progress
-    $milestoneQuery = "
+    // 6) Created Milestones
+    $milestonesQuery = "
         SELECT 
-            m.id AS milestone_id,
+            m.id,
             m.title,
+            m.description,
             m.due_date,
-            mp.status,
-            mp.completion_date,
-            p.title AS program_title
-        FROM milestone_progress mp
-        JOIN milestones m ON mp.milestone_id = m.id
+            p.title AS program_title,
+            p.id AS program_id
+        FROM milestones m
         JOIN programs p ON m.program_id = p.id
-        WHERE mp.user_id = ?
+        WHERE p.created_by = ?
         ORDER BY m.due_date ASC
+        LIMIT 5
+    ";
+    $milestonesStmt = $pdo->prepare($milestonesQuery);
+    $milestonesStmt->execute([$trainerId]);
+    $milestones = $milestonesStmt->fetchAll(PDO::FETCH_ASSOC);
+    $response['createdMilestones'] = $milestones;
+
+    // 7) Pending Assessments - Use practical_exam_attempts
+    $assessmentsQuery = "
+        SELECT 
+            pea.id,
+            pe.title,
+            'practical_exam' AS type,
+            pea.submitted_at AS submission_date,
+            u.full_name AS trainee_name,
+            u.id AS trainee_id,
+            p.title AS program_title,
+            p.id AS program_id
+        FROM practical_exam_attempts pea
+        JOIN practical_exams pe ON pea.exam_id = pe.id
+        JOIN users u ON pea.user_id = u.id
+        JOIN programs p ON pe.program_id = p.id
+        WHERE p.created_by = ?
+          AND pea.graded_at IS NULL
+        ORDER BY pea.submitted_at ASC
         LIMIT 10
     ";
-    $milestoneStmt = $pdo->prepare($milestoneQuery);
-    $milestoneStmt->execute([$traineeId]);
-    $milestones = $milestoneStmt->fetchAll(PDO::FETCH_ASSOC);
-    $response['milestoneStatus'] = $milestones;
+    $assessmentsStmt = $pdo->prepare($assessmentsQuery);
+    $assessmentsStmt->execute([$trainerId]);
+    $pendingAssessments = $assessmentsStmt->fetchAll(PDO::FETCH_ASSOC);
+    $response['pendingAssessments'] = $pendingAssessments;
 
-    // 5) Notifications
+    // 8) Notifications
     $notifQuery = "
         SELECT 
             id,
@@ -151,49 +243,87 @@ try {
         LIMIT 5
     ";
     $notifStmt = $pdo->prepare($notifQuery);
-    $notifStmt->execute([$traineeId]);
+    $notifStmt->execute([$trainerId]);
     $notifications = $notifStmt->fetchAll(PDO::FETCH_ASSOC);
     $response['notifications'] = $notifications;
 
-    // 6) Custom Alerts
+    // 9) Custom Alerts
     $alerts = [];
 
-    // Example: Alert if any milestone is overdue
-    $overdueMileQuery = "
-        SELECT m.id, m.title, p.title AS program_title, DATEDIFF(CURRENT_DATE, m.due_date) AS days_overdue
-        FROM milestone_progress mp
-        JOIN milestones m ON mp.milestone_id = m.id
-        JOIN programs p ON m.program_id = p.id
-        WHERE mp.user_id = ?
-          AND mp.status != 'completed'
-          AND m.due_date < CURRENT_DATE
+    // Alert for ungraded practical exams
+    $ungradedExamsQuery = "
+        SELECT 
+            pe.title, 
+            u.full_name AS trainee_name,
+            DATEDIFF(CURRENT_DATE, pea.submitted_at) AS days_pending
+        FROM practical_exam_attempts pea
+        JOIN practical_exams pe ON pea.exam_id = pe.id
+        JOIN users u ON pea.user_id = u.id
+        JOIN programs p ON pe.program_id = p.id
+        WHERE p.created_by = ?
+          AND pea.graded_at IS NULL
+          AND pea.submitted_at < DATE_SUB(CURRENT_DATE, INTERVAL 3 DAY)
+        ORDER BY pea.submitted_at ASC
         LIMIT 3
     ";
-    $overdueStmt = $pdo->prepare($overdueMileQuery);
-    $overdueStmt->execute([$traineeId]);
-    $overdueMileRows = $overdueStmt->fetchAll(PDO::FETCH_ASSOC);
+    $ungradedStmt = $pdo->prepare($ungradedExamsQuery);
+    $ungradedStmt->execute([$trainerId]);
+    $ungradedExams = $ungradedStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($overdueMileRows as $row) {
+    foreach ($ungradedExams as $exam) {
         $alerts[] = [
             'type'    => 'warning',
-            'title'   => 'Overdue Milestone',
-            'message' => "Milestone '{$row['title']}' in '{$row['program_title']}' is overdue by {$row['days_overdue']} days."
+            'title'   => 'Ungraded Practical Exam',
+            'message' => "Practical exam '{$exam['title']}' submitted by {$exam['trainee_name']} has been pending review for {$exam['days_pending']} days."
+        ];
+    }
+
+    // Alert for trainees with low quiz scores
+    $lowScoreQuery = "
+        SELECT 
+            u.full_name AS trainee_name,
+            q.title AS quiz_title,
+            qa.score,
+            p.title AS program_title
+        FROM quiz_attempts qa
+        JOIN quizzes q ON qa.quiz_id = q.id
+        JOIN users u ON qa.user_id = u.id
+        JOIN programs p ON q.program_id = p.id
+        WHERE p.created_by = ?
+          AND qa.score < q.passing_score
+          AND qa.attempt_date > DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)
+        ORDER BY qa.attempt_date DESC
+        LIMIT 3
+    ";
+    $lowScoreStmt = $pdo->prepare($lowScoreQuery);
+    $lowScoreStmt->execute([$trainerId]);
+    $lowScores = $lowScoreStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($lowScores as $score) {
+        $alerts[] = [
+            'type'    => 'error',
+            'title'   => 'Low Quiz Score',
+            'message' => "Trainee {$score['trainee_name']} scored {$score['score']}% on '{$score['quiz_title']}' in the '{$score['program_title']}' program."
         ];
     }
 
     $response['alerts'] = $alerts;
 
+    // Set active trainees count
+    $response['activeTrainees'] = count($traineesProgress);
+
     // Send final JSON
     echo json_encode($response);
 
 } catch (PDOException $e) {
-    error_log("Trainee Dashboard PDO Error: " . $e->getMessage());
+    error_log("Trainer Dashboard PDO Error: " . $e->getMessage());
     http_response_code(500);
     echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
     exit;
 } catch (Exception $e) {
-    error_log("Trainee Dashboard General Error: " . $e->getMessage());
+    error_log("Trainer Dashboard General Error: " . $e->getMessage());
     http_response_code(500);
     echo json_encode(['error' => 'General error: ' . $e->getMessage()]);
     exit;
 }
+?>

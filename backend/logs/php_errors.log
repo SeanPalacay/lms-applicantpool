@@ -1,0 +1,49 @@
+[03-Apr-2025 08:40:36 Europe/Berlin] Auth helper file missing
+[03-Apr-2025 08:40:59 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lms_forbes.sessions' doesn't exist in C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php:143
+Stack trace:
+#0 C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php(143): PDOStatement->execute()
+#1 C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php(66): getUserIdFromToken('d1916ca60e54a45...')
+#2 {main}
+  thrown in C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php on line 143
+[03-Apr-2025 08:44:19 Europe/Berlin] Auth helper file missing
+[03-Apr-2025 08:44:55 Europe/Berlin] Auth helper file missing
+[03-Apr-2025 08:47:44 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lms_forbes.sessions' doesn't exist in C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php:165
+Stack trace:
+#0 C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php(165): PDOStatement->execute()
+#1 C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php(80): getUserIdFromToken('d1916ca60e54a45...')
+#2 {main}
+  thrown in C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php on line 165
+[03-Apr-2025 08:47:51 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lms_forbes.sessions' doesn't exist in C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php:165
+Stack trace:
+#0 C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php(165): PDOStatement->execute()
+#1 C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php(80): getUserIdFromToken('d1916ca60e54a45...')
+#2 {main}
+  thrown in C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php on line 165
+[03-Apr-2025 08:52:43 Europe/Berlin] Starting applications.php
+[03-Apr-2025 08:52:43 Europe/Berlin] Session started
+[03-Apr-2025 08:52:43 Europe/Berlin] CORS middleware included
+[03-Apr-2025 08:52:43 Europe/Berlin] Database config included
+[03-Apr-2025 08:52:43 Europe/Berlin] PDO connection verified
+[03-Apr-2025 08:52:43 Europe/Berlin] Authorization header: Bearer d1916ca60e54a456c683947b1824aa53e91bfe25d2d88c540107effa2e84aab3
+[03-Apr-2025 08:52:43 Europe/Berlin] Token extracted: d1916ca60e54a456c683947b1824aa53e91bfe25d2d88c540107effa2e84aab3
+[03-Apr-2025 08:52:43 Europe/Berlin] Validating token: d1916ca60e54a456c683947b1824aa53e91bfe25d2d88c540107effa2e84aab3
+[03-Apr-2025 08:52:43 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lms_forbes.sessions' doesn't exist in C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php:187
+Stack trace:
+#0 C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php(187): PDOStatement->execute()
+#1 C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php(91): getUserIdFromToken('d1916ca60e54a45...')
+#2 {main}
+  thrown in C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php on line 187
+[03-Apr-2025 08:57:59 Europe/Berlin] === applications.php started ===
+[03-Apr-2025 08:57:59 Europe/Berlin] Session started
+[03-Apr-2025 08:57:59 Europe/Berlin] CORS middleware loaded
+[03-Apr-2025 08:57:59 Europe/Berlin] Database config loaded
+[03-Apr-2025 08:57:59 Europe/Berlin] PDO connection verified
+[03-Apr-2025 08:57:59 Europe/Berlin] Authorization header: Bearer d1916ca60e54a456c683947b1824aa53e91bfe25d2d88c540107effa2e84aab3
+[03-Apr-2025 08:57:59 Europe/Berlin] Token extracted: d1916ca60e...
+[03-Apr-2025 08:57:59 Europe/Berlin] Validating token: d1916ca60e...
+[03-Apr-2025 08:57:59 Europe/Berlin] Error: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lms_forbes.sessions' doesn't exist (Code: 42S02)
+[03-Apr-2025 08:57:59 Europe/Berlin] PHP Fatal error:  Uncaught TypeError: http_response_code(): Argument #1 ($response_code) must be of type int, string given in C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php:171
+Stack trace:
+#0 C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php(171): http_response_code('42S02')
+#1 {main}
+  thrown in C:\xampp\htdocs\lms-forbes\backend\api\applicant\applications.php on line 171

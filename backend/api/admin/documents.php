@@ -208,37 +208,35 @@ function getDocumentById($pdo, $documentId) {
  * Download a document
  */
 function downloadDocument($pdo, $documentId) {
-    // Check if document exists
-    $checkQuery = "
+    $checkStmt = $pdo->prepare("
         SELECT file_path, description FROM records 
         WHERE id = ? AND record_type = 'applicant'
-    ";
-    
-    $checkStmt = $pdo->prepare($checkQuery);
+    ");
     $checkStmt->execute([$documentId]);
     
     if ($checkStmt->rowCount() === 0) {
-        header('Content-Type: application/json');
         http_response_code(404);
         echo json_encode(['error' => 'Document not found']);
         return;
     }
     
     $document = $checkStmt->fetch(PDO::FETCH_ASSOC);
-    $file_path = __DIR__ . '/../../' . $document['file_path'];
+    $base_dir = __DIR__ . '/../../uploads/'; // Adjust this
+    $relative_path = ltrim($document['file_path'], '/');
+    $file_path = $base_dir . $relative_path;
+    
+    error_log("Resolved file path for download: $file_path");
     
     if (!file_exists($file_path)) {
-        header('Content-Type: application/json');
+        error_log("File not found at: $file_path");
         http_response_code(404);
         echo json_encode(['error' => 'Document file not found']);
         return;
     }
     
-    // Get file info
     $file_info = pathinfo($file_path);
     $extension = strtolower($file_info['extension']);
     
-    // Set content type based on file extension
     switch ($extension) {
         case 'pdf':
             $content_type = 'application/pdf';
@@ -253,16 +251,12 @@ function downloadDocument($pdo, $documentId) {
             $content_type = 'application/octet-stream';
     }
     
-    // Force download
     header('Content-Type: ' . $content_type);
-    header('Content-Disposition: attachment; filename="' . basename($document['description']) . '.' . $extension . '"');
+    header('Content-Disposition: attachment; filename="' . ($document['description'] ?: 'document') . '.' . $extension . '"');
     header('Content-Length: ' . filesize($file_path));
     
-    // Clear output buffer
     ob_clean();
     flush();
-    
-    // Output file
     readfile($file_path);
     exit;
 }
@@ -271,61 +265,43 @@ function downloadDocument($pdo, $documentId) {
  * View a document in browser
  */
 function viewDocument($pdo, $documentId) {
-    // Check if document exists
-    $checkQuery = "
-        SELECT file_path FROM records 
+    $checkStmt = $pdo->prepare("
+        SELECT file_path, description
+        FROM records 
         WHERE id = ? AND record_type = 'applicant'
-    ";
-    
-    $checkStmt = $pdo->prepare($checkQuery);
+    ");
     $checkStmt->execute([$documentId]);
+    $document = $checkStmt->fetch(PDO::FETCH_ASSOC);
     
     if ($checkStmt->rowCount() === 0) {
-        header('Content-Type: application/json');
         http_response_code(404);
         echo json_encode(['error' => 'Document not found']);
         return;
     }
     
-    $document = $checkStmt->fetch(PDO::FETCH_ASSOC);
-    $file_path = __DIR__ . '/../../' . $document['file_path'];
+    // Match applicant/documents.php path structure
+    $file_path = __DIR__ . '/../../../' . $document['file_path'];
+    error_log("Resolved file path: $file_path"); // Debug
     
     if (!file_exists($file_path)) {
-        header('Content-Type: application/json');
+        error_log("File not found at: $file_path"); // Debug
         http_response_code(404);
         echo json_encode(['error' => 'Document file not found']);
         return;
     }
     
-    // Get file info
-    $file_info = pathinfo($file_path);
-    $extension = strtolower($file_info['extension']);
+    $extension = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+    $content_type = $extension === 'pdf' ? 'application/pdf' :
+                    ($extension === 'doc' ? 'application/msword' :
+                    ($extension === 'docx' ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' :
+                    'application/octet-stream'));
     
-    // Set content type based on file extension
-    switch ($extension) {
-        case 'pdf':
-            $content_type = 'application/pdf';
-            break;
-        case 'doc':
-            $content_type = 'application/msword';
-            break;
-        case 'docx':
-            $content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-            break;
-        default:
-            $content_type = 'application/octet-stream';
-    }
-    
-    // View in browser
     header('Content-Type: ' . $content_type);
-    header('Content-Disposition: inline; filename="' . basename($file_path) . '"');
+    header('Content-Disposition: inline; filename="' . ($document['description'] ?: basename($file_path)) . '"');
     header('Content-Length: ' . filesize($file_path));
     
-    // Clear output buffer
     ob_clean();
     flush();
-    
-    // Output file
     readfile($file_path);
     exit;
 }

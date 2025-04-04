@@ -89,22 +89,69 @@ try {
 
     // 2) Fetch Enrollments
     $enrollQuery = "
-        SELECT 
-            pe.id,
-            pe.program_id,
-            p.title AS program_title,
-            pe.enrollment_date,
-            pe.completion_status,
-            pe.completion_percentage
-        FROM program_enrollments pe
-        JOIN programs p ON p.id = pe.program_id
-        WHERE pe.user_id = ?
-        ORDER BY pe.enrollment_date DESC
+    SELECT 
+        pe.id,
+        pe.program_id,
+        p.title AS program_title,
+        pe.enrollment_date,
+        pe.completion_status,
+        pe.completion_percentage
+    FROM program_enrollments pe
+    JOIN programs p ON p.id = pe.program_id
+    WHERE pe.user_id = ?
+    ORDER BY pe.enrollment_date DESC
+";
+$enrollStmt = $pdo->prepare($enrollQuery);
+$enrollStmt->execute([$traineeId]);
+$enrollments = $enrollStmt->fetchAll(PDO::FETCH_ASSOC);
+
+foreach ($enrollments as &$enrollment) {
+    // Count total quizzes for the program
+    $totalQuizzesQuery = "
+        SELECT COUNT(*) 
+        FROM quizzes 
+        WHERE program_id = ? AND status = 'active'
     ";
-    $enrollStmt = $pdo->prepare($enrollQuery);
-    $enrollStmt->execute([$traineeId]);
-    $enrollments = $enrollStmt->fetchAll(PDO::FETCH_ASSOC);
-    $response['enrollments'] = $enrollments;
+    $totalQuizzesStmt = $pdo->prepare($totalQuizzesQuery);
+    $totalQuizzesStmt->execute([$enrollment['program_id']]);
+    $totalQuizzes = (int)$totalQuizzesStmt->fetchColumn();
+
+    // Initialize completion percentage
+    $completionPercentage = 0.00;
+
+    if ($totalQuizzes > 0) {
+        // Count completed quizzes (score >= passing_score)
+        $completedQuizzesQuery = "
+            SELECT COUNT(DISTINCT qa.quiz_id)
+            FROM quiz_attempts qa
+            JOIN quizzes q ON qa.quiz_id = q.id
+            WHERE qa.user_id = ? 
+            AND q.program_id = ? 
+            AND qa.score >= q.passing_score
+        ";
+        $completedQuizzesStmt = $pdo->prepare($completedQuizzesQuery);
+        $completedQuizzesStmt->execute([$traineeId, $enrollment['program_id']]);
+        $completedQuizzes = (int)$completedQuizzesStmt->fetchColumn();
+
+        // Calculate completion percentage based on quizzes
+        $completionPercentage = ($completedQuizzes / $totalQuizzes) * 100;
+    }
+
+    // Update the database
+    $newStatus = $completionPercentage >= 100 ? 'completed' : ($completionPercentage > 0 ? 'in_progress' : 'not_started');
+    $updatePercentageQuery = "
+        UPDATE program_enrollments
+        SET completion_percentage = ?, completion_status = ?
+        WHERE id = ?
+    ";
+    $updateStmt = $pdo->prepare($updatePercentageQuery);
+    $updateStmt->execute([$completionPercentage, $newStatus, $enrollment['id']]);
+
+    // Update the response data
+    $enrollment['completion_percentage'] = $completionPercentage;
+    $enrollment['completion_status'] = $newStatus;
+}
+$response['enrollments'] = $enrollments;
 
     // 3) Fetch Quiz Attempts
     $quizQuery = "

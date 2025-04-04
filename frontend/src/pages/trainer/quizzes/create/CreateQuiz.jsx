@@ -274,9 +274,127 @@ const CreateQuiz = () => {
         return false;
       }
       
-      if (!question.option_a.trim() || !question.option_b.trim()) {
-        setError(`Question ${i + 1}: Please provide at least options A and B.`);
+      // Different validation based on question type
+      switch (question.question_type) {
+        case 'multiple_choice':
+          if (!question.option_a.trim() || !question.option_b.trim()) {
+            setError(`Question ${i + 1}: Please provide at least options A and B for multiple choice questions.`);
+            return false;
+          }
+          
+          if (!question.correct_answer) {
+            setError(`Question ${i + 1}: Please select the correct answer.`);
+            return false;
+          }
+          break;
+          
+        case 'multiple_answer':
+          if (!question.option_a.trim() || !question.option_b.trim()) {
+            setError(`Question ${i + 1}: Please provide at least options A and B for multiple answer questions.`);
+            return false;
+          }
+          
+          if (!question.correct_answers || question.correct_answers.length === 0) {
+            setError(`Question ${i + 1}: Please select at least one correct answer.`);
+            return false;
+          }
+          break;
+          
+        case 'identification':
+          if (!question.answer_text || !question.answer_text.trim()) {
+            setError(`Question ${i + 1}: Please provide the correct answer for the identification question.`);
+            return false;
+          }
+          break;
+          
+        case 'matching':
+          if (!question.matching_pairs || question.matching_pairs.length < 2) {
+            setError(`Question ${i + 1}: Please provide at least two matching pairs.`);
+            return false;
+          }
+          
+          for (let j = 0; j < question.matching_pairs.length; j++) {
+            const pair = question.matching_pairs[j];
+            if (!pair.left || !pair.left.trim() || !pair.right || !pair.right.trim()) {
+              setError(`Question ${i + 1}: Please complete both sides of all matching pairs.`);
+              return false;
+            }
+          }
+          break;
+          
+        case 'true_false':
+          // No additional validation needed for true/false
+          // The is_true property will always be either true or false
+          break;
+          
+        case 'essay':
+          // No strict validation for essay, model answer is optional
+          break;
+          
+        default:
+          setError(`Question ${i + 1}: Unknown question type.`);
+          return false;
+      }
+    }
+    
+    // If using weighted grading, validate that weights are valid
+    if (gradingSettings.grading_type === 'weighted') {
+      let totalWeight = 0;
+      
+      for (let i = 0; i < gradingSettings.question_weights.length; i++) {
+        const weight = gradingSettings.question_weights[i].weight;
+        
+        if (weight < 0) {
+          setError(`Question weight for question ${i + 1} cannot be negative.`);
+          return false;
+        }
+        
+        totalWeight += parseFloat(weight);
+      }
+      
+      // Warn if total weight is not close to 100%
+      if (Math.abs(totalWeight - 100) > 0.1) {
+        // Just a warning, continue with submission
+        console.warn(`Total question weight is ${totalWeight}%, which is not equal to 100%.`);
+      }
+    }
+    
+    // Validate feedback templates if auto feedback is enabled
+    if (quizData.auto_grade && quizData.auto_feedback) {
+      if (!gradingSettings.feedback_templates || gradingSettings.feedback_templates.length === 0) {
+        setError('Please add at least one feedback template for auto-grading.');
         return false;
+      }
+      
+      // Check if templates cover the full range from 0 to 100
+      let minFound = 100;
+      let maxFound = 0;
+      
+      for (const template of gradingSettings.feedback_templates) {
+        if (!template.template || !template.template.trim()) {
+          setError('All feedback templates must have content.');
+          return false;
+        }
+        
+        minFound = Math.min(minFound, template.min_score);
+        maxFound = Math.max(maxFound, template.max_score);
+        
+        if (template.min_score < 0 || template.min_score > 100 || 
+            template.max_score < 0 || template.max_score > 100) {
+          setError('Feedback template score ranges must be between 0 and 100.');
+          return false;
+        }
+        
+        if (template.min_score >= template.max_score) {
+          setError('Each feedback template\'s minimum score must be less than its maximum score.');
+          return false;
+        }
+      }
+      
+      // Warn if templates don't cover the full range
+      if (minFound > 0 || maxFound < 100) {
+        console.warn(`Feedback templates don't cover the full range from 0% to 100%.`);
+        // Just a warning, continue with submission
       }
     }
     
@@ -301,8 +419,8 @@ const QuestionTypeSelector = ({ questionType, onChange }) => (
       <option value="multiple_answer">Multiple Answer</option>
       <option value="true_false">True/False</option>
       <option value="identification">Identification</option>
-      <option value="matching">Matching</option>
-      <option value="essay">Essay/Short Answer</option>
+      {/* <option value="matching">Matching</option> */}
+      {/* <option value="essay">Essay/Short Answer</option> */}
     </select>
   </div>
 );
@@ -458,43 +576,114 @@ const TrueFalseQuestion = ({ question, index, onQuestionChange }) => (
     </div>
   </div>
 );
+// Replace your current IdentificationQuestion component with this improved version
+const IdentificationQuestion = ({ question, index, onQuestionChange }) => {
+  // Ensure answer_text is initialized
+  React.useEffect(() => {
+    if (question.answer_text === undefined) {
+      onQuestionChange(index, 'answer_text', '');
+    }
+    if (question.alternative_answers === undefined) {
+      onQuestionChange(index, 'alternative_answers', '');
+    }
+    if (question.case_sensitive === undefined) {
+      onQuestionChange(index, 'case_sensitive', false);
+    }
+  }, [question, index, onQuestionChange]);
 
-// Identification question
-const IdentificationQuestion = ({ question, index, onQuestionChange }) => (
-  <div>
-    <div style={{ marginBottom: '15px' }}>
-      <label style={{ display: 'block', marginBottom: '5px' }}>Question Text</label>
-      <textarea
-        value={question.question_text}
-        onChange={(e) => onQuestionChange(index, 'question_text', e.target.value)}
-        style={{
-          width: '100%',
-          padding: '8px',
-          border: '1px solid #ddd',
-          borderRadius: '4px',
-          minHeight: '60px'
-        }}
-        placeholder="Enter your identification question here"
-        required
-      />
+  const handleAnswerChange = (e) => {
+    onQuestionChange(index, 'answer_text', e.target.value);
+  };
+
+  const handleAlternativeAnswersChange = (e) => {
+    onQuestionChange(index, 'alternative_answers', e.target.value);
+  };
+
+  const handleCaseSensitiveChange = (e) => {
+    onQuestionChange(index, 'case_sensitive', e.target.checked);
+  };
+
+  return (
+    <div>
+      <div style={{ marginBottom: '15px' }}>
+        <label style={{ display: 'block', marginBottom: '5px' }}>Question Text</label>
+        <textarea
+          value={question.question_text || ''}
+          onChange={(e) => onQuestionChange(index, 'question_text', e.target.value)}
+          style={{
+            width: '100%',
+            padding: '8px',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            minHeight: '60px'
+          }}
+          placeholder="Enter your identification question here"
+          required
+        />
+      </div>
+      <div style={{ marginBottom: '15px' }}>
+        <label style={{ display: 'block', marginBottom: '5px' }}>
+          <span style={{ color: '#dc3545', marginRight: '4px' }}>*</span>
+          Correct Answer
+        </label>
+        <input
+          value={question.answer_text || ''}
+          onChange={handleAnswerChange}
+          style={{
+            width: '100%',
+            padding: '8px',
+            border: '1px solid #ddd',
+            borderRadius: '4px'
+          }}
+          placeholder="Enter the correct answer (required)"
+          required
+        />
+        <small style={{ color: '#6c757d', display: 'block', marginTop: '4px' }}>
+          This is the answer trainees must provide to get this question correct.
+        </small>
+      </div>
+      <div style={{ marginBottom: '15px' }}>
+        <label style={{ display: 'block', marginBottom: '5px' }}>
+          Alternative Answers (Optional)
+        </label>
+        <textarea
+          value={question.alternative_answers || ''}
+          onChange={handleAlternativeAnswersChange}
+          style={{
+            width: '100%',
+            padding: '8px',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            minHeight: '60px'
+          }}
+          placeholder="Enter alternative acceptable answers, one per line (optional)"
+        />
+        <small style={{ color: '#6c757d', display: 'block', marginTop: '4px' }}>
+          If there are multiple acceptable answers, list them here (one per line).
+        </small>
+      </div>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center',
+        marginBottom: '15px', 
+        padding: '10px', 
+        backgroundColor: '#f8f9fa', 
+        borderRadius: '4px' 
+      }}>
+        <input
+          type="checkbox"
+          id={`case_sensitive_${index}`}
+          checked={question.case_sensitive || false}
+          onChange={handleCaseSensitiveChange}
+          style={{ marginRight: '8px' }}
+        />
+        <label htmlFor={`case_sensitive_${index}`}>
+          Case-sensitive answer checking
+        </label>
+      </div>
     </div>
-    <div style={{ marginBottom: '15px' }}>
-      <label style={{ display: 'block', marginBottom: '5px' }}>Correct Answer</label>
-      <input
-        value={question.answer_text || ''}
-        onChange={(e) => onQuestionChange(index, 'answer_text', e.target.value)}
-        style={{
-          width: '100%',
-          padding: '8px',
-          border: '1px solid #ddd',
-          borderRadius: '4px'
-        }}
-        placeholder="Enter the correct answer"
-        required
-      />
-    </div>
-  </div>
-);
+  );
+};
 
 // Matching question
 const MatchingQuestion = ({ question, index, onQuestionChange }) => {
@@ -646,48 +835,123 @@ const EssayQuestion = ({ question, index, onQuestionChange }) => (
   </div>
 );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (!validateForm()) {
+    return;
+  }
+  
+  setSaving(true);
+  setError(null);
+  
+  try {
+    // Create a deep copy to avoid modifying state directly
+    const preparedQuizData = JSON.parse(JSON.stringify(quizData));
     
-    if (!validateForm()) {
-      return;
+    // Process questions based on their type
+    preparedQuizData.questions = preparedQuizData.questions.map(question => {
+      const questionType = question.question_type;
+      
+      switch (questionType) {
+        case 'multiple_choice':
+          return {
+            question_type: questionType,
+            question_text: question.question_text,
+            option_a: question.option_a || '',
+            option_b: question.option_b || '',
+            option_c: question.option_c || '',
+            option_d: question.option_d || '',
+            correct_answer: question.correct_answer || 'a'
+          };
+          
+        case 'multiple_answer':
+          return {
+            question_type: questionType,
+            question_text: question.question_text,
+            option_a: question.option_a || '',
+            option_b: question.option_b || '',
+            option_c: question.option_c || '',
+            option_d: question.option_d || '',
+            correct_answers: Array.isArray(question.correct_answers) ? question.correct_answers : []
+          };
+          
+        case 'true_false':
+          return {
+            question_type: questionType,
+            question_text: question.question_text,
+            is_true: question.is_true === true
+          };
+          
+        case 'identification':
+          return {
+            question_type: questionType,
+            question_text: question.question_text,
+            answer_text: (question.answer_text || '').trim(),
+            alternative_answers: (question.alternative_answers || '').trim(),
+            case_sensitive: question.case_sensitive === true
+          };
+          
+        case 'matching':
+          return {
+            question_type: questionType,
+            question_text: question.question_text,
+            matching_pairs: Array.isArray(question.matching_pairs) ? 
+              question.matching_pairs.map(pair => ({
+                left: (pair.left || '').trim(),
+                right: (pair.right || '').trim(),
+                key: pair.key || ''
+              })) : []
+          };
+          
+        case 'essay':
+          return {
+            question_type: questionType,
+            question_text: question.question_text,
+            answer_text: (question.answer_text || '').trim() // Model answer
+          };
+          
+        default:
+          return question;
+      }
+    });
+    
+    // Prepare final quiz data for submission
+    const mappedQuizData = {
+      ...preparedQuizData,
+      time_limit: parseInt(preparedQuizData.time_limit) || 30,
+      passing_score: parseFloat(preparedQuizData.passing_score) || 70,
+      grade_weighting: gradingSettings.grading_type === 'weighted' ? 'custom' : 'equal',
+      auto_feedback: !!gradingSettings.auto_feedback
+    };
+    
+    // If using weighted grading, include question weights
+    if (gradingSettings.grading_type === 'weighted') {
+      mappedQuizData.question_weights = gradingSettings.question_weights;
     }
     
-    setSaving(true);
-    
-    try {
-    // In handleSubmit
-const mappedQuizData = {
-  ...quizData,
-  time_limit: parseInt(quizData.time_limit),
-  passing_score: parseFloat(quizData.passing_score),
-  grade_weighting: gradingSettings.grading_type === 'weighted' ? 'custom' : 'equal',
-  // Ensure questions are properly formatted
-  questions: quizData.questions.map(q => {
-    // Create a new object to avoid modifying original state
-    const formattedQuestion = {...q};
-    
-    // If it's a multiple-answer question, ensure correct_answers is properly formatted
-    if (formattedQuestion.question_type === 'multiple_answer') {
-      // Make sure it's an array, even if empty
-      formattedQuestion.correct_answers = formattedQuestion.correct_answers || [];
+    // If using auto feedback, include feedback templates
+    if (gradingSettings.auto_feedback) {
+      mappedQuizData.feedback_templates = gradingSettings.feedback_templates;
     }
     
-    return formattedQuestion;
-  })
-};
+    console.log("Sending quiz data:", JSON.stringify(mappedQuizData));
+    
+    // Save quiz
+    const response = await trainerService.createQuiz(mappedQuizData);
+    
+    // If quiz was created successfully, configure grading settings
+    if (response && response.quizId) {
+      const gradingData = {
+        ...gradingSettings,
+        passing_score: parseFloat(gradingSettings.passing_score)
+      };
       
-      // Save quiz
-      const response = await trainerService.createQuiz(mappedQuizData);
-      
-      // If quiz was created successfully, configure grading settings
-      if (response && response.quizId) {
-        const gradingData = {
-          ...gradingSettings,
-          passing_score: parseFloat(gradingSettings.passing_score)
-        };
-        
+      try {
         await trainerService.configureQuizGrading(response.quizId, gradingData);
+      } catch (gradingError) {
+        console.error("Error configuring grading settings:", gradingError);
+        // Continue anyway - we've already created the quiz
       }
       
       setSuccess('Quiz created successfully.');
@@ -696,14 +960,14 @@ const mappedQuizData = {
       setTimeout(() => {
         navigate(`/trainer/quizzes/${response.quizId}`);
       }, 2000);
-    } catch (err) {
-      console.error('Error creating quiz:', err);
-      setError(err.message || 'Failed to create quiz. Please try again.');
-    } finally {
-      setSaving(false);
     }
-  };
-
+  } catch (err) {
+    console.error('Error creating quiz:', err);
+    setError(err.message || 'Failed to create quiz. Please try again.');
+  } finally {
+    setSaving(false);
+  }
+};
   const handleCancel = () => {
     navigate('/trainer/quizzes');
   };

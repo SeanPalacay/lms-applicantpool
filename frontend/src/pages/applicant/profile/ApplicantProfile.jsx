@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   User, Mail, Key, Eye, EyeOff, Save, AlertTriangle, 
-  Clock, RefreshCw, CheckCircle, Loader, FileText
+  Clock, RefreshCw, CheckCircle, Loader, FileText, 
+  Upload, Trash2, Check, X, File,Download
 } from 'lucide-react';
 import applicantService from '../../../services/applicantService';
 
@@ -19,6 +20,7 @@ const ApplicantProfile = () => {
   
   const [applications, setApplications] = useState([]);
   const [activity, setActivity] = useState([]);
+  const [documents, setDocuments] = useState([]); // Added for document management
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -40,7 +42,16 @@ const ApplicantProfile = () => {
     new_password: '',
     confirm_password: ''
   });
-  
+
+  // Document upload states (copied from UploadDocuments)
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [dragActive, setDragActive] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileDescription, setFileDescription] = useState('');
+  const fileInputRef = useRef(null);
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -70,10 +81,19 @@ const ApplicantProfile = () => {
         } catch (activityError) {
           console.warn('Could not fetch activity data:', activityError);
         }
+
+        // Fetch user documents (added from UploadDocuments)
+        let documentsData = [];
+        try {
+          documentsData = await applicantService.getUserDocuments();
+        } catch (docError) {
+          console.warn('Could not fetch documents:', docError);
+        }
         
         setProfile(profileData);
         setApplications(dashboardData.myApplications || []);
         setActivity(activityData);
+        setDocuments(documentsData || []); // Set documents
         
         if (profileData.additional_info) {
           try {
@@ -104,7 +124,158 @@ const ApplicantProfile = () => {
 
     fetchProfile();
   }, []);
+
+  // Document upload handlers (copied from UploadDocuments)
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
   
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFile(e.dataTransfer.files[0]);
+    }
+  };
+  
+  const handleFileSelect = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFile(e.target.files[0]);
+    }
+  };
+  
+  const handleFile = (file) => {
+    const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a PDF or Word document.');
+      return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size should be less than 5MB.');
+      return;
+    }
+    
+    setSelectedFile(file);
+    setFileDescription(file.name);
+  };
+  
+  const clearSelectedFile = () => {
+    setSelectedFile(null);
+    setFileDescription('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+  
+  const handleDescriptionChange = (e) => {
+    setFileDescription(e.target.value);
+  };
+  
+  const uploadDocument = async () => {
+    if (!selectedFile || !fileDescription.trim()) {
+      alert('Please select a file and provide a description.');
+      return;
+    }
+    
+    try {
+      setUploading(true);
+      setUploadProgress(0);
+      
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('record_type', 'applicant');
+      formData.append('category', 'evaluations');
+      formData.append('description', fileDescription);
+      
+      const response = await applicantService.uploadDocument(formData, (percentCompleted) => {
+        setUploadProgress(percentCompleted);
+      });
+      
+      setDocuments([...documents, response]);
+      clearSelectedFile();
+      setUploadSuccess(true);
+      setTimeout(() => setUploadSuccess(false), 5000);
+      setUploading(false);
+    } catch (err) {
+      console.error('Error uploading document:', err);
+      alert('Failed to upload document. Please try again.');
+      setUploading(false);
+    }
+  };
+  
+  const deleteDocument = async (documentId) => {
+    if (!window.confirm('Are you sure you want to delete this document?')) {
+      return;
+    }
+    
+    try {
+      await applicantService.deleteDocument(documentId);
+      setDocuments(documents.filter(doc => doc.id !== documentId));
+    } catch (err) {
+      console.error('Error deleting document:', err);
+      alert('Failed to delete document. Please try again.');
+    }
+  };
+  
+  const viewDocument = async (documentId) => {
+    try {
+      await applicantService.viewDocument(documentId);
+    } catch (err) {
+      console.error('Error viewing document:', err);
+      alert('Failed to view document. Please try again.');
+    }
+  };
+  
+  const downloadDocument = async (documentId, filename) => {
+    try {
+      await applicantService.downloadDocument(documentId);
+    } catch (err) {
+      console.error('Error downloading document:', err);
+      alert('Failed to download document. Please try again.');
+    }
+  };
+  
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+  
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Never';
+    return new Date(dateString).toLocaleString();
+  };
+  
+  const getFileIcon = (filename) => {
+    if (!filename) return <File size={24} />;
+    
+    const extension = filename.split('.').pop().toLowerCase();
+    
+    switch (extension) {
+      case 'pdf':
+        return <FileText size={24} />;
+      case 'doc':
+      case 'docx':
+        return <FileText size={24} />;
+      default:
+        return <File size={24} />;
+    }
+  };
+
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
     setProfile(prev => ({
@@ -154,7 +325,8 @@ const ApplicantProfile = () => {
       
       const updateData = {
         full_name: profile.full_name,
-        email: profile.email
+        email: profile.email,
+        additional_info: additionalInfo // Include additional info in the update
       };
       
       const response = await applicantService.updateUserProfile(updateData);
@@ -249,11 +421,6 @@ const ApplicantProfile = () => {
     }, 100);
   };
   
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Never';
-    return new Date(dateString).toLocaleString();
-  };
-  
   const getStatusClass = (status) => {
     switch (status) {
       case 'pending':
@@ -337,7 +504,7 @@ const ApplicantProfile = () => {
           <form onSubmit={updateProfile} style={{ padding: '16px' }}>
             <div style={{ marginBottom: '16px' }}>
               <label htmlFor="username" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Username</label>
-              <div style={{ position: 'relative' }}>
+               <div style={{ position: 'relative' }}>
                 <User size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                 <input 
                   type="text" 
@@ -794,6 +961,228 @@ const ApplicantProfile = () => {
           </div>
         </div>
 
+        {/* Document Upload Card (New) */}
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ padding: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Upload size={20} /> Upload Documents
+            </h2>
+          </div>
+
+          <div style={{ padding: '16px' }}>
+            {uploadSuccess && (
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                padding: '12px', 
+                backgroundColor: 'var(--success-color)', 
+                color: 'white', 
+                borderRadius: '4px', 
+                marginBottom: '16px' 
+              }}>
+                <Check size={18} />
+                <span>Document uploaded successfully!</span>
+              </div>
+            )}
+
+            <div 
+              style={{ 
+                border: `2px dashed ${dragActive ? 'var(--primary-color)' : 'var(--medium-gray)'}`, 
+                borderRadius: '8px', 
+                padding: '24px', 
+                backgroundColor: dragActive ? 'var(--primary-ultralight)' : 'white', 
+                transition: 'all 0.3s ease',
+                marginBottom: '16px'
+              }}
+              onDragEnter={handleDrag}
+              onDragOver={handleDrag}
+              onDragLeave={handleDrag}
+              onDrop={handleDrop}
+            >
+              {!selectedFile ? (
+                <div style={{ textAlign: 'center' }}>
+                  <Upload size={48} style={{ color: dragActive ? 'var(--primary-color)' : 'var(--text-secondary)', marginBottom: '16px' }} />
+                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>Drag & Drop your file here</h3>
+                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>or</p>
+                  <label 
+                    style={{ 
+                      padding: '8px 16px', 
+                      borderRadius: '4px', 
+                      backgroundColor: 'var(--primary-color)', 
+                      color: 'white', 
+                      cursor: 'pointer', 
+                      display: 'inline-block' 
+                    }}
+                  >
+                    Browse Files
+                    <input 
+                      type="file" 
+                      ref={fileInputRef}
+                      accept=".pdf,.doc,.docx" 
+                      onChange={handleFileSelect}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '16px' }}>
+                    Acceptable file types: PDF, DOC, DOCX<br />
+                    Maximum file size: 5MB
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+                    {getFileIcon(selectedFile.name)}
+                    <div>
+                      <div style={{ fontSize: '16px', fontWeight: '500', color: 'var(--text-primary)' }}>{selectedFile.name}</div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{formatFileSize(selectedFile.size)}</div>
+                    </div>
+                    <button 
+                      onClick={clearSelectedFile}
+                      style={{ 
+                        marginLeft: 'auto', 
+                        background: 'none', 
+                        border: 'none', 
+                        cursor: 'pointer', 
+                        color: 'var(--text-secondary)' 
+                      }}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                  
+                  <div style={{ marginBottom: '16px' }}>
+                    <label htmlFor="description" style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>Description</label>
+                    <input 
+                      type="text" 
+                      id="description" 
+                      value={fileDescription}
+                      onChange={handleDescriptionChange}
+                      placeholder="Enter a description for this document"
+                      style={{ 
+                        width: '100%', 
+                        padding: '8px 16px', 
+                        borderRadius: '4px', 
+                        border: '1px solid var(--medium-gray)', 
+                        backgroundColor: 'white', 
+                        fontSize: '14px', 
+                        color: 'var(--text-primary)' 
+                      }}
+                      required
+                    />
+                  </div>
+                  
+                  <button 
+                    onClick={uploadDocument}
+                    disabled={uploading}
+                    style={{ 
+                      width: '100%', 
+                      padding: '12px 16px', 
+                      borderRadius: '4px', 
+                      backgroundColor: 'var(--primary-color)', 
+                      color: 'white', 
+                      border: 'none', 
+                      cursor: 'pointer', 
+                      fontSize: '14px', 
+                      fontWeight: '500', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      gap: '8px' 
+                    }}
+                  >
+                    {uploading ? (
+                      <>
+                        <Loader size={16} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
+                        Uploading... ({uploadProgress}%)
+                      </>
+                    ) : (
+                      <>
+                        <Upload size={16} />
+                        Upload Document
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <h3 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '16px' }}>My Documents</h3>
+            
+            {documents.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '16px' }}>
+                <FileText size={48} style={{ color: 'var(--text-secondary)', marginBottom: '16px' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>No documents found</h3>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>You haven't uploaded any documents yet.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
+                {documents.map(document => (
+                  <div key={document.id} style={{ border: '1px solid var(--medium-gray)', borderRadius: '8px', padding: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+                      {getFileIcon(document.file_path)}
+                      <div>
+                        <h3 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)' }}>{document.description}</h3>
+                        <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Uploaded: {formatDate(document.created_at)}</div>
+                      </div>
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button 
+                        onClick={() => viewDocument(document.id)}
+                        style={{ 
+                          padding: '8px', 
+                          borderRadius: '4px', 
+                          backgroundColor: 'var(--light-gray)', 
+                          border: 'none', 
+                          cursor: 'pointer', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center' 
+                        }}
+                      >
+                        <Eye size={16} color="var(--text-secondary)" />
+                      </button>
+                      
+                      <button 
+                        onClick={() => downloadDocument(document.id, document.description)}
+                        style={{ 
+                          padding: '8px', 
+                          borderRadius: '4px', 
+                          backgroundColor: 'var(--light-gray)', 
+                          border: 'none', 
+                          cursor: 'pointer', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center' 
+                        }}
+                      >
+                        <Download size={16} color="var(--text-secondary)" />
+                      </button>
+                      
+                      <button 
+                        onClick={() => deleteDocument(document.id)}
+                        style={{ 
+                          padding: '8px', 
+                          borderRadius: '4px', 
+                          backgroundColor: 'var(--light-gray)', 
+                          border: 'none', 
+                          cursor: 'pointer', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center' 
+                        }}
+                      >
+                        <Trash2 size={16} color="var(--danger-color)" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Recent Activity Card */}
         <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }}>
           <div style={{ padding: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
@@ -857,8 +1246,8 @@ const ApplicantProfile = () => {
                 <div key={app.application_id || app.id} style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--medium-gray)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)' }}>{app.program_title}</div>
-                      <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{app.job_role} - {app.department}</div>
+                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)' }}>{app.position_name}</div>
+                      <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{app.department}</div>
                       <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Applied: {formatDate(app.applied_at)}</div>
                     </div>
                     <div style={{ 
