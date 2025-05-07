@@ -278,7 +278,7 @@ const TrainerPrograms = () => {
             <Plus size={16} />
             <span>Create Program</span>
           </Link>
-          <Link 
+          {/* <Link 
             to="/trainer/quizzes/create" 
             style={{ 
               display: 'flex', 
@@ -293,7 +293,7 @@ const TrainerPrograms = () => {
           >
             <Plus size={16} />
             <span>Add Quiz</span>
-          </Link>
+          </Link> */}
         </div>
       </div>
       
@@ -419,13 +419,13 @@ const TrainerPrograms = () => {
                       >
                         <Eye size={20} />
                       </Link>
-                      <Link 
+                      {/* <Link 
                         to={`/trainer/programs/edit/${program.id}`}
                         style={{ color: 'var(--primary-color)', textDecoration: 'none' }}
                         title="Edit program"
                       >
                         <Edit size={20} />
-                      </Link>
+                      </Link> */}
                     </div>
                   </div>
                   
@@ -481,10 +481,10 @@ const TrainerPrograms = () => {
                       <span>Created: {formatDate(program.created_at)}</span>
                     </div>
                     
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', color: 'var(--text-secondary)' }}>
+                    {/* <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', color: 'var(--text-secondary)' }}>
                       <Clock size={14} />
                       <span>{program.quizCount || 0} Quizzes</span>
-                    </div>
+                    </div> */}
                   </div>
                   
                   <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
@@ -598,7 +598,7 @@ const TrainerPrograms = () => {
                           >
                             <Edit size={18} />
                           </Link>
-                          <Link 
+                          {/* <Link 
                             to={`/trainer/quizzes?programId=${program.id}`}
                             style={{ 
                               padding: '5px',
@@ -608,7 +608,7 @@ const TrainerPrograms = () => {
                             title="Manage Quizzes"
                           >
                             <BookOpen size={18} />
-                          </Link>
+                          </Link> */}
                         </div>
                       </td>
                     </tr>

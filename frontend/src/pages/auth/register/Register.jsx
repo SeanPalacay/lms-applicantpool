@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle, ArrowRight, ArrowLeft, Check, Loader } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle, ArrowRight, ArrowLeft, Check, Loader, Upload, X, FileText } from 'lucide-react';
 import './register.css';
 
 const Register = () => {
@@ -13,14 +13,19 @@ const Register = () => {
         password: '',
         confirmPassword: ''
     });
+    const [selectedFile, setSelectedFile] = useState(null);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [dragActive, setDragActive] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [step, setStep] = useState(1);
     const [passwordStrength, setPasswordStrength] = useState(0);
     const [passwordFeedback, setPasswordFeedback] = useState('');
+    const fileInputRef = useRef(null);
 
     const API_URL = 'http://localhost:8080/lms-forbes/backend/api/auth/register.php';
 
@@ -50,6 +55,54 @@ const Register = () => {
         );
     };
 
+    const handleDrag = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.type === 'dragenter' || e.type === 'dragover') {
+            setDragActive(true);
+        } else if (e.type === 'dragleave') {
+            setDragActive(false);
+        }
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragActive(false);
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleFile(e.dataTransfer.files[0]);
+        }
+    };
+
+    const handleFileSelect = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            handleFile(e.target.files[0]);
+        }
+    };
+
+    const handleFile = (file) => {
+        const validTypes = ['application/pdf'];
+        if (!validTypes.includes(file.type)) {
+            setError('Please upload a PDF file.');
+            setSelectedFile(null);
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            setError('File size should be less than 5MB.');
+            setSelectedFile(null);
+            return;
+        }
+        setSelectedFile(file);
+        setError('');
+    };
+
+    const clearSelectedFile = () => {
+        setSelectedFile(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
     const nextStep = (e) => {
         e.preventDefault();
         if (step === 1) {
@@ -59,6 +112,11 @@ const Register = () => {
             }
             if (!isValidEmail(formData.email)) {
                 setError('Please enter a valid email address');
+                return;
+            }
+        } else if (step === 2) {
+            if (!selectedFile) {
+                setError('Please upload your resume');
                 return;
             }
         }
@@ -79,36 +137,54 @@ const Register = () => {
         setError('');
         setSuccess('');
         setLoading(true);
+        setUploading(true);
 
-        if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
-            setError('All fields are required');
+        if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !selectedFile) {
+            setError('All fields and resume are required');
             setLoading(false);
+            setUploading(false);
             return;
         }
         if (formData.password !== formData.confirmPassword) {
             setError('Passwords do not match');
             setLoading(false);
+            setUploading(false);
             return;
         }
         if (formData.password.length < 6) {
             setError('Password must be at least 6 characters long');
             setLoading(false);
+            setUploading(false);
             return;
         }
 
         try {
-            const payload = {
+            const formPayload = new FormData();
+            formPayload.append('first_name', formData.firstName);
+            formPayload.append('last_name', formData.lastName);
+            formPayload.append('email', formData.email);
+            formPayload.append('password', formData.password);
+            formPayload.append('role', 'applicant');
+            formPayload.append('full_name', `${formData.firstName} ${formData.lastName}`);
+            formPayload.append('file', selectedFile);
+            formPayload.append('description', 'Resume');
+            formPayload.append('record_type', 'applicant');
+            formPayload.append('category', 'evaluations');
+
+            console.log('Submitting registration with resume:', {
                 first_name: formData.firstName,
                 last_name: formData.lastName,
                 email: formData.email,
-                password: formData.password,
                 role: 'applicant',
-                full_name: `${formData.firstName} ${formData.lastName}`
-            };
-            console.log('Submitting registration:', { ...payload, password: '***' });
+                resume: selectedFile.name
+            });
 
-            const response = await axios.post(API_URL, payload, {
-                headers: { 'Content-Type': 'application/json' }
+            const response = await axios.post(API_URL, formPayload, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    setUploadProgress(percentCompleted);
+                }
             });
 
             console.log('Registration successful:', response.data);
@@ -123,6 +199,8 @@ const Register = () => {
             );
         } finally {
             setLoading(false);
+            setUploading(false);
+            setUploadProgress(0);
         }
     };
 
@@ -136,8 +214,13 @@ const Register = () => {
                 <span className="step-label">Personal Info</span>
             </div>
             <div className="progress-line"></div>
-            <div className={`progress-step ${step === 2 ? 'active' : ''}`}>
+            <div className={`progress-step ${step >= 2 ? 'active' : ''}`}>
                 <div className="step-number">2</div>
+                <span className="step-label">Resume Upload</span>
+            </div>
+            <div className="progress-line"></div>
+            <div className={`progress-step ${step === 3 ? 'active' : ''}`}>
+                <div className="step-number">3</div>
                 <span className="step-label">Account Setup</span>
             </div>
         </div>
@@ -191,13 +274,75 @@ const Register = () => {
             </div>
             <div className="form-navigation">
                 <button type="button" className="register-next-button" onClick={nextStep}>
-                    Continue to Account Setup <ArrowRight size={18} />
+                    Continue to Resume Upload <ArrowRight size={18} />
                 </button>
             </div>
         </>
     );
 
     const renderStepTwo = () => (
+        <>
+            <div className="register-input-container">
+                <label className="register-label">Upload Resume (PDF only)</label>
+                <div 
+                    className={`upload-area ${dragActive ? 'drag-active' : ''}`}
+                    onDragEnter={handleDrag}
+                    onDragOver={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDrop={handleDrop}
+                >
+                    {!selectedFile ? (
+                        <div className="upload-placeholder">
+                            <Upload size={48} className={dragActive ? 'upload-icon-active' : ''} />
+                            <h3>Drag & Drop your resume here</h3>
+                            <p>or</p>
+                            <label className="upload-button">
+                                Browse Files
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    accept="application/pdf"
+                                    onChange={handleFileSelect}
+                                    style={{ display: 'none' }}
+                                />
+                            </label>
+                            <p className="upload-instructions">
+                                Acceptable file type: PDF<br />
+                                Maximum file size: 5MB
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="selected-file">
+                            <div className="file-info">
+                                <FileText size={24} />
+                                <div>
+                                    <span className="file-name">{selectedFile.name}</span>
+                                    <span className="file-size">{formatFileSize(selectedFile.size)}</span>
+                                </div>
+                                <button 
+                                    type="button" 
+                                    className="clear-file-button"
+                                    onClick={clearSelectedFile}
+                                >
+                                    <X size={16} />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+            <div className="form-navigation">
+                <button type="button" className="register-back-button" onClick={prevStep}>
+                    <ArrowLeft size={18} /> Back
+                </button>
+                <button type="button" className="register-next-button" onClick={nextStep}>
+                    Continue to Account Setup <ArrowRight size={18} />
+                </button>
+            </div>
+        </>
+    );
+
+    const renderStepThree = () => (
         <>
             <div className="register-input-container">
                 <label htmlFor="password" className="register-label">Password</label>
@@ -261,7 +406,10 @@ const Register = () => {
                     disabled={loading || !formData.password || !formData.confirmPassword || formData.password !== formData.confirmPassword}
                 >
                     {loading ? (
-                        <><Loader size={18} className="loading-spinner" /> Creating Account...</>
+                        <>
+                            <Loader size={18} className="loading-spinner" />
+                            Creating Account... ({uploadProgress}%)
+                        </>
                     ) : (
                         <>Create Account <Check size={18} /></>
                     )}
@@ -269,6 +417,14 @@ const Register = () => {
             </div>
         </>
     );
+
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
 
     return (
         <div className="register-container">
@@ -290,6 +446,7 @@ const Register = () => {
                     <form onSubmit={handleSubmit} className="register-form">
                         {step === 1 && renderStepOne()}
                         {step === 2 && renderStepTwo()}
+                        {step === 3 && renderStepThree()}
                     </form>
                     <p className="register-footer">
                         Already have an account? <Link to="/login" className="register-link">Log In</Link>

@@ -46,9 +46,13 @@ try {
     // Handle different HTTP methods
     switch ($method) {
         case 'GET':
-            if (isset($_GET['id'])) {
+            if (isset($_GET['action']) && $_GET['action'] === 'waitlist' && isset($_GET['position_id'])) {
+                getWaitlistByPosition($pdo, $_GET['position_id']);
+            } 
+            else if (isset($_GET['id'])) {
                 getApplicationById($pdo, $_GET['id']);
-            } else {
+            } 
+            else {
                 getApplications($pdo);
             }
             break;
@@ -60,6 +64,16 @@ try {
                 header('Content-Type: application/json');
                 http_response_code(400);
                 echo json_encode(['error' => 'Missing application ID']);
+            }
+            break;
+            
+        case 'POST':
+            if (isset($_GET['action']) && $_GET['action'] === 'move_waitlisted' && isset($_GET['position_id'])) {
+                moveNextWaitlistedToApplied($pdo, $_GET['position_id']);
+            } else {
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid or missing action/position_id']);
             }
             break;
             
@@ -94,28 +108,70 @@ try {
     echo json_encode(['error' => 'Error: ' . $e->getMessage()]);
 }
 
-/**
- * Get applications with optional filters
- */
-function getApplications($pdo) {
-    error_log('Getting applications with filters: ' . json_encode($_GET));
+function getWaitlistByPosition($pdo, $positionId) {
+    error_log('Getting waitlist for position_id: ' . $positionId);
     
-    // Base query - UPDATED for job_applications table
-    $baseQuery = "
+    // Verify the position_id is numeric
+    if (!is_numeric($positionId)) {
+        header('Content-Type: application/json');
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid position ID']);
+        return;
+    }
+    
+    // Query to get waitlisted applicants with position information
+    $query = "
         SELECT 
             ja.*, 
             u.full_name, 
-            u.email, 
+            u.email,
             jp.position_name,
             jp.department
         FROM 
             job_applications ja
         JOIN 
             users u ON ja.user_id = u.id
-        LEFT JOIN 
+        JOIN 
             job_positions jp ON ja.position_id = jp.id
-        WHERE 1=1
+        WHERE 
+            ja.position_id = :position_id AND 
+            ja.status = 'waitlisted'
+        ORDER BY 
+            ja.applied_at ASC
     ";
+    
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':position_id', $positionId, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    $waitlist = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    header('Content-Type: application/json');
+    echo json_encode($waitlist);
+}
+
+/**
+ * Get applications with optional filters
+ */
+function getApplications($pdo) {
+    error_log('Getting applications with filters: ' . json_encode($_GET));
+    
+    // Base query
+    $baseQuery = "
+    SELECT 
+        ja.*,
+        u.full_name, 
+        u.email, 
+        jp.position_name, 
+        jp.department
+    FROM 
+        job_applications ja
+    JOIN 
+        users u ON ja.user_id = u.id
+    JOIN  -- Use INNER JOIN instead of LEFT JOIN to ensure position data
+        job_positions jp ON ja.position_id = jp.id
+    WHERE 1=1
+";
     
     $params = [];
     
@@ -131,6 +187,12 @@ function getApplications($pdo) {
         $params[':department'] = $_GET['department'];
     }
     
+    // Add position_id filter
+    if (isset($_GET['position_id']) && is_numeric($_GET['position_id'])) {
+        $baseQuery .= " AND ja.position_id = :position_id";
+        $params[':position_id'] = $_GET['position_id'];
+    }
+    
     // Add search filter
     if (isset($_GET['search']) && !empty($_GET['search'])) {
         $search = '%' . $_GET['search'] . '%';
@@ -138,8 +200,12 @@ function getApplications($pdo) {
         $params[':search'] = $search;
     }
     
-    // Add order by
-    $baseQuery .= " ORDER BY ja.applied_at DESC";
+    // Add order by (ASC for waitlist to support FCFS, DESC otherwise)
+    if (isset($_GET['status']) && $_GET['status'] === 'waitlisted') {
+        $baseQuery .= " ORDER BY ja.applied_at ASC"; // FCFS: Earliest first
+    } else {
+        $baseQuery .= " ORDER BY ja.applied_at DESC";
+    }
     
     // Log the query for debugging
     error_log('SQL Query: ' . $baseQuery);
@@ -176,7 +242,7 @@ function getApplicationById($pdo, $id) {
         return;
     }
     
-    // Query to get application details - UPDATED for job_applications table
+    // Query to get application details
     $query = "
         SELECT 
             ja.*, 
@@ -231,6 +297,26 @@ function getApplicationById($pdo, $id) {
     $documents = $documentsStmt->fetchAll(PDO::FETCH_ASSOC);
     $application['documents'] = $documents;
     
+    // Get application notes
+    $notesQuery = "
+        SELECT 
+            id,
+            note,
+            created_at
+        FROM 
+            application_notes
+        WHERE 
+            application_id = :application_id
+        ORDER BY 
+            created_at DESC
+    ";
+    
+    $notesStmt = $pdo->prepare($notesQuery);
+    $notesStmt->bindParam(':application_id', $application['id'], PDO::PARAM_INT);
+    $notesStmt->execute();
+    
+    $application['notes'] = $notesStmt->fetchAll(PDO::FETCH_ASSOC);
+    
     header('Content-Type: application/json');
     echo json_encode($application);
 }
@@ -253,8 +339,17 @@ function updateApplication($pdo, $id) {
     $data = json_decode(file_get_contents('php://input'), true);
     error_log('Update data: ' . json_encode($data));
     
-    // Check if application exists and get user ID - UPDATED for job_applications table
-    $checkQuery = "SELECT user_id FROM job_applications WHERE id = :id";
+    // Validate status
+    $validStatuses = ['pending', 'waitlisted', 'shortlisted', 'hired', 'rejected'];
+    if (isset($data['status']) && !in_array($data['status'], $validStatuses)) {
+        header('Content-Type: application/json');
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid status value']);
+        return;
+    }
+    
+    // Check if application exists and get user ID
+    $checkQuery = "SELECT user_id, position_id FROM job_applications WHERE id = :id";
     $checkStmt = $pdo->prepare($checkQuery);
     $checkStmt->bindParam(':id', $id, PDO::PARAM_INT);
     $checkStmt->execute();
@@ -268,6 +363,7 @@ function updateApplication($pdo, $id) {
     
     $applicationData = $checkStmt->fetch(PDO::FETCH_ASSOC);
     $applicantUserId = $applicationData['user_id'];
+    $positionId = $applicationData['position_id'];
     
     // Begin transaction
     $pdo->beginTransaction();
@@ -286,8 +382,7 @@ function updateApplication($pdo, $id) {
             $notificationTitle = "Application Status Updated";
             $notificationMessage = "Your application status has been updated to " . ucfirst($data['status']) . ".";
             $notificationType = ($data['status'] === 'rejected') ? 'error' : 
-                              (($data['status'] === 'hired') ? 'success' : 
-                              (($data['status'] === 'shortlisted') ? 'success' : 'info'));
+                              (($data['status'] === 'hired' || $data['status'] === 'shortlisted') ? 'success' : 'info');
         }
         
         // If no fields to update
@@ -298,7 +393,7 @@ function updateApplication($pdo, $id) {
             return;
         }
         
-        // Build and execute update query - UPDATED for job_applications table
+        // Build and execute update query
         $updateQuery = "UPDATE job_applications SET " . implode(", ", $updateFields) . ", updated_at = NOW() WHERE id = :id";
         $updateStmt = $pdo->prepare($updateQuery);
         
@@ -307,6 +402,18 @@ function updateApplication($pdo, $id) {
         }
         
         $updateStmt->execute();
+        
+        // Store reason/note if provided
+        if (isset($data['reason']) && !empty($data['reason'])) {
+            $noteQuery = "
+                INSERT INTO application_notes (application_id, note, created_at)
+                VALUES (:application_id, :note, NOW())
+            ";
+            $noteStmt = $pdo->prepare($noteQuery);
+            $noteStmt->bindParam(':application_id', $id, PDO::PARAM_INT);
+            $noteStmt->bindParam(':note', $data['reason'], PDO::PARAM_STR);
+            $noteStmt->execute();
+        }
         
         // Create notification if status was updated
         if (isset($data['status'])) {
@@ -335,6 +442,85 @@ function updateApplication($pdo, $id) {
 }
 
 /**
+ * Move the next waitlisted applicant to applied status for a position
+ */
+function moveNextWaitlistedToApplied($pdo, $positionId) {
+    error_log('Moving next waitlisted applicant for position_id: ' . $positionId);
+    
+    // Verify the position_id is numeric
+    if (!is_numeric($positionId)) {
+        header('Content-Type: application/json');
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid position ID']);
+        return;
+    }
+    
+    // Begin transaction
+    $pdo->beginTransaction();
+    
+    try {
+        // Find the earliest waitlisted applicant
+        $query = "
+            SELECT id, user_id
+            FROM job_applications
+            WHERE position_id = :position_id AND status = 'waitlisted'
+            ORDER BY applied_at ASC
+            LIMIT 1
+        ";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':position_id', $positionId, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        if ($stmt->rowCount() === 0) {
+            $pdo->commit();
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'message' => 'No waitlisted applicants']);
+            return;
+        }
+        
+        $application = $stmt->fetch(PDO::FETCH_ASSOC);
+        $applicationId = $application['id'];
+        $applicantUserId = $application['user_id'];
+        
+        // Update status to applied
+        $updateQuery = "
+            UPDATE job_applications
+            SET status = 'pending', updated_at = NOW()
+            WHERE id = :id
+        ";
+        $updateStmt = $pdo->prepare($updateQuery);
+        $updateStmt->bindParam(':id', $applicationId, PDO::PARAM_INT);
+        $updateStmt->execute();
+        
+        // Create notification
+        $notificationTitle = "Application Status Updated";
+        $notificationMessage = "Your application has been moved from waitlisted to pending review.";
+        $notificationType = 'info';
+        
+        $notifQuery = "
+            INSERT INTO notifications (user_id, type, title, message, created_at) 
+            VALUES (:user_id, :type, :title, :message, NOW())
+        ";
+        $notifStmt = $pdo->prepare($notifQuery);
+        $notifStmt->bindParam(':user_id', $applicantUserId, PDO::PARAM_INT);
+        $notifStmt->bindParam(':type', $notificationType, PDO::PARAM_STR);
+        $notifStmt->bindParam(':title', $notificationTitle, PDO::PARAM_STR);
+        $notifStmt->bindParam(':message', $notificationMessage, PDO::PARAM_STR);
+        $notifStmt->execute();
+        
+        // Commit the transaction
+        $pdo->commit();
+        
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'Moved waitlisted applicant to pending', 'application_id' => $applicationId]);
+    } catch (Exception $e) {
+        // Rollback the transaction on error
+        $pdo->rollBack();
+        throw $e;
+    }
+}
+
+/**
  * Delete an application
  */
 function deleteApplication($pdo, $id) {
@@ -348,7 +534,7 @@ function deleteApplication($pdo, $id) {
         return;
     }
     
-    // Check if application exists and get user ID - UPDATED for job_applications table
+    // Check if application exists and get user ID
     $checkQuery = "SELECT user_id FROM job_applications WHERE id = :id";
     $checkStmt = $pdo->prepare($checkQuery);
     $checkStmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -368,7 +554,7 @@ function deleteApplication($pdo, $id) {
     $pdo->beginTransaction();
     
     try {
-        // Delete the application - UPDATED for job_applications table
+        // Delete the application
         $deleteQuery = "DELETE FROM job_applications WHERE id = :id";
         $deleteStmt = $pdo->prepare($deleteQuery);
         $deleteStmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -394,3 +580,4 @@ function deleteApplication($pdo, $id) {
         throw $e;
     }
 }
+?>

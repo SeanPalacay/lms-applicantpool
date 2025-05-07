@@ -15,6 +15,7 @@ const EnrollTrainees = () => {
   const [availableTrainees, setAvailableTrainees] = useState([]);
   const [selectedTrainees, setSelectedTrainees] = useState([]);
   const [enrollmentStats, setEnrollmentStats] = useState(null);
+  const [positionMappings, setPositionMappings] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,19 +51,48 @@ const EnrollTrainees = () => {
     fetchData();
   }, [programId]);
 
+  const fetchPositionMappings = async (traineeId) => {
+    try {
+      const trainee = availableTrainees.find(t => t.id === parseInt(traineeId));
+      if (trainee && trainee.position_id) {
+        const response = await trainerService.getPositionMappings(trainee.position_id);
+        if (response.success) {
+          setPositionMappings(prev => ({
+            ...prev,
+            [traineeId]: {
+              quizzes: response.quizzes || [],
+              programs: response.programs || []
+            }
+          }));
+        }
+      }
+    } catch (error) {
+      console.error(`Error fetching position mappings for trainee ${traineeId}:`, error);
+    }
+  };
+
   const handleSelectAll = () => {
     if (selectedTrainees.length === availableTrainees.length) {
       setSelectedTrainees([]);
+      setPositionMappings({});
     } else {
-      setSelectedTrainees(availableTrainees.map(trainee => trainee.id));
+      const allTraineeIds = availableTrainees.map(trainee => trainee.id);
+      setSelectedTrainees(allTraineeIds);
+      allTraineeIds.forEach(id => fetchPositionMappings(id));
     }
   };
 
   const handleSelectTrainee = (traineeId) => {
     if (selectedTrainees.includes(traineeId)) {
       setSelectedTrainees(selectedTrainees.filter(id => id !== traineeId));
+      setPositionMappings(prev => {
+        const newMappings = { ...prev };
+        delete newMappings[traineeId];
+        return newMappings;
+      });
     } else {
       setSelectedTrainees([...selectedTrainees, traineeId]);
+      fetchPositionMappings(traineeId);
     }
   };
 
@@ -80,10 +110,11 @@ const EnrollTrainees = () => {
       const result = await trainerService.enrollTrainees(programId, selectedTrainees);
       
       if (result.success) {
-        setSuccess(`Successfully enrolled ${result.stats.newly_enrolled} new trainees.`);
+        setSuccess(`Successfully enrolled ${result.stats.newly_enrolled} new trainees, assigned ${result.stats.quiz_enrollments} quizzes, and enrolled in ${result.stats.additional_program_enrollments} additional programs.`);
         setEnrollmentStats(result.stats);
-        // Clear selection after successful enrollment
+        // Clear selection and mappings after successful enrollment
         setSelectedTrainees([]);
+        setPositionMappings({});
         
         // Refresh available trainees list
         const traineesData = await trainerService.getTrainees();
@@ -177,6 +208,8 @@ const EnrollTrainees = () => {
               <li>Total trainees requested: {enrollmentStats.total_requested}</li>
               <li>Already enrolled: {enrollmentStats.already_enrolled}</li>
               <li>Newly enrolled: {enrollmentStats.newly_enrolled}</li>
+              <li>Quizzes assigned: {enrollmentStats.quiz_enrollments}</li>
+              <li>Additional programs enrolled: {enrollmentStats.additional_program_enrollments}</li>
             </ul>
           </div>
         )}
@@ -251,6 +284,7 @@ const EnrollTrainees = () => {
                     <th style={{ padding: 'var(--spacing-sm)', textAlign: 'left', borderBottom: '1px solid var(--medium-gray)' }}>Name</th>
                     <th style={{ padding: 'var(--spacing-sm)', textAlign: 'left', borderBottom: '1px solid var(--medium-gray)' }}>Email</th>
                     <th style={{ padding: 'var(--spacing-sm)', textAlign: 'left', borderBottom: '1px solid var(--medium-gray)' }}>Department</th>
+                    <th style={{ padding: 'var(--spacing-sm)', textAlign: 'left', borderBottom: '1px solid var(--medium-gray)' }}>Position Assignments</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -289,6 +323,20 @@ const EnrollTrainees = () => {
                       <td style={{ padding: 'var(--spacing-sm)' }}>{trainee.full_name}</td>
                       <td style={{ padding: 'var(--spacing-sm)' }}>{trainee.email}</td>
                       <td style={{ padding: 'var(--spacing-sm)' }}>{trainee.department || 'N/A'}</td>
+                      <td style={{ padding: 'var(--spacing-sm)' }}>
+                        {positionMappings[trainee.id] ? (
+                          <div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                              Quizzes: {positionMappings[trainee.id].quizzes.map(q => q.title).join(', ') || 'None'}
+                            </div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                              Programs: {positionMappings[trainee.id].programs.map(p => p.title).join(', ') || 'None'}
+                            </div>
+                          </div>
+                        ) : (
+                          <span style={{ color: 'var(--text-muted)' }}>Select to view assignments</span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

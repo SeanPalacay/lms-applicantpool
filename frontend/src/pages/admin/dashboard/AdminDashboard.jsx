@@ -6,7 +6,7 @@ import {
   RotateCcw, Server, BarChart2, UserPlus, 
   Plus, History, Layers, Settings, Calendar, Activity,
   Shield, Database, CheckCheck, HelpCircle, Briefcase,
-  FileDown, Share2
+  FileDown, Share2, PieChart
 } from 'lucide-react';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
@@ -37,7 +37,27 @@ const AdminDashboard = () => {
     inactiveUsers: 0,
     lastBackupDays: null,
     lastBackupStatus: null,
-    alerts: []
+    alerts: [],
+    leaderboardData: { 
+      byPosition: {
+        "8": [
+          { rank: 1, user_id: 15, full_name: "student student", batch_id: 1, program_name: "bago", score: 95.5, position_name: "Accounting Specialist", created_at: "2025-04-04T21:17:00Z" },
+          { rank: 2, user_id: 16, full_name: "trainee2", batch_id: 1, program_name: "finance", score: 88.0, position_name: "Accounting Specialist", created_at: "2025-03-15T10:00:00Z" }
+        ],
+        "9": [
+          { rank: 1, user_id: 17, full_name: "trainee1", batch_id: 2, program_name: "finance", score: 90.0, position_name: "Finance Department Head", created_at: "2025-02-10T09:00:00Z" }
+        ]
+      },
+      byBatch: {
+        "1": [
+          { rank: 1, user_id: 15, full_name: "student student", position_name: "Accounting Specialist", program_name: "bago", score: 95.5, created_at: "2025-04-04T21:17:00Z" },
+          { rank: 2, user_id: 16, full_name: "trainee2", position_name: "Accounting Specialist", program_name: "finance", score: 88.0, created_at: "2025-03-15T10:00:00Z" }
+        ],
+        "2": [
+          { rank: 1, user_id: 17, full_name: "trainee1", position_name: "Finance Department Head", program_name: "finance", score: 90.0, created_at: "2025-02-10T09:00:00Z" }
+        ]
+      }
+    }
   });
 
   useEffect(() => {
@@ -58,7 +78,28 @@ const AdminDashboard = () => {
           return;
         }
         const data = await adminService.getDashboardData();
-        setStats(data);
+
+        // Filter leaderboard data for the last 6 months (180 days)
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setDate(sixMonthsAgo.getDate() - 180);
+
+        const filterByDate = (leaderboardData) => {
+          return Object.keys(leaderboardData).reduce((acc, key) => {
+            acc[key] = leaderboardData[key].filter(item => {
+              const itemDate = new Date(item.created_at || item.updated_at || new Date());
+              return itemDate >= sixMonthsAgo;
+            });
+            return acc;
+          }, {});
+        };
+
+        setStats({
+          ...data,
+          leaderboardData: {
+            byPosition: filterByDate(data.leaderboard?.byPosition || stats.leaderboardData.byPosition),
+            byBatch: filterByDate(data.leaderboard?.byBatch || stats.leaderboardData.byBatch)
+          }
+        });
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
         if (err.message.includes('Authentication') || err.message.includes('login')) {
@@ -139,15 +180,39 @@ const AdminDashboard = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  // Leaderboard tab state
+  const [activePositionTab, setActivePositionTab] = useState('all');
+  const [activeBatchTab, setActiveBatchTab] = useState('all');
+
+  const getPositionTabs = () => {
+    return [
+      { value: 'all', label: 'All Positions' },
+      ...Object.keys(stats.leaderboardData.byPosition).map(positionId => ({
+        value: positionId,
+        label: stats.leaderboardData.byPosition[positionId][0]?.position_name || `Position ${positionId}`
+      }))
+    ];
+  };
+
+  const getBatchTabs = () => {
+    return [
+      { value: 'all', label: 'All Batches' },
+      ...Object.keys(stats.leaderboardData.byBatch).map(batchId => ({
+        value: batchId,
+        label: `Batch ${batchId}`
+      }))
+    ];
+  };
+
   if (loading) return <LoadingSpinner />;
 
   return (
     <div style={{
       minHeight: '100vh',
-      backgroundColor: '#f8fafc', // --light-gray
-      padding: '32px', // --spacing-xl
+      backgroundColor: '#f8fafc',
+      padding: '32px',
       fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif",
-      color: '#1e293b' // --text-primary
+      color: '#1e293b'
     }}>
       {error && <AlertBanner message={error} type="error" />}
       
@@ -155,8 +220,8 @@ const AdminDashboard = () => {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '16px', // --spacing-md
-        marginBottom: '32px' // --spacing-xl
+        gap: '16px',
+        marginBottom: '32px'
       }}>
         {[
           { icon: Users, value: stats.activeUsers, label: 'Active Users', onClick: navigateToUserManagement },
@@ -166,20 +231,20 @@ const AdminDashboard = () => {
         ].map((metric, index) => (
           <div key={index} onClick={metric.onClick} style={{
             backgroundColor: '#ffffff',
-            borderRadius: '12px', // --radius-lg
-            padding: '24px', // --spacing-lg
-            boxShadow: '0 4px 6px rgba(0,0,0,0.07)', // --shadow-md
+            borderRadius: '12px',
+            padding: '24px',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '16px', // --spacing-md
-            transition: 'box-shadow 0.3s ease', // --transition-normal
-            ':hover': { boxShadow: '0 10px 15px rgba(0,0,0,0.1)' } // --shadow-lg
+            gap: '16px',
+            transition: 'box-shadow 0.3s ease',
+            ':hover': { boxShadow: '0 10px 15px rgba(0,0,0,0.1)' }
           }}>
-            <metric.icon size={24} style={{ color: '#1E88E5' }} /> {/* --primary-color */}
+            <metric.icon size={24} style={{ color: '#1E88E5' }} />
             <div>
               <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600, color: '#1e293b' }}>{metric.value || 0}</h2>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>{metric.label}</p> {/* --text-secondary */}
+              <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>{metric.label}</p>
             </div>
           </div>
         ))}
@@ -189,10 +254,10 @@ const AdminDashboard = () => {
       {stats.alerts && stats.alerts.length > 0 && (
         <div style={{
           backgroundColor: '#ffffff',
-          borderRadius: '12px', // --radius-lg
-          padding: '24px', // --spacing-lg
-          marginBottom: '32px', // --spacing-xl
-          boxShadow: '0 4px 6px rgba(0,0,0,0.07)' // --shadow-md
+          borderRadius: '12px',
+          padding: '24px',
+          marginBottom: '32px',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.07)'
         }}>
           <h2 style={{ margin: '0 0 16px 0', fontSize: '1.125rem', fontWeight: 600, color: '#1e293b' }}>
             Alerts & Notifications
@@ -202,14 +267,14 @@ const AdminDashboard = () => {
               display: 'flex',
               alignItems: 'center',
               backgroundColor: alert.type === 'warning' ? '#fff8e6' :
-                              alert.type === 'info' ? '#E3F2FD' : // --primary-ultralight
+                              alert.type === 'info' ? '#E3F2FD' :
                               alert.type === 'success' ? '#e6ffe6' : '#ffe6e6',
-              borderRadius: '8px', // --radius-md
-              padding: '16px', // --spacing-md
-              marginBottom: '8px', // --spacing-sm
-              borderLeft: `4px solid ${alert.type === 'warning' ? '#f39c12' : // --warning-color
-                                     alert.type === 'info' ? '#1E88E5' : // --primary-color
-                                     alert.type === 'success' ? '#2ecc71' : '#e74c3c'}` // --success-color, --danger-color
+              borderRadius: '8px',
+              padding: '16px',
+              marginBottom: '8px',
+              borderLeft: `4px solid ${alert.type === 'warning' ? '#f39c12' :
+                                     alert.type === 'info' ? '#1E88E5' :
+                                     alert.type === 'success' ? '#2ecc71' : '#e74c3c'}`
             }}>
               <div style={{ marginRight: '16px', color: alert.type === 'warning' ? '#f39c12' :
                                                     alert.type === 'info' ? '#1E88E5' :
@@ -224,8 +289,7 @@ const AdminDashboard = () => {
                 <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>{alert.message}</p>
                 {alert.deadline && (
                   <p style={{ margin: '4px 0 0 0', fontSize: '0.75rem', color: '#94a3b8' }}>
-                    <Clock size={14} style={{ verticalAlign: 'middle', marginRight: '4px' }} />
-                    Due: {formatDate(alert.deadline)}
+                    <Clock size={14} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> Due: {formatDate(alert.deadline)}
                   </p>
                 )}
               </div>
@@ -244,18 +308,9 @@ const AdminDashboard = () => {
       )}
 
       {/* Dashboard Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-        gap: '16px' // --spacing-md
-      }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
         {/* User Management Card */}
-        <div style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '12px', // --radius-lg
-          padding: '24px', // --spacing-lg
-          boxShadow: '0 4px 6px rgba(0,0,0,0.07)' // --shadow-md
-        }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
             <Users size={20} style={{ color: '#1E88E5', marginRight: '16px' }} />
             <h3 style={{ margin: 0, flex: 1, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>User Management</h3>
@@ -265,15 +320,7 @@ const AdminDashboard = () => {
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-              <div style={{
-                width: '80px',
-                height: '80px',
-                backgroundColor: '#E3F2FD', // --primary-ultralight
-                borderRadius: '9999px', // --radius-full
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
+              <div style={{ width: '80px', height: '80px', backgroundColor: '#E3F2FD', borderRadius: '9999px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1e293b' }}>{stats.totalUsers || 0}</div>
                   <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Total</div>
@@ -285,17 +332,8 @@ const AdminDashboard = () => {
                     <span style={{ color: '#64748b' }}>Active</span>
                     <span style={{ color: '#1e293b' }}>{stats.activeUsers || 0}</span>
                   </div>
-                  <div style={{
-                    height: '4px',
-                    backgroundColor: '#e2e8f0', // --medium-gray
-                    borderRadius: '4px', // --radius-sm
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{
-                      width: `${stats.totalUsers ? (stats.activeUsers / stats.totalUsers * 100) : 0}%`,
-                      height: '100%',
-                      backgroundColor: '#1E88E5' // --primary-color
-                    }}></div>
+                  <div style={{ height: '4px', backgroundColor: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: `${stats.totalUsers ? (stats.activeUsers / stats.totalUsers * 100) : 0}%`, height: '100%', backgroundColor: '#1E88E5' }}></div>
                   </div>
                 </div>
                 <div>
@@ -303,17 +341,8 @@ const AdminDashboard = () => {
                     <span style={{ color: '#64748b' }}>Inactive</span>
                     <span style={{ color: '#1e293b' }}>{stats.inactiveUsers || (stats.totalUsers ? stats.totalUsers - (stats.activeUsers || 0) : 0)}</span>
                   </div>
-                  <div style={{
-                    height: '4px',
-                    backgroundColor: '#e2e8f0',
-                    borderRadius: '4px',
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{
-                      width: `${stats.totalUsers ? ((stats.totalUsers - stats.activeUsers) / stats.totalUsers * 100) : 0}%`,
-                      height: '100%',
-                      backgroundColor: '#64748b' // --dark-gray
-                    }}></div>
+                  <div style={{ height: '4px', backgroundColor: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: `${stats.totalUsers ? ((stats.totalUsers - stats.activeUsers) / stats.totalUsers * 100) : 0}%`, height: '100%', backgroundColor: '#64748b' }}></div>
                   </div>
                 </div>
               </div>
@@ -324,14 +353,14 @@ const AdminDashboard = () => {
                 color: '#ffffff',
                 padding: '8px 16px',
                 border: 'none',
-                borderRadius: '8px', // --radius-md
+                borderRadius: '8px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
                 fontSize: '0.875rem',
                 transition: 'background-color 0.3s ease',
-                ':hover': { backgroundColor: '#1565C0' } // --primary-dark
+                ':hover': { backgroundColor: '#1565C0' }
               }}>
                 <UserPlus size={16} /> Add User
               </button>
@@ -354,12 +383,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Applicant Pooling Card */}
-        <div style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '12px',
-          padding: '24px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.07)'
-        }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
             <Briefcase size={20} style={{ color: '#1E88E5', marginRight: '16px' }} />
             <h3 style={{ margin: 0, flex: 1, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>Applicant Pooling</h3>
@@ -369,15 +393,7 @@ const AdminDashboard = () => {
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-              <div style={{
-                width: '80px',
-                height: '80px',
-                backgroundColor: '#E3F2FD',
-                borderRadius: '9999px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
+              <div style={{ width: '80px', height: '80px', backgroundColor: '#E3F2FD', borderRadius: '9999px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1e293b' }}>{stats.totalApplicants || 0}</div>
                   <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Total</div>
@@ -389,17 +405,8 @@ const AdminDashboard = () => {
                     <span style={{ color: '#64748b' }}>Pending</span>
                     <span style={{ color: '#1e293b' }}>{stats.pendingApplicants || 0}</span>
                   </div>
-                  <div style={{
-                    height: '4px',
-                    backgroundColor: '#e2e8f0',
-                    borderRadius: '4px',
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{
-                      width: `${stats.totalApplicants ? (stats.pendingApplicants / stats.totalApplicants * 100) : 0}%`,
-                      height: '100%',
-                      backgroundColor: '#f39c12' // --warning-color
-                    }}></div>
+                  <div style={{ height: '4px', backgroundColor: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: `${stats.totalApplicants ? (stats.pendingApplicants / stats.totalApplicants * 100) : 0}%`, height: '100%', backgroundColor: '#f39c12' }}></div>
                   </div>
                 </div>
                 <div style={{ marginBottom: '8px' }}>
@@ -407,17 +414,8 @@ const AdminDashboard = () => {
                     <span style={{ color: '#64748b' }}>Shortlisted</span>
                     <span style={{ color: '#1e293b' }}>{stats.shortlistedApplicants || 0}</span>
                   </div>
-                  <div style={{
-                    height: '4px',
-                    backgroundColor: '#e2e8f0',
-                    borderRadius: '4px',
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{
-                      width: `${stats.totalApplicants ? (stats.shortlistedApplicants / stats.totalApplicants * 100) : 0}%`,
-                      height: '100%',
-                      backgroundColor: '#1E88E5'
-                    }}></div>
+                  <div style={{ height: '4px', backgroundColor: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: `${stats.totalApplicants ? (stats.shortlistedApplicants / stats.totalApplicants * 100) : 0}%`, height: '100%', backgroundColor: '#1E88E5' }}></div>
                   </div>
                 </div>
                 <div>
@@ -425,17 +423,8 @@ const AdminDashboard = () => {
                     <span style={{ color: '#64748b' }}>Hired</span>
                     <span style={{ color: '#1e293b' }}>{stats.hiredApplicants || 0}</span>
                   </div>
-                  <div style={{
-                    height: '4px',
-                    backgroundColor: '#e2e8f0',
-                    borderRadius: '4px',
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{
-                      width: `${stats.totalApplicants ? (stats.hiredApplicants / stats.totalApplicants * 100) : 0}%`,
-                      height: '100%',
-                      backgroundColor: '#2ecc71' // --success-color
-                    }}></div>
+                  <div style={{ height: '4px', backgroundColor: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: `${stats.totalApplicants ? (stats.hiredApplicants / stats.totalApplicants * 100) : 0}%`, height: '100%', backgroundColor: '#2ecc71' }}></div>
                   </div>
                 </div>
               </div>
@@ -444,25 +433,9 @@ const AdminDashboard = () => {
               <div>
                 <h4 style={{ margin: '0 0 8px 0', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>Recent Applicants</h4>
                 {stats.recentApplicants.map((applicant, index) => (
-                  <div key={index} style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '8px 0',
-                    borderBottom: index < stats.recentApplicants.length - 1 ? '1px solid #e2e8f0' : 'none'
-                  }}>
+                  <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: index < stats.recentApplicants.length - 1 ? '1px solid #e2e8f0' : 'none' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{
-                        width: '28px',
-                        height: '28px',
-                        backgroundColor: '#1E88E5',
-                        borderRadius: '9999px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '0.875rem',
-                        color: '#ffffff'
-                      }}>
+                      <div style={{ width: '28px', height: '28px', backgroundColor: '#1E88E5', borderRadius: '9999px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', color: '#ffffff' }}>
                         {applicant.full_name.charAt(0)}
                       </div>
                       <div>
@@ -523,12 +496,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Training Programs Card */}
-        <div style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '12px',
-          padding: '24px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.07)'
-        }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
             <BookOpen size={20} style={{ color: '#1E88E5', marginRight: '16px' }} />
             <h3 style={{ margin: 0, flex: 1, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>Training Programs</h3>
@@ -538,30 +506,14 @@ const AdminDashboard = () => {
           </div>
           <div>
             <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                backgroundColor: '#E3F2FD',
-                padding: '16px',
-                borderRadius: '8px',
-                flex: 1
-              }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#E3F2FD', padding: '16px', borderRadius: '8px', flex: 1 }}>
                 <BookOpen size={20} style={{ color: '#1E88E5' }} />
                 <div>
                   <div style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1e293b' }}>{stats.activePrograms || 0}</div>
                   <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Active Programs</div>
                 </div>
               </div>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                backgroundColor: '#E3F2FD',
-                padding: '16px',
-                borderRadius: '8px',
-                flex: 1
-              }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#E3F2FD', padding: '16px', borderRadius: '8px', flex: 1 }}>
                 <HelpCircle size={20} style={{ color: '#1E88E5' }} />
                 <div>
                   <div style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1e293b' }}>{stats.totalQuizzes || 0}</div>
@@ -571,23 +523,19 @@ const AdminDashboard = () => {
             </div>
             {stats.programActivity && stats.programActivity.length > 0 && (
               <div>
-                <h4 style={{ margin: '0 0 8px 0', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>
-                  Program Enrollments & Completions
-                </h4>
+                <h4 style={{ margin: '0 0 8px 0', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>Program Enrollments & Completions</h4>
                 <ResponsiveContainer width="100%" height={180}>
                   <LineChart data={stats.programActivity}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                     <XAxis dataKey="date" stroke="#64748b" fontSize={12} />
                     <YAxis stroke="#64748b" fontSize={12} />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: '#ffffff', 
-                        border: '1px solid #e2e8f0', 
-                        borderRadius: '8px',
-                        boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
-                        color: '#1e293b'
-                      }} 
-                    />
+                    <Tooltip contentStyle={{ 
+                      backgroundColor: '#ffffff', 
+                      border: '1px solid #e2e8f0', 
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
+                      color: '#1e293b'
+                    }} />
                     <Line 
                       type="monotone" 
                       dataKey="enrollments" 
@@ -644,12 +592,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* System Health Card */}
-        <div style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '12px',
-          padding: '24px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.07)'
-        }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
             <Server size={20} style={{ color: '#1E88E5', marginRight: '16px' }} />
             <h3 style={{ margin: 0, flex: 1, fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>System Health</h3>
@@ -674,13 +617,7 @@ const AdminDashboard = () => {
               <h4 style={{ margin: '0 0 8px 0', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>Recent Backups</h4>
               {stats.recentBackups && stats.recentBackups.length > 0 ? (
                 stats.recentBackups.map((backup, index) => (
-                  <div key={index} style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '8px 0',
-                    borderBottom: index < stats.recentBackups.length - 1 ? '1px solid #e2e8f0' : 'none'
-                  }}>
+                  <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: index < stats.recentBackups.length - 1 ? '1px solid #e2e8f0' : 'none' }}>
                     <div>
                       <div style={{ fontSize: '0.875rem', color: '#1e293b' }}>{backup.backup_name}</div>
                       <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
@@ -733,6 +670,191 @@ const AdminDashboard = () => {
               }}>
                 <Download size={16} /> Create Backup
               </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Leaderboard Section */}
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ color: '#1E88E5' }}><PieChart size={20} /></div>
+              <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: 0 }}>Leaderboard (Last 6 Months)</h3>
+            </div>
+            {/* <Link to="/admin/leaderboard" style={{ color: '#1E88E5', fontSize: '0.875rem', textDecoration: 'none', ':hover': { textDecoration: 'underline' } }}>
+              View All
+            </Link> */}
+          </div>
+          {/* Position Tabs */}
+          <div style={{ marginBottom: '16px' }}>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>
+              By Position
+            </h4>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', borderBottom: '1px solid #e2e8f0' }}>
+              {getPositionTabs().map(tab => (
+                <button
+                  key={tab.value}
+                  onClick={() => setActivePositionTab(tab.value)}
+                  style={{
+                    padding: '8px 16px',
+                    border: 'none',
+                    borderBottom: activePositionTab === tab.value ? '2px solid #1E88E5' : 'none',
+                    background: 'none',
+                    color: activePositionTab === tab.value ? '#1E88E5' : '#64748b',
+                    fontSize: '0.875rem',
+                    fontWeight: activePositionTab === tab.value ? 600 : 400,
+                    cursor: 'pointer',
+                    outline: 'none'
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#E3F2FD', borderBottom: '1px solid #e2e8f0' }}>
+                    {['Rank', 'Trainee', 'Batch', 'Program', 'Score'].map((header, index) => (
+                      <th key={index} style={{
+                        padding: '12px',
+                        textAlign: 'left',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        color: '#1e293b'
+                      }}>
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {activePositionTab !== 'all' && stats.leaderboardData.byPosition[activePositionTab] ? (
+                    stats.leaderboardData.byPosition[activePositionTab].map((trainee, idx) => (
+                      <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.rank || idx + 1}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.full_name || 'Unknown'}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>Batch {trainee.batch_id || 'N/A'}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.program_name || 'N/A'}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.score ? trainee.score.toFixed(2) : 'N/A'}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    Object.values(stats.leaderboardData.byPosition)
+                      .flat()
+                      .sort((a, b) => (a.rank || 0) - (b.rank || 0))
+                      .map((trainee, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.rank || idx + 1}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.full_name || 'Unknown'}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>Batch {trainee.batch_id || 'N/A'}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.program_name || 'N/A'}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.score ? trainee.score.toFixed(2) : 'N/A'}</td>
+                        </tr>
+                      ))
+                  )}
+                  {activePositionTab !== 'all' && (!stats.leaderboardData.byPosition[activePositionTab] || stats.leaderboardData.byPosition[activePositionTab].length === 0) && (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '12px', textAlign: 'center', color: '#64748b' }}>
+                        No trainees found for this position.
+                      </td>
+                    </tr>
+                  )}
+                  {activePositionTab === 'all' && Object.values(stats.leaderboardData.byPosition).flat().length === 0 && (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '12px', textAlign: 'center', color: '#64748b' }}>
+                        No leaderboard data available for the last 6 months.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {/* Batch Tabs */}
+          <div style={{ marginBottom: '16px' }}>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>
+              By Batch
+            </h4>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', borderBottom: '1px solid #e2e8f0' }}>
+              {getBatchTabs().map(tab => (
+                <button
+                  key={tab.value}
+                  onClick={() => setActiveBatchTab(tab.value)}
+                  style={{
+                    padding: '8px 16px',
+                    border: 'none',
+                    borderBottom: activeBatchTab === tab.value ? '2px solid #1E88E5' : 'none',
+                    background: 'none',
+                    color: activeBatchTab === tab.value ? '#1E88E5' : '#64748b',
+                    fontSize: '0.875rem',
+                    fontWeight: activeBatchTab === tab.value ? 600 : 400,
+                    cursor: 'pointer',
+                    outline: 'none'
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#E3F2FD', borderBottom: '1px solid #e2e8f0' }}>
+                    {['Rank', 'Trainee', 'Position', 'Program', 'Score'].map((header, index) => (
+                      <th key={index} style={{
+                        padding: '12px',
+                        textAlign: 'left',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        color: '#1e293b'
+                      }}>
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {activeBatchTab !== 'all' && stats.leaderboardData.byBatch[activeBatchTab] ? (
+                    stats.leaderboardData.byBatch[activeBatchTab].map((trainee, idx) => (
+                      <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.rank || idx + 1}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.full_name || 'Unknown'}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.position_name || 'N/A'}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.program_name || 'N/A'}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.score ? trainee.score.toFixed(2) : 'N/A'}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    Object.values(stats.leaderboardData.byBatch)
+                      .flat()
+                      .sort((a, b) => (a.rank || 0) - (b.rank || 0))
+                      .map((trainee, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.rank || idx + 1}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.full_name || 'Unknown'}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.position_name || 'N/A'}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.program_name || 'N/A'}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.score ? trainee.score.toFixed(2) : 'N/A'}</td>
+                        </tr>
+                      ))
+                  )}
+                  {activeBatchTab !== 'all' && (!stats.leaderboardData.byBatch[activeBatchTab] || stats.leaderboardData.byBatch[activeBatchTab].length === 0) && (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '12px', textAlign: 'center', color: '#64748b' }}>
+                        No trainees found for this batch.
+                      </td>
+                    </tr>
+                  )}
+                  {activeBatchTab === 'all' && Object.values(stats.leaderboardData.byBatch).flat().length === 0 && (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '12px', textAlign: 'center', color: '#64748b' }}>
+                        No leaderboard data available for the last 6 months.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

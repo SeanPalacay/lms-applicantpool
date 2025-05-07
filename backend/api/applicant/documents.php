@@ -294,22 +294,33 @@ function uploadDocument($pdo, $userId) {
     // Create uploads directory if it doesn't exist
     $uploadsDir = __DIR__ . '/../../../uploads/documents';
     if (!file_exists($uploadsDir)) {
-        mkdir($uploadsDir, 0755, true);
+        if (!mkdir($uploadsDir, 0755, true)) {
+            debug_log("Failed to create uploads directory", $uploadsDir);
+            throw new Exception("Failed to create uploads directory");
+        }
+    }
+    if (!is_writable($uploadsDir)) {
+        debug_log("Uploads directory is not writable", $uploadsDir);
+        throw new Exception("Uploads directory is not writable");
     }
     
     // Generate a unique filename
     $uniqueFilename = $userId . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
     $uploadPath = $uploadsDir . '/' . $uniqueFilename;
-    $databasePath = 'uploads/documents/' . $uniqueFilename;
+    $databasePath = "uploads/documents/" . $uniqueFilename;
     
     debug_log("Moving uploaded file to", $uploadPath);
     
-    // Move the uploaded file
     if (!move_uploaded_file($fileTmpName, $uploadPath)) {
-        debug_log("Failed to move uploaded file");
-        http_response_code(500);
-        echo json_encode(['error' => 'Failed to save uploaded file']);
-        return;
+        $error = error_get_last();
+        debug_log("Failed to move uploaded file", $error ? $error['message'] : 'Unknown error');
+        throw new Exception("Failed to save uploaded file: " . ($error ? $error['message'] : 'Unknown error'));
+    }
+    
+    // Verify file exists after upload
+    if (!file_exists($uploadPath)) {
+        debug_log("Uploaded file not found after move", $uploadPath);
+        throw new Exception("Uploaded file not found after move");
     }
     
     // Insert record into database
@@ -364,9 +375,12 @@ function deleteDocument($pdo, $documentId, $userId) {
     }
     
     // Delete the file from the file system
-    $filePath = __DIR__ . '/../../../' . $document['file_path'];
+    $basePath = realpath(__DIR__ . '/../../../');
+    $filePath = $basePath . '/backend/' . $document['file_path'];
     if (file_exists($filePath)) {
-        unlink($filePath);
+        if (!unlink($filePath)) {
+            debug_log("Failed to delete file", $filePath);
+        }
     }
     
     // Delete the record from the database
@@ -401,10 +415,21 @@ function viewDocument($pdo, $documentId, $userId) {
         return;
     }
     
-    $filePath = __DIR__ . '/../../../' . $document['file_path'];
+    $basePath = realpath(__DIR__ . '/../../../');
+    $filePath = $basePath . '/backend/' . $document['file_path'];
+    debug_log("Attempting to access file", $filePath);
+    
     if (!file_exists($filePath)) {
+        debug_log("File not found", $filePath);
         http_response_code(404);
         echo json_encode(['error' => 'Document file not found on server']);
+        return;
+    }
+    
+    if (!is_readable($filePath)) {
+        debug_log("File not readable", $filePath);
+        http_response_code(403);
+        echo json_encode(['error' => 'Document file not readable']);
         return;
     }
     
@@ -455,10 +480,21 @@ function downloadDocument($pdo, $documentId, $userId) {
         return;
     }
     
-    $filePath = __DIR__ . '/../../../' . $document['file_path'];
+    $basePath = realpath(__DIR__ . '/../../../');
+    $filePath = $basePath . '/backend/' . $document['file_path'];
+    debug_log("Attempting to access file for download", $filePath);
+    
     if (!file_exists($filePath)) {
+        debug_log("File not found", $filePath);
         http_response_code(404);
         echo json_encode(['error' => 'Document file not found on server']);
+        return;
+    }
+    
+    if (!is_readable($filePath)) {
+        debug_log("File not readable", $filePath);
+        http_response_code(403);
+        echo json_encode(['error' => 'Document file not readable']);
         return;
     }
     

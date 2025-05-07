@@ -207,8 +207,8 @@ const roleToPathMap = {
       { path: '/admin/programs', label: 'Programs', iconName: 'programs' },
       { path: '/admin/applications', label: 'Applications', iconName: 'applicants' },
       { path: '/admin/applicant-pools', label: 'Applicant Pools', iconName: 'applicants' },
-      { path: '/admin/reports', label: 'Assessment Reports', iconName: 'reports' },
-      { path: '/admin/records', label: 'Records Management', iconName: 'records' },
+      // { path: '/admin/reports', label: 'Assessment Reports', iconName: 'reports' },
+      // { path: '/admin/records', label: 'Records Management', iconName: 'records' },
       { path: '/admin/backups', label: 'System Backups', iconName: 'backups' },
       // { path: '/admin/incidents', label: 'Performance Incidents', iconName: 'incidents' },
       { path: '/admin/profile', label: 'Profile', iconName: 'admin-profile' },
@@ -229,7 +229,7 @@ const roleToPathMap = {
       { path: '/trainee/programs', label: 'My Programs', iconName: 'my-programs' },
       { path: '/trainee/practical-exams', label: 'Exam', iconName: 'certificates' },
       { path: '/trainee/assessments', label: 'Assessments', iconName: 'assessments' },
-      { path: '/trainee/progress', label: 'Progress Tracking', iconName: 'progress' },
+      // { path: '/trainee/progress', label: 'Progress Tracking', iconName: 'progress' },
       // { path: '/trainee/certificates', label: 'Certificates', iconName: 'certificates' },
       { path: '/trainee/profile', label: 'Profile', iconName: 'trainee-profile' },
     ],
@@ -243,7 +243,7 @@ const roleToPathMap = {
   
       { path: '/employee/assessments', label: 'Assessments', iconName: 'assessments' },
   
-      { path: '/employee/progress', label: 'Progress Tracking', iconName: 'progress' },
+      // { path: '/employee/progress', label: 'Progress Tracking', iconName: 'progress' },
   
       { path: '/employee/profile', label: 'Profile', iconName: 'trainee-profile' },
   

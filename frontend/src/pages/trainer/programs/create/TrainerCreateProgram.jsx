@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save } from 'lucide-react';
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
@@ -9,12 +9,27 @@ const TrainerCreateProgram = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [jobPositions, setJobPositions] = useState([]);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     type: 'regular',
-    status: 'active'
+    status: 'active',
+    position_id: ''
   });
+
+  // Fetch job positions on component mount
+  useEffect(() => {
+    const fetchJobPositions = async () => {
+      try {
+        const positions = await trainerService.getJobPositions();
+        setJobPositions(positions);
+      } catch (err) {
+        setError('Failed to load job positions');
+      }
+    };
+    fetchJobPositions();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,15 +48,17 @@ const TrainerCreateProgram = () => {
       if (!formData.title.trim()) {
         throw new Error('Program title is required');
       }
+      if (!formData.position_id) {
+        throw new Error('Please select a job position');
+      }
   
-      // Add some debug logging
       console.log('Submitting program data:', formData);
       
       const result = await trainerService.createProgram(formData);
       console.log('Program created successfully:', result);
       
       navigate('/trainer/programs', { 
-        state: { message: 'Program created successfully' } 
+        state: { message: 'Program created successfully and trainees enrolled' } 
       });
     } catch (err) {
       console.error('Error creating program:', err);
@@ -154,6 +171,33 @@ const TrainerCreateProgram = () => {
             >
               <option value="regular">Regular</option>
               <option value="refresher">Refresher</option>
+            </select>
+          </div>
+
+          <div style={{ marginBottom: 'var(--spacing-md)' }}>
+            <label htmlFor="position_id" style={{ display: 'block', marginBottom: 'var(--spacing-xs)', color: 'var(--text-primary)', fontWeight: '500' }}>
+              Job Position *
+            </label>
+            <select
+              id="position_id"
+              name="position_id"
+              value={formData.position_id}
+              onChange={handleChange}
+              required
+              style={{
+                width: '100%',
+                padding: 'var(--spacing-md)',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--medium-gray)',
+                outline: 'none'
+              }}
+            >
+              <option value="">Select a job position</option>
+              {jobPositions.map((position) => (
+                <option key={position.id} value={position.id}>
+                  {position.position_name} ({position.department})
+                </option>
+              ))}
             </select>
           </div>
 

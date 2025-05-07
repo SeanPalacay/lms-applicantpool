@@ -13,7 +13,7 @@ ob_start();
 // Set proper headers
 header('Content-Type: application/json');
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Methods: GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 // Handle preflight OPTIONS request
@@ -98,7 +98,7 @@ try {
         exit;
     }
 
-    // Handle different request methods
+    // Handle GET request
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Fetch trainees by program
         $programId = isset($_GET['program_id']) ? intval($_GET['program_id']) : null;
@@ -106,13 +106,6 @@ try {
             throw new Exception("Program ID is required");
         }
         getTraineesByProgram($pdo, $programId);
-    } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Add trainee to pool
-        $data = json_decode(file_get_contents('php://input'), true);
-        if (!isset($data['pool_id']) || !isset($data['trainee_id'])) {
-            throw new Exception("Pool ID and Trainee ID are required");
-        }
-        addTraineeToPool($pdo, $data['pool_id'], $data['trainee_id']);
     } else {
         throw new Exception("Method not allowed");
     }
@@ -139,7 +132,7 @@ function getTraineesByProgram($pdo, $programId) {
     // Fetch trainees enrolled in the program
     $query = "
         SELECT 
-            u.id AS trainee_id,
+            u.id AS user_id,
             u.full_name,
             u.email,
             pe.enrollment_date,
@@ -184,7 +177,7 @@ function getTraineesByProgram($pdo, $programId) {
 
     // Calculate final grade for each trainee
     foreach ($trainees as &$trainee) {
-        $traineeId = $trainee['trainee_id'];
+        $traineeId = $trainee['user_id'];
 
         // Get quiz average
         $quizAvgQuery = "
@@ -239,72 +232,4 @@ function getTraineesByProgram($pdo, $programId) {
     // Return JSON
     echo json_encode($trainees);
 }
-
-
-/**
- * Add a trainee to a pool
- */
-function addTraineeToPool($pdo, $poolId, $traineeId) {
-    // Verify pool exists
-    $poolStmt = $pdo->prepare("SELECT id, program_id FROM trainee_pools WHERE id = :poolId");
-    $poolStmt->bindParam(':poolId', $poolId, PDO::PARAM_INT);
-    $poolStmt->execute();
-    if ($poolStmt->rowCount() === 0) {
-        throw new Exception("Pool not found with ID: $poolId");
-    }
-    $pool = $poolStmt->fetch(PDO::FETCH_ASSOC);
-    $programId = $pool['program_id'];
-
-    // Verify trainee exists and is enrolled in the program
-    $traineeStmt = $pdo->prepare("
-        SELECT u.id 
-        FROM users u
-        JOIN program_enrollments pe ON u.id = pe.trainee_id
-        WHERE u.id = :traineeId AND u.role = 'trainee' AND pe.program_id = :programId
-    ");
-    $traineeStmt->bindParam(':traineeId', $traineeId, PDO::PARAM_INT);
-    $traineeStmt->bindParam(':programId', $programId, PDO::PARAM_INT);
-    $traineeStmt->execute();
-    if ($traineeStmt->rowCount() === 0) {
-        throw new Exception("Trainee not found or not enrolled in the program");
-    }
-
-    // Check if trainee is already in a pool for this program
-    $checkStmt = $pdo->prepare("
-        SELECT tpt.id 
-        FROM trainee_pools_trainees tpt
-        JOIN trainee_pools tp ON tpt.pool_id = tp.id
-        WHERE tpt.trainee_id = :traineeId AND tp.program_id = :programId
-    ");
-    $checkStmt->bindParam(':traineeId', $traineeId, PDO::PARAM_INT);
-    $checkStmt->bindParam(':programId', $programId, PDO::PARAM_INT);
-    $checkStmt->execute();
-    if ($checkStmt->rowCount() > 0) {
-        throw new Exception("Trainee is already in a pool for this program");
-    }
-
-    // Add trainee to pool
-    $insertStmt = $pdo->prepare("
-        INSERT INTO trainee_pools_trainees (pool_id, trainee_id, assigned_at, added_at)
-        VALUES (:poolId, :traineeId, NOW(), NOW())
-    ");
-    $insertStmt->bindParam(':poolId', $poolId, PDO::PARAM_INT);
-    $insertStmt->bindParam(':traineeId', $traineeId, PDO::PARAM_INT);
-    $insertStmt->execute();
-
-    // Fetch the updated list of trainees in this pool
-    $updatedTraineesStmt = $pdo->prepare("
-        SELECT u.id AS trainee_id, u.full_name, u.email
-        FROM trainee_pools_trainees tpt
-        JOIN users u ON tpt.trainee_id = u.id
-        WHERE tpt.pool_id = :poolId
-    ");
-    $updatedTraineesStmt->bindParam(':poolId', $poolId, PDO::PARAM_INT);
-    $updatedTraineesStmt->execute();
-    $updatedTrainees = $updatedTraineesStmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Return the updated list of trainees
-    return $updatedTrainees;
-}
-
 ?>

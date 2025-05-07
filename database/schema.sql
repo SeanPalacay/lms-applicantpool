@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 04, 2025 at 10:17 PM
+-- Generation Time: May 07, 2025 at 04:09 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -28,12 +28,12 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `access_codes` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`code` varchar(50) NOT NULL,
-`created_by` int(11) DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-`expires_at` timestamp NULL DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `code` varchar(50) NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `expires_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -45,7 +45,12 @@ INSERT INTO `access_codes` (`id`, `user_id`, `code`, `created_by`, `created_at`,
 (2, 9, 'lA6PsOlWT&', NULL, '2025-03-30 02:03:13', '2025-04-28 18:03:13'),
 (3, 13, '%notD3JjNF', NULL, '2025-03-30 09:54:23', '2025-04-29 01:54:23'),
 (4, 13, '*67MFOD$cl', NULL, '2025-03-30 10:00:11', '2025-04-29 02:00:11'),
-(5, 4, 'vB37y9pVNH', NULL, '2025-04-03 05:19:47', '2025-05-02 21:19:47');
+(5, 4, 'vB37y9pVNH', NULL, '2025-04-03 05:19:47', '2025-05-02 21:19:47'),
+(6, 16, '7DGRFGX0o3', NULL, '2025-04-18 11:23:40', '2025-05-18 03:23:40'),
+(7, 16, 'lTypt8X8T1', NULL, '2025-04-18 11:23:40', '2025-05-18 03:23:40'),
+(8, 17, '5PHhZQbAuO', NULL, '2025-04-18 23:16:20', '2025-05-18 15:16:20'),
+(9, 17, 'JDpPMtGZ0G', NULL, '2025-04-18 23:16:20', '2025-05-18 15:16:20'),
+(10, 18, 'KhjmgxjJnD', NULL, '2025-04-18 23:23:29', '2025-05-18 15:23:29');
 
 -- --------------------------------------------------------
 
@@ -54,11 +59,11 @@ INSERT INTO `access_codes` (`id`, `user_id`, `code`, `created_by`, `created_at`,
 --
 
 CREATE TABLE `applicant_notes` (
-`id` int(11) NOT NULL,
-`applicant_id` int(11) NOT NULL,
-`content` text NOT NULL,
-`created_by` int(11) DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `applicant_id` int(11) NOT NULL,
+  `content` text NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -68,12 +73,12 @@ CREATE TABLE `applicant_notes` (
 --
 
 CREATE TABLE `applicant_pools` (
-`id` int(11) NOT NULL,
-`pool_name` varchar(50) NOT NULL,
-`description` text DEFAULT NULL,
-`created_by` int(11) DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-`department` varchar(100) DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `pool_name` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `department` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -83,10 +88,10 @@ CREATE TABLE `applicant_pools` (
 --
 
 CREATE TABLE `applicant_pool_assignments` (
-`id` int(11) NOT NULL,
-`application_id` int(11) NOT NULL,
-`pool_id` int(11) NOT NULL,
-`assigned_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `pool_id` int(11) NOT NULL,
+  `assigned_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -96,10 +101,10 @@ CREATE TABLE `applicant_pool_assignments` (
 --
 
 CREATE TABLE `applicant_pool_positions` (
-`id` int(11) NOT NULL,
-`pool_id` int(11) NOT NULL,
-`position_name` varchar(100) NOT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `pool_id` int(11) NOT NULL,
+  `position_name` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -109,12 +114,12 @@ CREATE TABLE `applicant_pool_positions` (
 --
 
 CREATE TABLE `applicant_profiles` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`phone` varchar(20) DEFAULT NULL,
-`address` text DEFAULT NULL,
-`bio` text DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `bio` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -124,24 +129,38 @@ CREATE TABLE `applicant_profiles` (
 --
 
 CREATE TABLE `applications` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`pool_id` int(11) NOT NULL,
-`position_id` int(11) DEFAULT NULL,
-`job_role` varchar(50) DEFAULT NULL,
-`department` varchar(50) DEFAULT NULL,
-`status` enum('pending','shortlisted','hired','rejected','withdrawn') DEFAULT 'pending',
-`reasons` text DEFAULT NULL,
-`experience` text DEFAULT NULL,
-`skills` text DEFAULT NULL,
-`education` text DEFAULT NULL,
-`availability` text DEFAULT NULL,
-`references` text DEFAULT NULL,
-`document_id` int(11) DEFAULT NULL,
-`evaluation_score` decimal(5,2) DEFAULT NULL,
-`fst_score` decimal(5,2) DEFAULT NULL,
-`applied_at` timestamp NOT NULL DEFAULT current_timestamp(),
-`updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `pool_id` int(11) NOT NULL,
+  `position_id` int(11) DEFAULT NULL,
+  `job_role` varchar(50) DEFAULT NULL,
+  `department` varchar(50) DEFAULT NULL,
+  `status` enum('pending','shortlisted','hired','rejected','withdrawn') DEFAULT 'pending',
+  `reasons` text DEFAULT NULL,
+  `experience` text DEFAULT NULL,
+  `skills` text DEFAULT NULL,
+  `education` text DEFAULT NULL,
+  `availability` text DEFAULT NULL,
+  `references` text DEFAULT NULL,
+  `document_id` int(11) DEFAULT NULL,
+  `evaluation_score` decimal(5,2) DEFAULT NULL,
+  `fst_score` decimal(5,2) DEFAULT NULL,
+  `applied_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `application_notes`
+--
+
+CREATE TABLE `application_notes` (
+  `id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `note` text NOT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -151,12 +170,12 @@ CREATE TABLE `applications` (
 --
 
 CREATE TABLE `backups` (
-`id` int(11) NOT NULL,
-`backup_name` varchar(100) NOT NULL,
-`file_path` varchar(255) NOT NULL,
-`backup_type` enum('scheduled','manual') NOT NULL,
-`created_by` int(11) DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `backup_name` varchar(100) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `backup_type` enum('scheduled','manual') NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -185,13 +204,13 @@ CREATE TABLE `department_positions` (
 --
 
 CREATE TABLE `grade_configuration` (
-`id` int(11) NOT NULL,
-`quiz_weight` decimal(5,2) NOT NULL DEFAULT 0.60,
-`practical_exam_weight` decimal(5,2) NOT NULL DEFAULT 0.40,
-`passing_grade` decimal(5,2) NOT NULL DEFAULT 70.00,
-`created_by` int(11) DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-`updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+  `id` int(11) NOT NULL,
+  `quiz_weight` decimal(5,2) NOT NULL DEFAULT 0.60,
+  `practical_exam_weight` decimal(5,2) NOT NULL DEFAULT 0.40,
+  `passing_grade` decimal(5,2) NOT NULL DEFAULT 70.00,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -208,19 +227,19 @@ INSERT INTO `grade_configuration` (`id`, `quiz_weight`, `practical_exam_weight`,
 --
 
 CREATE TABLE `job_applications` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`position_id` int(11) NOT NULL,
-`reasons` text NOT NULL,
-`experience` text DEFAULT NULL,
-`skills` text DEFAULT NULL,
-`education` text DEFAULT NULL,
-`availability` text DEFAULT NULL,
-`references` text DEFAULT NULL,
-`document_id` int(11) DEFAULT NULL,
-`status` enum('pending','shortlisted','hired','rejected','withdrawn') DEFAULT 'pending',
-`applied_at` timestamp NOT NULL DEFAULT current_timestamp(),
-`updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `position_id` int(11) NOT NULL,
+  `reasons` text NOT NULL,
+  `experience` text DEFAULT NULL,
+  `skills` text DEFAULT NULL,
+  `education` text DEFAULT NULL,
+  `availability` text DEFAULT NULL,
+  `references` text DEFAULT NULL,
+  `document_id` int(11) DEFAULT NULL,
+  `status` enum('pending','waitlisted','shortlisted','hired','rejected') NOT NULL DEFAULT 'pending',
+  `applied_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -228,7 +247,7 @@ CREATE TABLE `job_applications` (
 --
 
 INSERT INTO `job_applications` (`id`, `user_id`, `position_id`, `reasons`, `experience`, `skills`, `education`, `availability`, `references`, `document_id`, `status`, `applied_at`, `updated_at`) VALUES
-(1, 4, 8, 'asd', 'asd', 'asd', 'asd', 'asd', 'asd', NULL, 'pending', '2025-04-03 07:55:18', NULL);
+(1, 4, 8, 'asd', 'asd', 'asd', 'asd', 'asd', 'asd', NULL, 'waitlisted', '2025-04-03 07:55:18', NULL);
 
 -- --------------------------------------------------------
 
@@ -237,12 +256,12 @@ INSERT INTO `job_applications` (`id`, `user_id`, `position_id`, `reasons`, `expe
 --
 
 CREATE TABLE `job_positions` (
-`id` int(11) NOT NULL,
-`department` varchar(100) NOT NULL,
-`position_name` varchar(100) NOT NULL,
-`description` text DEFAULT NULL,
-`is_active` tinyint(1) DEFAULT 1,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `department` varchar(100) NOT NULL,
+  `position_name` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -288,10 +307,10 @@ INSERT INTO `job_positions` (`id`, `department`, `position_name`, `description`,
 --
 
 CREATE TABLE `job_requirements` (
-`id` int(11) NOT NULL,
-`position_id` int(11) NOT NULL,
-`requirement` text NOT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `position_id` int(11) NOT NULL,
+  `requirement` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -332,10 +351,10 @@ INSERT INTO `job_requirements` (`id`, `position_id`, `requirement`, `created_at`
 --
 
 CREATE TABLE `job_responsibilities` (
-`id` int(11) NOT NULL,
-`position_id` int(11) NOT NULL,
-`responsibility` text NOT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `position_id` int(11) NOT NULL,
+  `responsibility` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -376,13 +395,13 @@ INSERT INTO `job_responsibilities` (`id`, `position_id`, `responsibility`, `crea
 --
 
 CREATE TABLE `milestones` (
-`id` int(11) NOT NULL,
-`program_id` int(11) DEFAULT NULL,
-`title` varchar(100) NOT NULL,
-`description` text DEFAULT NULL,
-`due_date` date DEFAULT NULL,
-`created_by` int(11) DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `program_id` int(11) DEFAULT NULL,
+  `title` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `due_date` date DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -392,11 +411,11 @@ CREATE TABLE `milestones` (
 --
 
 CREATE TABLE `milestone_progress` (
-`id` int(11) NOT NULL,
-`milestone_id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`status` enum('not_started','in_progress','completed') DEFAULT 'not_started',
-`completion_date` timestamp NULL DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `milestone_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `status` enum('not_started','in_progress','completed') DEFAULT 'not_started',
+  `completion_date` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -406,13 +425,13 @@ CREATE TABLE `milestone_progress` (
 --
 
 CREATE TABLE `notifications` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`type` enum('info','warning','success','error') NOT NULL,
-`title` varchar(100) NOT NULL,
-`message` text DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-`read_at` timestamp NULL DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `type` enum('info','warning','success','error') NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `message` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `read_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -447,7 +466,8 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `creat
 (25, 15, 'info', 'New Program Enrollment', 'You have been enrolled in the program: bago', '2025-04-04 19:49:55', NULL),
 (26, 4, 'info', 'Pool Removed', 'An applicant pool you were in has been removed.', '2025-04-04 20:10:09', NULL),
 (27, 9, 'info', 'Pool Removed', 'An applicant pool you were in has been removed.', '2025-04-04 20:10:09', NULL),
-(28, 13, 'info', 'Pool Removed', 'An applicant pool you were in has been removed.', '2025-04-04 20:10:09', NULL);
+(28, 13, 'info', 'Pool Removed', 'An applicant pool you were in has been removed.', '2025-04-04 20:10:09', NULL),
+(29, 3, 'info', 'New Program Enrollment', 'You have been enrolled in the program: bago', '2025-04-07 09:06:07', NULL);
 
 -- --------------------------------------------------------
 
@@ -456,11 +476,11 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `creat
 --
 
 CREATE TABLE `password_reset_tokens` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`token` varchar(255) NOT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-`expires_at` timestamp NULL DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `expires_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -477,12 +497,12 @@ INSERT INTO `password_reset_tokens` (`id`, `user_id`, `token`, `created_at`, `ex
 --
 
 CREATE TABLE `performance_incidents` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`incident_type` enum('low_quiz_score','policy_violation','other') NOT NULL,
-`description` text DEFAULT NULL,
-`incident_date` timestamp NOT NULL DEFAULT current_timestamp(),
-`reported_by` int(11) DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `incident_type` enum('low_quiz_score','policy_violation','other') NOT NULL,
+  `description` text DEFAULT NULL,
+  `incident_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `reported_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -501,10 +521,10 @@ INSERT INTO `performance_incidents` (`id`, `user_id`, `incident_type`, `descript
 --
 
 CREATE TABLE `permissions` (
-`id` int(11) NOT NULL,
-`role` enum('administrator','trainer','trainee','applicant') NOT NULL,
-`permission` varchar(50) NOT NULL,
-`description` text DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `role` enum('administrator','trainer','trainee','applicant') NOT NULL,
+  `permission` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -522,15 +542,67 @@ INSERT INTO `permissions` (`id`, `role`, `permission`, `description`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `pool_enrollments`
+--
+
+CREATE TABLE `pool_enrollments` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `pool_id` int(11) NOT NULL,
+  `batch_id` int(11) NOT NULL,
+  `position_id` int(11) NOT NULL,
+  `program_id` int(11) NOT NULL,
+  `enrolled_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pool_enrollments`
+--
+
+INSERT INTO `pool_enrollments` (`id`, `user_id`, `pool_id`, `batch_id`, `position_id`, `program_id`, `enrolled_at`) VALUES
+(1, 15, 2, 1, 8, 13, '2025-04-04 13:17:00');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `position_program_relation`
 --
 
 CREATE TABLE `position_program_relation` (
-`id` int(11) NOT NULL,
-`position_id` int(11) NOT NULL,
-`program_id` int(11) NOT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `position_id` int(11) NOT NULL,
+  `program_id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `position_program_relation`
+--
+
+INSERT INTO `position_program_relation` (`id`, `position_id`, `program_id`, `created_at`) VALUES
+(9, 8, 13, '2025-05-06 00:49:19'),
+(10, 8, 14, '2025-05-06 05:46:09');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `position_quiz_relation`
+--
+
+CREATE TABLE `position_quiz_relation` (
+  `id` int(11) NOT NULL,
+  `position_id` int(11) NOT NULL,
+  `quiz_id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `position_quiz_relation`
+--
+
+INSERT INTO `position_quiz_relation` (`id`, `position_id`, `quiz_id`, `created_at`) VALUES
+(1, 8, 14, '2025-05-06 00:49:19'),
+(2, 8, 15, '2025-05-06 00:49:19');
 
 -- --------------------------------------------------------
 
@@ -539,13 +611,13 @@ CREATE TABLE `position_program_relation` (
 --
 
 CREATE TABLE `practical_exams` (
-`id` int(11) NOT NULL,
-`program_id` int(11) NOT NULL,
-`title` varchar(100) NOT NULL,
-`description` text DEFAULT NULL,
-`max_score` decimal(5,2) DEFAULT 100.00,
-`created_by` int(11) DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `program_id` int(11) NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `max_score` decimal(5,2) DEFAULT 100.00,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -563,15 +635,15 @@ INSERT INTO `practical_exams` (`id`, `program_id`, `title`, `description`, `max_
 --
 
 CREATE TABLE `practical_exam_attempts` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`exam_id` int(11) NOT NULL,
-`submission_text` text NOT NULL,
-`score` decimal(5,2) DEFAULT 0.00,
-`feedback` text DEFAULT NULL,
-`submitted_at` timestamp NOT NULL DEFAULT current_timestamp(),
-`graded_by` int(11) DEFAULT NULL,
-`graded_at` timestamp NULL DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `exam_id` int(11) NOT NULL,
+  `submission_text` text NOT NULL,
+  `score` decimal(5,2) DEFAULT 0.00,
+  `feedback` text DEFAULT NULL,
+  `submitted_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `graded_by` int(11) DEFAULT NULL,
+  `graded_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -590,22 +662,24 @@ INSERT INTO `practical_exam_attempts` (`id`, `user_id`, `exam_id`, `submission_t
 --
 
 CREATE TABLE `programs` (
-`id` int(11) NOT NULL,
-`title` varchar(100) NOT NULL,
-`description` text DEFAULT NULL,
-`type` enum('regular','refresher') DEFAULT 'regular',
-`created_by` int(11) DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `type` enum('regular','refresher') DEFAULT 'regular',
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` varchar(20) NOT NULL DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `programs`
 --
 
-INSERT INTO `programs` (`id`, `title`, `description`, `type`, `created_by`, `created_at`) VALUES
-(11, 'try1', 'try', 'regular', 2, '2025-03-25 02:33:59'),
-(12, 'gege', 'gege', 'regular', 2, '2025-04-04 10:03:51'),
-(13, 'bago', 'asda', 'regular', 14, '2025-04-04 19:05:58');
+INSERT INTO `programs` (`id`, `title`, `description`, `type`, `created_by`, `created_at`, `status`) VALUES
+(11, 'try1', 'try', 'regular', 2, '2025-03-25 02:33:59', 'active'),
+(12, 'gege', 'gege', 'regular', 2, '2025-04-04 10:03:51', 'active'),
+(13, 'bago', 'asda', 'regular', 14, '2025-04-04 19:05:58', 'active'),
+(14, 'accounting', 'accounting', 'regular', 2, '2025-05-06 05:46:09', 'active');
 
 -- --------------------------------------------------------
 
@@ -614,12 +688,12 @@ INSERT INTO `programs` (`id`, `title`, `description`, `type`, `created_by`, `cre
 --
 
 CREATE TABLE `program_enrollments` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`program_id` int(11) NOT NULL,
-`enrollment_date` timestamp NOT NULL DEFAULT current_timestamp(),
-`completion_status` enum('not_started','in_progress','completed') DEFAULT 'not_started',
-`completion_percentage` decimal(5,2) DEFAULT 0.00
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `program_id` int(11) NOT NULL,
+  `enrollment_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `completion_status` enum('not_started','in_progress','completed') DEFAULT 'not_started',
+  `completion_percentage` decimal(5,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -629,7 +703,41 @@ CREATE TABLE `program_enrollments` (
 INSERT INTO `program_enrollments` (`id`, `user_id`, `program_id`, `enrollment_date`, `completion_status`, `completion_percentage`) VALUES
 (4, 3, 11, '2025-03-25 07:20:14', 'completed', 100.00),
 (5, 10, 11, '2025-04-02 01:34:09', 'not_started', 0.00),
-(6, 15, 13, '2025-04-04 19:49:55', 'in_progress', 75.00);
+(6, 15, 13, '2025-04-04 19:49:55', 'in_progress', 80.00),
+(7, 3, 13, '2025-04-07 09:06:07', 'not_started', 0.00),
+(8, 3, 14, '2025-05-06 05:46:09', 'not_started', 0.00),
+(9, 10, 14, '2025-05-06 05:46:09', 'not_started', 0.00),
+(10, 15, 14, '2025-05-06 05:46:09', 'not_started', 0.00);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `questions`
+--
+
+CREATE TABLE `questions` (
+  `id` int(11) NOT NULL,
+  `quiz_id` int(11) NOT NULL,
+  `question_type` enum('multiple_choice','multiple_answer','true_false','identification','matching','essay') NOT NULL DEFAULT 'multiple_choice',
+  `question_text` text NOT NULL,
+  `option_a` varchar(255) DEFAULT NULL,
+  `option_b` varchar(255) DEFAULT NULL,
+  `option_c` varchar(255) DEFAULT NULL,
+  `option_d` varchar(255) DEFAULT NULL,
+  `correct_answer` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `questions`
+--
+
+INSERT INTO `questions` (`id`, `quiz_id`, `question_type`, `question_text`, `option_a`, `option_b`, `option_c`, `option_d`, `correct_answer`) VALUES
+(27, 15, 'multiple_answer', 'faa', 'x', 's', 'sd', 'aa', ''),
+(28, 16, 'true_false', 'aa', 'True', 'False', NULL, NULL, 'b'),
+(34, 28, 'identification', 'ass', NULL, NULL, NULL, NULL, 'ge'),
+(36, 14, 'multiple_choice', 'ass', 'a', 'v', 'b', 'd', 'a'),
+(37, 30, 'multiple_choice', 'testing123', 'a', 'c', 'b', 'd', 'a'),
+(39, 50, 'multiple_choice', 'ass', 'a', 'd', 'b', 'c', 'a');
 
 -- --------------------------------------------------------
 
@@ -638,28 +746,35 @@ INSERT INTO `program_enrollments` (`id`, `user_id`, `program_id`, `enrollment_da
 --
 
 CREATE TABLE `quizzes` (
-`id` int(11) NOT NULL,
-`program_id` int(11) DEFAULT NULL,
-`title` varchar(100) NOT NULL,
-`description` text DEFAULT NULL,
-`time_limit` int(11) DEFAULT NULL,
-`passing_score` decimal(5,2) DEFAULT 70.00,
-`created_by` int(11) DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-`status` enum('draft','active') NOT NULL DEFAULT 'draft',
-`grading_type` enum('standard','weighted','custom') DEFAULT 'standard',
-`auto_feedback` tinyint(1) DEFAULT 0
+  `id` int(11) NOT NULL,
+  `program_id` int(11) DEFAULT NULL,
+  `title` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `time_limit` int(11) DEFAULT NULL,
+  `passing_score` decimal(5,2) DEFAULT 70.00,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` enum('draft','active') NOT NULL DEFAULT 'draft',
+  `grading_type` enum('standard','weighted','custom') DEFAULT 'standard',
+  `grade_weighting` decimal(5,2) DEFAULT 100.00,
+  `auto_feedback` tinyint(1) DEFAULT 0,
+  `show_grade_immediately` tinyint(1) DEFAULT 0,
+  `auto_grade` tinyint(1) DEFAULT 0,
+  `grade_on_submission` tinyint(1) DEFAULT 0,
+  `show_correct_answers` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `quizzes`
 --
 
-INSERT INTO `quizzes` (`id`, `program_id`, `title`, `description`, `time_limit`, `passing_score`, `created_by`, `created_at`, `status`, `grading_type`, `auto_feedback`) VALUES
-(14, 13, 'multi', 'asda', 30, 70.00, 14, '2025-04-04 19:13:44', 'active', 'standard', 0),
-(15, 13, 'multia', 'sss', 30, 70.00, 14, '2025-04-04 19:14:26', 'active', 'standard', 0),
-(16, 13, 'tru', 'sdfad', 30, 70.00, 14, '2025-04-04 19:14:53', 'active', 'standard', 0),
-(28, 13, 'test', 'test', 30, 70.00, 14, '2025-04-04 19:46:39', 'active', 'standard', 0);
+INSERT INTO `quizzes` (`id`, `program_id`, `title`, `description`, `time_limit`, `passing_score`, `created_by`, `created_at`, `status`, `grading_type`, `grade_weighting`, `auto_feedback`, `show_grade_immediately`, `auto_grade`, `grade_on_submission`, `show_correct_answers`) VALUES
+(14, 13, 'multi', 'asda', 30, 70.00, 14, '2025-04-04 19:13:44', 'active', 'standard', 100.00, 0, 0, 0, 0, 0),
+(15, 13, 'multia', 'sss', 30, 70.00, 14, '2025-04-04 19:14:26', 'active', 'standard', 100.00, 0, 0, 0, 0, 0),
+(16, 13, 'tru', 'sdfad', 30, 70.00, 14, '2025-04-04 19:14:53', 'active', 'standard', 100.00, 0, 0, 0, 0, 0),
+(28, 13, 'test', 'test', 30, 70.00, 14, '2025-04-04 19:46:39', 'active', 'standard', 100.00, 0, 0, 0, 0, 0),
+(30, 13, 'testing123', 'testing123', 30, 70.00, 14, '2025-04-04 23:07:58', 'active', 'standard', 100.00, 0, 0, 0, 0, 0),
+(50, 14, 'asdf', 'asdf', 30, 70.00, 2, '2025-05-07 02:07:32', 'draft', 'standard', 0.00, 0, 1, 1, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -668,13 +783,13 @@ INSERT INTO `quizzes` (`id`, `program_id`, `title`, `description`, `time_limit`,
 --
 
 CREATE TABLE `quiz_attempts` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`quiz_id` int(11) NOT NULL,
-`score` decimal(5,2) DEFAULT 0.00,
-`time_taken` int(11) DEFAULT NULL,
-`attempt_date` timestamp NOT NULL DEFAULT current_timestamp(),
-`feedback` text DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `quiz_id` int(11) NOT NULL,
+  `score` decimal(5,2) DEFAULT 0.00,
+  `time_taken` int(11) DEFAULT NULL,
+  `attempt_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `feedback` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -685,7 +800,8 @@ INSERT INTO `quiz_attempts` (`id`, `user_id`, `quiz_id`, `score`, `time_taken`, 
 (13, 15, 28, 100.00, NULL, '2025-04-04 19:55:35', 'Good job!'),
 (14, 15, 16, 100.00, NULL, '2025-04-04 19:55:42', 'Good job!'),
 (15, 15, 15, 100.00, NULL, '2025-04-04 19:56:00', 'Good job!'),
-(16, 15, 14, 0.00, NULL, '2025-04-04 19:56:06', 'Review the material and try again.');
+(16, 15, 14, 0.00, NULL, '2025-04-04 19:56:06', 'Review the material and try again.'),
+(17, 15, 30, 100.00, NULL, '2025-04-04 23:08:37', 'Good job!');
 
 -- --------------------------------------------------------
 
@@ -694,10 +810,10 @@ INSERT INTO `quiz_attempts` (`id`, `user_id`, `quiz_id`, `score`, `time_taken`, 
 --
 
 CREATE TABLE `quiz_attempt_answers` (
-`id` int(11) NOT NULL,
-`attempt_id` int(11) NOT NULL,
-`question_id` int(11) NOT NULL,
-`selected_answer` text NOT NULL
+  `id` int(11) NOT NULL,
+  `attempt_id` int(11) NOT NULL,
+  `question_id` int(11) NOT NULL,
+  `selected_answer` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -708,7 +824,23 @@ INSERT INTO `quiz_attempt_answers` (`id`, `attempt_id`, `question_id`, `selected
 (19, 13, 34, 'ge'),
 (20, 14, 28, 'b'),
 (21, 15, 27, 'b,a'),
-(22, 16, 36, 'd');
+(22, 16, 36, 'd'),
+(23, 17, 37, 'a');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quiz_enrollments`
+--
+
+CREATE TABLE `quiz_enrollments` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `quiz_id` int(11) NOT NULL,
+  `program_id` int(11) DEFAULT NULL,
+  `enrollment_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` enum('not_started','in_progress','completed') DEFAULT 'not_started'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -717,40 +849,12 @@ INSERT INTO `quiz_attempt_answers` (`id`, `attempt_id`, `question_id`, `selected
 --
 
 CREATE TABLE `quiz_feedback_templates` (
-`id` int(11) NOT NULL,
-`quiz_id` int(11) NOT NULL,
-`score_range_min` decimal(5,2) DEFAULT 0.00,
-`score_range_max` decimal(5,2) DEFAULT 100.00,
-`feedback_template` text NOT NULL
+  `id` int(11) NOT NULL,
+  `quiz_id` int(11) NOT NULL,
+  `score_range_min` decimal(5,2) DEFAULT 0.00,
+  `score_range_max` decimal(5,2) DEFAULT 100.00,
+  `feedback_template` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `quiz_questions`
---
-
-CREATE TABLE `quiz_questions` (
-`id` int(11) NOT NULL,
-`quiz_id` int(11) NOT NULL,
-`question_type` enum('multiple_choice','multiple_answer','true_false','identification','matching','essay') NOT NULL DEFAULT 'multiple_choice',
-`question_text` text NOT NULL,
-`option_a` varchar(255) DEFAULT NULL,
-`option_b` varchar(255) DEFAULT NULL,
-`option_c` varchar(255) DEFAULT NULL,
-`option_d` varchar(255) DEFAULT NULL,
-`correct_answer` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `quiz_questions`
---
-
-INSERT INTO `quiz_questions` (`id`, `quiz_id`, `question_type`, `question_text`, `option_a`, `option_b`, `option_c`, `option_d`, `correct_answer`) VALUES
-(27, 15, 'multiple_answer', 'faa', 'x', 's', 'sd', 'aa', ''),
-(28, 16, 'true_false', 'aa', 'True', 'False', NULL, NULL, 'b'),
-(34, 28, 'identification', 'ass', NULL, NULL, NULL, NULL, 'ge'),
-(36, 14, 'multiple_choice', 'ass', 'a', 'v', 'b', 'd', 'a');
 
 -- --------------------------------------------------------
 
@@ -759,11 +863,11 @@ INSERT INTO `quiz_questions` (`id`, `quiz_id`, `question_type`, `question_text`,
 --
 
 CREATE TABLE `quiz_question_answer_options` (
-`id` int(11) NOT NULL,
-`question_id` int(11) NOT NULL,
-`option_text` varchar(255) NOT NULL,
-`option_key` varchar(2) NOT NULL,
-`is_correct` tinyint(1) DEFAULT 0
+  `id` int(11) NOT NULL,
+  `question_id` int(11) NOT NULL,
+  `option_text` varchar(255) NOT NULL,
+  `option_key` varchar(2) NOT NULL,
+  `is_correct` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -783,11 +887,11 @@ INSERT INTO `quiz_question_answer_options` (`id`, `question_id`, `option_text`, 
 --
 
 CREATE TABLE `quiz_question_matching_pairs` (
-`id` int(11) NOT NULL,
-`question_id` int(11) NOT NULL,
-`left_item` varchar(255) NOT NULL,
-`right_item` varchar(255) NOT NULL,
-`pair_key` varchar(2) NOT NULL
+  `id` int(11) NOT NULL,
+  `question_id` int(11) NOT NULL,
+  `left_item` varchar(255) NOT NULL,
+  `right_item` varchar(255) NOT NULL,
+  `pair_key` varchar(2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -797,10 +901,10 @@ CREATE TABLE `quiz_question_matching_pairs` (
 --
 
 CREATE TABLE `quiz_question_metadata` (
-`id` int(11) NOT NULL,
-`question_id` int(11) NOT NULL,
-`meta_key` varchar(50) NOT NULL,
-`meta_value` text DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `question_id` int(11) NOT NULL,
+  `meta_key` varchar(50) NOT NULL,
+  `meta_value` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -810,11 +914,38 @@ CREATE TABLE `quiz_question_metadata` (
 --
 
 CREATE TABLE `quiz_question_weights` (
-`id` int(11) NOT NULL,
-`quiz_id` int(11) NOT NULL,
-`question_id` int(11) NOT NULL,
-`weight` decimal(5,2) DEFAULT 1.00
+  `id` int(11) NOT NULL,
+  `quiz_id` int(11) NOT NULL,
+  `question_id` int(11) NOT NULL,
+  `weight` decimal(5,2) DEFAULT 1.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quiz_results`
+--
+
+CREATE TABLE `quiz_results` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `quiz_id` int(11) NOT NULL,
+  `score` decimal(5,2) DEFAULT 0.00,
+  `time_taken` int(11) DEFAULT NULL,
+  `attempt_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `feedback` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `quiz_results`
+--
+
+INSERT INTO `quiz_results` (`id`, `user_id`, `quiz_id`, `score`, `time_taken`, `attempt_date`, `feedback`) VALUES
+(13, 15, 28, 100.00, NULL, '2025-04-04 19:55:35', 'Good job!'),
+(14, 15, 16, 100.00, NULL, '2025-04-04 19:55:42', 'Good job!'),
+(15, 15, 15, 100.00, NULL, '2025-04-04 19:56:00', 'Good job!'),
+(16, 15, 14, 0.00, NULL, '2025-04-04 19:56:06', 'Review the material and try again.'),
+(17, 15, 30, 100.00, NULL, '2025-04-04 23:08:37', 'Good job!');
 
 -- --------------------------------------------------------
 
@@ -823,14 +954,14 @@ CREATE TABLE `quiz_question_weights` (
 --
 
 CREATE TABLE `records` (
-`id` int(11) NOT NULL,
-`user_id` int(11) DEFAULT NULL,
-`record_type` enum('training','applicant','backup','other') NOT NULL,
-`category` varchar(50) DEFAULT NULL,
-`application_id` int(11) DEFAULT NULL,
-`file_path` varchar(255) DEFAULT NULL,
-`description` text DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `record_type` enum('training','applicant','backup','other') NOT NULL,
+  `category` varchar(50) DEFAULT NULL,
+  `application_id` int(11) DEFAULT NULL,
+  `file_path` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -843,7 +974,11 @@ INSERT INTO `records` (`id`, `user_id`, `record_type`, `category`, `application_
 (3, 4, 'applicant', 'evaluations', NULL, '/uploads/applicant/cover_letter.pdf', 'Cover Letter', '2025-03-11 10:30:00'),
 (4, 2, 'training', 'guides', NULL, '/uploads/trainer/quiz_guide.pdf', 'Quiz Creation Guide', '2025-03-05 00:00:00'),
 (6, 9, 'applicant', 'evaluations', NULL, 'uploads/documents/9_1742974622_67e3ae9ec6609.pdf', 'LMS.pdf', '2025-03-26 07:37:02'),
-(7, 4, 'applicant', 'evaluations', NULL, 'uploads/documents/4_1743689708_562c8b9b.pdf', 'LMS.pdf', '2025-04-03 14:15:08');
+(7, 4, 'applicant', 'evaluations', NULL, 'uploads/documents/4_1743689708_562c8b9b.pdf', 'LMS.pdf', '2025-04-03 14:15:08'),
+(9, 16, 'applicant', 'evaluations', NULL, 'uploads/documents/16_1744975909_191b89f4.pdf', 'LMS.pdf', '2025-04-18 11:31:49'),
+(10, 17, 'applicant', 'evaluations', NULL, 'Uploads/documents/resume_17_1745018092_b89c95da.pdf', 'Resume', '2025-04-18 23:14:52'),
+(11, 18, 'applicant', 'evaluations', NULL, 'uploads/documents/resume_18_1745018589_652f18a3.pdf', 'Resume', '2025-04-18 23:23:09'),
+(12, 19, 'applicant', 'evaluations', NULL, 'uploads/documents/resume_19_1745076462_9160bc31.pdf', 'Resume', '2025-04-19 15:27:42');
 
 -- --------------------------------------------------------
 
@@ -852,13 +987,13 @@ INSERT INTO `records` (`id`, `user_id`, `record_type`, `category`, `application_
 --
 
 CREATE TABLE `trainee_pools` (
-`id` int(11) NOT NULL,
-`pool_name` varchar(50) NOT NULL,
-`description` text DEFAULT NULL,
-`program_id` int(11) DEFAULT NULL,
-`created_by` int(11) DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-`updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+  `id` int(11) NOT NULL,
+  `pool_name` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `program_id` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -866,7 +1001,7 @@ CREATE TABLE `trainee_pools` (
 --
 
 INSERT INTO `trainee_pools` (`id`, `pool_name`, `description`, `program_id`, `created_by`, `created_at`, `updated_at`) VALUES
-(1, 'gg', 'asdfas', 13, 1, '2025-04-04 20:17:18', NULL);
+(2, 'gege', 'gege', 13, 1, '2025-04-04 20:20:16', '2025-04-04 21:57:26');
 
 -- --------------------------------------------------------
 
@@ -875,11 +1010,19 @@ INSERT INTO `trainee_pools` (`id`, `pool_name`, `description`, `program_id`, `cr
 --
 
 CREATE TABLE `trainee_pools_trainees` (
-`id` int(11) NOT NULL,
-`pool_id` int(11) NOT NULL,
-`trainee_id` int(11) NOT NULL,
-`assigned_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `pool_id` int(11) NOT NULL,
+  `trainee_id` int(11) NOT NULL,
+  `assigned_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `added_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `trainee_pools_trainees`
+--
+
+INSERT INTO `trainee_pools_trainees` (`id`, `pool_id`, `trainee_id`, `assigned_at`, `added_at`) VALUES
+(2, 2, 15, '2025-04-04 21:17:00', '2025-04-04 21:17:00');
 
 -- --------------------------------------------------------
 
@@ -888,11 +1031,11 @@ CREATE TABLE `trainee_pools_trainees` (
 --
 
 CREATE TABLE `trainer_profiles` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`phone` varchar(20) DEFAULT NULL,
-`bio` text DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `bio` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -909,38 +1052,43 @@ INSERT INTO `trainer_profiles` (`id`, `user_id`, `phone`, `bio`, `created_at`) V
 --
 
 CREATE TABLE `users` (
-`id` int(11) NOT NULL,
-`username` varchar(50) NOT NULL,
-`password` varchar(255) NOT NULL,
-`full_name` varchar(100) NOT NULL,
-`email` varchar(100) NOT NULL,
-`phone` varchar(20) DEFAULT NULL,
-`address` text DEFAULT NULL,
-`department` text DEFAULT NULL,
-`role` enum('administrator','trainer','trainee','applicant','employee') NOT NULL,
-`status` enum('active','inactive') DEFAULT 'active',
-`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-`last_login` timestamp NULL DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `full_name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `department` text DEFAULT NULL,
+  `role` enum('administrator','trainer','trainee','applicant','employee') NOT NULL,
+  `status` enum('active','inactive') DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `last_login` timestamp NULL DEFAULT NULL,
+  `position_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `full_name`, `email`, `phone`, `address`, `department`, `role`, `status`, `created_at`, `last_login`) VALUES
-(1, 'admin', '$2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO', 'Admin Admin', 'admin@gmail.com', NULL, NULL, 'Management', 'administrator', 'active', '2025-03-09 13:16:01', '2025-04-04 20:09:43'),
-(2, 'trainer', '$2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK', 'Trainer Trainers', 'trainer@gmail.com', NULL, NULL, 'Human Resources', 'trainer', 'active', '2025-03-09 13:39:22', '2025-04-04 19:51:18'),
-(3, 'trainee', '$2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.', 'Trainee Trainee', 'trainee@gmail.com', NULL, NULL, 'Operations', 'trainee', 'active', '2025-03-09 13:38:54', '2025-04-04 19:51:03'),
-(4, 'applicant', '$2y$10$TONg2cTG/RZkaPi/PjD1hOx0xCb6crYoJZNrO1rvH7qFxUpWVqLhi', 'Applicant Applicant', 'applicant@gmail.com', NULL, NULL, 'Operations', 'applicant', 'active', '2025-03-09 13:15:17', '2025-04-04 00:01:27'),
-(5, 'admin1', '$2y$10$5PuQqTMqIwxi7Ol1Nw48huWuPgmzMuCqJ7usq4ezYzBSq31W68swG', 'admin1 admin1', 'admin1@gmail.com', NULL, NULL, NULL, 'administrator', 'active', '2025-03-14 15:17:21', '2025-03-18 03:06:38'),
-(8, 'applicant2', '$2y$10$rvxU.uX6yUR90npUGrH3q.hObW2FiKXVFs2vcMeKD0kSxEzulFw4K', 'applicant2 applicant2', 'applicant2@gmail.com', NULL, NULL, 'Accounting and Finance', 'applicant', 'active', '2025-03-18 02:24:08', '2025-03-26 07:24:35'),
-(9, 'applicant1', '$2y$10$iZawKoM2ITue2Og2xD8D9eTrSc3P/gLpnFzV.eV1k/TaviUu1Rl8u', 'applicant1 applicant1', 'applicant1@gmail.com', NULL, NULL, 'Compliance and Strategic Support', 'applicant', 'active', '2025-03-18 02:24:46', '2025-03-30 09:44:42'),
-(10, 'trainee1', '$2y$10$oBbcFO56ADyYY94I6pxeLO/sz9JfW2cDWn3EdUy7bhxRDjfs63gZ2', 'trainee1', 'trainee1@gmail.com', NULL, NULL, 'Client Development and Services', 'trainee', 'active', '2025-03-18 03:07:04', '2025-04-03 04:56:02'),
-(11, 'employee', '$2y$10$lct7rJQrUSse7C/876vGp.asPqskev0mSlL/wZLUlklXE0x94GVIa', 'employee employee', 'employee@gmail.com', NULL, NULL, NULL, 'employee', 'active', '2025-03-26 08:50:16', '2025-03-30 10:15:04'),
-(12, 'APP_welJp', '$2y$10$1Nfl3LP29dBOtQ2tCBFuIeKlEefn2NAkqBRg/q/4Tm/08sz5tetjq', 'applicantcode', 'applicantcode@gmail.com', NULL, NULL, NULL, 'applicant', 'active', '2025-03-30 01:12:44', '2025-03-30 02:25:15'),
-(13, 'applicant3', '$2y$10$SJE3oGV9UxII07WeAiWTI.gBF5qsa8cQvhcXCrjOLHERcdQhfDbgK', 'applicant3 applicant3', 'jethroyacalap@gmail.com', NULL, NULL, NULL, 'applicant', 'active', '2025-03-30 09:53:54', '2025-04-01 01:05:47'),
-(14, 'bago', '$2y$10$H7OVy5AMln.4s.EipQC/n.E41ENXLiGx9EgZLYivmObqa7QE1e4MW', 'bago bago', 'bago@gmail.com', NULL, NULL, NULL, 'trainer', 'active', '2025-04-04 09:45:57', '2025-04-04 19:54:30'),
-(15, 'student', '$2y$10$BmG1H6lZrsd13o2tL7QTxOYA77X/GfcgvUjYKFpica5Dd.ZUYn92e', 'student student', 'student@gmail.com', NULL, NULL, NULL, 'trainee', 'active', '2025-04-04 09:46:35', '2025-04-04 19:55:23');
+INSERT INTO `users` (`id`, `username`, `password`, `full_name`, `email`, `phone`, `address`, `department`, `role`, `status`, `created_at`, `last_login`, `position_id`) VALUES
+(1, 'admin', '$2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO', 'Admin Admin', 'admin@gmail.com', NULL, NULL, 'Management', 'administrator', 'active', '2025-03-09 13:16:01', '2025-05-07 01:13:46', 1),
+(2, 'trainer', '$2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK', 'Trainer Trainers', 'trainer@gmail.com', NULL, NULL, 'Human Resources', 'trainer', 'active', '2025-03-09 13:39:22', '2025-05-07 01:13:59', 5),
+(3, 'trainee', '$2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.', 'Trainee Trainee', 'trainee@gmail.com', NULL, NULL, 'Operations', 'trainee', 'active', '2025-03-09 13:38:54', '2025-04-04 19:51:03', 8),
+(4, 'applicant', '$2y$10$TONg2cTG/RZkaPi/PjD1hOx0xCb6crYoJZNrO1rvH7qFxUpWVqLhi', 'Applicant Applicant', 'applicant@gmail.com', NULL, NULL, 'Operations', 'applicant', 'active', '2025-03-09 13:15:17', '2025-04-18 03:20:53', 8),
+(5, 'admin1', '$2y$10$5PuQqTMqIwxi7Ol1Nw48huWuPgmzMuCqJ7usq4ezYzBSq31W68swG', 'admin1 admin1', 'admin1@gmail.com', NULL, NULL, NULL, 'administrator', 'active', '2025-03-14 15:17:21', '2025-03-18 03:06:38', NULL),
+(8, 'applicant2', '$2y$10$rvxU.uX6yUR90npUGrH3q.hObW2FiKXVFs2vcMeKD0kSxEzulFw4K', 'applicant2 applicant2', 'applicant2@gmail.com', NULL, NULL, 'Accounting and Finance', 'applicant', 'active', '2025-03-18 02:24:08', '2025-03-26 07:24:35', NULL),
+(9, 'applicant1', '$2y$10$iZawKoM2ITue2Og2xD8D9eTrSc3P/gLpnFzV.eV1k/TaviUu1Rl8u', 'applicant1 applicant1', 'applicant1@gmail.com', NULL, NULL, 'Compliance and Strategic Support', 'applicant', 'active', '2025-03-18 02:24:46', '2025-03-30 09:44:42', 13),
+(10, 'trainee1', '$2y$10$oBbcFO56ADyYY94I6pxeLO/sz9JfW2cDWn3EdUy7bhxRDjfs63gZ2', 'trainee1', 'trainee1@gmail.com', NULL, NULL, 'Client Development and Services', 'trainee', 'active', '2025-03-18 03:07:04', '2025-04-03 04:56:02', 8),
+(11, 'employee', '$2y$10$lct7rJQrUSse7C/876vGp.asPqskev0mSlL/wZLUlklXE0x94GVIa', 'employee employee', 'employee@gmail.com', NULL, NULL, NULL, 'employee', 'active', '2025-03-26 08:50:16', '2025-03-30 10:15:04', NULL),
+(12, 'APP_welJp', '$2y$10$1Nfl3LP29dBOtQ2tCBFuIeKlEefn2NAkqBRg/q/4Tm/08sz5tetjq', 'applicantcode', 'applicantcode@gmail.com', NULL, NULL, NULL, 'applicant', 'active', '2025-03-30 01:12:44', '2025-03-30 02:25:15', NULL),
+(13, 'applicant3', '$2y$10$SJE3oGV9UxII07WeAiWTI.gBF5qsa8cQvhcXCrjOLHERcdQhfDbgK', 'applicant3 applicant3', 'jethroyacalap@gmail.com', NULL, NULL, NULL, 'applicant', 'active', '2025-03-30 09:53:54', '2025-04-01 01:05:47', 21),
+(14, 'bago', '$2y$10$H7OVy5AMln.4s.EipQC/n.E41ENXLiGx9EgZLYivmObqa7QE1e4MW', 'bago bago', 'bago@gmail.com', NULL, NULL, NULL, 'trainer', 'active', '2025-04-04 09:45:57', '2025-04-07 09:05:53', NULL),
+(15, 'student', '$2y$10$BmG1H6lZrsd13o2tL7QTxOYA77X/GfcgvUjYKFpica5Dd.ZUYn92e', 'student student', 'student@gmail.com', NULL, NULL, NULL, 'trainee', 'active', '2025-04-04 09:46:35', '2025-04-04 23:08:16', 8),
+(16, 'ttryko', '$2y$10$lcTtPieE38UA92o8R81gpOSC/TRDHvT16xWP.C26pRb/DDWdVhsoC', 'tryko tryko', 'tryko@gmail.com', NULL, NULL, NULL, 'applicant', 'active', '2025-04-18 11:23:29', '2025-04-18 11:23:45', NULL),
+(17, 'aadan', '$2y$10$.G9RmLqw4m5cmYtDSi5kEup6pGxRS.toir37bJIYkDgq.GjqSnTpq', 'adan adan', 'adan@gmail.com', NULL, NULL, NULL, 'applicant', 'active', '2025-04-18 23:14:52', '2025-04-18 23:16:25', NULL),
+(18, 'ggege', '$2y$10$AJPfsKjvMgkTZHEIN6ObFOgrL0BGasqgv7HlAIVa83MW2mIaaD8lm', 'gege gege', 'gege@gmail.com', NULL, NULL, NULL, 'applicant', 'active', '2025-04-18 23:23:09', '2025-04-18 23:31:44', NULL),
+(19, 'rresume', '$2y$10$iT/bbssHd8Wbkn.9KC4qM.tHJMVe7kfHaUk7m4tkBBLH6fi3f/THm', 'resume resume', 'resume@gmail.com', NULL, NULL, NULL, 'applicant', 'active', '2025-04-19 15:27:42', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -949,11 +1097,11 @@ INSERT INTO `users` (`id`, `username`, `password`, `full_name`, `email`, `phone`
 --
 
 CREATE TABLE `user_activity` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`activity_type` enum('login','logout','attendance','profile_update') NOT NULL DEFAULT 'login',
-`activity_time` timestamp NOT NULL DEFAULT current_timestamp(),
-`details` text DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `activity_type` enum('login','logout','attendance','profile_update') NOT NULL DEFAULT 'login',
+  `activity_time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `details` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -1100,12 +1248,12 @@ INSERT INTO `user_activity` (`id`, `user_id`, `activity_type`, `activity_time`, 
 --
 
 CREATE TABLE `user_education` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`degree` varchar(100) NOT NULL,
-`institution` varchar(100) NOT NULL,
-`graduation_year` int(4) NOT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `degree` varchar(100) NOT NULL,
+  `institution` varchar(100) NOT NULL,
+  `graduation_year` int(4) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1115,13 +1263,13 @@ CREATE TABLE `user_education` (
 --
 
 CREATE TABLE `user_experience` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`position` varchar(100) NOT NULL,
-`company` varchar(100) NOT NULL,
-`start_date` date NOT NULL,
-`end_date` date DEFAULT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `position` varchar(100) NOT NULL,
+  `company` varchar(100) NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1131,11 +1279,11 @@ CREATE TABLE `user_experience` (
 --
 
 CREATE TABLE `user_resumes` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`file_path` varchar(255) NOT NULL,
-`original_name` varchar(255) NOT NULL,
-`uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `original_name` varchar(255) NOT NULL,
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -1152,10 +1300,10 @@ INSERT INTO `user_resumes` (`id`, `user_id`, `file_path`, `original_name`, `uplo
 --
 
 CREATE TABLE `user_skills` (
-`id` int(11) NOT NULL,
-`user_id` int(11) NOT NULL,
-`skill` varchar(100) NOT NULL,
-`created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `skill` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1175,328 +1323,373 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- Indexes for table `access_codes`
 --
 ALTER TABLE `access_codes`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `unique_user_code` (`user_id`,`code`),
-ADD KEY `idx_code` (`code`),
-ADD KEY `fk_access_codes_creator` (`created_by`),
-ADD KEY `idx_access_code` (`code`),
-ADD KEY `idx_expiration` (`expires_at`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_user_code` (`user_id`,`code`),
+  ADD KEY `idx_code` (`code`),
+  ADD KEY `fk_access_codes_creator` (`created_by`),
+  ADD KEY `idx_access_code` (`code`),
+  ADD KEY `idx_expiration` (`expires_at`);
 
 --
 -- Indexes for table `applicant_notes`
 --
 ALTER TABLE `applicant_notes`
-ADD PRIMARY KEY (`id`),
-ADD KEY `applicant_id` (`applicant_id`),
-ADD KEY `created_by` (`created_by`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `applicant_id` (`applicant_id`),
+  ADD KEY `created_by` (`created_by`);
 
 --
 -- Indexes for table `applicant_pools`
 --
 ALTER TABLE `applicant_pools`
-ADD PRIMARY KEY (`id`),
-ADD KEY `created_by` (`created_by`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `created_by` (`created_by`);
 
 --
 -- Indexes for table `applicant_pool_assignments`
 --
 ALTER TABLE `applicant_pool_assignments`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `application_pool` (`application_id`,`pool_id`),
-ADD KEY `pool_id` (`pool_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `application_pool` (`application_id`,`pool_id`),
+  ADD KEY `pool_id` (`pool_id`);
 
 --
 -- Indexes for table `applicant_pool_positions`
 --
 ALTER TABLE `applicant_pool_positions`
-ADD PRIMARY KEY (`id`),
-ADD KEY `pool_id` (`pool_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `pool_id` (`pool_id`);
 
 --
 -- Indexes for table `applicant_profiles`
 --
 ALTER TABLE `applicant_profiles`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `applications`
 --
 ALTER TABLE `applications`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `user_pool` (`user_id`,`pool_id`),
-ADD KEY `pool_id` (`pool_id`),
-ADD KEY `fk_applications_document_id` (`document_id`),
-ADD KEY `idx_position_id` (`position_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_pool` (`user_id`,`pool_id`),
+  ADD KEY `pool_id` (`pool_id`),
+  ADD KEY `fk_applications_document_id` (`document_id`),
+  ADD KEY `idx_position_id` (`position_id`);
+
+--
+-- Indexes for table `application_notes`
+--
+ALTER TABLE `application_notes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `application_id` (`application_id`);
 
 --
 -- Indexes for table `backups`
 --
 ALTER TABLE `backups`
-ADD PRIMARY KEY (`id`),
-ADD KEY `created_by` (`created_by`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `created_by` (`created_by`);
 
 --
 -- Indexes for table `grade_configuration`
 --
 ALTER TABLE `grade_configuration`
-ADD PRIMARY KEY (`id`),
-ADD KEY `created_by` (`created_by`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `created_by` (`created_by`);
 
 --
 -- Indexes for table `job_applications`
 --
 ALTER TABLE `job_applications`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `user_position_unique` (`user_id`,`position_id`),
-ADD KEY `position_id` (`position_id`),
-ADD KEY `document_id` (`document_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_position_unique` (`user_id`,`position_id`),
+  ADD KEY `position_id` (`position_id`),
+  ADD KEY `document_id` (`document_id`);
 
 --
 -- Indexes for table `job_positions`
 --
 ALTER TABLE `job_positions`
-ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `job_requirements`
 --
 ALTER TABLE `job_requirements`
-ADD PRIMARY KEY (`id`),
-ADD KEY `position_id` (`position_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `position_id` (`position_id`);
 
 --
 -- Indexes for table `job_responsibilities`
 --
 ALTER TABLE `job_responsibilities`
-ADD PRIMARY KEY (`id`),
-ADD KEY `position_id` (`position_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `position_id` (`position_id`);
 
 --
 -- Indexes for table `milestones`
 --
 ALTER TABLE `milestones`
-ADD PRIMARY KEY (`id`),
-ADD KEY `program_id` (`program_id`),
-ADD KEY `created_by` (`created_by`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `program_id` (`program_id`),
+  ADD KEY `created_by` (`created_by`);
 
 --
 -- Indexes for table `milestone_progress`
 --
 ALTER TABLE `milestone_progress`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `milestone_user` (`milestone_id`,`user_id`),
-ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `milestone_user` (`milestone_id`,`user_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
-ADD PRIMARY KEY (`id`),
-ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `performance_incidents`
 --
 ALTER TABLE `performance_incidents`
-ADD PRIMARY KEY (`id`),
-ADD KEY `user_id` (`user_id`),
-ADD KEY `reported_by` (`reported_by`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `reported_by` (`reported_by`);
 
 --
 -- Indexes for table `permissions`
 --
 ALTER TABLE `permissions`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `role_permission` (`role`,`permission`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `role_permission` (`role`,`permission`);
+
+--
+-- Indexes for table `pool_enrollments`
+--
+ALTER TABLE `pool_enrollments`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_pool` (`user_id`,`pool_id`),
+  ADD KEY `fk_pe_pool` (`pool_id`),
+  ADD KEY `fk_pe_position` (`position_id`),
+  ADD KEY `fk_pe_program` (`program_id`);
 
 --
 -- Indexes for table `position_program_relation`
 --
 ALTER TABLE `position_program_relation`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `position_program` (`position_id`,`program_id`),
-ADD KEY `program_id` (`program_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `position_program` (`position_id`,`program_id`),
+  ADD KEY `program_id` (`program_id`);
+
+--
+-- Indexes for table `position_quiz_relation`
+--
+ALTER TABLE `position_quiz_relation`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `position_quiz` (`position_id`,`quiz_id`),
+  ADD KEY `quiz_id` (`quiz_id`);
 
 --
 -- Indexes for table `practical_exams`
 --
 ALTER TABLE `practical_exams`
-ADD PRIMARY KEY (`id`),
-ADD KEY `program_id` (`program_id`),
-ADD KEY `created_by` (`created_by`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `program_id` (`program_id`),
+  ADD KEY `created_by` (`created_by`);
 
 --
 -- Indexes for table `practical_exam_attempts`
 --
 ALTER TABLE `practical_exam_attempts`
-ADD PRIMARY KEY (`id`),
-ADD KEY `user_id` (`user_id`),
-ADD KEY `exam_id` (`exam_id`),
-ADD KEY `graded_by` (`graded_by`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `exam_id` (`exam_id`),
+  ADD KEY `graded_by` (`graded_by`);
 
 --
 -- Indexes for table `programs`
 --
 ALTER TABLE `programs`
-ADD PRIMARY KEY (`id`),
-ADD KEY `created_by` (`created_by`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `created_by` (`created_by`),
+  ADD KEY `idx_created_by` (`created_by`);
 
 --
 -- Indexes for table `program_enrollments`
 --
 ALTER TABLE `program_enrollments`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `user_program` (`user_id`,`program_id`),
-ADD KEY `program_id` (`program_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_program` (`user_id`,`program_id`),
+  ADD KEY `program_id` (`program_id`),
+  ADD KEY `idx_program_id` (`program_id`);
+
+--
+-- Indexes for table `questions`
+--
+ALTER TABLE `questions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `quiz_id` (`quiz_id`);
 
 --
 -- Indexes for table `quizzes`
 --
 ALTER TABLE `quizzes`
-ADD PRIMARY KEY (`id`),
-ADD KEY `program_id` (`program_id`),
-ADD KEY `created_by` (`created_by`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `program_id` (`program_id`),
+  ADD KEY `created_by` (`created_by`);
 
 --
 -- Indexes for table `quiz_attempts`
 --
 ALTER TABLE `quiz_attempts`
-ADD PRIMARY KEY (`id`),
-ADD KEY `user_id` (`user_id`),
-ADD KEY `quiz_id` (`quiz_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `quiz_id` (`quiz_id`);
 
 --
 -- Indexes for table `quiz_attempt_answers`
 --
 ALTER TABLE `quiz_attempt_answers`
-ADD PRIMARY KEY (`id`),
-ADD KEY `attempt_id` (`attempt_id`),
-ADD KEY `question_id` (`question_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `attempt_id` (`attempt_id`),
+  ADD KEY `question_id` (`question_id`);
+
+--
+-- Indexes for table `quiz_enrollments`
+--
+ALTER TABLE `quiz_enrollments`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_quiz` (`user_id`,`quiz_id`),
+  ADD KEY `quiz_id` (`quiz_id`),
+  ADD KEY `program_id` (`program_id`);
 
 --
 -- Indexes for table `quiz_feedback_templates`
 --
 ALTER TABLE `quiz_feedback_templates`
-ADD PRIMARY KEY (`id`),
-ADD KEY `quiz_id` (`quiz_id`);
-
---
--- Indexes for table `quiz_questions`
---
-ALTER TABLE `quiz_questions`
-ADD PRIMARY KEY (`id`),
-ADD KEY `quiz_id` (`quiz_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `quiz_id` (`quiz_id`);
 
 --
 -- Indexes for table `quiz_question_answer_options`
 --
 ALTER TABLE `quiz_question_answer_options`
-ADD PRIMARY KEY (`id`),
-ADD KEY `question_id` (`question_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `question_id` (`question_id`);
 
 --
 -- Indexes for table `quiz_question_matching_pairs`
 --
 ALTER TABLE `quiz_question_matching_pairs`
-ADD PRIMARY KEY (`id`),
-ADD KEY `question_id` (`question_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `question_id` (`question_id`);
 
 --
 -- Indexes for table `quiz_question_metadata`
 --
 ALTER TABLE `quiz_question_metadata`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `question_meta` (`question_id`,`meta_key`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `question_meta` (`question_id`,`meta_key`);
 
 --
 -- Indexes for table `quiz_question_weights`
 --
 ALTER TABLE `quiz_question_weights`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `quiz_question` (`quiz_id`,`question_id`),
-ADD KEY `question_id` (`question_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `quiz_question` (`quiz_id`,`question_id`),
+  ADD KEY `question_id` (`question_id`);
+
+--
+-- Indexes for table `quiz_results`
+--
+ALTER TABLE `quiz_results`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `quiz_id` (`quiz_id`);
 
 --
 -- Indexes for table `records`
 --
 ALTER TABLE `records`
-ADD PRIMARY KEY (`id`),
-ADD KEY `user_id` (`user_id`),
-ADD KEY `fk_records_application_id` (`application_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `fk_records_application_id` (`application_id`);
 
 --
 -- Indexes for table `trainee_pools`
 --
 ALTER TABLE `trainee_pools`
-ADD PRIMARY KEY (`id`),
-ADD KEY `program_id` (`program_id`),
-ADD KEY `created_by` (`created_by`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `program_id` (`program_id`),
+  ADD KEY `created_by` (`created_by`);
 
 --
 -- Indexes for table `trainee_pools_trainees`
 --
 ALTER TABLE `trainee_pools_trainees`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `pool_trainee` (`pool_id`,`trainee_id`),
-ADD KEY `trainee_id` (`trainee_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `pool_trainee` (`pool_id`,`trainee_id`),
+  ADD KEY `trainee_id` (`trainee_id`);
 
 --
 -- Indexes for table `trainer_profiles`
 --
 ALTER TABLE `trainer_profiles`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-ADD PRIMARY KEY (`id`),
-ADD UNIQUE KEY `username` (`username`),
-ADD UNIQUE KEY `email` (`email`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `idx_position_id` (`position_id`);
 
 --
 -- Indexes for table `user_activity`
 --
 ALTER TABLE `user_activity`
-ADD PRIMARY KEY (`id`),
-ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `user_education`
 --
 ALTER TABLE `user_education`
-ADD PRIMARY KEY (`id`),
-ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `user_experience`
 --
 ALTER TABLE `user_experience`
-ADD PRIMARY KEY (`id`),
-ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `user_resumes`
 --
 ALTER TABLE `user_resumes`
-ADD PRIMARY KEY (`id`),
-ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `user_skills`
 --
 ALTER TABLE `user_skills`
-ADD PRIMARY KEY (`id`),
-ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -1506,259 +1699,289 @@ ADD KEY `user_id` (`user_id`);
 -- AUTO_INCREMENT for table `access_codes`
 --
 ALTER TABLE `access_codes`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `applicant_notes`
 --
 ALTER TABLE `applicant_notes`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `applicant_pools`
 --
 ALTER TABLE `applicant_pools`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `applicant_pool_assignments`
 --
 ALTER TABLE `applicant_pool_assignments`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `applicant_pool_positions`
 --
 ALTER TABLE `applicant_pool_positions`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `applicant_profiles`
 --
 ALTER TABLE `applicant_profiles`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `applications`
 --
 ALTER TABLE `applications`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `application_notes`
+--
+ALTER TABLE `application_notes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `backups`
 --
 ALTER TABLE `backups`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `grade_configuration`
 --
 ALTER TABLE `grade_configuration`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `job_applications`
 --
 ALTER TABLE `job_applications`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `job_positions`
 --
 ALTER TABLE `job_positions`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `job_requirements`
 --
 ALTER TABLE `job_requirements`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `job_responsibilities`
 --
 ALTER TABLE `job_responsibilities`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `milestones`
 --
 ALTER TABLE `milestones`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `milestone_progress`
 --
 ALTER TABLE `milestone_progress`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `performance_incidents`
 --
 ALTER TABLE `performance_incidents`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `pool_enrollments`
+--
+ALTER TABLE `pool_enrollments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `position_program_relation`
 --
 ALTER TABLE `position_program_relation`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `position_quiz_relation`
+--
+ALTER TABLE `position_quiz_relation`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `practical_exams`
 --
 ALTER TABLE `practical_exams`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `practical_exam_attempts`
 --
 ALTER TABLE `practical_exam_attempts`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `programs`
 --
 ALTER TABLE `programs`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `program_enrollments`
 --
 ALTER TABLE `program_enrollments`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `questions`
+--
+ALTER TABLE `questions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `quizzes`
 --
 ALTER TABLE `quizzes`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `quiz_attempts`
 --
 ALTER TABLE `quiz_attempts`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `quiz_attempt_answers`
 --
 ALTER TABLE `quiz_attempt_answers`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
+-- AUTO_INCREMENT for table `quiz_enrollments`
+--
+ALTER TABLE `quiz_enrollments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `quiz_feedback_templates`
 --
 ALTER TABLE `quiz_feedback_templates`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `quiz_questions`
---
-ALTER TABLE `quiz_questions`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `quiz_question_answer_options`
 --
 ALTER TABLE `quiz_question_answer_options`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `quiz_question_matching_pairs`
 --
 ALTER TABLE `quiz_question_matching_pairs`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `quiz_question_metadata`
 --
 ALTER TABLE `quiz_question_metadata`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `quiz_question_weights`
 --
 ALTER TABLE `quiz_question_weights`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `quiz_results`
+--
+ALTER TABLE `quiz_results`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `records`
 --
 ALTER TABLE `records`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `trainee_pools`
 --
 ALTER TABLE `trainee_pools`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `trainee_pools_trainees`
 --
 ALTER TABLE `trainee_pools_trainees`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `trainer_profiles`
 --
 ALTER TABLE `trainer_profiles`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `user_activity`
 --
 ALTER TABLE `user_activity`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=132;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=132;
 
 --
 -- AUTO_INCREMENT for table `user_education`
 --
 ALTER TABLE `user_education`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `user_experience`
 --
 ALTER TABLE `user_experience`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `user_resumes`
 --
 ALTER TABLE `user_resumes`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user_skills`
 --
 ALTER TABLE `user_skills`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -1768,264 +1991,307 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 -- Constraints for table `access_codes`
 --
 ALTER TABLE `access_codes`
-ADD CONSTRAINT `fk_access_codes_creator` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-ADD CONSTRAINT `fk_access_codes_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_access_codes_creator` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_access_codes_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `applicant_notes`
 --
 ALTER TABLE `applicant_notes`
-ADD CONSTRAINT `applicant_notes_ibfk_1` FOREIGN KEY (`applicant_id`) REFERENCES `applicant_pool_assignments` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `applicant_notes_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `applicant_notes_ibfk_1` FOREIGN KEY (`applicant_id`) REFERENCES `applicant_pool_assignments` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `applicant_notes_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `applicant_pools`
 --
 ALTER TABLE `applicant_pools`
-ADD CONSTRAINT `applicant_pools_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `applicant_pools_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `applicant_pool_assignments`
 --
 ALTER TABLE `applicant_pool_assignments`
-ADD CONSTRAINT `applicant_pool_assignments_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `applications` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `applicant_pool_assignments_ibfk_2` FOREIGN KEY (`pool_id`) REFERENCES `applicant_pools` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `applicant_pool_assignments_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `applications` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `applicant_pool_assignments_ibfk_2` FOREIGN KEY (`pool_id`) REFERENCES `applicant_pools` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `applicant_pool_positions`
 --
 ALTER TABLE `applicant_pool_positions`
-ADD CONSTRAINT `fk_pool_positions_pool` FOREIGN KEY (`pool_id`) REFERENCES `applicant_pools` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_pool_positions_pool` FOREIGN KEY (`pool_id`) REFERENCES `applicant_pools` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `applicant_profiles`
 --
 ALTER TABLE `applicant_profiles`
-ADD CONSTRAINT `applicant_profiles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `applicant_profiles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `applications`
 --
 ALTER TABLE `applications`
-ADD CONSTRAINT `applications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `applications_ibfk_2` FOREIGN KEY (`pool_id`) REFERENCES `applicant_pools` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `fk_applications_document_id` FOREIGN KEY (`document_id`) REFERENCES `user_resumes` (`id`) ON DELETE SET NULL,
-ADD CONSTRAINT `fk_applications_position_id` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `applications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `applications_ibfk_2` FOREIGN KEY (`pool_id`) REFERENCES `applicant_pools` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_applications_document_id` FOREIGN KEY (`document_id`) REFERENCES `user_resumes` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_applications_position_id` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `application_notes`
+--
+ALTER TABLE `application_notes`
+  ADD CONSTRAINT `application_notes_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `job_applications` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `backups`
 --
 ALTER TABLE `backups`
-ADD CONSTRAINT `backups_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `backups_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `grade_configuration`
 --
 ALTER TABLE `grade_configuration`
-ADD CONSTRAINT `grade_configuration_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `grade_configuration_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `job_applications`
 --
 ALTER TABLE `job_applications`
-ADD CONSTRAINT `job_applications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `job_applications_ibfk_2` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `job_applications_ibfk_3` FOREIGN KEY (`document_id`) REFERENCES `user_resumes` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `job_applications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `job_applications_ibfk_2` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `job_applications_ibfk_3` FOREIGN KEY (`document_id`) REFERENCES `user_resumes` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `job_requirements`
 --
 ALTER TABLE `job_requirements`
-ADD CONSTRAINT `job_requirements_ibfk_1` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `job_requirements_ibfk_1` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `job_responsibilities`
 --
 ALTER TABLE `job_responsibilities`
-ADD CONSTRAINT `job_responsibilities_ibfk_1` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `job_responsibilities_ibfk_1` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `milestones`
 --
 ALTER TABLE `milestones`
-ADD CONSTRAINT `milestones_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `milestones_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `milestones_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `milestones_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `milestone_progress`
 --
 ALTER TABLE `milestone_progress`
-ADD CONSTRAINT `milestone_progress_ibfk_1` FOREIGN KEY (`milestone_id`) REFERENCES `milestones` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `milestone_progress_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `milestone_progress_ibfk_1` FOREIGN KEY (`milestone_id`) REFERENCES `milestones` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `milestone_progress_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `notifications`
 --
 ALTER TABLE `notifications`
-ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
-ADD CONSTRAINT `password_reset_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `password_reset_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `performance_incidents`
 --
 ALTER TABLE `performance_incidents`
-ADD CONSTRAINT `performance_incidents_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `performance_incidents_ibfk_2` FOREIGN KEY (`reported_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `performance_incidents_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `performance_incidents_ibfk_2` FOREIGN KEY (`reported_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `pool_enrollments`
+--
+ALTER TABLE `pool_enrollments`
+  ADD CONSTRAINT `fk_pe_pool` FOREIGN KEY (`pool_id`) REFERENCES `trainee_pools` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_pe_position` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_pe_program` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_pe_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `position_program_relation`
 --
 ALTER TABLE `position_program_relation`
-ADD CONSTRAINT `position_program_relation_ibfk_1` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `position_program_relation_ibfk_2` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `position_program_relation_ibfk_1` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `position_program_relation_ibfk_2` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `position_quiz_relation`
+--
+ALTER TABLE `position_quiz_relation`
+  ADD CONSTRAINT `position_quiz_relation_ibfk_1` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `position_quiz_relation_ibfk_2` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `practical_exams`
 --
 ALTER TABLE `practical_exams`
-ADD CONSTRAINT `practical_exams_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `practical_exams_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `practical_exams_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `practical_exams_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `practical_exam_attempts`
 --
 ALTER TABLE `practical_exam_attempts`
-ADD CONSTRAINT `practical_exam_attempts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `practical_exam_attempts_ibfk_2` FOREIGN KEY (`exam_id`) REFERENCES `practical_exams` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `practical_exam_attempts_ibfk_3` FOREIGN KEY (`graded_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `practical_exam_attempts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `practical_exam_attempts_ibfk_2` FOREIGN KEY (`exam_id`) REFERENCES `practical_exams` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `practical_exam_attempts_ibfk_3` FOREIGN KEY (`graded_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `programs`
 --
 ALTER TABLE `programs`
-ADD CONSTRAINT `programs_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `programs_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `program_enrollments`
 --
 ALTER TABLE `program_enrollments`
-ADD CONSTRAINT `program_enrollments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `program_enrollments_ibfk_2` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `program_enrollments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `program_enrollments_ibfk_2` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `questions`
+--
+ALTER TABLE `questions`
+  ADD CONSTRAINT `questions_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `quizzes`
 --
 ALTER TABLE `quizzes`
-ADD CONSTRAINT `quizzes_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `quizzes_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `quizzes_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `quizzes_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `quiz_attempts`
 --
 ALTER TABLE `quiz_attempts`
-ADD CONSTRAINT `quiz_attempts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `quiz_attempts_ibfk_2` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `quiz_attempts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `quiz_attempts_ibfk_2` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `quiz_attempt_answers`
 --
 ALTER TABLE `quiz_attempt_answers`
-ADD CONSTRAINT `quiz_attempt_answers_ibfk_1` FOREIGN KEY (`attempt_id`) REFERENCES `quiz_attempts` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `quiz_attempt_answers_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `quiz_questions` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `quiz_attempt_answers_ibfk_1` FOREIGN KEY (`attempt_id`) REFERENCES `quiz_attempts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `quiz_attempt_answers_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `quiz_enrollments`
+--
+ALTER TABLE `quiz_enrollments`
+  ADD CONSTRAINT `quiz_enrollments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `quiz_enrollments_ibfk_2` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `quiz_enrollments_ibfk_3` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `quiz_feedback_templates`
 --
 ALTER TABLE `quiz_feedback_templates`
-ADD CONSTRAINT `quiz_feedback_templates_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `quiz_questions`
---
-ALTER TABLE `quiz_questions`
-ADD CONSTRAINT `quiz_questions_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `quiz_feedback_templates_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `quiz_question_answer_options`
 --
 ALTER TABLE `quiz_question_answer_options`
-ADD CONSTRAINT `quiz_question_answer_options_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `quiz_questions` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `quiz_question_answer_options_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `quiz_question_matching_pairs`
 --
 ALTER TABLE `quiz_question_matching_pairs`
-ADD CONSTRAINT `quiz_question_matching_pairs_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `quiz_questions` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `quiz_question_matching_pairs_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `quiz_question_metadata`
 --
 ALTER TABLE `quiz_question_metadata`
-ADD CONSTRAINT `quiz_question_metadata_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `quiz_questions` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `quiz_question_metadata_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `quiz_question_weights`
 --
 ALTER TABLE `quiz_question_weights`
-ADD CONSTRAINT `quiz_question_weights_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `quiz_question_weights_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `quiz_questions` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `quiz_question_weights_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `quiz_question_weights_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `quiz_results`
+--
+ALTER TABLE `quiz_results`
+  ADD CONSTRAINT `fk_quiz_results_quiz_id` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_quiz_results_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `records`
 --
 ALTER TABLE `records`
-ADD CONSTRAINT `fk_records_application_id` FOREIGN KEY (`application_id`) REFERENCES `applications` (`id`) ON DELETE SET NULL,
-ADD CONSTRAINT `records_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `fk_records_application_id` FOREIGN KEY (`application_id`) REFERENCES `applications` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `records_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `trainee_pools`
 --
 ALTER TABLE `trainee_pools`
-ADD CONSTRAINT `fk_trainee_pools_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-ADD CONSTRAINT `fk_trainee_pools_program` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `fk_trainee_pools_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_trainee_pools_program` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `trainee_pools_trainees`
 --
 ALTER TABLE `trainee_pools_trainees`
-ADD CONSTRAINT `fk_tpt_pool` FOREIGN KEY (`pool_id`) REFERENCES `trainee_pools` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `fk_tpt_trainee` FOREIGN KEY (`trainee_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_tpt_pool` FOREIGN KEY (`pool_id`) REFERENCES `trainee_pools` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_tpt_trainee` FOREIGN KEY (`trainee_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `trainer_profiles`
 --
 ALTER TABLE `trainer_profiles`
-ADD CONSTRAINT `fk_trainer_profiles_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_trainer_profiles_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_users_position` FOREIGN KEY (`position_id`) REFERENCES `job_positions` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `user_activity`
 --
 ALTER TABLE `user_activity`
-ADD CONSTRAINT `user_activity_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `user_activity_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `user_education`
 --
 ALTER TABLE `user_education`
-ADD CONSTRAINT `user_education_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `user_education_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `user_experience`
 --
 ALTER TABLE `user_experience`
-ADD CONSTRAINT `user_experience_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `user_experience_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `user_resumes`
 --
 ALTER TABLE `user_resumes`
-ADD CONSTRAINT `user_resumes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `user_resumes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `user_skills`
 --
 ALTER TABLE `user_skills`
-ADD CONSTRAINT `user_skills_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `user_skills_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

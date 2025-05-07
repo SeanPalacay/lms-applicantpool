@@ -26,14 +26,48 @@ const TrainerDashboard = () => {
     createdQuizzes: [],
     createdMilestones: [],
     traineeProgress: [],
-    alerts: []
+    alerts: [],
+    leaderboardData: { 
+      byPosition: {
+        "8": [
+          { rank: 1, user_id: 15, full_name: "student student", batch_id: 1, program_name: "bago", score: 95.5, position_name: "Accounting Specialist", created_at: "2025-04-04T21:17:00Z" },
+          { rank: 2, user_id: 16, full_name: "trainee2", batch_id: 1, program_name: "finance", score: 88.0, position_name: "Accounting Specialist", created_at: "2025-03-15T10:00:00Z" }
+        ],
+        "9": [
+          { rank: 1, user_id: 17, full_name: "trainee1", batch_id: 2, program_name: "finance", score: 90.0, position_name: "Finance Department Head", created_at: "2025-02-10T09:00:00Z" }
+        ]
+      },
+      byBatch: {
+        "1": [
+          { rank: 1, user_id: 15, full_name: "student student", position_name: "Accounting Specialist", program_name: "bago", score: 95.5, created_at: "2025-04-04T21:17:00Z" },
+          { rank: 2, user_id: 16, full_name: "trainee2", position_name: "Accounting Specialist", program_name: "finance", score: 88.0, created_at: "2025-03-15T10:00:00Z" }
+        ],
+        "2": [
+          { rank: 1, user_id: 17, full_name: "trainee1", position_name: "Finance Department Head", program_name: "finance", score: 90.0, created_at: "2025-02-10T09:00:00Z" }
+        ]
+      }
+    }
   });
 
   const navigate = useNavigate();
 
   const transformApiDataToTrainerFormat = (apiData) => {
     console.log("Transforming API data to trainer format:", apiData);
-    if (apiData.createdPrograms) return apiData;
+
+    // Filter leaderboard data for the last 6 months (180 days)
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setDate(sixMonthsAgo.getDate() - 180);
+
+    const filterByDate = (data) => {
+      return Object.keys(data).reduce((acc, key) => {
+        acc[key] = data[key].filter(item => {
+          const itemDate = new Date(item.created_at || item.updated_at || new Date());
+          return itemDate >= sixMonthsAgo;
+        });
+        return acc;
+      }, {});
+    };
+
     const transformedData = {
       user: apiData.user || { full_name: 'Trainer' },
       createdPrograms: (apiData.enrollments || []).map(enrollment => ({
@@ -78,7 +112,11 @@ const TrainerDashboard = () => {
           actionLink: "/trainer/programs",
           actionText: "View Programs"
         }))
-      )
+      ),
+      leaderboardData: {
+        byPosition: filterByDate(apiData.leaderboard?.byPosition || dashboardData.leaderboardData.byPosition),
+        byBatch: filterByDate(apiData.leaderboard?.byBatch || dashboardData.leaderboardData.byBatch)
+      }
     };
     console.log("Transformed data:", transformedData);
     return transformedData;
@@ -124,6 +162,30 @@ const TrainerDashboard = () => {
   const formatPercentage = (value) => {
     if (value === null || value === undefined) return '0.00%';
     return parseFloat(value).toFixed(2) + '%';
+  };
+
+  // Leaderboard tab state
+  const [activePositionTab, setActivePositionTab] = useState('all');
+  const [activeBatchTab, setActiveBatchTab] = useState('all');
+
+  const getPositionTabs = () => {
+    return [
+      { value: 'all', label: 'All Positions' },
+      ...Object.keys(dashboardData.leaderboardData.byPosition).map(positionId => ({
+        value: positionId,
+        label: dashboardData.leaderboardData.byPosition[positionId][0]?.position_name || `Position ${positionId}`
+      }))
+    ];
+  };
+
+  const getBatchTabs = () => {
+    return [
+      { value: 'all', label: 'All Batches' },
+      ...Object.keys(dashboardData.leaderboardData.byBatch).map(batchId => ({
+        value: batchId,
+        label: `Batch ${batchId}`
+      }))
+    ];
   };
 
   if (loading) return <LoadingSpinner />;
@@ -205,52 +267,7 @@ const TrainerDashboard = () => {
           </div>
         </div>
 
-        {/* 2. Created Milestones */}
-        {/* <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-            <div style={{ color: '#1E88E5' }}><Calendar size={20} /></div>
-            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0 }}>Recent Milestones</h3>
-          </div>
-          <div style={{ display: 'grid', gap: '16px' }}>
-            {dashboardData.createdMilestones?.length > 0 ? (
-              dashboardData.createdMilestones.map((milestone, index) => (
-                <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: index < dashboardData.createdMilestones.length - 1 ? '1px solid #e2e8f0' : 'none' }}>
-                  <div>
-                    <h4 style={{ fontSize: '1rem', fontWeight: 500, margin: '0 0 4px 0' }}>{milestone.title || 'Untitled Milestone'}</h4>
-                    {milestone.program_title && (
-                      <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>{milestone.program_title}</p>
-                    )}
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '0.875rem', color: formatDueDate(milestone.due_date) === 'Due Today' ? '#e74c3c' : '#64748b', marginBottom: '4px' }}>
-                      {formatDueDate(milestone.due_date)}
-                    </div>
-                    <Link
-                      to={`/trainer/milestones/${milestone.id}`}
-                      style={{
-                        color: '#1E88E5',
-                        fontSize: '0.75rem',
-                        textDecoration: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        ':hover': { textDecoration: 'underline' }
-                      }}
-                    >
-                      Details <ChevronRight size={12} />
-                    </Link>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div style={{ textAlign: 'center', padding: '24px 0' }}>
-                <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>No milestones created yet.</p>
-              </div>
-            )}
-          </div>
-        </div> */}
-
-        {/* 3. Created Quizzes */}
+        {/* 2. Created Quizzes */}
         <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -302,7 +319,7 @@ const TrainerDashboard = () => {
           </div>
         </div>
 
-        {/* 4. Trainee Progress */}
+        {/* 3. Trainee Progress */}
         {dashboardData.traineeProgress?.length > 0 && (
           <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', padding: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
@@ -339,6 +356,196 @@ const TrainerDashboard = () => {
             </div>
           </div>
         )}
+
+        {/* 4. Leaderboard Section */}
+        <div style={{
+          backgroundColor: '#ffffff',
+          borderRadius: '12px',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
+          padding: '24px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ color: '#1E88E5' }}><PieChart size={20} /></div>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: 0 }}>Leaderboard (Last 6 Months)</h3>
+            </div>
+            <Link to="/trainer/leaderboard" style={{ color: '#1E88E5', fontSize: '0.875rem', textDecoration: 'none', ':hover': { textDecoration: 'underline' } }}>
+              View All
+            </Link>
+          </div>
+          {/* Position Tabs */}
+          <div style={{ marginBottom: '16px' }}>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>
+              By Position
+            </h4>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', borderBottom: '1px solid #e2e8f0' }}>
+              {getPositionTabs().map(tab => (
+                <button
+                  key={tab.value}
+                  onClick={() => setActivePositionTab(tab.value)}
+                  style={{
+                    padding: '8px 16px',
+                    border: 'none',
+                    borderBottom: activePositionTab === tab.value ? '2px solid #1E88E5' : 'none',
+                    background: 'none',
+                    color: activePositionTab === tab.value ? '#1E88E5' : '#64748b',
+                    fontSize: '0.875rem',
+                    fontWeight: activePositionTab === tab.value ? 600 : 400,
+                    cursor: 'pointer',
+                    outline: 'none'
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#E3F2FD', borderBottom: '1px solid #e2e8f0' }}>
+                    {['Rank', 'Trainee', 'Batch', 'Program', 'Score'].map((header, index) => (
+                      <th key={index} style={{
+                        padding: '12px',
+                        textAlign: 'left',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        color: '#1e293b'
+                      }}>
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {activePositionTab !== 'all' && dashboardData.leaderboardData.byPosition[activePositionTab] ? (
+                    dashboardData.leaderboardData.byPosition[activePositionTab].map((trainee, idx) => (
+                      <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.rank || idx + 1}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.full_name || 'Unknown'}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>Batch {trainee.batch_id || 'N/A'}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.program_name || 'N/A'}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.score ? trainee.score.toFixed(2) : 'N/A'}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    Object.values(dashboardData.leaderboardData.byPosition)
+                      .flat()
+                      .sort((a, b) => (a.rank || 0) - (b.rank || 0))
+                      .map((trainee, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.rank || idx + 1}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.full_name || 'Unknown'}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>Batch {trainee.batch_id || 'N/A'}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.program_name || 'N/A'}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.score ? trainee.score.toFixed(2) : 'N/A'}</td>
+                        </tr>
+                      ))
+                  )}
+                  {activePositionTab !== 'all' && (!dashboardData.leaderboardData.byPosition[activePositionTab] || dashboardData.leaderboardData.byPosition[activePositionTab].length === 0) && (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '12px', textAlign: 'center', color: '#64748b' }}>
+                        No trainees found for this position.
+                      </td>
+                    </tr>
+                  )}
+                  {activePositionTab === 'all' && Object.values(dashboardData.leaderboardData.byPosition).flat().length === 0 && (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '12px', textAlign: 'center', color: '#64748b' }}>
+                        No leaderboard data available for the last 6 months.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {/* Batch Tabs */}
+          <div style={{ marginBottom: '16px' }}>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b' }}>
+              By Batch
+            </h4>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', borderBottom: '1px solid #e2e8f0' }}>
+              {getBatchTabs().map(tab => (
+                <button
+                  key={tab.value}
+                  onClick={() => setActiveBatchTab(tab.value)}
+                  style={{
+                    padding: '8px 16px',
+                    border: 'none',
+                    borderBottom: activeBatchTab === tab.value ? '2px solid #1E88E5' : 'none',
+                    background: 'none',
+                    color: activeBatchTab === tab.value ? '#1E88E5' : '#64748b',
+                    fontSize: '0.875rem',
+                    fontWeight: activeBatchTab === tab.value ? 600 : 400,
+                    cursor: 'pointer',
+                    outline: 'none'
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#E3F2FD', borderBottom: '1px solid #e2e8f0' }}>
+                    {['Rank', 'Trainee', 'Position', 'Program', 'Score'].map((header, index) => (
+                      <th key={index} style={{
+                        padding: '12px',
+                        textAlign: 'left',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        color: '#1e293b'
+                      }}>
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {activeBatchTab !== 'all' && dashboardData.leaderboardData.byBatch[activeBatchTab] ? (
+                    dashboardData.leaderboardData.byBatch[activeBatchTab].map((trainee, idx) => (
+                      <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.rank || idx + 1}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.full_name || 'Unknown'}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.position_name || 'N/A'}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.program_name || 'N/A'}</td>
+                        <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.score ? trainee.score.toFixed(2) : 'N/A'}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    Object.values(dashboardData.leaderboardData.byBatch)
+                      .flat()
+                      .sort((a, b) => (a.rank || 0) - (b.rank || 0))
+                      .map((trainee, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.rank || idx + 1}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.full_name || 'Unknown'}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.position_name || 'N/A'}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.program_name || 'N/A'}</td>
+                          <td style={{ padding: '12px', fontSize: '0.875rem' }}>{trainee.score ? trainee.score.toFixed(2) : 'N/A'}</td>
+                        </tr>
+                      ))
+                  )}
+                  {activeBatchTab !== 'all' && (!dashboardData.leaderboardData.byBatch[activeBatchTab] || dashboardData.leaderboardData.byBatch[activeBatchTab].length === 0) && (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '12px', textAlign: 'center', color: '#64748b' }}>
+                        No trainees found for this batch.
+                      </td>
+                    </tr>
+                  )}
+                  {activeBatchTab === 'all' && Object.values(dashboardData.leaderboardData.byBatch).flat().length === 0 && (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '12px', textAlign: 'center', color: '#64748b' }}>
+                        No leaderboard data available for the last 6 months.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

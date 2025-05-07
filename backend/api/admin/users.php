@@ -82,11 +82,14 @@ try {
 function getAllUsers($pdo) {
     $query = "
         SELECT 
-            id, username, full_name, email, role, status, created_at, last_login
+            u.id, u.username, u.full_name, u.email, u.role, u.status, u.created_at, u.last_login,
+            u.position_id, jp.position_name AS position_name
         FROM 
-            users
+            users u
+        LEFT JOIN 
+            job_positions jp ON u.position_id = jp.id
         ORDER BY 
-            created_at DESC
+            u.created_at DESC
     ";
     
     $stmt = $pdo->prepare($query);
@@ -111,11 +114,14 @@ function getUserById($pdo, $id) {
     
     $query = "
         SELECT 
-            id, username, full_name, email, role, status, created_at, last_login
+            u.id, u.username, u.full_name, u.email, u.role, u.status, u.created_at, u.last_login,
+            u.position_id, jp.position_name AS position_name
         FROM 
-            users
+            users u
+        LEFT JOIN 
+            job_positions jp ON u.position_id = jp.id
         WHERE 
-            id = :id
+            u.id = :id
     ";
     
     $stmt = $pdo->prepare($query);
@@ -133,7 +139,7 @@ function getUserById($pdo, $id) {
     
     header('Content-Type: application/json');
     echo json_encode($user);
-}
+}   
 
 /**
  * Create a new user
@@ -339,7 +345,6 @@ function updateUser($pdo) {
     $params[':email'] = $data['email'];
     
     if (isset($data['current_password']) && isset($data['password'])) {
-        // Verify current password
         if (!password_verify($data['current_password'], $user['password'])) {
             header('Content-Type: application/json');
             http_response_code(401);
@@ -362,6 +367,28 @@ function updateUser($pdo) {
         $params[':status'] = $data['status'];
     }
     
+    if (isset($data['position_id'])) {
+        if ($data['position_id'] === null || $data['position_id'] === '') {
+            $updateFields[] = "position_id = NULL";
+        } else {
+            // Verify position_id exists and is active
+            $checkPositionQuery = "SELECT id FROM job_positions WHERE id = :position_id AND is_active = 1";
+            $checkPositionStmt = $pdo->prepare($checkPositionQuery);
+            $checkPositionStmt->bindParam(':position_id', $data['position_id'], PDO::PARAM_INT);
+            $checkPositionStmt->execute();
+            
+            if ($checkPositionStmt->rowCount() === 0) {
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid or inactive position ID']);
+                return;
+            }
+            
+            $updateFields[] = "position_id = :position_id";
+            $params[':position_id'] = $data['position_id'];
+        }
+    }
+    
     $params[':id'] = $id;
     
     $query = "UPDATE users SET " . implode(", ", $updateFields) . " WHERE id = :id";
@@ -375,11 +402,14 @@ function updateUser($pdo) {
     
     $query = "
         SELECT 
-            id, username, full_name, email, role, status, created_at, last_login
+            u.id, u.username, u.full_name, u.email, u.role, u.status, u.created_at, u.last_login,
+            u.position_id, jp.position_name AS position_name
         FROM 
-            users
+            users u
+        LEFT JOIN 
+            job_positions jp ON u.position_id = jp.id
         WHERE 
-            id = :id
+            u.id = :id
     ";
     
     $stmt = $pdo->prepare($query);

@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
-import trainerService from '../../../services/trainerService';
 
 const Quizzes = () => {
   const navigate = useNavigate();
@@ -30,9 +29,51 @@ const Quizzes = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(location.state?.message || null);
-  const [quizzes, setQuizzes] = useState([]);
-  const [filteredQuizzes, setFilteredQuizzes] = useState([]);
-  const [programs, setPrograms] = useState([]);
+  const [quizzes, setQuizzes] = useState([
+    {
+      id: '1',
+      title: 'Financial Accounting Basics',
+      description: 'Test your understanding of fundamental accounting principles.',
+      program_id: '14',
+      time_limit: 30,
+      passing_score: 70,
+      question_count: 10,
+      attempt_count: 25,
+      average_score: 75,
+      pass_rate: 80
+    },
+    {
+      id: '2',
+      title: 'Bookkeeping Essentials',
+      description: 'Assess your knowledge of bookkeeping practices and ledger management.',
+      program_id: '14',
+      time_limit: 45,
+      passing_score: 65,
+      question_count: 15,
+      attempt_count: 30,
+      average_score: 68,
+      pass_rate: 70
+    },
+    {
+      id: '3',
+      title: 'Tax Fundamentals',
+      description: 'A quiz on basic tax concepts and regulations.',
+      program_id: '14',
+      time_limit: 20,
+      passing_score: 75,
+      question_count: 8,
+      attempt_count: 15,
+      average_score: 80,
+      pass_rate: 85
+    }
+  ]);
+  const [filteredQuizzes, setFilteredQuizzes] = useState(quizzes);
+  const [programs, setPrograms] = useState([
+    { id: '101', title: 'Accounting Specialist Certification' },
+    { id: '102', title: 'Software Developer Training' },
+    { id: '103', title: 'Customer Service Excellence' },
+    { id: '14', title: 'Data Analyst Certification' }
+  ]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -42,53 +83,53 @@ const Quizzes = () => {
   });
 
   useEffect(() => {
-    const fetchQuizzes = async () => {
+    const initializeData = async () => {
       setLoading(true);
       setError(null);
       
       try {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
+        // Simulate authentication check
+        const mockToken = 'mock-token';
+        const mockUserRole = 'trainer';
+        
+        if (!mockToken) {
           setError('You are not logged in. Please log in to access this page.');
           setLoading(false);
           setTimeout(() => navigate('/login'), 2000);
           return;
         }
         
-        const userRole = localStorage.getItem('userRole');
-        if (userRole !== 'trainer') {
+        if (mockUserRole !== 'trainer') {
           setError('You do not have permission to access this page.');
           setLoading(false);
-          setTimeout(() => navigate(`/${userRole}-dashboard`), 2000);
+          setTimeout(() => navigate(`/${mockUserRole}-dashboard`), 2000);
           return;
         }
         
-        const programsData = await trainerService.getPrograms();
-        setPrograms(programsData);
+        // Simulate fetching data
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
         
-        const quizzesData = await trainerService.getQuizzes(programIdParam);
-        setQuizzes(quizzesData);
-        
-        let filteredResults = quizzesData;
+        // Apply initial filters
+        let filteredResults = quizzes;
         if (filters.program_id) {
           filteredResults = filteredResults.filter(quiz => quiz.program_id.toString() === filters.program_id);
         }
         
         setFilteredQuizzes(filteredResults);
       } catch (err) {
-        console.error('Error fetching quizzes:', err);
+        console.error('Error initializing data:', err);
         setError('Failed to load quizzes. Please try again.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchQuizzes();
+    initializeData();
     
     if (location.state?.message) {
       window.history.replaceState({}, document.title);
     }
-  }, [navigate, location.state, programIdParam, filters.program_id]);
+  }, [navigate, location.state, quizzes, filters.program_id]);
 
   useEffect(() => {
     let results = quizzes;
@@ -150,7 +191,8 @@ const Quizzes = () => {
 
   const handleDelete = async (quizId) => {
     try {
-      await trainerService.deleteQuiz(quizId);
+      // Simulate delete action
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
       
       const updatedQuizzes = quizzes.filter(quiz => quiz.id !== quizId);
       setQuizzes(updatedQuizzes);
@@ -317,7 +359,7 @@ const Quizzes = () => {
         
         <div>
           <Link 
-            to="/trainer/quizzes/create"
+            to={programIdParam ? `/trainer/quizzes/create?programId=${programIdParam}` : '/trainer/quizzes/create'}
             style={{
               padding: '8px 15px',
               background: '#007bff',
@@ -817,7 +859,7 @@ const Quizzes = () => {
               No quizzes match your search criteria or no quizzes have been created yet.
             </p>
             <Link 
-              to="/trainer/quizzes/create"
+              to={programIdParam ? `/trainer/quizzes/create?programId=${programIdParam}` : '/trainer/quizzes/create'}
               style={{
                 padding: '8px 15px',
                 background: '#007bff',

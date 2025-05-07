@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Key, Shield, AlertCircle, Save, XCircle, Copy, RefreshCw } from 'lucide-react';
+import { ArrowLeft, User, Mail, Key, Shield, AlertCircle, Save, XCircle, Copy, RefreshCw, Briefcase } from 'lucide-react';
 import adminService from '../../../../services/adminService';
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
@@ -26,6 +26,7 @@ const CreateUserForm = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [codeCopied, setCodeCopied] = useState(false);
+  const [positions, setPositions] = useState([]);
   
   const [formData, setFormData] = useState({
     username: '',
@@ -35,6 +36,7 @@ const CreateUserForm = () => {
     email: '',
     role: 'trainee',
     status: 'active',
+    position_id: '',
     access_code: generateRandomCode(10)
   });
   
@@ -50,7 +52,28 @@ const CreateUserForm = () => {
         confirmPassword: prev.access_code
       }));
     }
+    
+    // Fetch positions when component mounts
+    fetchPositions();
   }, [formData.role, formData.access_code]);
+  
+  const fetchPositions = async () => {
+    try {
+      const data = await adminService.getJobPositions();
+      console.log('Raw positions data:', data);
+      
+      // Ensure data is an array
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid position data: Expected an array');
+      }
+      
+      // Just use all positions since we don't see is_active in the API response
+      setPositions(data);
+    } catch (err) {
+      console.error('Error fetching positions:', err);
+      setError('Failed to load positions. Please try again.');
+    }
+  };
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -153,8 +176,12 @@ const CreateUserForm = () => {
         delete userData.access_code;
       }
       
+      // Convert position_id to a number if it's a string and not empty
+      if (userData.position_id && typeof userData.position_id === 'string') {
+        userData.position_id = parseInt(userData.position_id, 10) || '';
+      }
+      
       await adminService.createUser(userData);
-      setSuccess('User created successfully!');
       
       if (userData.role === 'applicant') {
         setSuccess(`Applicant created successfully! Access code: ${userData.access_code}`);
@@ -226,6 +253,39 @@ const CreateUserForm = () => {
               <option value="applicant">Applicant</option>
               <option value="administrator">Administrator</option>
             </select>
+          </div>
+          
+          {/* Position selection field */}
+          <div style={{ marginBottom: '24px' }}>
+            <label htmlFor="position_id" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+              <Briefcase size={16} /> Position
+            </label>
+            <select
+              id="position_id"
+              name="position_id"
+              value={formData.position_id}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '8px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                color: '#1e293b',
+                outline: 'none',
+                backgroundColor: '#ffffff'
+              }}
+            >
+              <option value="">-- No Position --</option>
+              {positions.map(position => (
+  <option key={position.id} value={position.id}>
+    {position.name} ({position.department})
+  </option>
+))}
+            </select>
+            <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>
+              Assign a job position to this user (optional)
+            </div>
           </div>
           
 {formData.role === 'applicant' && (

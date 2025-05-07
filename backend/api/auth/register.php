@@ -36,19 +36,10 @@ try {
         exit;
     }
 
-    $json_data = file_get_contents("php://input");
-    debug_log("Raw request data", $json_data);
-    $data = json_decode($json_data, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        debug_log("JSON decode error", json_last_error_msg());
-        http_response_code(400);
-        echo json_encode(['error' => 'Invalid JSON data: ' . json_last_error_msg()]);
-        exit;
-    }
-
-    $required_fields = ['first_name', 'last_name', 'email', 'password', 'role'];
+    // Validate form fields
+    $required_fields = ['first_name', 'last_name', 'email', 'password', 'role', 'file'];
     foreach ($required_fields as $field) {
-        if (!isset($data[$field]) || empty($data[$field])) {
+        if (!isset($_FILES[$field]) && !isset($_POST[$field])) {
             debug_log("Missing required field", $field);
             http_response_code(400);
             echo json_encode(['error' => "Missing required field: $field"]);
@@ -56,11 +47,48 @@ try {
         }
     }
 
-    $first_name = htmlspecialchars(trim($data['first_name']));
-    $last_name = htmlspecialchars(trim($data['last_name']));
-    $email = filter_var(trim($data['email']), FILTER_SANITIZE_EMAIL);
-    $password = $data['password'];
-    $role = htmlspecialchars(trim($data['role']));
+    // Validate resume file
+    if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+        $errorCode = isset($_FILES['file']) ? $_FILES['file']['error'] : 'No file uploaded';
+        debug_log("File upload error", $errorCode);
+        http_response_code(400);
+        echo json_encode(['error' => 'Resume upload failed. Error code: ' . $errorCode]);
+        exit;
+    }
+
+    $file = $_FILES['file'];
+    $fileName = $file['name'];
+    $fileSize = $file['size'];
+    $fileTmpName = $file['tmp_name'];
+    $fileType = $file['type'];
+
+    // Validate file type
+    $allowedTypes = ['application/pdf'];
+    if (!in_array($fileType, $allowedTypes)) {
+        debug_log("Invalid file type", $fileType);
+        http_response_code(400);
+        echo json_encode(['error' => 'Resume must be a PDF file']);
+        exit;
+    }
+
+    // Validate file size (5MB limit)
+    $maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if ($fileSize > $maxSize) {
+        debug_log("File too large", $fileSize);
+        http_response_code(400);
+        echo json_encode(['error' => 'Resume file size exceeds 5MB limit']);
+        exit;
+    }
+
+    // Get form fields
+    $first_name = htmlspecialchars(trim($_POST['first_name']));
+    $last_name = htmlspecialchars(trim($_POST['last_name']));
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+    $password = $_POST['password'];
+    $role = htmlspecialchars(trim($_POST['role']));
+    $description = isset($_POST['description']) ? htmlspecialchars(trim($_POST['description'])) : 'Resume';
+    $record_type = isset($_POST['record_type']) ? htmlspecialchars(trim($_POST['record_type'])) : 'applicant';
+    $category = isset($_POST['category']) ? htmlspecialchars(trim($_POST['category'])) : 'evaluations';
     $full_name = "$first_name $last_name";
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -77,6 +105,16 @@ try {
         exit;
     }
 
+    if ($record_type !== 'applicant' || $category !== 'evaluations') {
+        debug_log("Invalid record type or category", ['record_type' => $record_type, 'category' => $category]);
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid record type or category']);
+        exit;
+    }
+
+    // Start transaction
+    $pdo->beginTransaction();
+
     // Generate unique username
     $base_username = strtolower($first_name[0] . $last_name);
     $username = $base_username;
@@ -88,8 +126,8 @@ try {
         $username = $base_username . $suffix++;
     }
 
+    // Insert user
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
     $stmt = $pdo->prepare("
         INSERT INTO users (username, password, full_name, email, role, status, created_at)
         VALUES (?, ?, ?, ?, ?, 'active', NOW())
@@ -97,7 +135,48 @@ try {
     $stmt->execute([$username, $hashedPassword, $full_name, $email, $role]);
     $userId = $pdo->lastInsertId();
 
-    debug_log("User registered successfully", ['id' => $userId, 'username' => $username, 'role' => $role]);
+    // Handle resume upload
+    $uploadsDir = __DIR__ . '/../../uploads/documents';
+    if (!file_exists($uploadsDir)) {
+        if (!mkdir($uploadsDir, 0755, true)) {
+            debug_log("Failed to create uploads directory", $uploadsDir);
+            throw new Exception("Failed to create uploads directory");
+        }
+    }
+    if (!is_writable($uploadsDir)) {
+        debug_log("Uploads directory is not writable", $uploadsDir);
+        throw new Exception("Uploads directory is not writable");
+    }
+
+    $uniqueFilename = "resume_{$userId}_" . time() . '_' . bin2hex(random_bytes(4)) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
+    $uploadPath = $uploadsDir . '/' . $uniqueFilename;
+    $databasePath = "uploads/documents/" . $uniqueFilename;
+
+    debug_log("Moving uploaded file to", $uploadPath);
+
+    if (!move_uploaded_file($fileTmpName, $uploadPath)) {
+        debug_log("Failed to move uploaded file", error_get_last());
+        throw new Exception("Failed to save uploaded resume: " . (error_get_last()['message'] ?? 'Unknown error'));
+    }
+
+    // Verify file exists after upload
+    if (!file_exists($uploadPath)) {
+        debug_log("Uploaded file not found after move", $uploadPath);
+        throw new Exception("Uploaded file not found after move");
+    }
+
+    // Insert resume record
+    $stmt = $pdo->prepare("
+        INSERT INTO records (user_id, record_type, category, file_path, description, created_at)
+        VALUES (?, ?, ?, ?, ?, NOW())
+    ");
+    $stmt->execute([$userId, $record_type, $category, $databasePath, $description]);
+    $recordId = $pdo->lastInsertId();
+
+    // Commit transaction
+    $pdo->commit();
+
+    debug_log("User registered successfully with resume", ['id' => $userId, 'username' => $username, 'resume' => $databasePath, 'record_id' => $recordId]);
     http_response_code(201);
     echo json_encode([
         'success' => true,
@@ -106,6 +185,10 @@ try {
         'username' => $username
     ]);
 } catch (Exception $e) {
+    if (isset($pdo) && $pdo->inTransaction()) {
+        $pdo->rollBack();
+        debug_log("Transaction rolled back due to error", $e->getMessage());
+    }
     debug_log("Registration error", $e->getMessage());
     http_response_code(500);
     echo json_encode(['error' => 'Server error: ' . $e->getMessage()]);

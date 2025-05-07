@@ -70,42 +70,43 @@ try {
         exit;
     }
     
-    // Make database schema changes directly first, without using a function
+    // Make database schema changes
     error_log("Checking database schema...");
     
-    // First, check if correct_answer is TEXT
+    // Ensure correct_answer is TEXT
     try {
         $columnCheck = $pdo->query("SHOW COLUMNS FROM quiz_questions WHERE Field = 'correct_answer'");
         if ($columnCheck) {
             $column = $columnCheck->fetch(PDO::FETCH_ASSOC);
-            
             if ($column && strpos(strtolower($column['Type'] ?? ''), 'enum') !== false) {
                 error_log("Converting correct_answer to TEXT type");
                 $pdo->exec("ALTER TABLE quiz_questions MODIFY COLUMN correct_answer TEXT");
             }
         }
+        // Check for incorrect correct_answers column
+        $columnCheck = $pdo->query("SHOW COLUMNS FROM quiz_questions WHERE Field = 'correct_answers'");
+        if ($columnCheck && $columnCheck->fetch()) {
+            error_log("Dropping incorrect correct_answers column from quiz_questions");
+            $pdo->exec("ALTER TABLE quiz_questions DROP COLUMN correct_answers");
+        }
     } catch (PDOException $e) {
         error_log("Error checking or modifying correct_answer column: " . $e->getMessage());
     }
     
-    // Second, check if question_type ENUM includes all required types
+    // Ensure question_type ENUM includes all required types
     try {
         $typeCheck = $pdo->query("SHOW COLUMNS FROM quiz_questions WHERE Field = 'question_type'");
         if ($typeCheck) {
             $typeColumn = $typeCheck->fetch(PDO::FETCH_ASSOC);
-            
             if ($typeColumn) {
-                // Make sure it includes all types
-                $neededTypes = ['multiple_choice','multiple_answer','true_false','identification','matching','essay'];
+                $neededTypes = ['multiple_choice', 'multiple_answer', 'true_false', 'identification', 'matching', 'essay'];
                 $currentType = $typeColumn['Type'] ?? '';
                 $missingTypes = [];
-                
                 foreach ($neededTypes as $type) {
                     if (strpos($currentType, $type) === false) {
                         $missingTypes[] = $type;
                     }
                 }
-                
                 if (!empty($missingTypes)) {
                     error_log("Updating question_type ENUM to include missing types: " . implode(", ", $missingTypes));
                     $pdo->exec("
@@ -122,7 +123,6 @@ try {
     
     // Create necessary tables
     try {
-        // Quiz Question Metadata table
         $pdo->exec("
             CREATE TABLE IF NOT EXISTS `quiz_question_metadata` (
               `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -134,7 +134,6 @@ try {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
         ");
         
-        // Multiple Answer Options table
         $pdo->exec("
             CREATE TABLE IF NOT EXISTS `quiz_question_answer_options` (
               `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -146,7 +145,6 @@ try {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
         ");
         
-        // Matching Pairs table
         $pdo->exec("
             CREATE TABLE IF NOT EXISTS `quiz_question_matching_pairs` (
               `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -158,7 +156,6 @@ try {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
         ");
         
-        // Weights table
         $pdo->exec("
             CREATE TABLE IF NOT EXISTS `quiz_question_weights` (
               `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -171,7 +168,6 @@ try {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
         ");
         
-        // Feedback templates table
         $pdo->exec("
             CREATE TABLE IF NOT EXISTS `quiz_feedback_templates` (
               `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -183,7 +179,6 @@ try {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
         ");
         
-        // Update quizzes table
         $columnCheck = $pdo->query("SHOW COLUMNS FROM quizzes LIKE 'grading_type'");
         if ($columnCheck && $columnCheck->rowCount() === 0) {
             $pdo->exec("
@@ -201,43 +196,50 @@ try {
         error_log("Database schema checks and updates completed");
     } catch (PDOException $e) {
         error_log("Error updating database schema: " . $e->getMessage());
-        // Continue anyway - tables might exist with different structure
     }
 
-    // Validate all questions before beginning transaction
+    // Validate all questions
     foreach ($data['questions'] as $index => $question) {
         $questionType = $question['question_type'] ?? 'multiple_choice';
         error_log("Validating question $index of type $questionType");
         
-        // Basic validation for all question types
         if (!isset($question['question_text']) || empty(trim($question['question_text']))) {
             http_response_code(400);
             echo json_encode(['error' => "Question " . ($index + 1) . ": Question text is required"]);
             exit;
         }
         
-        // Type-specific validation
         switch ($questionType) {
             case 'multiple_choice':
+                if (!isset($question['option_a']) || empty(trim($question['option_a'])) ||
+                    !isset($question['option_b']) || empty(trim($question['option_b']))) {
+                    http_response_code(400);
+                    echo json_encode(['error' => "Question " . ($index + 1) . ": Please provide at least options A and B"]);
+                    exit;
+                }
+                if (!isset($question['correct_answer']) || empty($question['correct_answer'])) {
+                    http_response_code(400);
+                    echo json_encode(['error' => "Question " . ($index + 1) . ": Please select the correct answer"]);
+                    exit;
+                }
+                if (isset($question['correct_answers'])) {
+                    http_response_code(400);
+                    echo json_encode(['error' => "Question " . ($index + 1) . ": Multiple choice questions should use 'correct_answer', not 'correct_answers'"]);
+                    exit;
+                }
+                break;
+                
             case 'multiple_answer':
                 if (!isset($question['option_a']) || empty(trim($question['option_a'])) ||
                     !isset($question['option_b']) || empty(trim($question['option_b']))) {
                     http_response_code(400);
-                    echo json_encode(['error' => "Question " . ($index + 1) . ": Please provide at least options A and B for multiple choice/answer questions."]);
+                    echo json_encode(['error' => "Question " . ($index + 1) . ": Please provide at least options A and B"]);
                     exit;
                 }
-                
-                if ($questionType === 'multiple_choice' && 
-                    (!isset($question['correct_answer']) || empty($question['correct_answer']))) {
+                if (!isset($question['correct_answers']) || !is_array($question['correct_answers']) || empty($question['correct_answers'])) {
                     http_response_code(400);
-                    echo json_encode(['error' => "Question " . ($index + 1) . ": Please select the correct answer."]);
-                    exit;
-                }
-                
-                if ($questionType === 'multiple_answer' && 
-                    (!isset($question['correct_answers']) || !is_array($question['correct_answers']) || empty($question['correct_answers']))) {
-                    http_response_code(400);
-                    echo json_encode(['error' => "Question " . ($index + 1) . ": Please select at least one correct answer."]);
+                    
+                    echo json_encode(['error' => "Question " . ($index + 1) . ": Please select at least one correct answer"]);
                     exit;
                 }
                 break;
@@ -245,7 +247,7 @@ try {
             case 'identification':
                 if (!isset($question['answer_text']) || empty(trim($question['answer_text']))) {
                     http_response_code(400);
-                    echo json_encode(['error' => "Question " . ($index + 1) . ": Please provide the correct answer for the identification question."]);
+                    echo json_encode(['error' => "Question " . ($index + 1) . ": Please provide the correct answer"]);
                     exit;
                 }
                 break;
@@ -253,15 +255,14 @@ try {
             case 'matching':
                 if (!isset($question['matching_pairs']) || !is_array($question['matching_pairs']) || count($question['matching_pairs']) < 2) {
                     http_response_code(400);
-                    echo json_encode(['error' => "Question " . ($index + 1) . ": Please provide at least two matching pairs."]);
+                    echo json_encode(['error' => "Question " . ($index + 1) . ": Please provide at least two matching pairs"]);
                     exit;
                 }
-                
                 foreach ($question['matching_pairs'] as $pairIndex => $pair) {
                     if (!isset($pair['left']) || empty(trim($pair['left'])) || 
                         !isset($pair['right']) || empty(trim($pair['right']))) {
                         http_response_code(400);
-                        echo json_encode(['error' => "Question " . ($index + 1) . ": Please complete both sides of all matching pairs."]);
+                        echo json_encode(['error' => "Question " . ($index + 1) . ": Please complete both sides of all matching pairs"]);
                         exit;
                     }
                 }
@@ -273,7 +274,7 @@ try {
     $pdo->beginTransaction();
     error_log("Starting database transaction for quiz creation");
 
-    // Insert quiz with proper defaults for missing fields
+    // Insert quiz
     $grading_type = isset($data['grade_weighting']) && $data['grade_weighting'] === 'custom' ? 'weighted' : 'standard';
     $auto_feedback = isset($data['auto_feedback']) ? (bool)$data['auto_feedback'] : false;
     
@@ -323,7 +324,6 @@ try {
         $questionType = $question['question_type'] ?? 'multiple_choice';
         error_log("Processing question $index of type $questionType");
         
-        // Build query with placeholders
         $query = "
             INSERT INTO quiz_questions (
               quiz_id, 
@@ -349,8 +349,7 @@ try {
         
         try {
             $stmt = $pdo->prepare($query);
-            
-            // Initialize variables with default values
+            error_log("Prepared query for question $index: " . $query);
             $options = [
                 ':quiz_id' => $quizId,
                 ':question_type' => $questionType,
@@ -362,7 +361,6 @@ try {
                 ':correct_answer' => null
             ];
             
-            // Process based on question type
             switch ($questionType) {
                 case 'multiple_choice':
                     $options[':option_a'] = $question['option_a'] ?? '';
@@ -377,79 +375,43 @@ try {
                     $options[':option_b'] = $question['option_b'] ?? '';
                     $options[':option_c'] = $question['option_c'] ?? null;
                     $options[':option_d'] = $question['option_d'] ?? null;
-                    
-                    // For DB record, store as comma-separated for backward compatibility
-                    $correctAnswers = [];
-                    if (isset($question['correct_answers']) && is_array($question['correct_answers'])) {
-                        $correctAnswers = $question['correct_answers'];
-                    }
-                    $options[':correct_answer'] = implode(',', $correctAnswers);
+                    $options[':correct_answer'] = isset($question['correct_answers']) && is_array($question['correct_answers']) 
+                        ? implode(',', $question['correct_answers']) 
+                        : '';
                     break;
                 
                 case 'true_false':
                     $options[':option_a'] = 'True';
                     $options[':option_b'] = 'False';
-                    $options[':option_c'] = null;
-                    $options[':option_d'] = null;
                     $options[':correct_answer'] = isset($question['is_true']) && $question['is_true'] ? 'a' : 'b';
                     break;
                 
                 case 'identification':
-                    // For identification questions, all options are null
-                    $options[':option_a'] = null;
-                    $options[':option_b'] = null;
-                    $options[':option_c'] = null;
-                    $options[':option_d'] = null;
-                    
-                    // Make sure we have a valid answer text
-                    if (isset($question['answer_text']) && is_string($question['answer_text'])) {
-                        $options[':correct_answer'] = trim($question['answer_text']);
-                    } else {
-                        error_log("Warning: Missing or invalid answer_text for identification question");
-                        $options[':correct_answer'] = ""; // Use empty string as fallback
-                    }
+                    $options[':correct_answer'] = isset($question['answer_text']) && is_string($question['answer_text']) 
+                        ? trim($question['answer_text']) 
+                        : '';
                     break;
                 
                 case 'matching':
-                    // For matching, all options are null
-                    $options[':option_a'] = null;
-                    $options[':option_b'] = null;
-                    $options[':option_c'] = null;
-                    $options[':option_d'] = null;
-                    $options[':correct_answer'] = null;
                     break;
                 
                 case 'essay':
-                    // For essay questions, all options are null
-                    $options[':option_a'] = null;
-                    $options[':option_b'] = null;
-                    $options[':option_c'] = null;
-                    $options[':option_d'] = null;
-                    
-                    // Store model answer if provided
                     $options[':correct_answer'] = $question['answer_text'] ?? null;
                     break;
                 
                 default:
                     error_log("Warning: Unknown question type $questionType");
-                    // Use safe defaults for unknown types
-                    $options[':option_a'] = null;
-                    $options[':option_b'] = null;
-                    $options[':option_c'] = null;
-                    $options[':option_d'] = null;
                     $options[':correct_answer'] = null;
                     break;
             }
             
-            error_log("Inserting question with options: " . substr(json_encode($options), 0, 500));
+            error_log("Executing query for question $index with options: " . json_encode($options));
             $stmt->execute($options);
             $questionId = $pdo->lastInsertId();
             error_log("Created question with ID: $questionId");
             
-            // Handle special question types with additional tables
             if ($questionType === 'matching' && isset($question['matching_pairs'])) {
                 error_log("Processing matching pairs for question $questionId");
-                
                 $insertPairQuery = "
                     INSERT INTO quiz_question_matching_pairs (
                       question_id, 
@@ -464,37 +426,26 @@ try {
                       :pair_key
                     )
                 ";
-                
                 $pairStmt = $pdo->prepare($insertPairQuery);
-                
                 foreach ($question['matching_pairs'] as $pairIndex => $pair) {
                     if (!isset($pair['left']) || !isset($pair['right'])) {
                         error_log("Warning: Invalid pair at index $pairIndex");
                         continue;
                     }
-                    
-                    $pairKey = isset($pair['key']) ? $pair['key'] : chr(97 + $pairIndex); // a, b, c...
-                    
+                    $pairKey = isset($pair['key']) ? $pair['key'] : chr(97 + $pairIndex);
                     $pairStmt->execute([
                         ':question_id' => $questionId,
                         ':left_item' => $pair['left'],
                         ':right_item' => $pair['right'],
                         ':pair_key' => $pairKey
                     ]);
-                    
                     error_log("Added matching pair with key $pairKey");
                 }
             }
             
-            if ($questionType === 'multiple_answer') {
+            if ($questionType === 'multiple_answer' && isset($question['correct_answers']) && is_array($question['correct_answers']) && !empty($question['correct_answers'])) {
                 error_log("Processing multiple-answer options for question $questionId");
-                
-                // Check if correct_answers exists and is valid
-                if (!isset($question['correct_answers']) || !is_array($question['correct_answers'])) {
-                    error_log("Warning: correct_answers missing or not an array for question $questionId");
-                    $question['correct_answers'] = []; // Default to empty array
-                }
-                
+                $correctAnswers = $question['correct_answers'];
                 $insertOptionQuery = "
                     INSERT INTO quiz_question_answer_options (
                       question_id, 
@@ -509,165 +460,115 @@ try {
                       :is_correct
                     )
                 ";
-                
+                error_log("Prepared multiple_answer options query: " . $insertOptionQuery);
                 $optionStmt = $pdo->prepare($insertOptionQuery);
-                
                 foreach (['a', 'b', 'c', 'd'] as $key) {
                     $optionField = "option_$key";
                     if (isset($question[$optionField]) && $question[$optionField] !== null && $question[$optionField] !== '') {
-                        $isCorrect = in_array($key, $question['correct_answers']) ? 1 : 0;
-                        
-                        error_log("Adding option $key for question $questionId: text={$question[$optionField]}, isCorrect=$isCorrect");
-                        
-                        try {
-                            $optionStmt->execute([
-                                ':question_id' => $questionId,
-                                ':option_text' => $question[$optionField],
-                                ':option_key' => $key,
-                                ':is_correct' => $isCorrect
-                            ]);
-                        } catch (Exception $e) {
-                            error_log("Error inserting option $key for question $questionId: " . $e->getMessage());
-                            // Continue with other options - don't throw exception
-                        }
+                        $isCorrect = in_array($key, $correctAnswers) ? 1 : 0;
+                        error_log("Adding option $key: text={$question[$optionField]}, isCorrect=$isCorrect");
+                        $optionStmt->execute([
+                            ':question_id' => $questionId,
+                            ':option_text' => $question[$optionField],
+                            ':option_key' => $key,
+                            ':is_correct' => $isCorrect
+                        ]);
                     }
                 }
             }
             
-            // Add metadata for identification questions if needed
-            if ($questionType === 'identification') {
+            if ($questionType === 'identification' && isset($question['alternative_answers']) && is_string($question['alternative_answers']) && !empty(trim($question['alternative_answers']))) {
                 error_log("Processing metadata for identification question $questionId");
-                
-                try {
-                    // Only try to add alternative answers if they exist
-                    if (isset($question['alternative_answers']) && is_string($question['alternative_answers']) && !empty(trim($question['alternative_answers']))) {
-                        $insertMetaQuery = "
-                            INSERT INTO quiz_question_metadata (
-                              question_id, 
-                              meta_key, 
-                              meta_value
-                            )
-                            VALUES (
-                              :question_id, 
-                              :meta_key, 
-                              :meta_value
-                            )
-                        ";
-                        
-                        $metaStmt = $pdo->prepare($insertMetaQuery);
-                        
-                        // Insert alternative answers
-                        $metaStmt->execute([
-                            ':question_id' => $questionId,
-                            ':meta_key' => 'alternative_answers',
-                            ':meta_value' => trim($question['alternative_answers'])
-                        ]);
-                        
-                        error_log("Added alternative answers metadata for question $questionId");
-                        
-                        // Insert case sensitivity setting
-                        $caseSensitive = isset($question['case_sensitive']) && $question['case_sensitive'] ? '1' : '0';
-                        
-                        $metaStmt->execute([
-                            ':question_id' => $questionId,
-                            ':meta_key' => 'case_sensitive',
-                            ':meta_value' => $caseSensitive
-                        ]);
-                        
-                        error_log("Added case sensitivity metadata for question $questionId");
-                    } else {
-                        error_log("No alternative answers to add for question $questionId");
-                    }
-                } catch (Exception $metaEx) {
-                    error_log("Error adding metadata for question $questionId: " . $metaEx->getMessage());
-                    // Continue processing - metadata is not critical
-                }
+                $insertMetaQuery = "
+                    INSERT INTO quiz_question_metadata (
+                      question_id, 
+                      meta_key, 
+                      meta_value
+                    )
+                    VALUES (
+                      :question_id, 
+                      :meta_key, 
+                      :meta_value
+                    )
+                ";
+                $metaStmt = $pdo->prepare($insertMetaQuery);
+                $metaStmt->execute([
+                    ':question_id' => $questionId,
+                    ':meta_key' => 'alternative_answers',
+                    ':meta_value' => trim($question['alternative_answers'])
+                ]);
+                $caseSensitive = isset($question['case_sensitive']) && $question['case_sensitive'] ? '1' : '0';
+                $metaStmt->execute([
+                    ':question_id' => $questionId,
+                    ':meta_key' => 'case_sensitive',
+                    ':meta_value' => $caseSensitive
+                ]);
+                error_log("Added metadata for question $questionId");
             }
             
-            // Add question weights if grading type is weighted
             if ($grading_type === 'weighted' && isset($data['question_weights']) && isset($data['question_weights'][$index])) {
-                $weight = floatval($data['question_weights'][$index]);
-                
+                $weight = floatval($data['question_weights'][$index]['weight'] ?? $data['question_weights'][$index]);
                 if ($weight > 0) {
                     error_log("Adding weight $weight for question $questionId");
-                    
-                    try {
-                        $insertWeightQuery = "
-                            INSERT INTO quiz_question_weights (
-                              quiz_id, 
-                              question_id, 
-                              weight
-                            )
-                            VALUES (
-                              :quiz_id, 
-                              :question_id, 
-                              :weight
-                            )
-                        ";
-                        
-                        $weightStmt = $pdo->prepare($insertWeightQuery);
-                        $weightStmt->execute([
-                            ':quiz_id' => $quizId,
-                            ':question_id' => $questionId,
-                            ':weight' => $weight
-                        ]);
-                    } catch (Exception $weightEx) {
-                        error_log("Error adding weight for question $questionId: " . $weightEx->getMessage());
-                        // Continue processing - weights are not critical
-                    }
+                    $insertWeightQuery = "
+                        INSERT INTO quiz_question_weights (
+                          quiz_id, 
+                          question_id, 
+                          weight
+                        )
+                        VALUES (
+                          :quiz_id, 
+                          :question_id, 
+                          :weight
+                        )
+                    ";
+                    $weightStmt = $pdo->prepare($insertWeightQuery);
+                    $weightStmt->execute([
+                        ':quiz_id' => $quizId,
+                        ':question_id' => $questionId,
+                        ':weight' => $weight
+                    ]);
                 }
             }
         } catch (Exception $questionEx) {
             error_log("Error creating question $index: " . $questionEx->getMessage());
-            throw $questionEx; // Re-throw to be caught by main try-catch
+            throw $questionEx;
         }
     }
     
-    // Add feedback templates if auto_feedback is enabled
     if ($auto_feedback && isset($data['feedback_templates']) && is_array($data['feedback_templates']) && !empty($data['feedback_templates'])) {
         error_log("Adding feedback templates");
-        
-        try {
-            $insertTemplateQuery = "
-                INSERT INTO quiz_feedback_templates (
-                  quiz_id, 
-                  score_range_min, 
-                  score_range_max, 
-                  feedback_template
-                )
-                VALUES (
-                  :quiz_id, 
-                  :min_score, 
-                  :max_score, 
-                  :template
-                )
-            ";
-            
-            $templateStmt = $pdo->prepare($insertTemplateQuery);
-            
-            foreach ($data['feedback_templates'] as $template) {
-                if (!isset($template['min_score']) || !isset($template['max_score']) || !isset($template['template'])) {
-                    continue;
-                }
-                
-                $templateStmt->execute([
-                    ':quiz_id' => $quizId,
-                    ':min_score' => floatval($template['min_score']),
-                    ':max_score' => floatval($template['max_score']),
-                    ':template' => $template['template']
-                ]);
+        $insertTemplateQuery = "
+            INSERT INTO quiz_feedback_templates (
+              quiz_id, 
+              score_range_min, 
+              score_range_max, 
+              feedback_template
+            )
+            VALUES (
+              :quiz_id, 
+              :min_score, 
+              :max_score, 
+              :template
+            )
+        ";
+        $templateStmt = $pdo->prepare($insertTemplateQuery);
+        foreach ($data['feedback_templates'] as $template) {
+            if (!isset($template['min_score']) || !isset($template['max_score']) || !isset($template['template'])) {
+                continue;
             }
-        } catch (Exception $templateEx) {
-            error_log("Error adding feedback templates: " . $templateEx->getMessage());
-            // Continue processing - templates are not critical
+            $templateStmt->execute([
+                ':quiz_id' => $quizId,
+                ':min_score' => floatval($template['min_score']),
+                ':max_score' => floatval($template['max_score']),
+                ':template' => $template['template']
+            ]);
         }
     }
 
-    // Commit transaction
     $pdo->commit();
     error_log("Quiz creation successfully completed for quiz ID: $quizId");
     
-    // Return success response
     http_response_code(201);
     echo json_encode([
         'success' => true,
@@ -676,12 +577,10 @@ try {
     ]);
     
 } catch (Exception $e) {
-    // Roll back transaction if it was started
     if (isset($pdo) && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
     
-    // Log detailed error information
     $errorMessage = $e->getMessage();
     $errorCode = $e->getCode();
     $errorTrace = $e->getTraceAsString();
@@ -690,7 +589,6 @@ try {
     error_log("Error code: $errorCode");
     error_log("Stack trace: $errorTrace");
     
-    // Return error response
     http_response_code(500);
     echo json_encode(['error' => 'Failed to create quiz: ' . $errorMessage]);
 }

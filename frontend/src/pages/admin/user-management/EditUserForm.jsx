@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Key, Shield, AlertCircle, Save, XCircle } from 'lucide-react';
+import { ArrowLeft, User, Mail, Key, Shield, AlertCircle, Save, XCircle, Briefcase } from 'lucide-react';
 import adminService from '../../../services/adminService';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
@@ -11,6 +11,7 @@ const EditUserForm = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [positions, setPositions] = useState([]);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -19,30 +20,55 @@ const EditUserForm = () => {
     email: '',
     role: 'trainee',
     status: 'active',
+    position_id: '', // Added position_id field
   });
   const [validationErrors, setValidationErrors] = useState({});
   const [changePassword, setChangePassword] = useState(false);
 
-  useEffect(() => {
-    fetchUserData();
-  }, [userId]);
+// Inside EditUserForm.jsx, modify the useEffect that fetches user data
+useEffect(() => {
+  fetchUserData();
+  fetchPositions();
+}, [userId]);
 
-  const fetchUserData = async () => {
-    try {
-      setLoading(true);
-      const userData = await adminService.getUserById(userId);
-      setFormData({ ...userData, password: '', confirmPassword: '' });
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching user:', err);
-      setError('Failed to load user data. Please try again.');
-      if (err.message.includes('Authentication') || err.message.includes('login')) {
-        setTimeout(() => navigate('/login'), 2000);
-      }
-    } finally {
-      setLoading(false);
+const fetchUserData = async () => {
+  try {
+    setLoading(true);
+    const userData = await adminService.getUserById(userId);
+    console.log('User data from API:', userData); // Debug log
+    setFormData({ 
+      ...userData, 
+      password: '', 
+      confirmPassword: '',
+      position_id: userData.position_id || '' // Ensure position_id is initialized
+    });
+    setError(null);
+  } catch (err) {
+    console.error('Error fetching user:', err);
+    setError('Failed to load user data. Please try again.');
+    if (err.message.includes('Authentication') || err.message.includes('login')) {
+      setTimeout(() => navigate('/login'), 2000);
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
+
+const fetchPositions = async () => {
+  try {
+    const data = await adminService.getJobPositions();
+    console.log('Raw positions data:', data); // See what's coming from the API
+    
+    // Remove the filter temporarily to see if it's the problem
+    // const activePositions = data.filter(position => position.is_active === 1);
+    setPositions(data); // Use all positions for now
+    
+  } catch (err) {
+    console.error('Error fetching positions:', err);
+    setError('Failed to load positions. Please try again.');
+  }
+};
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -79,6 +105,12 @@ const EditUserForm = () => {
       setError(null);
       const { confirmPassword, username, ...userData } = formData;
       if (!changePassword) delete userData.password;
+      
+      // Convert position_id to a number if it's a string and not empty
+      if (userData.position_id && typeof userData.position_id === 'string') {
+        userData.position_id = parseInt(userData.position_id, 10) || '';
+      }
+      
       await adminService.updateUser(userId, userData);
       setSuccess('User updated successfully!');
       setTimeout(() => navigate('/admin/user-management'), 1500);
@@ -91,6 +123,21 @@ const EditUserForm = () => {
   };
 
   if (loading && !formData.username) return <LoadingSpinner />;
+
+  // Get current position name for display
+  const getCurrentPositionName = () => {
+    if (!formData.position_id) return 'None';
+    
+    const positionId = parseInt(formData.position_id, 10);
+    const position = positions.find(p => p.id === positionId);
+    
+    // Note that the API returns "name" not "position_name"
+    if (position) {
+      return `${position.name} (${position.department})`;
+    } else {
+      return 'Unknown';
+    }
+  };
 
   return (
     <div style={{
@@ -105,7 +152,7 @@ const EditUserForm = () => {
       {success && <AlertBanner message={success} type="success" onDismiss={() => setSuccess(null)} />}
       
       <div style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <Link to="/admin/user-management" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1E88E5', fontSize: '0.875rem', textDecoration: 'none', ':hover': { textDecoration: 'underline' } }}>
+        <Link to="/admin/user-management" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1E88E5', fontSize: '0.875rem', textDecoration: 'none' }}>
           <ArrowLeft size={16} /> Back to User Management
         </Link>
         <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600, color: '#1e293b' }}>Edit User: {formData.username}</h1>
@@ -162,8 +209,7 @@ const EditUserForm = () => {
                 borderRadius: '8px',
                 fontSize: '0.875rem',
                 color: '#1e293b',
-                outline: 'none',
-                ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                outline: 'none'
               }}
             />
             {validationErrors.full_name && (
@@ -191,8 +237,7 @@ const EditUserForm = () => {
                 borderRadius: '8px',
                 fontSize: '0.875rem',
                 color: '#1e293b',
-                outline: 'none',
-                ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                outline: 'none'
               }}
             />
             {validationErrors.email && (
@@ -200,6 +245,39 @@ const EditUserForm = () => {
                 <AlertCircle size={14} /> {validationErrors.email}
               </div>
             )}
+          </div>
+
+          {/* Position Field */}
+          <div style={{ marginBottom: '24px' }}>
+            <label htmlFor="position_id" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
+              <Briefcase size={16} /> Position
+            </label>
+            <select
+  id="position_id"
+  name="position_id"
+  value={formData.position_id}
+  onChange={handleChange}
+  style={{
+    width: '100%',
+    padding: '8px',
+    border: '1px solid #e2e8f0',
+    borderRadius: '8px',
+    fontSize: '0.875rem',
+    color: '#1e293b',
+    outline: 'none',
+    backgroundColor: '#ffffff'
+  }}
+>
+  <option value="">-- No Position --</option>
+  {positions.map(position => (
+    <option key={position.id} value={position.id}>
+      {position.name} ({position.department})
+    </option>
+  ))}
+</select>
+            <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>
+              Current position: {getCurrentPositionName()}
+            </div>
           </div>
 
           <div style={{ marginBottom: '24px' }}>
@@ -235,8 +313,7 @@ const EditUserForm = () => {
                     borderRadius: '8px',
                     fontSize: '0.875rem',
                     color: '#1e293b',
-                    outline: 'none',
-                    ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                    outline: 'none'
                   }}
                 />
                 {validationErrors.password && (
@@ -263,8 +340,7 @@ const EditUserForm = () => {
                     borderRadius: '8px',
                     fontSize: '0.875rem',
                     color: '#1e293b',
-                    outline: 'none',
-                    ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                    outline: 'none'
                   }}
                 />
                 {validationErrors.confirmPassword && (
@@ -282,28 +358,27 @@ const EditUserForm = () => {
                 <Shield size={16} /> Role
               </label>
               <select
-  id="role"
-  name="role"
-  value={formData.role}
-  onChange={handleChange}
-  style={{
-    width: '100%',
-    padding: '8px',
-    border: '1px solid #e2e8f0',
-    borderRadius: '8px',
-    fontSize: '0.875rem',
-    color: '#1e293b',
-    outline: 'none',
-    backgroundColor: '#ffffff',
-    ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
-  }}
->
-  <option value="trainee">Trainee</option>
-  <option value="trainer">Trainer</option>
-  <option value="employee">Employee</option>
-  <option value="applicant">Applicant</option>
-  <option value="administrator">Administrator</option>
-</select> 
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '0.875rem',
+                  color: '#1e293b',
+                  outline: 'none',
+                  backgroundColor: '#ffffff'
+                }}
+              >
+                <option value="trainee">Trainee</option>
+                <option value="trainer">Trainer</option>
+                <option value="employee">Employee</option>
+                <option value="applicant">Applicant</option>
+                <option value="administrator">Administrator</option>
+              </select>
             </div>
             <div>
               <label htmlFor="status" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>
@@ -322,8 +397,7 @@ const EditUserForm = () => {
                   fontSize: '0.875rem',
                   color: '#1e293b',
                   outline: 'none',
-                  backgroundColor: '#ffffff',
-                  ':focus': { borderColor: '#1E88E5', boxShadow: '0 0 0 2px rgba(30, 136, 229, 0.2)' }
+                  backgroundColor: '#ffffff'
                 }}
               >
                 <option value="active">Active</option>
@@ -347,8 +421,7 @@ const EditUserForm = () => {
                 gap: '8px',
                 fontSize: '0.875rem',
                 textDecoration: 'none',
-                transition: 'background-color 0.3s ease',
-                ':hover': { backgroundColor: '#E3F2FD' }
+                transition: 'background-color 0.3s ease'
               }}
             >
               <XCircle size={16} /> Cancel
@@ -367,8 +440,7 @@ const EditUserForm = () => {
                 alignItems: 'center',
                 gap: '8px',
                 fontSize: '0.875rem',
-                transition: 'background-color 0.3s ease',
-                ':hover': loading ? {} : { backgroundColor: '#1565C0' }
+                transition: 'background-color 0.3s ease'
               }}
             >
               <Save size={16} /> {loading ? 'Saving...' : 'Save Changes'}

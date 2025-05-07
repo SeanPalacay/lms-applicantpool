@@ -63,55 +63,55 @@ try {
   switch ($method) {
     case 'GET':
       // Check if specific program ID was requested
- // Inside the GET case where you check for a single program ID:
-if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-  $programId = $_GET['id'];
-  error_log("Fetching program details for ID: $programId by trainer ID: $trainerId");
-  
-  // Fetch program details created by this trainer
-  $query = "
-    SELECT 
-      p.id,
-      p.title,
-      p.description,
-      p.type,
-      'active' AS status,
-      p.created_at
-    FROM 
-      programs p
-    WHERE 
-      p.id = :programId AND p.created_by = :trainerId
-  ";
-  
-  error_log("Query: $query");
-  
-  $stmt = $pdo->prepare($query);
-  $stmt->bindParam(':programId', $programId, PDO::PARAM_INT);
-  $stmt->bindParam(':trainerId', $trainerId, PDO::PARAM_INT);
-  $stmt->execute();
-  
-  $program = $stmt->fetch(PDO::FETCH_ASSOC);
-  error_log("Program fetch result: " . json_encode($program));
-  
-  if (!$program) {
-    error_log("No program found with ID: $programId for trainer: $trainerId");
-    http_response_code(404);
-    echo json_encode(['error' => 'Program not found or you do not have permission to access it']);
-    exit;
-  }
-  
-  http_response_code(200);
-  echo json_encode($program);
-  exit;
-}
-      // Fetch all programs created by this trainer (your existing code)
+      if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+        $programId = $_GET['id'];
+        error_log("Fetching program details for ID: $programId by trainer ID: $trainerId");
+
+        // Fetch program details created by this trainer
+        $query = "
+          SELECT 
+            p.id,
+            p.title,
+            p.description,
+            p.type,
+            p.status,
+            p.created_at
+          FROM 
+            programs p
+          WHERE 
+            p.id = :programId AND p.created_by = :trainerId
+        ";
+
+        error_log("Query: $query");
+
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':programId', $programId, PDO::PARAM_INT);
+        $stmt->bindParam(':trainerId', $trainerId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $program = $stmt->fetch(PDO::FETCH_ASSOC);
+        error_log("Program fetch result: " . json_encode($program));
+
+        if (!$program) {
+          error_log("No program found with ID: $programId for trainer: $trainerId");
+          http_response_code(404);
+          echo json_encode(['error' => 'Program not found or you do not have permission to access it']);
+          exit;
+        }
+
+        http_response_code(200);
+        echo json_encode($program);
+        exit;
+      }
+
+      // Fetch all programs created by this trainer
       $query = "
         SELECT 
           p.id,
           p.title,
           p.description,
           p.type,
-          'active' AS status, -- No status field in schema, default to 'active'
+          p.status,
           p.created_at,
           (SELECT COUNT(*) FROM program_enrollments pe WHERE pe.program_id = p.id) AS enrollmentCount,
           (SELECT AVG(qa.score) FROM quiz_attempts qa 
@@ -138,139 +138,187 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
       break;
 
     case 'POST':
-      // Your existing POST code for creating a program...
       $input = file_get_contents('php://input');
       $data = json_decode($input, true);
-      
+
       if (json_last_error() !== JSON_ERROR_NONE) {
         http_response_code(400);
         echo json_encode(['error' => 'Invalid JSON input: ' . json_last_error_msg()]);
         exit;
       }
-      
+
       // Validate input
       if (!isset($data['title']) || empty(trim($data['title']))) {
         http_response_code(400);
         echo json_encode(['error' => 'Program title is required']);
         exit;
       }
-      
-      // Insert the new program
-      $insertQuery = "INSERT INTO programs (title, description, type, created_by, created_at) 
-                     VALUES (:title, :description, :type, :created_by, NOW())";
-      
-      $stmt = $pdo->prepare($insertQuery);
-      $stmt->bindParam(':title', $data['title']);
-      $description = isset($data['description']) ? $data['description'] : '';
-      $stmt->bindParam(':description', $description);
-      $type = isset($data['type']) ? $data['type'] : 'regular';
-      $stmt->bindParam(':type', $type);
-      $stmt->bindParam(':created_by', $trainerId);
-      $stmt->execute();
-      
-      $programId = $pdo->lastInsertId();
-      
-      // Fetch the newly created program
-      $fetchQuery = "SELECT id, title, description, type, created_at FROM programs WHERE id = :id";
-      $stmt = $pdo->prepare($fetchQuery);
-      $stmt->bindParam(':id', $programId);
-      $stmt->execute();
-      $program = $stmt->fetch(PDO::FETCH_ASSOC);
-      
-      http_response_code(201); // Created
-      echo json_encode($program);
+
+      if (!isset($data['position_id']) || !is_numeric($data['position_id'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Valid position ID is required']);
+        exit;
+      }
+
+      // Begin transaction
+      $pdo->beginTransaction();
+
+      try {
+        // Insert the new program
+        $insertQuery = "INSERT INTO programs (title, description, type, status, created_by, created_at) 
+                        VALUES (:title, :description, :type, :status, :created_by, NOW())";
+
+        $stmt = $pdo->prepare($insertQuery);
+        $stmt->bindParam(':title', $data['title']);
+        $description = isset($data['description']) ? $data['description'] : '';
+        $stmt->bindParam(':description', $description);
+        $type = isset($data['type']) ? $data['type'] : 'regular';
+        $stmt->bindParam(':type', $type);
+        $status = isset($data['status']) ? $data['status'] : 'active';
+        $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':created_by', $trainerId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $programId = $pdo->lastInsertId();
+
+        // Insert position-program relation
+        $positionId = $data['position_id'];
+        $relationQuery = "INSERT INTO position_program_relation (position_id, program_id) 
+                          VALUES (:position_id, :program_id)";
+        $stmt = $pdo->prepare($relationQuery);
+        $stmt->bindParam(':position_id', $positionId, PDO::PARAM_INT);
+        $stmt->bindParam(':program_id', $programId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Automatic enrollment of trainees with matching position_id
+        $enrollmentQuery = "
+          INSERT INTO program_enrollments (user_id, program_id, completion_status, completion_percentage)
+          SELECT u.id, :program_id, 'not_started', 0
+          FROM users u
+          WHERE u.position_id = :position_id AND u.role = 'trainee'
+        ";
+        $stmt = $pdo->prepare($enrollmentQuery);
+        $stmt->bindParam(':program_id', $programId, PDO::PARAM_INT);
+        $stmt->bindParam(':position_id', $positionId, PDO::PARAM_INT);
+        $stmt->execute();
+        $enrolledCount = $stmt->rowCount();
+
+        // Commit transaction
+        $pdo->commit();
+
+        // Fetch the newly created program
+        $fetchQuery = "SELECT id, title, description, type, status, created_at FROM programs WHERE id = :id";
+        $stmt = $pdo->prepare($fetchQuery);
+        $stmt->bindParam(':id', $programId, PDO::PARAM_INT);
+        $stmt->execute();
+        $program = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $program['enrolled_count'] = $enrolledCount;
+        http_response_code(201);
+        echo json_encode($program);
+      } catch (PDOException $e) {
+        $pdo->rollBack();
+        error_log("Database error in program creation: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to create program: ' . $e->getMessage()]);
+        exit;
+      }
       break;
 
     case 'PUT':
-      // Your existing PUT code for updating a program...
       // Check for program ID
       if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
         http_response_code(400);
         echo json_encode(['error' => 'Program ID is required']);
         exit;
       }
-      
+
       $programId = $_GET['id'];
-      
+
       // Verify the trainer owns this program
       $verifyQuery = "SELECT id FROM programs WHERE id = :id AND created_by = :trainerId";
       $stmt = $pdo->prepare($verifyQuery);
       $stmt->bindParam(':id', $programId, PDO::PARAM_INT);
       $stmt->bindParam(':trainerId', $trainerId, PDO::PARAM_INT);
       $stmt->execute();
-      
+
       $program = $stmt->fetch(PDO::FETCH_ASSOC);
       if (!$program) {
         http_response_code(403);
         echo json_encode(['error' => 'You do not have permission to update this program']);
         exit;
       }
-      
+
       // Get JSON input
       $input = file_get_contents('php://input');
       $data = json_decode($input, true);
-      
+
       if (json_last_error() !== JSON_ERROR_NONE) {
         http_response_code(400);
         echo json_encode(['error' => 'Invalid JSON input: ' . json_last_error_msg()]);
         exit;
       }
-      
+
       // Validate input
       if (isset($data['title']) && empty(trim($data['title']))) {
         http_response_code(400);
         echo json_encode(['error' => 'Program title cannot be empty']);
         exit;
       }
-      
+
       // Build the update query
       $updateFields = [];
       $params = [':id' => $programId];
-      
+
       if (isset($data['title'])) {
         $updateFields[] = "title = :title";
         $params[':title'] = $data['title'];
       }
-      
+
       if (isset($data['description'])) {
         $updateFields[] = "description = :description";
         $params[':description'] = $data['description'];
       }
-      
+
       if (isset($data['type'])) {
         $updateFields[] = "type = :type";
         $params[':type'] = $data['type'];
       }
-      
+
+      if (isset($data['status'])) {
+        $updateFields[] = "status = :status";
+        $params[':status'] = $data['status'];
+      }
+
       if (empty($updateFields)) {
         http_response_code(400);
         echo json_encode(['error' => 'No fields to update']);
         exit;
       }
-      
+
       // Execute the update
       $updateQuery = "UPDATE programs SET " . implode(", ", $updateFields) . " WHERE id = :id";
       $stmt = $pdo->prepare($updateQuery);
-      
+
       if (!$stmt->execute($params)) {
         http_response_code(500);
         echo json_encode(['error' => 'Failed to update program']);
         exit;
       }
-      
+
       // Fetch and return the updated program
-      $fetchQuery = "SELECT id, title, description, type, created_at FROM programs WHERE id = :id";
+      $fetchQuery = "SELECT id, title, description, type, status, created_at FROM programs WHERE id = :id";
       $stmt = $pdo->prepare($fetchQuery);
-      $stmt->bindParam(':id', $programId);
+      $stmt->bindParam(':id', $programId, PDO::PARAM_INT);
       $stmt->execute();
       $updatedProgram = $stmt->fetch(PDO::FETCH_ASSOC);
-      
+
       http_response_code(200);
       echo json_encode($updatedProgram);
       break;
-      
+
     default:
-      http_response_code(405); // Method Not Allowed
+      http_response_code(405);
       echo json_encode(['error' => 'Method not allowed']);
       break;
   }
