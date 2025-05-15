@@ -1090,40 +1090,37 @@ const trainerService = {
     return response.json();
   },
 
-  getQuizById: async (quizId) => {
-    const token = localStorage.getItem('authToken');
-    if (!token) throw new Error('No token found. Please log in again.');
-    if (isTokenExpired()) {
-      localStorage.removeItem('authToken');
-      throw new Error('Session expired. Please log in again.');
-    }
+ async getQuizById(quizId) {
+        try {
+            // Generate token (replace with your auth logic)
+            const trainerId = 2; // Example: Replace with actual trainer ID from auth context
+            const timestamp = Math.floor(Date.now() / 1000);
+            const token = btoa(`${trainerId}:${timestamp}`);
 
-    const endpoint = `${API_BASE_URL}/lms-forbes/backend/api/trainer/quiz_details.php?quizId=${quizId}`;
-    const response = await fetch(endpoint, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
+            const response = await fetch(`http://localhost:8080/lms-forbes/backend/api/trainer/quiz_details.php?quizId=${quizId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
-    if (!response.ok) {
-      if (response.status === 401) {
-        localStorage.removeItem('authToken');
-        throw new Error('Authentication failed. Please login again.');
-      }
-      const errorText = await response.text();
-      let errorData;
-      try {
-        errorData = JSON.parse(errorText);
-        throw new Error(errorData.error || `HTTP error: ${response.status}`);
-      } catch {
-        throw new Error(`HTTP error: ${response.status} - ${errorText}`);
-      }
-    }
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+            }
 
-    return response.json();
-  },
+            const data = await response.json();
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            return data;
+        } catch (error) {
+            console.error('Error fetching quiz:', error);
+            throw error;
+        }
+    },
 
   updateQuiz: async (quizId, quizData) => {
     const token = localStorage.getItem('authToken');

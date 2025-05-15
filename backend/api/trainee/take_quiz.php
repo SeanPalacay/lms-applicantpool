@@ -63,49 +63,66 @@ try {
             exit;
         }
 
-        // Fetch quiz details
-        $query = "SELECT id, title, description, time_limit, passing_score 
-                  FROM quizzes 
-                  WHERE id = :quizId AND status = 'active'";
+        // Fetch quiz details with enrollment check
+        $query = "
+            SELECT q.id, q.title, q.description, q.time_limit, q.passing_score 
+            FROM quizzes q
+            JOIN programs p ON q.program_id = p.id
+            JOIN program_enrollments pe ON p.id = pe.program_id
+            WHERE q.id = :quizId 
+            AND q.status = 'active' 
+            AND pe.user_id = :userId";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':quizId', $quizId, PDO::PARAM_INT);
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
         $stmt->execute();
         $quiz = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$quiz) {
             http_response_code(404);
-            echo json_encode(['error' => 'Quiz not found or not active']);
+            echo json_encode(['error' => 'Quiz not found, not active, or not enrolled']);
             exit;
         }
 
-// In take_quiz.php, when fetching questions
-$query = "SELECT id, question_type, question_text, option_a, option_b, option_c, option_d, correct_answer 
-FROM quiz_questions 
-WHERE quiz_id = :quizId";
-$stmt = $pdo->prepare($query);
-$stmt->bindParam(':quizId', $quizId, PDO::PARAM_INT);
-$stmt->execute();
-$questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Fetch questions
+        $query = "
+            SELECT id, question_type, question_text, option_a, option_b, option_c, option_d, 
+                   correct_answer 
+            FROM questions 
+            WHERE quiz_id = :quizId";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':quizId', $quizId, PDO::PARAM_INT);
+        $stmt->execute();
+        $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Process multiple-answer questions to include correct options
-foreach ($questions as &$question) {
-if ($question['question_type'] === 'multiple_answer') {
-// Fetch correct options from the quiz_question_answer_options table
-$optionsQuery = "SELECT option_key FROM quiz_question_answer_options 
-          WHERE question_id = :questionId AND is_correct = 1";
-$optionsStmt = $pdo->prepare($optionsQuery);
-$optionsStmt->bindParam(':questionId', $question['id'], PDO::PARAM_INT);
-$optionsStmt->execute();
-$correctOptions = $optionsStmt->fetchAll(PDO::FETCH_COLUMN);
-
-// Add correct_answers array to question
-$question['correct_answers'] = $correctOptions;
-
-// Also set correct_answer for backward compatibility
-$question['correct_answer'] = implode(',', $correctOptions);
-}
-}
-unset($question);
+        // Process questions
+        foreach ($questions as &$question) {
+            $question['matching_pairs'] = []; // Default empty array
+            if ($question['question_type'] === 'multiple_answer') {
+                // Fetch correct options
+                $optionsQuery = "
+                    SELECT option_key 
+                    FROM question_answer_options 
+                    WHERE question_id = :questionId AND is_correct = 1";
+                $optionsStmt = $pdo->prepare($optionsQuery);
+                $optionsStmt->bindParam(':questionId', $question['id'], PDO::PARAM_INT);
+                $optionsStmt->execute();
+                $correctOptions = $optionsStmt->fetchAll(PDO::FETCH_COLUMN);
+                $question['correct_answers'] = $correctOptions;
+                $question['correct_answer'] = implode(',', $correctOptions);
+            } elseif ($question['question_type'] === 'matching') {
+                // Fetch matching pairs
+                $pairsQuery = "
+                    SELECT `key`, left_item AS `left`, right_item AS `right`
+                    FROM matching_pairs 
+                    WHERE question_id = :questionId";
+                $pairsStmt = $pdo->prepare($pairsQuery);
+                $pairsStmt->bindParam(':questionId', $question['id'], PDO::PARAM_INT);
+                $pairsStmt->execute();
+                $question['matching_pairs'] = $pairsStmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+        }
+        unset($question);
 
         http_response_code(200);
         echo json_encode(['quiz' => $quiz, 'questions' => $questions]);
@@ -120,27 +137,37 @@ unset($question);
             exit;
         }
 
-        // Fetch quiz details
-        $query = "SELECT passing_score FROM quizzes WHERE id = :quizId AND status = 'active'";
+        // Fetch quiz details with enrollment check
+        $query = "
+            SELECT q.passing_score 
+            FROM quizzes q
+            JOIN programs p ON q.program_id = p.id
+            JOIN program_enrollments pe ON p.id = pe.program_id
+            WHERE q.id = :quizId 
+            AND q.status = 'active' 
+            AND pe.user_id = :userId";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':quizId', $quizId, PDO::PARAM_INT);
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
         $stmt->execute();
         $quiz = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$quiz) {
             http_response_code(404);
-            echo json_encode(['error' => 'Quiz not found or not active']);
+            echo json_encode(['error' => 'Quiz not found, not active, or not enrolled']);
             exit;
         }
 
-        // Fetch all questions with their types and correct answers
-        $query = "SELECT id, question_type, correct_answer FROM quiz_questions WHERE quiz_id = :quizId";
+        // Fetch questions
+        $query = "
+            SELECT id, question_type, correct_answer 
+            FROM questions 
+            WHERE quiz_id = :quizId";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':quizId', $quizId, PDO::PARAM_INT);
         $stmt->execute();
         $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Index questions by ID for easy lookup
+
         $questionsById = [];
         foreach ($questions as $question) {
             $questionsById[$question['id']] = $question;
@@ -148,114 +175,89 @@ unset($question);
 
         $correctCount = 0;
         $totalQuestions = count($questions);
-        $needsGrading = []; // For essay questions
+        $needsGrading = [];
 
         foreach ($answers as $answer) {
             $questionId = $answer['question_id'];
             $submittedAnswer = $answer['answer'];
             $questionType = $answer['question_type'] ?? 'multiple_choice';
-            
+
             if (!isset($questionsById[$questionId])) continue;
-            
+
             $question = $questionsById[$questionId];
             $isCorrect = false;
-            
+
             switch ($questionType) {
                 case 'multiple_choice':
                 case 'true_false':
-                    // Direct comparison
                     $isCorrect = ($submittedAnswer === $question['correct_answer']);
                     break;
-                    
+
                 case 'multiple_answer':
-                    // For multiple answer questions
-                    $submittedOptions = explode(',', $submittedAnswer);
-                    
-                    // Fetch correct options
-                    $query = "SELECT option_key FROM quiz_question_answer_options 
-                              WHERE question_id = :questionId AND is_correct = 1";
+                    $query = "
+                        SELECT option_key 
+                        FROM question_answer_options 
+                        WHERE question_id = :questionId AND is_correct = 1";
                     $stmt = $pdo->prepare($query);
                     $stmt->bindParam(':questionId', $questionId, PDO::PARAM_INT);
                     $stmt->execute();
                     $correctOptions = $stmt->fetchAll(PDO::FETCH_COLUMN);
-                    
-                    // Check if arrays have the same elements (regardless of order)
+
+                    $submittedOptions = $submittedAnswer ? explode(',', $submittedAnswer) : [];
                     sort($submittedOptions);
                     sort($correctOptions);
                     $isCorrect = ($submittedOptions == $correctOptions);
                     break;
-                    
+
                 case 'matching':
-                    // For matching questions
-                    $submittedMatches = json_decode($submittedAnswer, true);
-                    
-                    // Fetch correct matches
-                    $query = "SELECT pair_key, right_item FROM quiz_question_matching_pairs 
-                              WHERE question_id = :questionId";
-                    $stmt = $pdo->prepare($query);
-                    $stmt->bindParam(':questionId', $questionId, PDO::PARAM_INT);
-                    $stmt->execute();
-                    $matchingPairs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    
-                    // Create a map of correct matches
+                    // Fetch correct matching pairs
+                    $pairsQuery = "
+                        SELECT `key`, right_item AS `right`
+                        FROM matching_pairs 
+                        WHERE question_id = :questionId";
+                    $pairsStmt = $pdo->prepare($pairsQuery);
+                    $pairsStmt->bindParam(':questionId', $questionId, PDO::PARAM_INT);
+                    $pairsStmt->execute();
+                    $correctPairs = $pairsStmt->fetchAll(PDO::FETCH_ASSOC);
+
                     $correctMatches = [];
-                    foreach ($matchingPairs as $pair) {
-                        $correctMatches[$pair['pair_key']] = $pair['right_item'];
+                    foreach ($correctPairs as $pair) {
+                        $correctMatches[$pair['key']] = $pair['right'];
                     }
-                    
-                    // Check if all pairs match correctly
+
+                    $submittedMatches = json_decode($submittedAnswer, true) ?: [];
                     $allCorrect = true;
                     foreach ($submittedMatches as $leftKey => $rightKey) {
-                        // Get the right item text for the submitted right key
-                        $rightItemQuery = "SELECT right_item FROM quiz_question_matching_pairs 
-                                          WHERE question_id = :questionId AND pair_key = :rightKey";
-                        $stmt = $pdo->prepare($rightItemQuery);
-                        $stmt->bindParam(':questionId', $questionId, PDO::PARAM_INT);
-                        $stmt->bindParam(':rightKey', $rightKey, PDO::PARAM_STR);
-                        $stmt->execute();
-                        $rightItem = $stmt->fetchColumn();
-                        
-                        if (!isset($correctMatches[$leftKey]) || $correctMatches[$leftKey] !== $rightItem) {
+                        if (!isset($correctMatches[$leftKey]) || $correctMatches[$leftKey] !== $rightKey) {
                             $allCorrect = false;
                             break;
                         }
                     }
                     $isCorrect = $allCorrect && count($submittedMatches) === count($correctMatches);
                     break;
-                    
+
                 case 'identification':
-                    // Case-insensitive comparison for identification
                     $isCorrect = (strtolower(trim($submittedAnswer)) === strtolower(trim($question['correct_answer'])));
                     break;
-                    
+
                 case 'essay':
-                    // Essay questions need manual grading - mark for review
                     $needsGrading[] = $questionId;
-                    // Don't count essay questions in automatic grading
                     $totalQuestions--;
                     continue 2;
             }
-            
+
             if ($isCorrect) {
                 $correctCount++;
             }
         }
 
-        // Calculate score only from automatically graded questions
         $score = ($totalQuestions > 0) ? ($correctCount / $totalQuestions) * 100 : 0;
-        
-        // If there are essay questions, note that in the feedback
-        $feedback = '';
-        if (!empty($needsGrading)) {
-            $feedback = "Note: Your essay questions will be graded manually. ";
-        }
-        
-        // Add standard feedback based on passing score
+        $feedback = !empty($needsGrading) ? "Note: Your essay questions will be graded manually. " : "";
         $feedback .= $score >= $quiz['passing_score'] ? 'Good job!' : 'Review the material and try again.';
 
-        // Insert quiz attempt
-        $query = "INSERT INTO quiz_attempts (user_id, quiz_id, score, feedback, attempt_date) 
-                  VALUES (:userId, :quizId, :score, :feedback, NOW())";
+        $query = "
+            INSERT INTO quiz_attempts (user_id, quiz_id, score, feedback, attempt_date) 
+            VALUES (:userId, :quizId, :score, :feedback, NOW())";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
         $stmt->bindParam(':quizId', $quizId, PDO::PARAM_INT);
@@ -265,9 +267,9 @@ unset($question);
 
         $attemptId = $pdo->lastInsertId();
 
-        // Insert answers
-        $query = "INSERT INTO quiz_attempt_answers (attempt_id, question_id, selected_answer) 
-                  VALUES (:attemptId, :questionId, :answer)";
+        $query = "
+            INSERT INTO quiz_attempt_answers (attempt_id, question_id, selected_answer) 
+            VALUES (:attemptId, :questionId, :answer)";
         $stmt = $pdo->prepare($query);
 
         foreach ($answers as $answer) {

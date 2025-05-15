@@ -217,7 +217,7 @@ const roleToPathMap = {
       { path: '/trainer-dashboard', label: 'Dashboard', iconName: 'dashboard' },
       { path: '/trainer/programs', label: 'Programs', iconName: 'programs' },
       { path: '/trainer/practical-exams', label: 'Exam', iconName: 'certificates' },
-      { path: '/trainer/quizzes', label: 'Quizzes & Assessments', iconName: 'quizzes' },
+      // { path: '/trainer/quizzes', label: 'Quizzes & Assessments', iconName: 'quizzes' },
       // { path: '/trainer/milestones', label: 'Milestones', iconName: 'milestones' },
       { path: '/trainer/trainees', label: 'Trainees', iconName: 'trainees' },
       { path: '/trainer/refresher-courses', label: 'Refresher Courses', iconName: 'refresher' },

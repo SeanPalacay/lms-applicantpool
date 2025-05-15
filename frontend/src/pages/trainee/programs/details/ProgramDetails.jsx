@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { 
   BookOpen, ArrowLeft, Calendar, Clock, Flag, 
   CheckCircle, AlertTriangle, ClipboardList, FileText, 
-  Award, BarChart2, TrendingUp
+  Award, BarChart2
 } from 'lucide-react';
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
@@ -21,15 +21,15 @@ const ProgramDetails = () => {
     const fetchProgramData = async () => {
       setLoading(true);
       setError('');
-
       try {
         const programData = await traineeService.getProgramDetails(programId);
+        console.log('Program data:', programData);
         setProgram(programData);
-
         const milestonesData = await traineeService.getProgramMilestones(programId);
+        console.log('Milestones data:', milestonesData);
         setMilestones(milestonesData);
-
         const quizzesData = await traineeService.getProgramQuizzes(programId);
+        console.log('Quizzes data:', quizzesData);
         setQuizzes(quizzesData);
       } catch (err) {
         console.error('Error fetching program data:', err);
@@ -38,7 +38,6 @@ const ProgramDetails = () => {
         setLoading(false);
       }
     };
-
     fetchProgramData();
   }, [programId]);
 
@@ -48,43 +47,40 @@ const ProgramDetails = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Updated to return style objects instead of JSX elements
   const getStatusStyle = (status) => {
     const baseStyle = {
       display: 'flex',
       alignItems: 'center',
-      gap: '8px', // Using explicit values instead of CSS variables
+      gap: '8px',
       padding: '8px 16px',
       borderRadius: '4px',
       fontSize: '14px',
       fontWeight: '500',
     };
-
     switch (status) {
       case 'completed':
         return {
           ...baseStyle,
-          backgroundColor: '#e6f7ff', // Explicit color instead of var(--primary-ultralight)
-          color: '#0066cc', // Explicit color instead of var(--primary-color)
+          backgroundColor: '#e6f7ff',
+          color: '#0066cc',
         };
       case 'in_progress':
         return {
           ...baseStyle,
           backgroundColor: 'rgba(243, 156, 18, 0.1)',
-          color: '#f39c12', // Explicit color instead of var(--warning-color)
+          color: '#f39c12',
         };
       case 'not_started':
         return {
           ...baseStyle,
-          backgroundColor: '#f5f5f5', // Explicit color instead of var(--light-gray)
-          color: '#666666', // Explicit color instead of var(--text-secondary)
+          backgroundColor: '#f5f5f5',
+          color: '#666666',
         };
       default:
         return baseStyle;
     }
   };
 
-  // Separate function to render status badges as components
   const StatusBadge = ({ status }) => {
     switch (status) {
       case 'completed':
@@ -125,7 +121,6 @@ const ProgramDetails = () => {
     return <AlertBanner message="Program not found" type="error" />;
   }
 
-  // Define static styles instead of using CSS variables
   const styles = {
     container: {
       padding: '32px',
@@ -389,48 +384,6 @@ const ProgramDetails = () => {
       )}
       
       <div style={styles.contentGrid}>
-        {/* <div style={styles.card}>
-          <div style={styles.sectionIcon}>
-            <Flag size={20} style={styles.iconPrimary} />
-            <h3 style={styles.sectionTitle}>Milestones</h3>
-          </div>
-          {milestones.length > 0 ? (
-            <div style={{ display: 'grid', gap: '16px' }}>
-              {milestones.map(milestone => (
-                <div key={milestone.id} style={styles.listItem}>
-                  <div style={{
-                    ...styles.milestoneIcon,
-                    ...getStatusStyle(milestone.status)
-                  }}>
-                    {milestone.status === 'completed' && <CheckCircle size={20} />}
-                    {milestone.status === 'in_progress' && <Clock size={20} />}
-                    {milestone.status === 'not_started' && <AlertTriangle size={20} />}
-                  </div>
-                  <div style={styles.itemContent}>
-                    <h4 style={styles.itemTitle}>{milestone.title}</h4>
-                    <div style={styles.itemMeta}>
-                      <span><Calendar size={14} /> Due: {formatDate(milestone.due_date)}</span>
-                      {milestone.status === 'completed' && milestone.completion_date && (
-                        <span><CheckCircle size={14} /> Completed: {formatDate(milestone.completion_date)}</span>
-                      )}
-                    </div>
-                    {milestone.description && (
-                      <p style={styles.itemDescription}>
-                        {milestone.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div style={styles.emptyState}>
-              <Flag size={32} />
-              <p>No milestones have been set for this program</p>
-            </div>
-          )}
-        </div> */}
-        
         <div style={styles.card}>
           <div style={styles.sectionIcon}>
             <ClipboardList size={20} style={styles.iconPrimary} />
@@ -460,8 +413,8 @@ const ProgramDetails = () => {
                     </div>
                   </div>
                   <div style={styles.actionButtons}>
-                  {quiz.attempts && quiz.attempts.length > 0 ? (
-  parseFloat(quiz.attempts[0].score) >= parseFloat(quiz.passing_score || 70) ? (
+                    {quiz.attempts && quiz.attempts.length > 0 ? (
+                      parseFloat(quiz.attempts[0].score) >= parseFloat(quiz.passing_score || 70) ? (
                         <div style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -475,7 +428,7 @@ const ProgramDetails = () => {
                         }}>
                           <CheckCircle size={18} />
                           <span>Passed ({quiz.attempts[0].score}%)</span>
-                          </div>
+                        </div>
                       ) : (
                         <div style={{
                           display: 'flex',
@@ -490,7 +443,7 @@ const ProgramDetails = () => {
                         }}>
                           <AlertTriangle size={18} />
                           <span>Failed ({quiz.attempts[0].score}%)</span>
-                          </div>
+                        </div>
                       )
                     ) : (
                       <Link 

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 07, 2025 at 04:09 AM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: May 15, 2025 at 03:18 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -596,14 +596,6 @@ CREATE TABLE `position_quiz_relation` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `position_quiz_relation`
---
-
-INSERT INTO `position_quiz_relation` (`id`, `position_id`, `quiz_id`, `created_at`) VALUES
-(1, 8, 14, '2025-05-06 00:49:19'),
-(2, 8, 15, '2025-05-06 00:49:19');
-
 -- --------------------------------------------------------
 
 --
@@ -701,7 +693,7 @@ CREATE TABLE `program_enrollments` (
 --
 
 INSERT INTO `program_enrollments` (`id`, `user_id`, `program_id`, `enrollment_date`, `completion_status`, `completion_percentage`) VALUES
-(4, 3, 11, '2025-03-25 07:20:14', 'completed', 100.00),
+(4, 3, 11, '2025-03-25 07:20:14', 'not_started', 0.00),
 (5, 10, 11, '2025-04-02 01:34:09', 'not_started', 0.00),
 (6, 15, 13, '2025-04-04 19:49:55', 'in_progress', 80.00),
 (7, 3, 13, '2025-04-07 09:06:07', 'not_started', 0.00),
@@ -732,11 +724,6 @@ CREATE TABLE `questions` (
 --
 
 INSERT INTO `questions` (`id`, `quiz_id`, `question_type`, `question_text`, `option_a`, `option_b`, `option_c`, `option_d`, `correct_answer`) VALUES
-(27, 15, 'multiple_answer', 'faa', 'x', 's', 'sd', 'aa', ''),
-(28, 16, 'true_false', 'aa', 'True', 'False', NULL, NULL, 'b'),
-(34, 28, 'identification', 'ass', NULL, NULL, NULL, NULL, 'ge'),
-(36, 14, 'multiple_choice', 'ass', 'a', 'v', 'b', 'd', 'a'),
-(37, 30, 'multiple_choice', 'testing123', 'a', 'c', 'b', 'd', 'a'),
 (39, 50, 'multiple_choice', 'ass', 'a', 'd', 'b', 'c', 'a');
 
 -- --------------------------------------------------------
@@ -769,12 +756,7 @@ CREATE TABLE `quizzes` (
 --
 
 INSERT INTO `quizzes` (`id`, `program_id`, `title`, `description`, `time_limit`, `passing_score`, `created_by`, `created_at`, `status`, `grading_type`, `grade_weighting`, `auto_feedback`, `show_grade_immediately`, `auto_grade`, `grade_on_submission`, `show_correct_answers`) VALUES
-(14, 13, 'multi', 'asda', 30, 70.00, 14, '2025-04-04 19:13:44', 'active', 'standard', 100.00, 0, 0, 0, 0, 0),
-(15, 13, 'multia', 'sss', 30, 70.00, 14, '2025-04-04 19:14:26', 'active', 'standard', 100.00, 0, 0, 0, 0, 0),
-(16, 13, 'tru', 'sdfad', 30, 70.00, 14, '2025-04-04 19:14:53', 'active', 'standard', 100.00, 0, 0, 0, 0, 0),
-(28, 13, 'test', 'test', 30, 70.00, 14, '2025-04-04 19:46:39', 'active', 'standard', 100.00, 0, 0, 0, 0, 0),
-(30, 13, 'testing123', 'testing123', 30, 70.00, 14, '2025-04-04 23:07:58', 'active', 'standard', 100.00, 0, 0, 0, 0, 0),
-(50, 14, 'asdf', 'asdf', 30, 70.00, 2, '2025-05-07 02:07:32', 'draft', 'standard', 0.00, 0, 1, 1, 1, 0);
+(50, 14, 'asdf', 'asdf', 30, 70.00, 2, '2025-05-07 02:07:32', 'active', 'standard', 0.00, 0, 1, 1, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -797,11 +779,7 @@ CREATE TABLE `quiz_attempts` (
 --
 
 INSERT INTO `quiz_attempts` (`id`, `user_id`, `quiz_id`, `score`, `time_taken`, `attempt_date`, `feedback`) VALUES
-(13, 15, 28, 100.00, NULL, '2025-04-04 19:55:35', 'Good job!'),
-(14, 15, 16, 100.00, NULL, '2025-04-04 19:55:42', 'Good job!'),
-(15, 15, 15, 100.00, NULL, '2025-04-04 19:56:00', 'Good job!'),
-(16, 15, 14, 0.00, NULL, '2025-04-04 19:56:06', 'Review the material and try again.'),
-(17, 15, 30, 100.00, NULL, '2025-04-04 23:08:37', 'Good job!');
+(18, 3, 50, 100.00, NULL, '2025-05-15 01:10:27', 'Good job!');
 
 -- --------------------------------------------------------
 
@@ -821,11 +799,7 @@ CREATE TABLE `quiz_attempt_answers` (
 --
 
 INSERT INTO `quiz_attempt_answers` (`id`, `attempt_id`, `question_id`, `selected_answer`) VALUES
-(19, 13, 34, 'ge'),
-(20, 14, 28, 'b'),
-(21, 15, 27, 'b,a'),
-(22, 16, 36, 'd'),
-(23, 17, 37, 'a');
+(24, 18, 39, 'a');
 
 -- --------------------------------------------------------
 
@@ -869,16 +843,6 @@ CREATE TABLE `quiz_question_answer_options` (
   `option_key` varchar(2) NOT NULL,
   `is_correct` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `quiz_question_answer_options`
---
-
-INSERT INTO `quiz_question_answer_options` (`id`, `question_id`, `option_text`, `option_key`, `is_correct`) VALUES
-(21, 27, 'x', 'a', 1),
-(22, 27, 's', 'b', 1),
-(23, 27, 'sd', 'c', 0),
-(24, 27, 'aa', 'd', 0);
 
 -- --------------------------------------------------------
 
@@ -935,17 +899,6 @@ CREATE TABLE `quiz_results` (
   `attempt_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `feedback` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `quiz_results`
---
-
-INSERT INTO `quiz_results` (`id`, `user_id`, `quiz_id`, `score`, `time_taken`, `attempt_date`, `feedback`) VALUES
-(13, 15, 28, 100.00, NULL, '2025-04-04 19:55:35', 'Good job!'),
-(14, 15, 16, 100.00, NULL, '2025-04-04 19:55:42', 'Good job!'),
-(15, 15, 15, 100.00, NULL, '2025-04-04 19:56:00', 'Good job!'),
-(16, 15, 14, 0.00, NULL, '2025-04-04 19:56:06', 'Review the material and try again.'),
-(17, 15, 30, 100.00, NULL, '2025-04-04 23:08:37', 'Good job!');
 
 -- --------------------------------------------------------
 
@@ -1072,9 +1025,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `full_name`, `email`, `phone`, `address`, `department`, `role`, `status`, `created_at`, `last_login`, `position_id`) VALUES
-(1, 'admin', '$2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO', 'Admin Admin', 'admin@gmail.com', NULL, NULL, 'Management', 'administrator', 'active', '2025-03-09 13:16:01', '2025-05-07 01:13:46', 1),
-(2, 'trainer', '$2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK', 'Trainer Trainers', 'trainer@gmail.com', NULL, NULL, 'Human Resources', 'trainer', 'active', '2025-03-09 13:39:22', '2025-05-07 01:13:59', 5),
-(3, 'trainee', '$2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.', 'Trainee Trainee', 'trainee@gmail.com', NULL, NULL, 'Operations', 'trainee', 'active', '2025-03-09 13:38:54', '2025-04-04 19:51:03', 8),
+(1, 'admin', '$2y$10$JG9FFbj5qBvv.DHPSagJjufZSUwP5L4TMDVipopHLbX5Dz.Jw8iVO', 'Admin Admin', 'admin@gmail.com', NULL, NULL, 'Management', 'administrator', 'active', '2025-03-09 13:16:01', '2025-05-14 09:40:53', 1),
+(2, 'trainer', '$2y$10$FEGX/BEZrQ03299K6o/OQ.5BeRbcyZm0YOfUHAJ.ezjm4xdYhHhXK', 'Trainer Trainers', 'trainer@gmail.com', NULL, NULL, 'Human Resources', 'trainer', 'active', '2025-03-09 13:39:22', '2025-05-15 01:17:48', 5),
+(3, 'trainee', '$2y$10$o.JBoWQaMQpuMuzaxukgT.XuKXrOxcd1jF1W1XVXFx3IOBe6ByOq.', 'Trainee Trainee', 'trainee@gmail.com', NULL, NULL, 'Operations', 'trainee', 'active', '2025-03-09 13:38:54', '2025-05-15 00:58:16', 8),
 (4, 'applicant', '$2y$10$TONg2cTG/RZkaPi/PjD1hOx0xCb6crYoJZNrO1rvH7qFxUpWVqLhi', 'Applicant Applicant', 'applicant@gmail.com', NULL, NULL, 'Operations', 'applicant', 'active', '2025-03-09 13:15:17', '2025-04-18 03:20:53', 8),
 (5, 'admin1', '$2y$10$5PuQqTMqIwxi7Ol1Nw48huWuPgmzMuCqJ7usq4ezYzBSq31W68swG', 'admin1 admin1', 'admin1@gmail.com', NULL, NULL, NULL, 'administrator', 'active', '2025-03-14 15:17:21', '2025-03-18 03:06:38', NULL),
 (8, 'applicant2', '$2y$10$rvxU.uX6yUR90npUGrH3q.hObW2FiKXVFs2vcMeKD0kSxEzulFw4K', 'applicant2 applicant2', 'applicant2@gmail.com', NULL, NULL, 'Accounting and Finance', 'applicant', 'active', '2025-03-18 02:24:08', '2025-03-26 07:24:35', NULL),
@@ -1239,7 +1192,11 @@ INSERT INTO `user_activity` (`id`, `user_id`, `activity_type`, `activity_time`, 
 (128, 15, '', '2025-04-04 19:56:16', 'Viewed own profile'),
 (129, 15, '', '2025-04-04 19:56:16', 'Viewed own profile'),
 (130, 15, '', '2025-04-04 20:09:30', 'Viewed own profile'),
-(131, 15, '', '2025-04-04 20:09:30', 'Viewed own profile');
+(131, 15, '', '2025-04-04 20:09:30', 'Viewed own profile'),
+(132, 3, '', '2025-05-14 09:41:12', 'Viewed own profile'),
+(133, 3, '', '2025-05-14 09:41:12', 'Viewed own profile'),
+(134, 3, '', '2025-05-14 11:24:26', 'Viewed own profile'),
+(135, 3, '', '2025-05-14 11:24:26', 'Viewed own profile');
 
 -- --------------------------------------------------------
 
@@ -1873,13 +1830,13 @@ ALTER TABLE `quizzes`
 -- AUTO_INCREMENT for table `quiz_attempts`
 --
 ALTER TABLE `quiz_attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `quiz_attempt_answers`
 --
 ALTER TABLE `quiz_attempt_answers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `quiz_enrollments`
@@ -1957,7 +1914,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_activity`
 --
 ALTER TABLE `user_activity`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=132;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
 
 --
 -- AUTO_INCREMENT for table `user_education`

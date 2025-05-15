@@ -29,7 +29,7 @@ const CreateQuiz = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [program, setProgram] = useState(null);
+  const [programs, setPrograms] = useState([]); // List of available programs
   const [activeTab, setActiveTab] = useState('questions');
   const [quizData, setQuizData] = useState({
     title: '',
@@ -65,7 +65,7 @@ const CreateQuiz = () => {
     option_b: '',
     option_c: '',
     option_d: '',
-    correct_answer: 'a', // Only for multiple_choice
+    correct_answer: 'a',
     answer_text: '',
     alternative_answers: '',
     case_sensitive: false,
@@ -93,18 +93,29 @@ const CreateQuiz = () => {
           return;
         }
         
-        if (!programIdParam) {
-          setError('No program selected. Please select a program from the programs page.');
+        // Fetch all programs
+        const programData = await trainerService.getPrograms();
+        if (!programData || programData.length === 0) {
+          setError('No programs available. Please create a program first.');
           setTimeout(() => navigate('/trainer/programs'), 2000);
           return;
         }
+        setPrograms(programData);
         
-        const programData = await trainerService.getProgramById(programIdParam);
-        setProgram(programData);
+        // Validate programIdParam
+        if (programIdParam) {
+          const selectedProgram = programData.find(p => p.id === programIdParam);
+          if (!selectedProgram) {
+            setError('Invalid or inaccessible program selected. Please choose a valid program.');
+            setTimeout(() => navigate('/trainer/programs'), 2000);
+            return;
+          }
+        }
         
         setQuizData(prev => ({
           ...prev,
-          questions: [{ ...emptyQuestion }]
+          questions: [{ ...emptyQuestion }],
+          program_id: programIdParam || programData[0]?.id || '' // Default to first program if no programIdParam
         }));
       } catch (err) {
         console.error('Error initializing quiz:', err);
@@ -235,7 +246,12 @@ const CreateQuiz = () => {
     }
     
     if (!quizData.program_id) {
-      setError('No program selected. Please select a program from the programs page.');
+      setError('Please select a program.');
+      return false;
+    }
+    
+    if (!programs.some(p => p.id === quizData.program_id)) {
+      setError('Selected program is invalid or inaccessible.');
       return false;
     }
     
@@ -725,7 +741,7 @@ const CreateQuiz = () => {
         setSuccess('Quiz created successfully.');
         
         setTimeout(() => {
-          navigate(`/trainer/quizzes/${response.quizId}`);
+          navigate(`/trainer/quizzes?programId=${quizData.program_id}`);
         }, 2000);
       }
     } catch (err) {
@@ -737,7 +753,7 @@ const CreateQuiz = () => {
   };
 
   const handleCancel = () => {
-    navigate('/trainer/quizzes');
+    navigate(programIdParam ? `/trainer/quizzes?programId=${programIdParam}` : '/trainer/quizzes');
   };
 
   const handlePublish = () => {
@@ -874,18 +890,23 @@ const CreateQuiz = () => {
             </div>
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px' }}>Program</label>
-              <div style={{
-                padding: '8px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                background: '#f8f9fa',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                <BookOpen size={18} />
-                <span>{program ? program.title : 'Loading...'}</span>
-              </div>
+              <select
+                name="program_id"
+                value={quizData.program_id}
+                onChange={handleInputChange}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px'
+                }}
+                required
+              >
+                <option value="">Select a program</option>
+                {programs.map((program) => (
+                  <option key={program.id} value={program.id}>{program.title}</option>
+                ))}
+              </select>
             </div>
             <div style={{
               display: 'grid',

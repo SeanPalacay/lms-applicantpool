@@ -16,46 +16,47 @@ const TraineeAssessments = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterProgram, setFilterProgram] = useState('all');
+  const [filterQuizStatus, setFilterQuizStatus] = useState('all');
   const [programs, setPrograms] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [sortField, setSortField] = useState('due_date');
   const [sortDirection, setSortDirection] = useState('asc');
 
-  
-  useEffect(() => {
-    const fetchAssessments = async () => {
-      setLoading(true);
-      setError('');
+  const fetchAssessments = async () => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      const data = await traineeService.getAssessments();
+      console.log("Raw assessment data:", data);
       
-      try {
-        const data = await traineeService.getAssessments();
-        console.log("Raw assessment data:", data);
-        setAssessments(data);
-        
-        const programsMap = {};
-        data
-          .filter(assessment => assessment.program)
-          .forEach(assessment => {
-            console.log("Processing program:", assessment.program);
-            const programId = assessment.program.id;
-            if (!programsMap[programId]) {
-              programsMap[programId] = {
-                id: programId,
-                title: assessment.program.title
-              };
-            }
-          });
-        const uniquePrograms = Object.values(programsMap);
-        console.log("Extracted unique programs:", uniquePrograms);
-        setPrograms(uniquePrograms);
-      } catch (err) {
-        console.error('Error fetching assessments:', err);
-        setError(err.message || 'Failed to load your assessments. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-  
+      const assessmentsArray = Array.isArray(data) ? data : [];
+      setAssessments(assessmentsArray);
+      
+      const programsMap = {};
+      assessmentsArray
+        .filter(assessment => assessment.program && assessment.program.id)
+        .forEach(assessment => {
+          const programId = assessment.program.id.toString();
+          if (!programsMap[programId]) {
+            programsMap[programId] = {
+              id: programId,
+              title: assessment.program.title || 'Unknown Program'
+            };
+          }
+        });
+      const uniquePrograms = Object.values(programsMap);
+      console.log("Extracted unique programs:", uniquePrograms);
+      setPrograms(uniquePrograms);
+    } catch (err) {
+      console.error('Error fetching assessments:', err);
+      setError(err.message || 'Failed to load your assessments. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchAssessments();
   }, []);
 
@@ -69,6 +70,10 @@ const TraineeAssessments = () => {
 
   const handleProgramFilterChange = (e) => {
     setFilterProgram(e.target.value);
+  };
+
+  const handleQuizStatusFilterChange = (e) => {
+    setFilterQuizStatus(e.target.value);
   };
 
   const toggleFilters = () => {
@@ -86,16 +91,23 @@ const TraineeAssessments = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'N/A';
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return date.toLocaleDateString(undefined, options);
+    } catch {
+      return 'N/A';
+    }
   };
 
   const getAssessmentStatus = (assessment) => {
-    if (assessment.attempts && assessment.attempts.length > 0) {
-      const latestAttempt = assessment.attempts[0];
-      // Parse the score to make sure it's a number
-      const score = parseFloat(latestAttempt.score);
-      const passingScore = parseFloat(assessment.passing_score || 70);
+    if (!assessment) return 'pending';
+    const attempts = Array.isArray(assessment.attempts) ? assessment.attempts : [];
+    if (attempts.length > 0) {
+      const latestAttempt = attempts[0];
+      const score = parseFloat(latestAttempt.score) || 0;
+      const passingScore = parseFloat(assessment.passing_score) || 70;
       console.log('Comparing:', score, '>=', passingScore, score >= passingScore);
       return score >= passingScore ? 'passed' : 'failed';
     }
@@ -104,8 +116,11 @@ const TraineeAssessments = () => {
 
   const filteredAssessments = assessments
     .filter(assessment => {
-      const searchMatch = assessment.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (assessment.description && assessment.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      if (!assessment) return false;
+      
+      const searchMatch = 
+        (assessment.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (assessment.description || '').toLowerCase().includes(searchQuery.toLowerCase());
       
       let statusMatch = true;
       if (filterStatus !== 'all') {
@@ -114,21 +129,33 @@ const TraineeAssessments = () => {
       }
       
       let programMatch = true;
-      if (filterProgram !== 'all' && assessment.program) {
+      if (filterProgram !== 'all' && assessment.program && assessment.program.id) {
         programMatch = assessment.program.id.toString() === filterProgram;
       }
       
-      return searchMatch && statusMatch && programMatch;
+      let quizStatusMatch = true;
+      if (filterQuizStatus !== 'all') {
+        const quizStatus = assessment.status ? assessment.status.toLowerCase() : 'unknown';
+        quizStatusMatch = quizStatus === filterQuizStatus;
+      }
+      
+      return searchMatch && statusMatch && programMatch && quizStatusMatch;
     })
     .sort((a, b) => {
       let comparison = 0;
       
       if (sortField === 'title') {
-        comparison = a.title.localeCompare(b.title);
+        const titleA = a.title || '';
+        const titleB = b.title || '';
+        comparison = titleA.localeCompare(titleB);
       } else if (sortField === 'score') {
-        const scoreA = a.attempts && a.attempts.length > 0 ? a.attempts[0].score : -1;
-        const scoreB = b.attempts && b.attempts.length > 0 ? b.attempts[0].score : -1;
+        const scoreA = a.attempts && a.attempts.length > 0 ? parseFloat(a.attempts[0].score) || 0 : -1;
+        const scoreB = b.attempts && b.attempts.length > 0 ? parseFloat(b.attempts[0].score) || 0 : -1;
         comparison = scoreA - scoreB;
+      } else if (sortField === 'due_date') {
+        const dateA = a.due_date ? new Date(a.due_date).getTime() : Infinity;
+        const dateB = b.due_date ? new Date(b.due_date).getTime() : Infinity;
+        comparison = dateA - dateB;
       }
       
       return sortDirection === 'asc' ? comparison : -comparison;
@@ -140,7 +167,7 @@ const TraineeAssessments = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
-      {error && <AlertBanner message={error} type="error" />}
+      {error && <AlertBanner message={error} type="error" onDismiss={() => setError('')} />}
       
       <div style={{ 
         display: 'flex', 
@@ -203,6 +230,21 @@ const TraineeAssessments = () => {
           <span>Filters</span>
           {showFilters ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </button>
+        
+        <button 
+          onClick={fetchAssessments}
+          style={{ 
+            padding: '10px 15px', 
+            background: '#007bff', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '4px', 
+            cursor: 'pointer', 
+            fontSize: '14px' 
+          }}
+        >
+          Refresh
+        </button>
       </div>
       
       {showFilters && (
@@ -217,7 +259,7 @@ const TraineeAssessments = () => {
           flexWrap: 'wrap' 
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', minWidth: '200px' }}>
-            <label htmlFor="status-filter" style={{ fontSize: '14px', fontWeight: 'bold' }}>Status:</label>
+            <label htmlFor="status-filter" style={{ fontSize: '14px', fontWeight: 'bold' }}>Attempt Status:</label>
             <select 
               id="status-filter" 
               value={filterStatus}
@@ -257,14 +299,35 @@ const TraineeAssessments = () => {
               ))}
             </select>
           </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', minWidth: '200px' }}>
+            <label htmlFor="quiz-status-filter" style={{ fontSize: '14px', fontWeight: 'bold' }}>Quiz Status:</label>
+            <select 
+              id="quiz-status-filter" 
+              value={filterQuizStatus}
+              onChange={handleQuizStatusFilterChange}
+              style={{ 
+                padding: '8px', 
+                border: '1px solid #ddd', 
+                borderRadius: '4px', 
+                fontSize: '14px' 
+              }}
+            >
+              <option value="all">All Quiz Statuses</option>
+              <option value="active">Active</option>
+              <option value="draft">Draft</option>
+            </select>
+          </div>
         </div>
       )}
       
       {filteredAssessments.length > 0 ? (
         <div style={{ background: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
           {filteredAssessments.map(assessment => {
-            const status = getAssessmentStatus(assessment);
-            const latestAttempt = assessment.attempts && assessment.attempts.length > 0
+            const attemptStatus = getAssessmentStatus(assessment);
+            const quizStatus = assessment.status ? assessment.status.toLowerCase() : 'unknown';
+            console.log(`Quiz ID: ${assessment.id}, Title: ${assessment.title}, Status: ${assessment.status}, QuizStatus: ${quizStatus}`);
+            const latestAttempt = Array.isArray(assessment.attempts) && assessment.attempts.length > 0
               ? assessment.attempts[0]
               : null;
             
@@ -287,23 +350,39 @@ const TraineeAssessments = () => {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: '1', minWidth: '200px' }}>
                     <ClipboardList size={24} style={{ color: '#007bff' }} />
-                    <h3 style={{ fontSize: '16px', margin: 0 }}>{assessment.title}</h3>
+                    <h3 style={{ fontSize: '16px', margin: 0 }}>{assessment.title || 'Untitled'}</h3>
                   </div>
-                  <div style={{ 
-                    padding: '4px 8px', 
-                    borderRadius: '12px', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '5px', 
-                    fontSize: '12px',
-                    ...(status === 'passed' ? { background: '#d4edda', color: '#155724' } :
-                       status === 'failed' ? { background: '#f8d7da', color: '#721c24' } :
-                       { background: '#cce5ff', color: '#004085' })
-                  }}>
-                    {status === 'passed' && <CheckCircle size={16} />}
-                    {status === 'failed' && <AlertTriangle size={16} />}
-                    {status === 'pending' && <Clock size={16} />}
-                    <span>{status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ 
+                      padding: '4px 8px', 
+                      borderRadius: '12px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '5px', 
+                      fontSize: '12px',
+                      ...(attemptStatus === 'passed' ? { background: '#d4edda', color: '#155724' } :
+                         attemptStatus === 'failed' ? { background: '#f8d7da', color: '#721c24' } :
+                         { background: '#cce5ff', color: '#004085' })
+                    }}>
+                      {attemptStatus === 'passed' && <CheckCircle size={16} />}
+                      {attemptStatus === 'failed' && <AlertTriangle size={16} />}
+                      {attemptStatus === 'pending' && <Clock size={16} />}
+                      <span>{attemptStatus.charAt(0).toUpperCase() + attemptStatus.slice(1)}</span>
+                    </div>
+                    <div style={{
+                      padding: '4px 8px',
+                      borderRadius: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      fontSize: '12px',
+                      ...(quizStatus === 'active' ? { background: '#d4edda', color: '#155724' } :
+                         quizStatus === 'draft' ? { background: '#fff3cd', color: '#856404' } :
+                         { background: '#f8d7da', color: '#721c24' })
+                    }}>
+                      {quizStatus === 'active' ? <CheckCircle size={16} /> : <AlertTriangle size={16} />}
+                      <span>{quizStatus === 'unknown' ? 'Unknown' : quizStatus.charAt(0).toUpperCase() + quizStatus.slice(1)}</span>
+                    </div>
                   </div>
                 </div>
                 
@@ -317,10 +396,10 @@ const TraineeAssessments = () => {
                     flexWrap: 'wrap', 
                     gap: '15px', 
                     fontSize: '14px', 
-                    color: '#666', 
+                    color: 'black', 
                     marginBottom: '10px' 
                   }}>
-                    {assessment.program && (
+                    {assessment.program && assessment.program.title && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <BookOpen size={14} />
                         <span>{assessment.program.title}</span>
@@ -332,7 +411,7 @@ const TraineeAssessments = () => {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                       <BarChart2 size={14} />
-                      <span>Passing Score: {assessment.passing_score || 70}%</span>
+                      <span>Passing Score: {parseFloat(assessment.passing_score) || 70}%</span>
                     </div>
                   </div>
                   
@@ -341,12 +420,12 @@ const TraineeAssessments = () => {
                       <div style={{ marginBottom: '5px' }}>
                         <span style={{ fontWeight: 'bold' }}>Your Score:</span>
                         <span style={{ 
-  marginLeft: '5px', 
-  color: parseFloat(latestAttempt.score) >= parseFloat(assessment.passing_score || 70) ? '#28a745' : '#dc3545',
-  fontWeight: 'bold'
-}}>
-  {latestAttempt.score}%
-</span>
+                          marginLeft: '5px', 
+                          color: parseFloat(latestAttempt.score) >= parseFloat(assessment.passing_score || 70) ? '#28a745' : '#dc3545',
+                          fontWeight: 'bold'
+                        }}>
+                          {parseFloat(latestAttempt.score)}%
+                        </span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <Calendar size={14} />
@@ -357,7 +436,7 @@ const TraineeAssessments = () => {
                 </div>
                 
                 <div style={{ marginTop: '15px', marginLeft: '34px' }}>
-                  {status === 'pending' ? (
+                  {quizStatus === 'active' && attemptStatus === 'pending' ? (
                     <Link 
                       to={`/trainee/assessments/quiz/${assessment.id}`}
                       style={{ 
@@ -375,9 +454,37 @@ const TraineeAssessments = () => {
                       <ClipboardList size={16} />
                       <span>Take Quiz</span>
                     </Link>
+                  ) : quizStatus === 'draft' ? (
+                    <div style={{ 
+                      fontSize: '14px', 
+                      color: '#856404', 
+                      background: '#fff3cd', 
+                      padding: '8px 15px', 
+                      borderRadius: '4px', 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      gap: '5px' 
+                    }}>
+                      <AlertTriangle size={16} />
+                      <span>This quiz is in draft mode and cannot be taken yet.</span>
+                    </div>
+                  ) : quizStatus === 'unknown' ? (
+                    <div style={{ 
+                      fontSize: '14px', 
+                      color: '#721c24', 
+                      background: '#f8d7da', 
+                      padding: '8px 15px', 
+                      borderRadius: '4px', 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      gap: '5px' 
+                    }}>
+                      <AlertTriangle size={16} />
+                      <span>Quiz status unavailable. Please contact support.</span>
+                    </div>
                   ) : (
                     <Link 
-                      to={`/trainee/assessments/quiz/${assessment.id}/feedback${latestAttempt ? `?attempt=${assessment.attempts[0].id}` : ''}`}
+                      to={`/trainee/assessments/quiz/${assessment.id}/feedback${latestAttempt ? `?attempt=${latestAttempt.id}` : ''}`}
                       style={{ 
                         padding: '8px 15px', 
                         background: '#6c757d', 
@@ -410,7 +517,7 @@ const TraineeAssessments = () => {
           <ClipboardList size={48} style={{ color: '#007bff', marginBottom: '15px' }} />
           <h3 style={{ fontSize: '18px', margin: '0 0 10px 0' }}>No assessments found</h3>
           <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
-            {searchQuery || filterStatus !== 'all' || filterProgram !== 'all'
+            {searchQuery || filterStatus !== 'all' || filterProgram !== 'all' || filterQuizStatus !== 'all'
               ? 'Try adjusting your search or filters'
               : 'You don\'t have any assessments assigned yet'}
           </p>

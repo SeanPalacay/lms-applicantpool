@@ -1,21 +1,17 @@
 <?php
-// lms-forbes/backend/api/trainee/assessments.php
 require_once '../../shared/cors_middleware.php';
 require_once __DIR__ . '/../../config/db_config.php';
 
-// Disable error output to prevent HTML in JSON
 ini_set('display_errors', 0);
 error_reporting(E_ERROR);
 
 header('Content-Type: application/json');
 
-// Handle preflight request
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// Check authorization header
 $headers = getallheaders();
 $authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
 $token = '';
@@ -30,7 +26,6 @@ if (empty($token)) {
     exit;
 }
 
-// Decode token (base64-encoded "userId:timestamp")
 $decodedToken = base64_decode($token);
 if ($decodedToken === false || strpos($decodedToken, ':') === false) {
     http_response_code(401);
@@ -40,14 +35,12 @@ if ($decodedToken === false || strpos($decodedToken, ':') === false) {
 
 list($userId, $timestamp) = explode(':', $decodedToken);
 
-// Basic token validation (24-hour expiration)
 if (!$userId || !$timestamp || (time() - $timestamp > 24 * 60 * 60)) {
     http_response_code(401);
     echo json_encode(['error' => 'Invalid or expired token']);
     exit;
 }
 
-// Verify user role
 try {
     $query = "SELECT id, role FROM users WHERE id = :id";
     $stmt = $pdo->prepare($query);
@@ -67,16 +60,25 @@ try {
         exit;
     }
 
-    // Fetch only assessments for programs the trainee is enrolled in
     $query = "
-    SELECT q.id, q.title, q.description, q.time_limit, q.passing_score,
-       qa.id AS attempt_id, qa.score, qa.feedback, qa.attempt_date,
-       p.id AS program_id, p.title AS program_title
+    SELECT 
+        q.id, 
+        q.title, 
+        q.description, 
+        q.time_limit, 
+        q.passing_score,
+        q.status,
+        qa.id AS attempt_id, 
+        qa.score, 
+        qa.feedback, 
+        qa.attempt_date,
+        p.id AS program_id, 
+        p.title AS program_title
     FROM quizzes q
     LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.user_id = :userId
     JOIN programs p ON q.program_id = p.id
     JOIN program_enrollments pe ON p.id = pe.program_id
-    WHERE q.status = 'active'
+    WHERE q.status IN ('active', 'draft')
     AND pe.user_id = :userId
     ORDER BY q.created_at DESC
     ";
@@ -90,11 +92,9 @@ try {
     $stmt->execute();
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Group quiz attempts
     $assessments = [];
     $quizMap = [];
 
-    // Inside the foreach loop where attempts are processed
     foreach ($results as $row) {
         $quizId = $row['id'];
         if (!isset($quizMap[$quizId])) {
@@ -104,6 +104,7 @@ try {
                 'description' => $row['description'],
                 'time_limit' => $row['time_limit'],
                 'passing_score' => $row['passing_score'],
+                'status' => $row['status'], // Add status
                 'attempts' => [],
                 'program' => [
                     'id' => $row['program_id'],
@@ -112,9 +113,9 @@ try {
             ];
         }
 
-        if ($row['score'] !== null) {
+        if ($row['attempt_id'] !== null) {
             $quizMap[$quizId]['attempts'][] = [
-                'id' => $row['attempt_id'], // Add this field
+                'id' => $row['attempt_id'],
                 'score' => $row['score'],
                 'feedback' => $row['feedback'],
                 'attempt_date' => $row['attempt_date']

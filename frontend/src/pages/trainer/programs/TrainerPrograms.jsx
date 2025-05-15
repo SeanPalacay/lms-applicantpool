@@ -598,17 +598,6 @@ const TrainerPrograms = () => {
                           >
                             <Edit size={18} />
                           </Link>
-                          {/* <Link 
-                            to={`/trainer/quizzes?programId=${program.id}`}
-                            style={{ 
-                              padding: '5px',
-                              color: 'var(--primary-color)',
-                              textDecoration: 'none'
-                            }}
-                            title="Manage Quizzes"
-                          >
-                            <BookOpen size={18} />
-                          </Link> */}
                         </div>
                       </td>
                     </tr>

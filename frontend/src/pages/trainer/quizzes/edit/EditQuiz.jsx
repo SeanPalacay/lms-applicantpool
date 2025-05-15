@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  HelpCircle, 
-  CheckSquare, 
-  Plus, 
+import {
+  HelpCircle,
+  CheckSquare,
+  Plus,
   Trash2,
   ArrowLeft,
   Save,
@@ -15,150 +15,7 @@ import {
 import LoadingSpinner from '../../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../../components/shared/AlertBanner';
 import QuizGradingSettings from '../QuizGradingSettings';
-
-const getQuizById = (quizId) => {
-  const quizzes = [
-    {
-      id: '1',
-      title: 'Financial Accounting Basics',
-      description: 'Test your understanding of fundamental accounting principles.',
-      program_id: '101',
-      program_title: 'Accounting Specialist Certification',
-      time_limit: 30,
-      passing_score: 70,
-      question_count: 10,
-      attempt_count: 25,
-      average_score: 75,
-      pass_rate: 80,
-      questions: [
-        {
-          id: '1',
-          question_type: 'single_answer',
-          question_text: 'What is the primary purpose of a balance sheet?',
-          option_a: 'To show revenue and expenses',
-          option_b: 'To report assets, liabilities, and equity',
-          option_c: 'To track cash flow',
-          option_d: 'To calculate tax obligations',
-          correct_answer: 'b'
-        },
-        {
-          id: '2',
-          question_type: 'multiple_answer',
-          question_text: 'Which of the following are components of a general ledger?',
-          option_a: 'Accounts Receivable',
-          option_b: 'Income Statement',
-          option_c: 'Accounts Payable',
-          option_d: 'Balance Sheet',
-          correct_answer: 'a,c',
-          answer_options: [
-            { option_key: 'a', option_text: 'Accounts Receivable', is_correct: true },
-            { option_key: 'b', option_text: 'Income Statement', is_correct: false },
-            { option_key: 'c', option_text: 'Accounts Payable', is_correct: true },
-            { option_key: 'd', option_text: 'Balance Sheet', is_correct: false }
-          ]
-        },
-        {
-          id: '3',
-          question_type: 'single_answer',
-          question_text: 'In double-entry bookkeeping, a debit to an asset account is balanced by a credit to which type of account?',
-          option_a: 'Revenue',
-          option_b: 'Liability',
-          option_c: 'Expense',
-          option_d: 'Equity',
-          correct_answer: 'b'
-        }
-      ],
-      stats: {
-        total_attempts: 25,
-        pass_rate: 80,
-        average_score: 75,
-        highest_score: 95,
-        lowest_score: 50
-      },
-      created_at: '2025-01-15T10:00:00Z',
-      created_by: '101',
-      created_by_name: 'Jane Smith'
-    },
-    {
-      id: '2',
-      title: 'Bookkeeping Essentials',
-      description: 'Assess your knowledge of bookkeeping practices and ledger management.',
-      program_id: '101',
-      program_title: 'Accounting Specialist Certification',
-      time_limit: 45,
-      passing_score: 65,
-      question_count: 15,
-      attempt_count: 30,
-      average_score: 68,
-      pass_rate: 70,
-      questions: [
-        {
-          id: '4',
-          question_type: 'single_answer',
-          question_text: 'What is the purpose of a trial balance?',
-          option_a: 'To summarize revenue',
-          option_b: 'To ensure debits equal credits',
-          option_c: 'To calculate net income',
-          option_d: 'To prepare tax returns',
-          correct_answer: 'b'
-        }
-      ],
-      stats: {
-        total_attempts: 30,
-        pass_rate: 70,
-        average_score: 68,
-        highest_score: 90,
-        lowest_score: 45
-      },
-      created_at: '2025-02-01T09:00:00Z',
-      created_by: '101',
-      created_by_name: 'Jane Smith'
-    },
-    {
-      id: '3',
-      title: 'Tax Fundamentals',
-      description: 'A quiz on basic tax concepts and regulations.',
-      program_id: '101',
-      program_title: 'Accounting Specialist Certification',
-      time_limit: 20,
-      passing_score: 75,
-      question_count: 8,
-      attempt_count: 15,
-      average_score: 80,
-      pass_rate: 85,
-      questions: [
-        {
-          id: '5',
-          question_type: 'single_answer',
-          question_text: 'What is a progressive tax system?',
-          option_a: 'Same tax rate for all income levels',
-          option_b: 'Tax rate increases as income increases',
-          option_c: 'Tax rate decreases as income increases',
-          option_d: 'No tax on high incomes',
-          correct_answer: 'b'
-        }
-      ],
-      stats: {
-        total_attempts: 15,
-        pass_rate: 85,
-        average_score: 80,
-        highest_score: 98,
-        lowest_score: 60
-      },
-      created_at: '2025-03-01T08:00:00Z',
-      created_by: '101',
-      created_by_name: 'Jane Smith'
-    }
-  ];
-
-  return quizzes.find(quiz => quiz.id === quizId) || null;
-};
-
-const getPrograms = () => {
-  return [
-    { id: '101', title: 'Accounting Specialist Certification' }
-  ];
-};
+import TrainerService from '../../../../services/trainerService'; // Adjust path to match your structure
 
 const emptyQuestion = {
   id: null,
@@ -178,7 +35,7 @@ const emptyQuestion = {
 const EditQuiz = () => {
   const { quizId } = useParams();
   const navigate = useNavigate();
-  
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -194,7 +51,7 @@ const EditQuiz = () => {
     status: 'draft',
     questions: []
   });
-  
+
   const [gradingSettings, setGradingSettings] = useState({
     grading_type: 'standard',
     passing_score: 70,
@@ -211,61 +68,86 @@ const EditQuiz = () => {
     const fetchQuizData = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
-        const mockToken = 'mock-token';
+        // Simulate authentication (replace with actual auth logic)
+        const mockToken = btoa(`2:${Math.floor(Date.now() / 1000)}`); // Trainer ID 2
         const mockUserRole = 'trainer';
-        
+
         if (!mockToken) {
           setError('You are not logged in. Please log in to access this page.');
           setLoading(false);
           setTimeout(() => navigate('/login'), 2000);
           return;
         }
-        
+
         if (mockUserRole !== 'trainer') {
           setError('You do not have permission to access this page.');
           setLoading(false);
           setTimeout(() => navigate(`/${mockUserRole}-dashboard`), 2000);
           return;
         }
-        
-        const programsData = getPrograms();
+
+        // Mock programs (replace with API call if available)
+        const programsData = [
+          { id: '14', title: 'Accounting' } // Matches program_id=14 from schema
+        ];
         setPrograms(programsData);
-        
-        const quizResponse = getQuizById(quizId);
+
+        // Fetch quiz data from backend
+        const quizResponse = await TrainerService.getQuizById(quizId);
         if (!quizResponse) {
-          throw new Error('Quiz not found.');
+          throw new Error('Quiz not found or you do not have access.');
         }
-        
+
+        // Map backend response to component's expected format
         const formattedQuestions = quizResponse.questions.map(q => ({
-          ...q,
-          question_type: q.question_type === 'single_answer' ? 'multiple_choice' : q.question_type,
-          correct_answers: q.question_type === 'multiple_answer' && q.correct_answer ? q.correct_answer.split(',') : []
+          id: q.id,
+          question_text: q.question_text,
+          question_type: q.question_type === 'multiple_answer' ? 'multiple_answer' : 'multiple_choice', // Adjust as needed
+          option_a: q.option_a || '',
+          option_b: q.option_b || '',
+          option_c: q.option_c || '',
+          option_d: q.option_d || '',
+          correct_answer: q.correct_answer || 'a',
+          correct_answers: q.question_type === 'multiple_answer' && q.correct_answer ? q.correct_answer.split(',') : [],
+          answer_text: '',
+          matching_pairs: [],
+          is_true: q.correct_answer === 'a'
         }));
-        
+
         setQuizData({
-          ...quizResponse,
+          id: quizResponse.id,
+          title: quizResponse.title || '',
+          description: quizResponse.description || '',
+          program_id: quizResponse.program_id?.toString() || '',
+          time_limit: quizResponse.time_limit || 30,
+          passing_score: parseFloat(quizResponse.passing_score) || 70,
+          status: quizResponse.status || 'draft',
           questions: formattedQuestions.length > 0 ? formattedQuestions : [{ ...emptyQuestion }],
-          status: 'draft' // Default status
+          created_at: quizResponse.created_at,
+          created_by: quizResponse.created_by?.toString(),
+          created_by_name: quizResponse.created_by_name || ''
         });
-        
+
         setGradingSettings({
-          grading_type: 'standard',
-          passing_score: quizResponse.passing_score || 70,
-          auto_feedback: false,
-          question_weights: formattedQuestions.map(q => ({ question_id: q.id, weight: 1.0 })),
-          feedback_templates: [
-            { min_score: 0, max_score: 60, template: 'You need to review the material and try again.' },
-            { min_score: 60, max_score: 80, template: 'Good job! You\'ve passed but there\'s still room for improvement.' },
-            { min_score: 80, max_score: 100, template: 'Excellent work! You\'ve mastered this content.' }
-          ]
+          grading_type: quizResponse.grading_type || 'standard',
+          passing_score: parseFloat(quizResponse.passing_score) || 70,
+          auto_feedback: !!quizResponse.auto_feedback,
+          question_weights: quizResponse.question_weights.length > 0
+            ? quizResponse.question_weights
+            : formattedQuestions.map(q => ({ question_id: q.id, weight: 1.0 })),
+          feedback_templates: quizResponse.feedback_templates.length > 0
+            ? quizResponse.feedback_templates
+            : [
+                { min_score: 0, max_score: 60, template: 'You need to review the material and try again.' },
+                { min_score: 60, max_score: 80, template: 'Good job! You\'ve passed but there\'s still room for improvement.' },
+                { min_score: 80, max_score: 100, template: 'Excellent work! You\'ve mastered this content.' }
+              ]
         });
-        
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
       } catch (err) {
         console.error('Error fetching quiz data:', err);
-        setError('Failed to load quiz. Please try again.');
+        setError(err.message || 'Failed to load quiz. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -284,7 +166,7 @@ const EditQuiz = () => {
 
   const handleQuestionChange = (index, field, value) => {
     const updatedQuestions = [...quizData.questions];
-    
+
     if (field === 'question_type') {
       const newType = value;
       if (newType === 'true_false') {
@@ -343,7 +225,7 @@ const EditQuiz = () => {
     } else {
       updatedQuestions[index][field] = value;
     }
-    
+
     setQuizData({
       ...quizData,
       questions: updatedQuestions
@@ -365,7 +247,7 @@ const EditQuiz = () => {
       questions: updatedQuestions
     });
   };
-  
+
   const handleGradingSettingsChange = (newSettings) => {
     setGradingSettings(newSettings);
   };
@@ -373,45 +255,45 @@ const EditQuiz = () => {
   const validateForm = () => {
     setError(null);
     setSuccess(null);
-    
+
     if (!quizData.title.trim()) {
       setError('Please enter a quiz title.');
       return false;
     }
-    
+
     if (!quizData.program_id) {
       setError('Please select a program for this quiz.');
       return false;
     }
-    
+
     if (quizData.time_limit <= 0) {
       setError('Time limit must be greater than 0 minutes.');
       return false;
     }
-    
+
     if (quizData.passing_score < 0 || quizData.passing_score > 100) {
       setError('Passing score must be between 0 and 100.');
       return false;
     }
-    
+
     if (quizData.questions.length === 0) {
       setError('Please add at least one question to the quiz.');
       return false;
     }
-    
+
     for (let i = 0; i < quizData.questions.length; i++) {
       const question = quizData.questions[i];
       if (!question.question_text.trim()) {
         setError(`Question ${i + 1}: Please enter the question text.`);
         return false;
       }
-      
+
       if (question.question_type === 'multiple_choice' || question.question_type === 'multiple_answer') {
         if (!question.option_a.trim() || !question.option_b.trim()) {
           setError(`Question ${i + 1}: Please provide at least options A and B.`);
           return false;
         }
-        
+
         if (question.question_type === 'multiple_answer' && (!question.correct_answers || question.correct_answers.length === 0)) {
           setError(`Question ${i + 1}: Please select at least one correct answer for multiple answer question.`);
           return false;
@@ -426,7 +308,7 @@ const EditQuiz = () => {
           setError(`Question ${i + 1}: Matching questions require at least 2 pairs.`);
           return false;
         }
-        
+
         for (let j = 0; j < question.matching_pairs.length; j++) {
           const pair = question.matching_pairs[j];
           if (!pair.left.trim() || !pair.right.trim()) {
@@ -436,21 +318,22 @@ const EditQuiz = () => {
         }
       }
     }
-    
+
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setSaving(true);
-    
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+      // Simulate API call to update quiz (replace with actual API call)
+      await new Promise(resolve => setTimeout(resolve, 1000));
       setSuccess('Quiz updated successfully.');
       setTimeout(() => {
         navigate(`/trainer/quizzes/${quizId}`);
@@ -470,11 +353,12 @@ const EditQuiz = () => {
   const toggleStatus = async () => {
     const originalStatus = quizData.status;
     const newStatus = quizData.status === 'active' ? 'draft' : 'active';
-    
+
     setQuizData({ ...quizData, status: newStatus });
-    
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+      // Simulate API call to update status (replace with actual API call)
+      await new Promise(resolve => setTimeout(resolve, 500));
       setSuccess(`Quiz ${newStatus === 'active' ? 'published' : 'unpublished'} successfully.`);
     } catch (err) {
       console.error('Error updating quiz status:', err);
@@ -723,16 +607,16 @@ const EditQuiz = () => {
             required
           />
         </div>
-        
+
         <div style={{ marginBottom: '15px' }}>
           <label style={{ display: 'block', marginBottom: '10px' }}>Matching Pairs</label>
-          
+
           {(question.matching_pairs || []).map((pair, pairIndex) => (
-            <div key={pairIndex} style={{ 
-              display: 'flex', 
+            <div key={pairIndex} style={{
+              display: 'flex',
               gap: '10px',
-              alignItems: 'center', 
-              marginBottom: '10px' 
+              alignItems: 'center',
+              marginBottom: '10px'
             }}>
               <div style={{ flex: 1 }}>
                 <input
@@ -780,7 +664,7 @@ const EditQuiz = () => {
               )}
             </div>
           ))}
-          
+
           <button
             type="button"
             onClick={addMatchingPair}
@@ -865,7 +749,7 @@ const EditQuiz = () => {
       {error && <AlertBanner message={error} type="error" onDismiss={() => setError(null)} />}
       {success && <AlertBanner message={success} type="success" onDismiss={() => setSuccess(null)} />}
 
-      <div 
+      <div
         onClick={handleCancel}
         style={{
           display: 'flex',
@@ -1097,57 +981,57 @@ const EditQuiz = () => {
                         <Trash2 size={16} />
                       </button>
                     </div>
-                    
-                    <QuestionTypeSelector 
-                      questionType={question.question_type} 
-                      onChange={(value) => handleQuestionChange(index, 'question_type', value)} 
+
+                    <QuestionTypeSelector
+                      questionType={question.question_type}
+                      onChange={(value) => handleQuestionChange(index, 'question_type', value)}
                     />
-                    
+
                     {question.question_type === 'multiple_choice' && (
-                      <MultipleChoiceQuestion 
-                        question={question} 
-                        index={index} 
-                        onQuestionChange={handleQuestionChange} 
+                      <MultipleChoiceQuestion
+                        question={question}
+                        index={index}
+                        onQuestionChange={handleQuestionChange}
                       />
                     )}
-                    
+
                     {question.question_type === 'multiple_answer' && (
-                      <MultipleAnswerQuestion 
-                        question={question} 
-                        index={index} 
-                        onQuestionChange={handleQuestionChange} 
+                      <MultipleAnswerQuestion
+                        question={question}
+                        index={index}
+                        onQuestionChange={handleQuestionChange}
                       />
                     )}
-                    
+
                     {question.question_type === 'true_false' && (
-                      <TrueFalseQuestion 
-                        question={question} 
-                        index={index} 
-                        onQuestionChange={handleQuestionChange} 
+                      <TrueFalseQuestion
+                        question={question}
+                        index={index}
+                        onQuestionChange={handleQuestionChange}
                       />
                     )}
-                    
+
                     {question.question_type === 'identification' && (
-                      <IdentificationQuestion 
-                        question={question} 
-                        index={index} 
-                        onQuestionChange={handleQuestionChange} 
+                      <IdentificationQuestion
+                        question={question}
+                        index={index}
+                        onQuestionChange={handleQuestionChange}
                       />
                     )}
-                    
+
                     {question.question_type === 'matching' && (
-                      <MatchingQuestion 
-                        question={question} 
-                        index={index} 
-                        onQuestionChange={handleQuestionChange} 
+                      <MatchingQuestion
+                        question={question}
+                        index={index}
+                        onQuestionChange={handleQuestionChange}
                       />
                     )}
-                    
+
                     {question.question_type === 'essay' && (
-                      <EssayQuestion 
-                        question={question} 
-                        index={index} 
-                        onQuestionChange={handleQuestionChange} 
+                      <EssayQuestion
+                        question={question}
+                        index={index}
+                        onQuestionChange={handleQuestionChange}
                       />
                     )}
                   </div>
@@ -1176,10 +1060,10 @@ const EditQuiz = () => {
             </div>
           </div>
         ) : (
-          <QuizGradingSettings 
-            quizData={quizData} 
-            questions={quizData.questions} 
-            onChange={handleGradingSettingsChange} 
+          <QuizGradingSettings
+            quizData={quizData}
+            questions={quizData.questions}
+            onChange={handleGradingSettingsChange}
           />
         )}
 

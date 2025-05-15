@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import AlertBanner from '../../../components/shared/AlertBanner';
+import trainerService from '../../../services/trainerService';
 
 const Quizzes = () => {
   const navigate = useNavigate();
@@ -29,51 +30,9 @@ const Quizzes = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(location.state?.message || null);
-  const [quizzes, setQuizzes] = useState([
-    {
-      id: '1',
-      title: 'Financial Accounting Basics',
-      description: 'Test your understanding of fundamental accounting principles.',
-      program_id: '14',
-      time_limit: 30,
-      passing_score: 70,
-      question_count: 10,
-      attempt_count: 25,
-      average_score: 75,
-      pass_rate: 80
-    },
-    {
-      id: '2',
-      title: 'Bookkeeping Essentials',
-      description: 'Assess your knowledge of bookkeeping practices and ledger management.',
-      program_id: '14',
-      time_limit: 45,
-      passing_score: 65,
-      question_count: 15,
-      attempt_count: 30,
-      average_score: 68,
-      pass_rate: 70
-    },
-    {
-      id: '3',
-      title: 'Tax Fundamentals',
-      description: 'A quiz on basic tax concepts and regulations.',
-      program_id: '14',
-      time_limit: 20,
-      passing_score: 75,
-      question_count: 8,
-      attempt_count: 15,
-      average_score: 80,
-      pass_rate: 85
-    }
-  ]);
-  const [filteredQuizzes, setFilteredQuizzes] = useState(quizzes);
-  const [programs, setPrograms] = useState([
-    { id: '101', title: 'Accounting Specialist Certification' },
-    { id: '102', title: 'Software Developer Training' },
-    { id: '103', title: 'Customer Service Excellence' },
-    { id: '14', title: 'Data Analyst Certification' }
-  ]);
+  const [quizzes, setQuizzes] = useState([]);
+  const [filteredQuizzes, setFilteredQuizzes] = useState([]);
+  const [programs, setPrograms] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -88,29 +47,44 @@ const Quizzes = () => {
       setError(null);
       
       try {
-        // Simulate authentication check
-        const mockToken = 'mock-token';
-        const mockUserRole = 'trainer';
-        
-        if (!mockToken) {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
           setError('You are not logged in. Please log in to access this page.');
-          setLoading(false);
           setTimeout(() => navigate('/login'), 2000);
           return;
         }
         
-        if (mockUserRole !== 'trainer') {
+        const userRole = localStorage.getItem('userRole');
+        if (userRole !== 'trainer') {
           setError('You do not have permission to access this page.');
-          setLoading(false);
-          setTimeout(() => navigate(`/${mockUserRole}-dashboard`), 2000);
+          setTimeout(() => navigate(`/${userRole}-dashboard`), 2000);
           return;
         }
         
-        // Simulate fetching data
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+        // Fetch programs and quizzes
+        const [programData, quizData] = await Promise.all([
+          trainerService.getPrograms(),
+          trainerService.getQuizzes()
+        ]);
+        
+        if (!programData || programData.length === 0) {
+          setError('No programs available. Please create a program first.');
+          setTimeout(() => navigate('/trainer/programs'), 2000);
+          return;
+        }
+        
+        setPrograms(programData);
+        setQuizzes(quizData || []);
+        
+        // Validate programIdParam
+        if (programIdParam && !programData.some(p => p.id.toString() === programIdParam)) {
+          setError('Invalid or inaccessible program selected.');
+          setTimeout(() => navigate('/trainer/quizzes'), 2000);
+          return;
+        }
         
         // Apply initial filters
-        let filteredResults = quizzes;
+        let filteredResults = quizData || [];
         if (filters.program_id) {
           filteredResults = filteredResults.filter(quiz => quiz.program_id.toString() === filters.program_id);
         }
@@ -118,7 +92,7 @@ const Quizzes = () => {
         setFilteredQuizzes(filteredResults);
       } catch (err) {
         console.error('Error initializing data:', err);
-        setError('Failed to load quizzes. Please try again.');
+        setError('Failed to load quizzes or programs. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -129,7 +103,7 @@ const Quizzes = () => {
     if (location.state?.message) {
       window.history.replaceState({}, document.title);
     }
-  }, [navigate, location.state, quizzes, filters.program_id]);
+  }, [navigate, location.state, filters.program_id]);
 
   useEffect(() => {
     let results = quizzes;
@@ -191,8 +165,7 @@ const Quizzes = () => {
 
   const handleDelete = async (quizId) => {
     try {
-      // Simulate delete action
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+      await trainerService.deleteQuiz(quizId);
       
       const updatedQuizzes = quizzes.filter(quiz => quiz.id !== quizId);
       setQuizzes(updatedQuizzes);
@@ -200,6 +173,13 @@ const Quizzes = () => {
         let keep = true;
         if (filters.program_id) {
           keep = keep && quiz.program_id.toString() === filters.program_id;
+        }
+        if (searchTerm.trim()) {
+          const term = searchTerm.toLowerCase();
+          keep = keep && (
+            quiz.title.toLowerCase().includes(term) || 
+            (quiz.description && quiz.description.toLowerCase().includes(term))
+          );
         }
         return keep;
       }));
@@ -214,7 +194,7 @@ const Quizzes = () => {
   };
 
   const getProgramTitle = (programId) => {
-    const program = programs.find(p => p.id === programId);
+    const program = programs.find(p => p.id.toString() === programId.toString());
     return program ? program.title : 'Unknown Program';
   };
 
